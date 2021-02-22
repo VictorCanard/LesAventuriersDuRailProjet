@@ -2,6 +2,12 @@ package ch.epfl.tchu.game;
 
 import java.util.List;
 
+/**
+ * Class Card
+ * @author Victor Jean Canard-Duchene (326913)
+ * @author Anne-Marie Rusu (296098)
+ */
+
 public enum Card {
     BLACK(Color.BLACK),
     VIOLET(Color.VIOLET),

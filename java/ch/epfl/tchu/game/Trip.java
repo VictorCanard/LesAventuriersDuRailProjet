@@ -2,6 +2,10 @@ package ch.epfl.tchu.game;
 
 import java.util.Objects;
 
+/**
+ * Class Trip
+ * @author Anne-Marie Rusu (296098)
+ */
 public final class Trip {
     private final Station FROM;
     private final Station TO;

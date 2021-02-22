@@ -1,5 +1,9 @@
 package ch.epfl.tchu.game;
 
+/**
+ * Interface StationConnectivity
+ * @author Anne-Marie Rusu (296098)
+ */
 public interface StationConnectivity {
 
     /**
