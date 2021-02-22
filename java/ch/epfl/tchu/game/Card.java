@@ -20,6 +20,7 @@ public enum Card {
     public final static List<Card> CARS = ALL.subList(0,8);
 
     /**
+     * Constructor for Card
      * @param color : the color of the corresponding card
      */
     Card(Color color){
@@ -27,6 +28,7 @@ public enum Card {
     }
 
     /**
+     * Determines the type of card from its color
      * @param color : the color of a card
      * @return : the type of the card corresponding to the given color
      */
@@ -35,6 +37,7 @@ public enum Card {
     }
 
     /**
+     * Determines the color of the card from its type. Null if its a locomotive card
      * @return : the color of the given card
      */
     public Color color(){
