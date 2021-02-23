@@ -4,6 +4,12 @@ public final class Station {
     private int id;
     private String name;
 
+    /**
+     * Station Constructor
+     * if the id is negative it throws an error.
+     * @param id : between 0 and 50
+     * @param name
+     */
     public Station(int id, String name){
         if(id <0){
             throw new IllegalArgumentException();

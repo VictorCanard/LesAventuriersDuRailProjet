@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact name="tCHuBA2">
+    <output-path>$PROJECT_DIR$/out/artifacts/tCHuBA2</output-path>
+    <root id="root">
+      <element id="archive" name="BA2Projet">
+        <element id="directory" name="Projet">
+          <element id="directory" name="src">
+            <element id="dir-copy" path="$PROJECT_DIR$/java/ch/epfl/tchu" />
+          </element>
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
