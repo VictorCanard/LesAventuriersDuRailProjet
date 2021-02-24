@@ -7,6 +7,7 @@ import java.util.Objects;
 /**
  * Class Trip
  * @author Anne-Marie Rusu (296098)
+ * @author Victor Jean Canard-Duchene (326913)
  */
 public final class Trip {
     private final Station FROM;
@@ -20,15 +21,13 @@ public final class Trip {
      * @param points : number of points attributed to the trip
      */
     public Trip(Station from, Station to, int points) {
-            this.FROM = Objects.requireNonNull(from);
-            this.TO = Objects.requireNonNull(to);
+        this.FROM = Objects.requireNonNull(from);
+        this.TO = Objects.requireNonNull(to);
 
-            if(points <= 0){
-                throw new IllegalArgumentException();
-            }
-            this.POINTS = points;
-
-
+        if(points <= 0){
+            throw new IllegalArgumentException();
+        }
+        this.POINTS = points;
     }
 
     /**
@@ -39,7 +38,6 @@ public final class Trip {
      * list to the arrival station on the arrival list
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points){
-   //help
         if(from == null || to == null || points <= 0){
             throw new IllegalArgumentException();
         }
@@ -52,7 +50,6 @@ public final class Trip {
             }
         }
         return allTrips;
-
     }
 
     /**
@@ -87,9 +84,7 @@ public final class Trip {
     public int points(StationConnectivity connectivity){
         if(connectivity.connected(FROM, TO)){
             return POINTS;
-        }else{
-            return -POINTS;
         }
+        return -POINTS;
     }
-
 }

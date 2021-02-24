@@ -1,5 +1,10 @@
 package ch.epfl.tchu.game;
 
+/**
+ * Class Station
+ * @author Victor Jean Canard-Duchene (326913)
+ */
+
 public final class Station {
     private int id;
     private String name;

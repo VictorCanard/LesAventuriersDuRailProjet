@@ -13,6 +13,4 @@ public interface StationConnectivity {
      * @return : true if they are connected by a (single) players wagons, false otherwise
      */
     boolean connected(Station s1, Station s2);
-
-    //more to be added in later steps (4)
 }
