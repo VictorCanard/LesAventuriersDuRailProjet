@@ -13,7 +13,7 @@ public final class Ticket  implements Comparable<Ticket>{
     private final String TEXT;
     private static boolean biggerThan1; //default false
     private int i;
-    private Trip departure;
+    private Station departure;
 
     /**
      * Primary Ticket Constructor
@@ -21,9 +21,9 @@ public final class Ticket  implements Comparable<Ticket>{
      */
     Ticket(List<Trip> trips){
 
-        TreeSet<Trip> departureStations = new TreeSet<>();
+        TreeSet<Station> departureStations = new TreeSet<>();
 
-        for(Trip t : trips){departureStations.add(t);}
+        for(Trip t : trips){departureStations.add(t.from());}
 
         if(departureStations.size() != 1){
             throw new IllegalArgumentException();
@@ -69,15 +69,24 @@ public final class Ticket  implements Comparable<Ticket>{
         return String.join(", ", arrivalStations);
     }
 
+    /**
+     * @param connectivity : the connectivity of the trip
+     * @return
+     */
     public int points(StationConnectivity connectivity){
+       // if(connectivity.connected(departure, ))
         return 0;
 
     }
 
+    /**
+     * Compares this ticket with a specified ticket for alphabetical order.
+     * @param that : the ticket to be compared.
+     * @return : a negative integer, zero, or a positive integer as this ticket
+     * is less than, equal to, or greater than the specified ticket, alphabetically.
+     */
     @Override
     public int compareTo(Ticket that) {
-        return 0;
+        return this.text().compareTo(that.text());
     }
-
-
 }
