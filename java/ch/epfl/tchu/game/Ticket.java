@@ -45,7 +45,7 @@ public final class Ticket  implements Comparable<Ticket>{
      * @param points : number of points allocated for the corresponding trip
      */
     Ticket(Station from, Station to, int points){
-        List.of(new Trip(from, to, points));
+        this(List.of(new Trip(from, to, points)));
     }
 
     /**
