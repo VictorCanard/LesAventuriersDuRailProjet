@@ -11,31 +11,41 @@ import java.util.TreeSet;
 public final class Ticket  implements Comparable<Ticket>{
 
     private final String TEXT;
-    private Station from;
-    private Station to;
-    private int points;
+    private static boolean biggerThan1; //default false
+    private int i;
+    private Trip departure;
 
     /**
      * Primary Ticket Constructor
-     * @param trips
+     * @param trips : a list of trips provided for the construction of a ticket
      */
     Ticket(List<Trip> trips){
-        if(trips == null /*or departure not same*/){
+
+        TreeSet<Trip> departureStations = new TreeSet<>();
+
+        for(Trip t : trips){departureStations.add(t);}
+
+        if(departureStations.size() != 1){
             throw new IllegalArgumentException();
+        }else{
+            departure = departureStations.first();
+
+            if(biggerThan1){
+                TEXT = departure + " - {" + Ticket.computeText(trips) + "}";
+            }else {
+                TEXT = departure + " - " + Ticket.computeText(trips);
+            }
         }
-
-
     }
 
     /**
      * Secondary Ticket Constructor
-     * @param from
-     * @param to
-     * @param points
+     * @param from : departure station
+     * @param to : arrival station
+     * @param points : number of points allocated for the corresponding trip
      */
     Ticket(Station from, Station to, int points){
         List.of(new Trip(from, to, points));
-
     }
 
     /**
@@ -43,25 +53,24 @@ public final class Ticket  implements Comparable<Ticket>{
      * @return : text of the ticket
      */
     public String text(){
-
-
+        return TEXT;
     }
 
     private static String computeText(List<Trip> trip){ //list in argument is the list of trips for one departure station
 
         TreeSet<String> arrivalStations = new TreeSet<>();
-        if(trip.size() == 1){
-            arrivalStations.add(String.format("%s ( %s )", trip.get(0).to(), trip.get(0).points()));
-        }
+
         for(Trip t : trip){
-            arrivalStations.add(String.format("%s ( %s )", t.to(), t.points()));
+            arrivalStations.add(String.format("%s (%s)", t.to(), t.points()));
         }
+        if(arrivalStations.size()>1){ biggerThan1 = true; }
+        biggerThan1 = false;
 
-        return String.join(" ", arrivalStations);
-
+        return String.join(", ", arrivalStations);
     }
 
     public int points(StationConnectivity connectivity){
+        return 0;
 
     }
 
