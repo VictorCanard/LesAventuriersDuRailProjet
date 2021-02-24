@@ -1,5 +1,6 @@
 package ch.epfl.tchu.game;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -48,13 +49,15 @@ public final class Ticket  implements Comparable<Ticket>{
 
     private static String computeText(List<Trip> trip){ //list in argument is the list of trips for one departure station
 
-
-
         TreeSet<String> arrivalStations = new TreeSet<>();
-
-
-        for(Trip t : trip){
+        if(trip.size() == 1){
+            arrivalStations.add(String.format("%s ( %s )", trip.get(0).to(), trip.get(0).points()));
         }
+        for(Trip t : trip){
+            arrivalStations.add(String.format("%s ( %s )", t.to(), t.points()));
+        }
+
+        return String.join(" ", arrivalStations);
 
     }
 
