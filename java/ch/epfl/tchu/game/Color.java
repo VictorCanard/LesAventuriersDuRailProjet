@@ -2,6 +2,10 @@ package ch.epfl.tchu.game;
 
 import java.util.List;
 
+/**
+ * @author Victor Canard-Duchêne
+ */
+
 public enum Color {
     BLACK,VIOLET,BLUE,GREEN,YELLOW,ORANGE,RED,WHITE;
 
