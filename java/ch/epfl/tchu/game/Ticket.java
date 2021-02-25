@@ -24,7 +24,7 @@ public final class Ticket  implements Comparable<Ticket>{
      * Primary Ticket Constructor
      * @param trips : a list of trips provided for the construction of a ticket
      */
-    Ticket(List<Trip> trips){
+    public Ticket(List<Trip> trips){
 
         for(Trip t : trips){
             departureStationsNames.add(t.from().name());
@@ -52,7 +52,7 @@ public final class Ticket  implements Comparable<Ticket>{
      * @param to : arrival station
      * @param points : number of points allocated for the corresponding trip
      */
-    Ticket(Station from, Station to, int points){
+    public Ticket(Station from, Station to, int points){
         this(List.of(new Trip(from, to, points)));
     }
 
