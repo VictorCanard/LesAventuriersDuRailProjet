@@ -15,9 +15,7 @@ public final class Ticket  implements Comparable<Ticket>{
     private String departure;
 
     private Station departureStation;
-
     private Map<Station, Integer> arrivalStationsAndAssociatedPoints = new HashMap<>();
-
     private TreeSet<String> departureStationsNames = new TreeSet<>();
 
     /**

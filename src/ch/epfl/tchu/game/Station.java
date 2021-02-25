@@ -13,7 +13,7 @@ public final class Station {
      * Station Constructor
      * if the id is negative it throws an error.
      * @param id : between 0 and 50
-     * @param name
+     * @param name : station's name
      */
     public Station(int id, String name){
         if(id <0){
