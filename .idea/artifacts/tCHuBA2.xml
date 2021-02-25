@@ -2,11 +2,9 @@
   <artifact name="tCHuBA2">
     <output-path>$PROJECT_DIR$/out/artifacts/tCHuBA2</output-path>
     <root id="root">
-      <element id="archive" name="BA2Projet">
-        <element id="directory" name="Projet">
-          <element id="directory" name="src">
-            <element id="dir-copy" path="$PROJECT_DIR$/java/ch/epfl/tchu" />
-          </element>
+      <element id="archive" name="cs108.zip">
+        <element id="directory" name="BA2Projet">
+          <element id="directory" name="src" />
         </element>
       </element>
     </root>

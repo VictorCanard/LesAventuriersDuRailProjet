@@ -1,40 +1,45 @@
 package ch.epfl.tchu.game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Class Ticket
  * @author Anne-Marie Rusu (296098)
+ * @author Victor Canard-Duchêne (326913)
  */
+
 public final class Ticket  implements Comparable<Ticket>{
 
     private final String TEXT;
-    private static boolean biggerThan1; //default false
-    private int i;
+    private final String DELIMITER = ", ";
     private String departure;
-    private final String DELIMITER = " ,";
+
+    private Station departureStation;
+
+    private Map<Station, Integer> arrivalStationsAndAssociatedPoints = new HashMap<>();
+
+    private TreeSet<String> departureStationsNames = new TreeSet<>();
 
     /**
      * Primary Ticket Constructor
      * @param trips : a list of trips provided for the construction of a ticket
      */
-    //Problem: Train stations in france have different IDs so treeset will be bigger than 1?
-    //So we do with String and name of station
     Ticket(List<Trip> trips){
 
-        TreeSet<String> departureStations = new TreeSet<>();
+        for(Trip t : trips){
+            departureStationsNames.add(t.from().name());
+            arrivalStationsAndAssociatedPoints.put(t.to(), t.points());
+        }
 
-        for(Trip t : trips){departureStations.add(t.from().name());}
+        if(departureStationsNames.size() != 1){
+            throw new IllegalArgumentException("Empty list or all departures aren't from the same station.");
+        }
+        else{
+            departureStation = trips.get(0).from();
+            departure = departureStation.name();
 
-        if(departureStations.size() != 1){
-            throw new IllegalArgumentException();
-        }else{
-            departure = departureStations.first();
-
-            if(biggerThan1){
-                TEXT = String.format("%s - { %s + }", departure,Ticket.computeText(DELIMITER, trips));
+            if(trips.size()>1){
+                TEXT = String.format("%s - {%s}", departure,Ticket.computeText(DELIMITER, trips));
             }else {
                 TEXT = String.format("%s - %s", departure,Ticket.computeText(DELIMITER, trips));
             }
@@ -59,27 +64,49 @@ public final class Ticket  implements Comparable<Ticket>{
         return TEXT;
     }
 
-    private static String computeText(String delimiter, List<Trip> trip){ //list in argument is the list of trips for one departure station
+    /**
+     * Formats the ticket's text
+     * @param delimiter : separator for the display of arrival stations' names
+     * @param trip : list of trips for one departure station
+     * @return arrival stations and points associated
+     */
+    private static String computeText(String delimiter, List<Trip> trip){
 
-        TreeSet<String> arrivalStations = new TreeSet<>();
+        TreeSet<String> arrivalStationsNames = new TreeSet<>();
 
-        for(Trip t : trip){ //need to add name
-            arrivalStations.add(String.format("%s (%s)", t.to().name(), t.points()));
+        for(Trip t : trip){
+            arrivalStationsNames.add(String.format("%s (%s)", t.to().name(), t.points()));
         }
-        if(arrivalStations.size()>1){ biggerThan1 = true; }
-        biggerThan1 = false;
 
-        return String.join(delimiter, arrivalStations);
+        return String.join(delimiter, arrivalStationsNames);
     }
 
     /**
+     * Calculates the points the player receives or loses according to the stations he connected
      * @param connectivity : the connectivity of the trip
-     * @return
+     * @return the max amount of points to be gained
+     * or min to be lost.
      */
     public int points(StationConnectivity connectivity){
-       // if(connectivity.connected(departure, ))
-        return 0;
+        int counterOfConnectedStations = 0;
 
+        int minAmountOfPointsToBeSubstracted = Collections.min(arrivalStationsAndAssociatedPoints.values());
+        int maxAmountOfPointsToBeAdded = 0;
+
+        for (Map.Entry<Station,Integer> arrivalStation : arrivalStationsAndAssociatedPoints.entrySet()) {
+
+            if (connectivity.connected(departureStation, arrivalStation.getKey())) { //Stations
+                counterOfConnectedStations++;
+
+                maxAmountOfPointsToBeAdded = Math.max(maxAmountOfPointsToBeAdded, arrivalStation.getValue()); //Points
+            }
+        }
+
+        if(counterOfConnectedStations >0){
+            return maxAmountOfPointsToBeAdded;
+        }else{
+            return -minAmountOfPointsToBeSubstracted;
+        }
     }
 
     /**
