@@ -13,17 +13,20 @@ public final class Ticket  implements Comparable<Ticket>{
     private final String TEXT;
     private static boolean biggerThan1; //default false
     private int i;
-    private Station departure;
+    private String departure;
+    private final String DELIMITER = " ,";
 
     /**
      * Primary Ticket Constructor
      * @param trips : a list of trips provided for the construction of a ticket
      */
+    //Problem: Train stations in france have different IDs so treeset will be bigger than 1?
+    //So we do with String and name of station
     Ticket(List<Trip> trips){
 
-        TreeSet<Station> departureStations = new TreeSet<>();
+        TreeSet<String> departureStations = new TreeSet<>();
 
-        for(Trip t : trips){departureStations.add(t.from());}
+        for(Trip t : trips){departureStations.add(t.from().name());}
 
         if(departureStations.size() != 1){
             throw new IllegalArgumentException();
@@ -31,9 +34,9 @@ public final class Ticket  implements Comparable<Ticket>{
             departure = departureStations.first();
 
             if(biggerThan1){
-                TEXT = departure + " - {" + Ticket.computeText(trips) + "}";
+                TEXT = String.format("%s - { %s + }", departure,Ticket.computeText(DELIMITER, trips));
             }else {
-                TEXT = departure + " - " + Ticket.computeText(trips);
+                TEXT = String.format("%s - %s", departure,Ticket.computeText(DELIMITER, trips));
             }
         }
     }
@@ -56,17 +59,17 @@ public final class Ticket  implements Comparable<Ticket>{
         return TEXT;
     }
 
-    private static String computeText(List<Trip> trip){ //list in argument is the list of trips for one departure station
+    private static String computeText(String delimiter, List<Trip> trip){ //list in argument is the list of trips for one departure station
 
         TreeSet<String> arrivalStations = new TreeSet<>();
 
-        for(Trip t : trip){
-            arrivalStations.add(String.format("%s (%s)", t.to(), t.points()));
+        for(Trip t : trip){ //need to add name
+            arrivalStations.add(String.format("%s (%s)", t.to().name(), t.points()));
         }
         if(arrivalStations.size()>1){ biggerThan1 = true; }
         biggerThan1 = false;
 
-        return String.join(", ", arrivalStations);
+        return String.join(delimiter, arrivalStations);
     }
 
     /**
