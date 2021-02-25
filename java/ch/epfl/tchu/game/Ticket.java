@@ -13,35 +13,24 @@ public final class Ticket  implements Comparable<Ticket>{
     private final String TEXT;
     private static boolean biggerThan1; //default false
     private int i;
-    private Station departure;
-
+    private String departure;
     private final String DELIMITER = " ,";
 
     /**
      * Primary Ticket Constructor
      * @param trips : a list of trips provided for the construction of a ticket
      */
+    //Problem: Train stations in france have different IDs so treeset will be bigger than 1?
+    //So we do with String and name of station
     Ticket(List<Trip> trips){
 
-        TreeSet<Station> departureStations = new TreeSet<>();
-        String placeholderName = trips.get(0).from().name();
-        int countingSameStationNames = 0;
+        TreeSet<String> departureStations = new TreeSet<>();
 
-        for(Trip t : trips){
-            departureStations.add(t.from());
+        for(Trip t : trips){departureStations.add(t.from().name());}
 
-            if(t.from().name()== placeholderName){
-                ++countingSameStationNames;
-            }
-        }
-
-        if(departureStations.size() == 0 || countingSameStationNames != departureStations.size()){
-            throw new IllegalArgumentException("Empty list or all departures aren't from the same station.");
+        if(departureStations.size() != 1){
+            throw new IllegalArgumentException();
         }else{
-            if(trips.size()>1){
-                biggerThan1 = true;
-            }
-
             departure = departureStations.first();
 
             if(biggerThan1){
@@ -74,9 +63,11 @@ public final class Ticket  implements Comparable<Ticket>{
 
         TreeSet<String> arrivalStations = new TreeSet<>();
 
-        for(Trip t : trip){
-            arrivalStations.add(String.format("%s (%s)", t.to(), t.points()));
+        for(Trip t : trip){ //need to add name
+            arrivalStations.add(String.format("%s (%s)", t.to().name(), t.points()));
         }
+        if(arrivalStations.size()>1){ biggerThan1 = true; }
+        biggerThan1 = false;
 
         return String.join(delimiter, arrivalStations);
     }
