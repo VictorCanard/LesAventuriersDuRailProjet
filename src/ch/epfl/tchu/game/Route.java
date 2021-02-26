@@ -5,20 +5,30 @@ import ch.epfl.tchu.SortedBag;
 import java.util.List;
 
 public final class Route {
-    private final String id;
-    private final Station station1;
-    private final Station station2;
-    private final int length;
-    private final Level level;
-    private final Color color;
+    private final String ID;
+    private final Station STATION1;
+    private final Station STATION2;
+    private final int LENGTH;
+    private final Level LEVEL;
+    private final Color COLOR;
 
     public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
-        this.id = id;
-        this.station1 = station1;
-        this.station2 = station2;
-        this.length = length;
-        this.level = level;
-        this.color = color;
+
+
+        if(station1.equals(station2)|| length<Constants.MIN_ROUTE_LENGTH || length > Constants.MAX_ROUTE_LENGTH) {
+            throw new IllegalArgumentException();
+        }else if(id == null || station1 == null || station2 == null || level == null) {
+            throw new NullPointerException();
+        }else {
+            this.ID = id;
+            this.STATION1 = station1;
+            this.STATION2 = station2;
+            this.LENGTH = length;
+            this.LEVEL = level;
+            this.COLOR = color;
+        }
+
+
     }
 
 
