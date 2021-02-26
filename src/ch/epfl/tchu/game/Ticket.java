@@ -93,6 +93,7 @@ public final class Ticket  implements Comparable<Ticket>{
 
         for (Map.Entry<Station,Integer> arrivalStation : arrivalStationsAndAssociatedPoints.entrySet()) {
 
+
             if (connectivity.connected(departureStation, arrivalStation.getKey())) { //Stations
                 counterOfConnectedStations++;
 

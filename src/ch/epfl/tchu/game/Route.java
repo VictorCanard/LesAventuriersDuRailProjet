@@ -55,11 +55,21 @@ public final class Route {
     public List<Station> stations(){
         return List.of(station1,station2);
     }
-    public Station stationOpposite(Station station){
 
-    } //qui retourne la gare de la route qui n'est pas celle donnée,
-    // ou lève IllegalArgumentException si la gare donnée n'est
-    // ni la première ni la seconde gare de la route,
+
+    public Station stationOpposite(Station station){
+        if(station.name().equals(stat))
+            case station1.name():
+                return station2;
+            case station2.name():
+                return station1;
+            default:
+                throw new IllegalArgumentException("The station isn't one of this route");
+
+
+        }
+
+    }
 
     public List<SortedBag<Card>> possibleClaimCards(){
 
@@ -68,7 +78,7 @@ public final class Route {
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){}
 
     public int claimPoints(){
-
+        return Constants.ROUTE_CLAIM_POINTS.get(length);
     }
 
 

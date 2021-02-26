@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import java.util.Objects;
+
 /**
  * Class Station
  * @author Victor Jean Canard-Duchene (326913)
@@ -21,6 +23,19 @@ public final class Station {
         }
         this.id = id;
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) { //Généré par Intellij
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Station station = (Station) o;
+        return id == station.id && name.equals(station.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 
     public int id() {
