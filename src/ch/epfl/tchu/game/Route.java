@@ -68,18 +68,17 @@ public final class Route {
 
 
     public Station stationOpposite(Station station){
-        if(station.name().equals(stat))
-            case station1.name():
-                return station2;
-            case station2.name():
-                return station1;
-            default:
-                throw new IllegalArgumentException("The station isn't one of this route");
-
-
+        if(station.name().equals(station1.name())) {
+            return station2;
         }
-
+        else if(station.name().equals(station2.name())) {
+            return station1;
+        }else {
+            throw new IllegalArgumentException("The station isn't one of this route");
+        }
     }
+
+
 
     public List<SortedBag<Card>> possibleClaimCards(){
 
