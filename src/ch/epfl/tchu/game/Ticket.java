@@ -14,9 +14,9 @@ public final class Ticket  implements Comparable<Ticket>{
     private final String DELIMITER = ", ";
     private String departure;
 
-    private Station departureStation;
-    private Map<Station, Integer> arrivalStationsAndAssociatedPoints = new HashMap<>();
+    private List<Trip> trips;
     private TreeSet<String> departureStationsNames = new TreeSet<>();
+
 
     /**
      * Primary Ticket Constructor
@@ -24,17 +24,18 @@ public final class Ticket  implements Comparable<Ticket>{
      */
     public Ticket(List<Trip> trips){
 
+        this.trips = trips;
+
         for(Trip t : trips){
             departureStationsNames.add(t.from().name());
-            arrivalStationsAndAssociatedPoints.put(t.to(), t.points());
         }
 
         if(departureStationsNames.size() != 1){
             throw new IllegalArgumentException("Empty list or all departures aren't from the same station.");
         }
         else{
-            departureStation = trips.get(0).from();
-            departure = departureStation.name();
+
+            departure = trips.get(0).from().name();
 
             if(trips.size()>1){
                 TEXT = String.format("%s - {%s}", departure,Ticket.computeText(DELIMITER, trips));
@@ -81,31 +82,20 @@ public final class Ticket  implements Comparable<Ticket>{
 
     /**
      * Calculates the points the player receives or loses according to the stations he connected
+     * Take the max between the current amount of points and the points that can be gained
+     * through a connection with a new station. This works as the max amount of points to be added
+     * is always larger than the min amount of points to be removed (as that number is negative).
      * @param connectivity : the connectivity of the trip
      * @return the max amount of points to be gained
      * or min to be lost.
      */
     public int points(StationConnectivity connectivity){
-        int counterOfConnectedStations = 0;
+        int pointsToBeReturned = -100;
 
-        int minAmountOfPointsToBeSubstracted = Collections.min(arrivalStationsAndAssociatedPoints.values());
-        int maxAmountOfPointsToBeAdded = 0;
-
-        for (Map.Entry<Station,Integer> arrivalStation : arrivalStationsAndAssociatedPoints.entrySet()) {
-
-
-            if (connectivity.connected(departureStation, arrivalStation.getKey())) { //Stations
-                counterOfConnectedStations++;
-
-                maxAmountOfPointsToBeAdded = Math.max(maxAmountOfPointsToBeAdded, arrivalStation.getValue()); //Points
-            }
+        for (Trip trip: trips) {
+            pointsToBeReturned = Math.max(pointsToBeReturned, trip.points(connectivity));
         }
-
-        if(counterOfConnectedStations >0){
-            return maxAmountOfPointsToBeAdded;
-        }else{
-            return -minAmountOfPointsToBeSubstracted;
-        }
+        return pointsToBeReturned;
     }
 
     /**

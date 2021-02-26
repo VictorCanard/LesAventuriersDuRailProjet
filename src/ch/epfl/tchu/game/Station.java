@@ -33,10 +33,6 @@ public final class Station {
         return id == station.id && name.equals(station.name);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
 
     public int id() {
         return id;

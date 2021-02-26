@@ -37,42 +37,40 @@ public final class Route {
         UNDERGROUND
     }
 
-
-
     public String id() {
-        return id;
+        return ID;
     }
 
     public Station station1() {
-        return station1;
+        return STATION1;
     }
 
     public Station station2() {
-        return station2;
+        return STATION2;
     }
 
     public int length() {
-        return length;
+        return LENGTH;
     }
 
     public Level level() {
-        return level;
+        return LEVEL;
     }
 
     public Color color() {
-        return color;
+        return COLOR;
     }
     public List<Station> stations(){
-        return List.of(station1,station2);
+        return List.of(STATION1,STATION2);
     }
 
 
     public Station stationOpposite(Station station){
-        if(station.name().equals(station1.name())) {
-            return station2;
+        if(station.name().equals(STATION1.name())) {
+            return STATION2;
         }
-        else if(station.name().equals(station2.name())) {
-            return station1;
+        else if(station.name().equals(STATION2.name())) {
+            return STATION1;
         }else {
             throw new IllegalArgumentException("The station isn't one of this route");
         }
@@ -81,13 +79,15 @@ public final class Route {
 
 
     public List<SortedBag<Card>> possibleClaimCards(){
-
+        return null;
     }
 
-    public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){}
+    public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
+        return 0;
+    }
 
     public int claimPoints(){
-        return Constants.ROUTE_CLAIM_POINTS.get(length);
+        return Constants.ROUTE_CLAIM_POINTS.get(LENGTH);
     }
 
 
