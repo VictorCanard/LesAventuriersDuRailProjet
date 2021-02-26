@@ -12,20 +12,22 @@ public final class Route {
     private final Level level;
     private final Color color;
 
+    public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
+        this.id = id;
+        this.station1 = station1;
+        this.station2 = station2;
+        this.length = length;
+        this.level = level;
+        this.color = color;
+    }
+
+
     public enum Level{
         OVERGROUND,
         UNDERGROUND
     }
 
-    public Route(String id, Station station1, Station station2, int length, Level level, Color color, String id1, Station station11, Station station21, int length1, Level level1, Color color1){
 
-        this.id = id1;
-        this.station1 = station11;
-        this.station2 = station21;
-        this.length = length1;
-        this.level = level1;
-        this.color = color1;
-    }
 
     public String id() {
         return id;
@@ -51,7 +53,7 @@ public final class Route {
         return color;
     }
     public List<Station> stations(){
-
+        return List.of(station1,station2);
     }
     public Station stationOpposite(Station station){
 
@@ -65,7 +67,9 @@ public final class Route {
 
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){}
 
-    public int claimPoints(){}
+    public int claimPoints(){
+
+    }
 
 
 }

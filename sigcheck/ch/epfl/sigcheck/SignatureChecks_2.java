@@ -9,7 +9,7 @@ final class SignatureChecks_2 {
     private SignatureChecks_2() {}
 
     void checkRoute() {
-        v01 = new ch.epfl.tchu.game.Route(v02, v03, v03, v04, v05, v06, id1, station11, station21, length1, level1, color1);
+        v01 = new ch.epfl.tchu.game.Route(v02, v03, v03, v04, v05, v06);
         v04 = v01.additionalClaimCardsCount(v07, v07);
         v04 = v01.claimPoints();
         v06 = v01.color();

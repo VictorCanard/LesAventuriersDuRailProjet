@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class Trail {
     private final String TEXT;
-    static Trail longest(List<Route> routes){
+    public static Trail longest(List<Route> routes){
 
     }
     public int length(){}
