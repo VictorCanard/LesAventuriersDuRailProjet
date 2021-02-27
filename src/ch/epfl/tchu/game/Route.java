@@ -30,6 +30,10 @@ public final class Route {
 
 
     }
+    //Creates a new route while inverting the route's stations
+    public Route(Route route){
+        this(route.id(), route.station2(), route.station1(), route.length(), route.level(),route.COLOR);
+    }
 
 
     public enum Level{
