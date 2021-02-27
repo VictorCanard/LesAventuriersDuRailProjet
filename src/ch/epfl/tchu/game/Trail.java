@@ -65,7 +65,8 @@ public final class Trail {
                     routesToReturn.add(routeThatCouldBeAdded);
                 }
                 else if(routeThatCouldBeAdded.station2().equals(trailEndStationToWhichRoutesCanBeAdded)){
-                    routesToReturn.add(new Route(routeThatCouldBeAdded));
+                    routesToReturn.add(new Route(routeThatCouldBeAdded.id(), routeThatCouldBeAdded.station1(), routeThatCouldBeAdded.station2(),
+                            routeThatCouldBeAdded.length(), routeThatCouldBeAdded.level(), routeThatCouldBeAdded.color()));
                 }
             }
         }
