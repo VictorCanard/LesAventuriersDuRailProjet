@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="java"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="sigcheck"/>
+	<classpathentry kind="src" path="ch/epfl/tchu/game"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/org.junit.jupiter:junit-jupiter:5.7.0"/>
+	<classpathentry kind="output" path="out/production/tCHu"/>
+</classpath>
