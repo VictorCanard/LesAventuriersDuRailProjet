@@ -51,8 +51,6 @@ public final class Trail {
             }
             return longestTrail;
         }
-
-
     }
     private static List<Route> findRoutesToProlongTrail(Trail trail, List<Route> routes){
         List<Route> routesToReturn = new ArrayList<>();
