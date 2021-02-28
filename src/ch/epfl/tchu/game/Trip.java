@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,9 +26,8 @@ public final class Trip {
         this.FROM = Objects.requireNonNull(from);
         this.TO = Objects.requireNonNull(to);
 
-        if(points <= 0){
-            throw new IllegalArgumentException();
-        }
+        Preconditions.checkArgument(points>0);
+
         this.POINTS = points;
     }
 
@@ -38,11 +39,9 @@ public final class Trip {
      * list to the arrival station on the arrival list
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points){
-        if(from == null || to == null || points <= 0){
-            throw new IllegalArgumentException();
-        }
+        Preconditions.checkArgument(!(from == null || to == null || points <= 0));
 
-        ArrayList<Trip> allTrips = new ArrayList<Trip>();
+        ArrayList<Trip> allTrips = new ArrayList<>();
 
         for (Station departureStation :from) {
             for(Station arrivalStation : to){

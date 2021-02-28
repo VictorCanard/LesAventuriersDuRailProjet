@@ -47,10 +47,7 @@ public enum Card {
      * @return : the color of the given card
      */
     public Color color(){
-        if(this.color == null){
-            return null;
-        }else {
-            return this.color;
-        }
+        return this.color;
+
     }
 }

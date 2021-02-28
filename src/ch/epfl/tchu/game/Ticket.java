@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
 import java.util.*;
 
 /**
@@ -24,25 +26,22 @@ public final class Ticket  implements Comparable<Ticket>{
      */
     public Ticket(List<Trip> trips){
 
-        this.trips = trips;
+        this.trips = List.copyOf(trips);
 
-        for(Trip t : trips){
+        for(Trip t : this.trips){
             departureStationsNames.add(t.from().name());
         }
 
-        if(departureStationsNames.size() != 1){
-            throw new IllegalArgumentException("Empty list or all departures aren't from the same station.");
-        }
-        else{
+        Preconditions.checkArgument(departureStationsNames.size() == 1);
 
-            departure = trips.get(0).from().name();
+        departure = this.trips.get(0).from().name();
 
-            if(trips.size()>1){
-                TEXT = String.format("%s - {%s}", departure,Ticket.computeText(DELIMITER, trips));
-            }else {
-                TEXT = String.format("%s - %s", departure,Ticket.computeText(DELIMITER, trips));
-            }
+        if(this.trips.size()>1){ //The first format where there's only one destination
+            TEXT = String.format("%s - {%s}", departure,Ticket.computeText(DELIMITER, this.trips));
+        }else {
+            TEXT = String.format("%s - %s", departure,Ticket.computeText(DELIMITER, this.trips));
         }
+
     }
 
     /**
@@ -52,6 +51,7 @@ public final class Ticket  implements Comparable<Ticket>{
      * @param points : number of points allocated for the corresponding trip
      */
     public Ticket(Station from, Station to, int points){
+
         this(List.of(new Trip(from, to, points)));
     }
 

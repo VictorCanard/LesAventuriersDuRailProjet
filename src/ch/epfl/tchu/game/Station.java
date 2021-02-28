@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
 import java.util.Objects;
 
 /**
@@ -18,9 +20,8 @@ public final class Station {
      * @param name : station's name
      */
     public Station(int id, String name){
-        if(id <0){
-            throw new IllegalArgumentException();
-        }
+        Preconditions.checkArgument(id>=0);
+
         this.id = id;
         this.name = name;
     }

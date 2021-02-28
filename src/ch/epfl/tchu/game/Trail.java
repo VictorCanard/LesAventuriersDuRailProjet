@@ -25,7 +25,7 @@ public final class Trail {
             return emptyTrail;
         }
         else{
-            List<Trail> chemins = new ArrayList(routes); //Liste de routes à transformer en liste de chemins à une seule route
+            List<Trail> chemins = new ArrayList(routes); //TODO: Make a list of routes into a list of trails with only one route each
             Trail longestTrail = emptyTrail;
 
             while(!(chemins.isEmpty())){
@@ -87,7 +87,7 @@ public final class Trail {
     public String toString() {
         StringBuilder text = new StringBuilder();
 
-        for (Route route: ROUTES) { //Add station names separated by a " -"
+        for (Route route: ROUTES) { //Adds station names separated by a " -"
             text.append(route.station1().name())
                 .append(" -");
         }
