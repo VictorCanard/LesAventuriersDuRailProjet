@@ -26,15 +26,6 @@ public final class Station {
         this.name = name;
     }
 
-    @Override
-    public boolean equals(Object o) { //Généré par Intellij
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Station station = (Station) o;
-        return id == station.id && name.equals(station.name);
-    }
-
-
     public int id() {
         return id;
     }

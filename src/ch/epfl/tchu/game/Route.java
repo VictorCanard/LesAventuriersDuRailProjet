@@ -4,6 +4,7 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public final class Route {
     private final String ID;
@@ -20,16 +21,16 @@ public final class Route {
         if(id == null || station1 == null || station2 == null || level == null) {
             throw new NullPointerException();
         }else {
-            this.ID = id;
-            this.STATION1 = station1;
-            this.STATION2 = station2;
-            this.LENGTH = length;
-            this.LEVEL = level;
+            this.ID = Objects.requireNonNull(id);
+            this.STATION1 = Objects.requireNonNull(station1);
+            this.STATION2 = Objects.requireNonNull(station2);
+            this.LEVEL = Objects.requireNonNull(level);
             this.COLOR = color;
+            this.LENGTH = length;
         }
     }
     public Route(Route route){
-        this(route.ID, route.STATION1, route.STATION2, route.LENGTH, route.LEVEL,route.COLOR);
+        this(route.ID, route.STATION2, route.STATION1, route.LENGTH, route.LEVEL,route.COLOR);
     }
 
     public enum Level{
