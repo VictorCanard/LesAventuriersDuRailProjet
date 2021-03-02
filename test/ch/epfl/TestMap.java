@@ -12,6 +12,9 @@ public interface TestMap {
         public final Station LAU = new Station(1, "Lausanne");
         public final Station STG = new Station(2, "Saint-Gall");
 
+        Station YVE = ChMap.stations().get(31);
+        Station SCZ = ChMap.stations().get(24);
+
         // Stations - countries
         public final Station DE1 = new Station(3, "Allemagne");
         public final Station DE2 = new Station(4, "Allemagne");
@@ -47,5 +50,21 @@ public interface TestMap {
         //Routes
 
         List<Route> routes = ChMap.routes();
+        Route placeholderRoute = TestMap.routes.get(66);
+        Route YVE_NEU = new Route(placeholderRoute.id(), placeholderRoute.station2(), placeholderRoute.station1(),placeholderRoute.length() ,placeholderRoute.level(),placeholderRoute.color());
+        Route BER_NEU = TestMap.routes.get(18);
+        Route BER_LUC = TestMap.routes.get(16);
+        Route AT1_STG_1 = TestMap.routes.get(0);
+        Route BAD_BAL_1 = TestMap.routes.get(2);
+        Route BER_FRI_1 = TestMap.routes.get(13);
+        Route FR1_MAR_1 = TestMap.routes.get(41);
+        Route LUC_SCZ_1 = TestMap.routes.get(61);
+
+        List<Route> listeRoutes = List.of(YVE_NEU,BER_LUC,BER_NEU, AT1_STG_1, BAD_BAL_1,BER_FRI_1,FR1_MAR_1,LUC_SCZ_1);
+
+        //Trails
+
+        Trail testTrail1 = Trail.longest(listeRoutes.subList(0, 4));
+        Trail testTrail2 = Trail.longest(listeRoutes.subList(0, 3));
 
 }

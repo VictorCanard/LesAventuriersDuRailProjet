@@ -113,15 +113,15 @@ public final class Trail {
 
             Station currentStation = ROUTES.get(0).station1();
             text.append(currentStation.name())
-                    .append(" -");
+                    .append(" - ");
 
-            for (int i = 0; i < ROUTES.size(); i++) {
+            for (int i = 0; i < ROUTES.size()-1; i++) {
                 currentStation = ROUTES.get(i).stationOpposite(currentStation);
                 text.append(currentStation.name())
-                        .append(" -");
+                    .append(" - ");
             }
 
-            String textReturned = String.format("%s (%s)", text, length());
+            String textReturned = String.format("%s%s (%s)", text, station2(), length());
 
             return textReturned;
         }

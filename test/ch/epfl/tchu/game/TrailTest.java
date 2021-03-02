@@ -10,41 +10,60 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TrailTest implements TestMap {
 
+    @Test
 
-    private static
+    void checkStationReturnsNullIfListEmpty(){
+        List<Route> emptyList = new ArrayList<>();
+        Trail actualTrail = Trail.longest(emptyList);
+        assertEquals(null, actualTrail.station1());
+        assertEquals(null, actualTrail.station2());
+        assertTrue(actualTrail.length()==0);
+    }
+
     @Test
     void longest() {
-        Route placeholderRoute = TestMap.routes.get(66);
-        Route YVE_NEU = new Route(placeholderRoute.id(), placeholderRoute.station2(), placeholderRoute.station1(),placeholderRoute.length() ,placeholderRoute.level(),placeholderRoute.color());
-        Route BER_NEU = TestMap.routes.get(18);
-        Route BER_LUC = TestMap.routes.get(16);
-        Route AT1_STG_1 = TestMap.routes.get(0);
-        Route BAD_BAL_1 = TestMap.routes.get(2);
-        Route BER_FRI_1 = TestMap.routes.get(13);
-        Route FR1_MAR_1 = TestMap.routes.get(41);
-        Route LUC_SCZ_1 = TestMap.routes.get(61);
 
+        Trail actualLongestTrail = Trail.longest(listeRoutes);
+        List<Route> expectedListRoutes = List.of(YVE_NEU, BER_NEU, BER_LUC, LUC_SCZ_1);
 
-        List<Route> listeRoutes = List.of(YVE_NEU,BER_LUC,BER_NEU, AT1_STG_1, BAD_BAL_1,BER_FRI_1,FR1_MAR_1,LUC_SCZ_1);
+        assertTrue(actualLongestTrail.station1().equals(YVE));
+        assertTrue(actualLongestTrail.station2().equals(SCZ));
+        assertTrue(actualLongestTrail.length() == 9);
 
-        Trail longestTrail = Trail.longest(listeRoutes);
 
     }
 
     @Test
     void length() {
 
+
+        int expectedLength = 8;
+        int actualLength = testTrail1.length();
+
+        assertEquals(expectedLength,actualLength);
     }
 
     @Test
     void station1() {
+        Station expectedStation = ChMap.stations().get(31);
+        Station actualStation = testTrail1.station1();
+        assertTrue(expectedStation.equals(actualStation));
     }
 
     @Test
     void station2() {
+        Station expectedStation = SCZ;
+        Station actualStation = Trail.longest(listeRoutes).station2();
+        assertTrue(expectedStation.equals(actualStation));
     }
 
     @Test
     void testToString() {
+        Trail longestTrail = Trail.longest(listeRoutes);
+
+        String expectedString = "Yverdon - Neuchâtel - Berne - Lucerne - Schwyz (9)";
+        String actualString = longestTrail.toString();
+
+        assertEquals(expectedString,actualString);
     }
 }
