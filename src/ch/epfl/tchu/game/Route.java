@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public final class Route { //:)
+public final class Route {
     private final String ID;
     private final Station STATION1;
     private final Station STATION2;
@@ -78,17 +78,25 @@ public final class Route { //:)
     public List<SortedBag<Card>> possibleClaimCards(){
         List<SortedBag<Card>> possibleCards = new ArrayList<>();
 
-        if(COLOR != null) {
-            for(int i = 0 ; i<= LENGTH ; i++) {
-                possibleCards.add(SortedBag.of(LENGTH-i, Card.of(COLOR), i, Card.LOCOMOTIVE));
-            }
-        }else {
-            for (int i = 0; i < LENGTH; i++) {
-                for (Card c : Card.CARS) {
-                    possibleCards.add(SortedBag.of(LENGTH - i, c, i, Card.LOCOMOTIVE));
+        if(LEVEL == Level.UNDERGROUND) {
+            if (COLOR != null) {
+                for (int i = 0; i <= LENGTH; i++) {
+                    possibleCards.add(SortedBag.of(LENGTH - i, Card.of(COLOR), i, Card.LOCOMOTIVE));
+                }
+            } else {
+                for (int i = 0; i < LENGTH; i++) {
+                    for (Card c : Card.CARS) {
+                        possibleCards.add(SortedBag.of(LENGTH - i, c, i, Card.LOCOMOTIVE));
+                    }
+                    possibleCards.add(SortedBag.of(LENGTH, Card.LOCOMOTIVE));
                 }
             }
-            possibleCards.add(SortedBag.of(LENGTH, Card.LOCOMOTIVE));
+        }else if(COLOR == null){
+            for(Card c : Card.CARS) {
+                possibleCards.add(SortedBag.of(LENGTH, c));
+            }
+        }else {
+            possibleCards.add(SortedBag.of(LENGTH, Card.of(COLOR)));
         }
         return possibleCards;
     }
@@ -96,10 +104,7 @@ public final class Route { //:)
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
 
         int aCCC;
-
-        if (LEVEL != Level.UNDERGROUND || drawnCards.size() != Constants.ADDITIONAL_TUNNEL_CARDS){
-            throw new IllegalArgumentException("Not a tunnel or 3 cards haven't been drawn");
-        }
+        Preconditions.checkArgument(LEVEL == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
 
         if(claimCards.equals(SortedBag.of(LENGTH, Card.LOCOMOTIVE))){
             aCCC = drawnCards.countOf(Card.LOCOMOTIVE);
