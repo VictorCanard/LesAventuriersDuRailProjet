@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +40,7 @@ public final class Trail {
                         List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.ROUTES));
                         newListOfRoutes.add(route);
 
-                        Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), route.station2());
+                        Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), route.stationOpposite(currentTrail.station2()));
 
                         if(newTrailIsLonger(newTrail, longestTrail)){
                             longestTrail = newTrail;
@@ -71,19 +73,19 @@ public final class Trail {
         Station trailEndStationToWhichRoutesCanBeAdded = trail.station2();
 
         for (Route routeThatCouldBeAdded: routes) {
-            if(!(trail.ROUTES.contains(routeThatCouldBeAdded))){ //Change this method to add routes in any way without inverting the stations
+            if(!(trail.ROUTES.contains(routeThatCouldBeAdded))){
 
-                if(routeThatCouldBeAdded.station1().equals(trailEndStationToWhichRoutesCanBeAdded)){
+                if(checkIfNewRouteCanBeAdded(routeThatCouldBeAdded, trailEndStationToWhichRoutesCanBeAdded)) {
                     routesToReturn.add(routeThatCouldBeAdded);
-                }
-                else if(routeThatCouldBeAdded.station2().equals(trailEndStationToWhichRoutesCanBeAdded)){
-                    routesToReturn.add(new Route(routeThatCouldBeAdded));
                 }
             }
         }
         return routesToReturn;
     }
 
+    private static boolean checkIfNewRouteCanBeAdded(Route newRoute, Station trailEndStation){
+        return (newRoute.stations().contains(trailEndStation));
+    }
     public int length(){
         int length = 0;
         for (Route route:ROUTES
@@ -103,15 +105,26 @@ public final class Trail {
 
     @Override
     public String toString() {
-        StringBuilder text = new StringBuilder();
-
-        for (Route route: ROUTES) { //Adds station names separated by a " -"
-            text.append(route.station1().name())
-                .append(" -");
+        if(ROUTES.isEmpty()){
+            return "";
         }
+        else{
+            StringBuilder text = new StringBuilder();
 
-        String textReturned = String.format(" %s (%s)", STATION2, length());
+            Station currentStation = ROUTES.get(0).station1();
+            text.append(currentStation.name())
+                    .append(" -");
 
-        return textReturned;
+            for (int i = 0; i < ROUTES.size(); i++) {
+                currentStation = ROUTES.get(i).stationOpposite(currentStation);
+                text.append(currentStation.name())
+                        .append(" -");
+            }
+
+            String textReturned = String.format("%s (%s)", text, length());
+
+            return textReturned;
+        }
     }
+
 }

@@ -29,9 +29,7 @@ public final class Route {
             this.LENGTH = length;
         }
     }
-    public Route(Route route){
-        this(route.ID, route.STATION2, route.STATION1, route.LENGTH, route.LEVEL,route.COLOR);
-    }
+
 
     public enum Level{
         OVERGROUND,
