@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public final class Route {
+public final class Route { //:)
     private final String ID;
     private final Station STATION1;
     private final Station STATION2;
