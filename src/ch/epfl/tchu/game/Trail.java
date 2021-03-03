@@ -88,8 +88,8 @@ public final class Trail {
     }
     public int length(){
         int length = 0;
-        for (Route route:ROUTES
-             ) {
+
+        for (Route route:ROUTES) {
             length += route.length();
         }
         return length;

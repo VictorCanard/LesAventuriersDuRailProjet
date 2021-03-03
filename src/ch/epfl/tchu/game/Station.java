@@ -15,9 +15,9 @@ public final class Station {
 
     /**
      * Station Constructor
-     * if the id is negative it throws an error.
+     * @throws IllegalArgumentException if id is strictly negative
      * @param id : between 0 and 50
-     * @param name : station's name
+     * @param name : Station's name
      */
     public Station(int id, String name){
         Preconditions.checkArgument(id>=0);

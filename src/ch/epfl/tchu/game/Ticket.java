@@ -22,6 +22,9 @@ public final class Ticket  implements Comparable<Ticket>{
 
     /**
      * Primary Ticket Constructor
+     * Calls the method computeText() to initialize the ticket's text, in a specific format
+     * according to the number of Arrival Stations
+     * @throws IllegalArgumentException if trips is empty or if all departure stations aren't the same
      * @param trips : a list of trips provided for the construction of a ticket
      */
     public Ticket(List<Trip> trips){
@@ -45,7 +48,7 @@ public final class Ticket  implements Comparable<Ticket>{
     }
 
     /**
-     * Secondary Ticket Constructor
+     * Secondary Ticket Constructor when there is only one trip
      * @param from : departure station
      * @param to : arrival station
      * @param points : number of points allocated for the corresponding trip
@@ -56,7 +59,7 @@ public final class Ticket  implements Comparable<Ticket>{
     }
 
     /**
-     * Textual representation of the trip ticket
+     * Textual representation of the trip's ticket
      * @return : text of the ticket
      */
     public String text(){
@@ -82,7 +85,7 @@ public final class Ticket  implements Comparable<Ticket>{
 
     /**
      * Calculates the points the player receives or loses according to the stations he connected
-     * Take the max between the current amount of points and the points that can be gained
+     * Takes the max between the current amount of points and the points that can be gained
      * through a connection with a new station. This works as the max amount of points to be added
      * is always larger than the min amount of points to be removed (as that number is negative).
      * @param connectivity : the connectivity of the trip
@@ -99,10 +102,10 @@ public final class Ticket  implements Comparable<Ticket>{
     }
 
     /**
-     * Compares this ticket with a specified ticket for alphabetical order.
-     * @param that : the ticket to be compared.
-     * @return : a negative integer, zero, or a positive integer as this ticket
-     * is less than, equal to, or greater than the specified ticket, alphabetically.
+     * Compares this ticket with a specified ticket according to alphabetical order.
+     * @param that : the ticket to compare this ticket to
+     * @return : a negative integer, zero, or a positive integer according to if this ticket's text
+     * is less than, equal to, or greater than the specified ticket's text, alphabetically.
      */
     @Override
     public int compareTo(Ticket that) {

@@ -17,7 +17,9 @@ public final class Trip {
     private final int POINTS;
 
     /**
-     * Constructor for Trip
+     * Constructor for Trip, checks if the arguments aren't empty before attributing them
+     * @throws IllegalArgumentException if the points are negative
+     * @throws NullPointerException if the stations are null
      * @param from : departure station
      * @param to : arrival station
      * @param points : number of points attributed to the trip
@@ -32,18 +34,21 @@ public final class Trip {
     }
 
     /**
+     * Returns a list of all the possible trips from a departure station on the departure
+     * list to an arrival station on the arrival list
+     * @throws IllegalArgumentException if the departure station or arrival stations are null
+     * or if the number of points is negative
      * @param from : list of departure stations (departure list)
      * @param to : list of arrival stations (arrival list)
      * @param points : number of points attributed to the trip
-     * @return : list of all the possible trips from a departure station on the departure
-     * list to the arrival station on the arrival list
+     * @return : all possible trips.
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points){
-        Preconditions.checkArgument(!(from == null || to == null || points <= 0));
+        Preconditions.checkArgument(from != null && to != null && points > 0);
 
         ArrayList<Trip> allTrips = new ArrayList<>();
 
-        for (Station departureStation :from) {
+        for (Station departureStation : from) {
             for(Station arrivalStation : to){
                 allTrips.add(new Trip(departureStation,arrivalStation,points));
             }
@@ -76,7 +81,7 @@ public final class Trip {
     }
 
     /**
-     * Determines number of points for the trip depending on whether or not the stations are connected
+     * Determines the number of points for the trip depending on whether or not the stations are connected
      * @param connectivity : connectivity of trip
      * @return : positive points for a connection, negative points otherwise
      */
