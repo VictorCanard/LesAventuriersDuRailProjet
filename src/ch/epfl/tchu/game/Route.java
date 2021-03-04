@@ -106,8 +106,8 @@ public final class Route {
     }
 
     /**- Gets the opposite station to the one given as an argument
-     * Throws an exception if the station doesn't belong to the route
      * @param station : one of the possible stations of the given route
+     * @throws IllegalArgumentException if the station doesn't belong to the route
      * @return oppositeStation
      */
     public Station stationOpposite(Station station){
