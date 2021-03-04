@@ -27,38 +27,37 @@ public final class Trail {
      * @return the longest trail
      */
     public static Trail longest(List<Route> routes){
-        Trail emptyTrail = new Trail(new ArrayList(){}, null, null);
+        Trail emptyTrail = new Trail(List.copyOf(routes), null, null);
 
-        if(routes.size()==0){
-            return emptyTrail;
-        }
-        else{
-            List<Trail> trails = listOfTrailsWithOneRoute(routes);
+        List<Trail> trails = listOfTrailsWithOneRoute(routes);
 
-            Trail longestTrail = emptyTrail;
+        //If there are no trails ie because there are no routes in the list, then return emptyTrail
+        //Else, return the first trail
 
-            while(!(trails.isEmpty())){
-                List<Trail> newTrails = new ArrayList<>();
+        Trail longestTrail = (trails.isEmpty()) ? emptyTrail : trails.get(0);
 
-                for (Trail currentTrail: trails) {
-                    List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routes);
+        while(!(trails.isEmpty())){
+            List<Trail> newTrails = new ArrayList<>();
 
-                    for (Route route: routesToProlong) {
-                        List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.ROUTES));
-                        newListOfRoutes.add(route);
+            for (Trail currentTrail: trails) {
+                List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routes);
 
-                        Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), route.stationOpposite(currentTrail.station2()));
+                for (Route route: routesToProlong) {
+                    List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.ROUTES));
+                    newListOfRoutes.add(route);
 
-                        if(newTrailIsLonger(newTrail, longestTrail)){
-                            longestTrail = newTrail;
-                        }
-                        newTrails.add(newTrail);
+                    Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), route.stationOpposite(currentTrail.station2()));
+
+                    if(newTrailIsLonger(newTrail, longestTrail)){
+                        longestTrail = newTrail;
                     }
+                    newTrails.add(newTrail);
                 }
-                trails = newTrails;
             }
-            return longestTrail;
+            trails = newTrails;
         }
+        return longestTrail;
+
     }
     private static boolean newTrailIsLonger(Trail newTrail, Trail currentLongestTrail){
         return (newTrail.length() > currentLongestTrail.length());

@@ -70,7 +70,6 @@ class TrailTest implements TestMap {
 
         String expectedString2 = "Berne - Fribourg (1)";
         String actualString2 = longestTrail2.toString();
-        System.out.println(actualString2 + "oh no");
 
        assertEquals(expectedString2, actualString2);
     }
