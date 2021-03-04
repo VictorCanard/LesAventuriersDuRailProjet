@@ -5,7 +5,7 @@ import ch.epfl.tchu.Preconditions;
 import java.util.*;
 
 /**
- * Class Ticket
+ * A train ticket permitting the player to embark on certain paths in the game
  * @author Anne-Marie Rusu (296098)
  * @author Victor Canard-Duchêne (326913)
  */
@@ -21,11 +21,11 @@ public final class Ticket  implements Comparable<Ticket>{
 
 
     /**
-     * Primary Ticket Constructor
+     * Primary Ticket constructor defined by a list of trips
      * Calls the method computeText() to initialize the ticket's text, in a specific format
      * according to the number of Arrival Stations
-     * @throws IllegalArgumentException if trips is empty or if all departure stations aren't the same
      * @param trips : a list of trips provided for the construction of a ticket
+     * @throws IllegalArgumentException if trips is empty or if all departure stations aren't the same
      */
     public Ticket(List<Trip> trips){
 
@@ -48,7 +48,7 @@ public final class Ticket  implements Comparable<Ticket>{
     }
 
     /**
-     * Secondary Ticket Constructor when there is only one trip
+     * Secondary Ticket constructor defined by a single trip
      * @param from : departure station
      * @param to : arrival station
      * @param points : number of points allocated for the corresponding trip

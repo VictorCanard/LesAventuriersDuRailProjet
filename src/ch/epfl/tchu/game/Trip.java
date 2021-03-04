@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Class Trip
+ * A trip between two stations
  * @author Anne-Marie Rusu (296098)
  * @author Victor Jean Canard-Duchene (326913)
  */
@@ -17,12 +17,13 @@ public final class Trip {
     private final int POINTS;
 
     /**
-     * Constructor for Trip, checks if the arguments aren't empty before attributing them
-     * @throws IllegalArgumentException if the points are negative
-     * @throws NullPointerException if the stations are null
+     * Constructs a trip with the given stations and number of points attributed to it
+     * checks if the arguments aren't empty before attributing them
      * @param from : departure station
      * @param to : arrival station
      * @param points : number of points attributed to the trip
+     * @throws IllegalArgumentException if the points are negative
+     * @throws NullPointerException if the stations are null
      */
     public Trip(Station from, Station to, int points) {
         this.FROM = Objects.requireNonNull(from);
@@ -36,11 +37,11 @@ public final class Trip {
     /**
      * Returns a list of all the possible trips from a departure station on the departure
      * list to an arrival station on the arrival list
-     * @throws IllegalArgumentException if the departure station or arrival stations are null
-     * or if the number of points is negative
      * @param from : list of departure stations (departure list)
      * @param to : list of arrival stations (arrival list)
      * @param points : number of points attributed to the trip
+     * @throws IllegalArgumentException if the departure station or arrival stations are null
+     * or if the number of points is negative
      * @return : all possible trips.
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points){

@@ -60,10 +60,18 @@ class TrailTest implements TestMap {
     @Test
     void testToString() {
         Trail longestTrail = Trail.longest(listeRoutes);
+        Trail longestTrail2 = Trail.longest(listeRoutes2);
+
 
         String expectedString = "Yverdon - Neuchâtel - Berne - Lucerne - Schwyz (9)";
         String actualString = longestTrail.toString();
 
         assertEquals(expectedString,actualString);
+
+        String expectedString2 = "Berne - Fribourg (1)";
+        String actualString2 = longestTrail2.toString();
+        System.out.println(actualString2 + "oh no");
+
+       assertEquals(expectedString2, actualString2);
     }
 }

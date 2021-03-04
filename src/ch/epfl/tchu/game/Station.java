@@ -5,7 +5,7 @@ import ch.epfl.tchu.Preconditions;
 import java.util.Objects;
 
 /**
- * Class Station
+ * Train stations used in the game
  * @author Victor Jean Canard-Duchene (326913)
  */
 
@@ -14,10 +14,10 @@ public final class Station {
     private String name;
 
     /**
-     * Station Constructor
+     * A train station, defined by its id and name
+     * @param id between 0 and 50
+     * @param name Station's name
      * @throws IllegalArgumentException if id is strictly negative
-     * @param id : between 0 and 50
-     * @param name : Station's name
      */
     public Station(int id, String name){
         Preconditions.checkArgument(id>=0);
@@ -26,10 +26,18 @@ public final class Station {
         this.name = name;
     }
 
+    /**
+     * Getter for the id associated to the train station
+     * @return the id of a station
+     */
     public int id() {
         return id;
     }
 
+    /**
+     * Getter for the name associated to the train station
+     * @return name of the train station
+     */
     public String name() {
         return name;
     }

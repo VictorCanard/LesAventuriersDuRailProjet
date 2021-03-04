@@ -61,7 +61,7 @@ public interface TestMap {
         Route LUC_SCZ_1 = TestMap.routes.get(61);
 
         List<Route> listeRoutes = List.of(YVE_NEU,BER_LUC,BER_NEU, AT1_STG_1, BAD_BAL_1,BER_FRI_1,FR1_MAR_1,LUC_SCZ_1);
-
+        List<Route> listeRoutes2 = List.of(BER_FRI_1);
         //Trails
 
         Trail testTrail1 = Trail.longest(listeRoutes.subList(0, 4));

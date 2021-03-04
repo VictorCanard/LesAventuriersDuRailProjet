@@ -3,7 +3,7 @@ package ch.epfl.tchu.game;
 import java.util.List;
 
 /**
- * Class Card
+ * Types of cards that can be played
  * @author Victor Jean Canard-Duchene (326913)
  * @author Anne-Marie Rusu (296098)
  */
@@ -20,9 +20,19 @@ public enum Card {
     LOCOMOTIVE(null);
 
     private Color color;
-
+    /**
+     * List of all the types of cards
+     */
     public final static List<Card> ALL = List.of(Card.values());
+
+    /**
+     * Total number of types of cards
+     */
     public final static int COUNT = ALL.size();
+
+    /**
+     * List of the car types of cards (excluding the locomotive card)
+     */
     public final static List<Card> CARS = ALL.subList(0,8);
 
     /**
