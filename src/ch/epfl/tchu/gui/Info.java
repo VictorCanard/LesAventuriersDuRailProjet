@@ -10,16 +10,27 @@ import java.util.List;
 
 public final class Info {
     private final String playerName;
+    private final static List<String> listOfAllCards =
+            List.of(StringsFr.BLACK_CARD,
+                    StringsFr.BLUE_CARD,
+                    StringsFr.GREEN_CARD,
+                    StringsFr.ORANGE_CARD,
+                    StringsFr.RED_CARD,
+                    StringsFr.VIOLET_CARD,
+                    StringsFr.WHITE_CARD,
+                    StringsFr.YELLOW_CARD,
+                    StringsFr.LOCOMOTIVE_CARD);
 
     public Info(String playerName){
         this.playerName = playerName;
     }
     public static String cardName(Card card, int count){
         Color cardColor = card.color();
-        String cardFrenchName = StringsFr.cardColor;
-        return StringsFr.
+        String cardFrenchName = listOfAllCards.get(cardColor.ordinal());
+
+        return String.format("%s%t",cardFrenchName, StringsFr.plural(count));
     }
-            //(utilise BLACK_CARD, BLUE_CARD, etc.),
+
     public static String draw(List<String> playerNames, int points){
         String playersMessage = String.format("%s%t%u", playerNames.get(0), StringsFr.AND_SEPARATOR, playerNames.get(1));
         String drawMessage = String.format(StringsFr.DRAW, playersMessage, points);
@@ -54,20 +65,37 @@ public final class Info {
     public String drewAdditionalCards(SortedBag<Card> drawnCards, int additionalCost){
         String additionalCards = String.format(StringsFr.ADDITIONAL_CARDS_ARE, cardNames(drawnCards));
 
-        if()
-        String additionalCost = String.format(StringsFr.ADD);
+        String additionalCostMessage;
+
+        if(additionalCost > 0){
+            additionalCostMessage = String.format(StringsFr.NO_ADDITIONAL_COST);
+        }
+        else{
+            additionalCostMessage = String.format(StringsFr.SOME_ADDITIONAL_COST, additionalCost);
+        }
+        return String.format("%s%t", additionalCards, additionalCostMessage);
+
     }
-    public String didNotClaimRoute(Route route){}
-    public String lastTurnBegins(int carCount){}
-    public String getsLongestTrailBonus(Trail longestTrail){}
-    public String won(int points, int loserPoints){}
+    public String didNotClaimRoute(Route route){
+        return String.format(StringsFr.DID_NOT_CLAIM_ROUTE, playerName, route);
+    }
+    public String lastTurnBegins(int carCount){
+        return String.format(StringsFr.LAST_TURN_BEGINS, playerName, carCount);
+    }
+    public String getsLongestTrailBonus(Trail longestTrail){
+        String trailName = String.format("%s%t%u", longestTrail.station1(), StringsFr.EN_DASH_SEPARATOR, longestTrail.station2());
+        return String.format(StringsFr.GETS_BONUS, playerName, trailName);
+    }
+    public String won(int points, int loserPoints){
+        return String.format(StringsFr.WINS, playerName, points, loserPoints);
+    }
 
     private static String cardNames(SortedBag<Card> bagOfCards){
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
         for (Card c: bagOfCards.toSet()) {
             int n = bagOfCards.countOf(c);
             stringOfAllCardNamesToReturn
-                    .append(cardName(c, 1)) //Fix the count issue
+                    .append(cardName(c, n))
                     .append(" ")
                     .append(n);
         }

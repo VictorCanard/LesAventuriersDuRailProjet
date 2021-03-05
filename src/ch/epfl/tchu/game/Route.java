@@ -2,6 +2,8 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.gui.StringsFr;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -190,5 +192,8 @@ public final class Route {
         return Constants.ROUTE_CLAIM_POINTS.get(LENGTH);
     }
 
-
+    @Override
+    public String toString() {
+        return String.format("%s%t%u",STATION1, StringsFr.EN_DASH_SEPARATOR, STATION2);
+    }
 }
