@@ -7,6 +7,7 @@ import ch.epfl.tchu.game.Deck;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.ArrayList;
 
 
 
@@ -34,16 +35,16 @@ public final class CardState extends PublicCardState{
        return new CardState(faceUpCards, drawPile.size(), 0, drawPile, SortedBag.of());
     }
 
-    public CardState withDrawnFaceUpCard(int slot){ //works with the 5 face up cards
-        Preconditions.checkArgument();
-        Objects.checkIndex(slot, 5);
+    public CardState withDrawnFaceUpCard(int slot){
+        Preconditions.checkArgument(drawPile.isEmpty());
+        Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);
+
         topCard = drawPile.topCard();
         drawPile = drawPile.withoutTopCard();
-        faceUpCards = faceUpCards.set(slot, topCard); //???????????/
 
+        faceUpCards.set(slot, topCard);
 
-        return new CardState(faceUpCards, drawPile.size(), this.discardsSize());
-
+        return new CardState(faceUpCards, drawPile.size(), this.discardsSize(), drawPile, this.discardPile);
     }
     public Card topDeckCard(){
         return this.faceUpCard(0);
