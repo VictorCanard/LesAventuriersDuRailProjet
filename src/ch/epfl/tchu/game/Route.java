@@ -194,6 +194,6 @@ public final class Route {
 
     @Override
     public String toString() {
-        return String.format("%s%t%u",STATION1, StringsFr.EN_DASH_SEPARATOR, STATION2);
+        return String.format("%s%s%s",STATION1, StringsFr.EN_DASH_SEPARATOR, STATION2);
     }
 }

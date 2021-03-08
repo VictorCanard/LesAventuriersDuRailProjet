@@ -6,14 +6,14 @@ import java.util.Random;
 
 public class CardState extends PublicCardState{
     private CardState(){
-        super();
+        super(null,0,0);
 
     }
-    public static CardState of(Deck<Card> deck){}
+    public static CardState of(Deck<Card> deck){return null;}
 
-    public CardState withDrawnFaceUpCard(int slot){}
-    public Card topDeckCard(){}
-    public CardState withoutTopDeckCard(){}
-    public CardState withDeckRecreatedFromDiscards(Random rng){}
-    public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){}
+    public CardState withDrawnFaceUpCard(int slot){return null;}
+    public Card topDeckCard(){return null;}
+    public CardState withoutTopDeckCard(){return null;}
+    public CardState withDeckRecreatedFromDiscards(Random rng){return null;}
+    public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){return null;}
 }
