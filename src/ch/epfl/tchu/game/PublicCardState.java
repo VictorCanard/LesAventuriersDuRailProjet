@@ -1,7 +1,6 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
-//import ch.epfl.tchu.game.Constants.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +22,7 @@ public class PublicCardState {
         return DECKSIZE + DISCARDSSIZE + FACEUPCARDS.size();
     }
     public List<Card> faceUpCards(){
-        return FACEUPCARDS; //????????????/
+        return FACEUPCARDS;
     }
     public Card faceUpCard(int slot){
         Objects.checkIndex(slot, 5);
