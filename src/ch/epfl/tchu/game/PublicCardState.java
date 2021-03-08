@@ -1,9 +1,10 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
-
+//import ch.epfl.tchu.game.Constants.*;
 import java.util.List;
 import java.util.Objects;
+
 
 public class PublicCardState {
 
@@ -12,7 +13,7 @@ public class PublicCardState {
     private final int DISCARDSSIZE;
 
     public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize){
-        Preconditions.checkArgument(faceUpCards.size() == 5 || deckSize >=0 || discardsSize >=0);
+        Preconditions.checkArgument(faceUpCards.size() == Constants.FACE_UP_CARDS_COUNT || deckSize >=0 || discardsSize >=0);
         this.FACEUPCARDS = List.copyOf(faceUpCards);
         this.DECKSIZE = deckSize;
         this.DISCARDSSIZE = discardsSize;
