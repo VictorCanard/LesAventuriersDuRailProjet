@@ -1,19 +1,61 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.game.Deck;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.ArrayList;
 
-public class CardState extends PublicCardState{
-    private CardState(){
-        super(null,0,0);
+
+
+public final class CardState extends PublicCardState{
+
+    private static List<Card> faceUpCards;
+    private static Deck<Card> drawPile;
+    private static Card topCard;
+    private SortedBag<Card> discardPile;
+
+
+    private CardState(List<Card> faceUpCards, int deckSize, int discardsSize, Deck<Card> drawPile, SortedBag<Card> discardPile){
+        super(faceUpCards, deckSize, discardsSize);
+        Preconditions.checkArgument(discardPile.size()>=0);
+        this.discardPile = discardPile;
+        this.drawPile = drawPile;
+    }
+
+    public static CardState of(Deck<Card> deck){
+        Preconditions.checkArgument(deck.size()>=Constants.FACE_UP_CARDS_COUNT);
+
+       faceUpCards = deck.topCards(Constants.FACE_UP_CARDS_COUNT).toList();
+       drawPile = deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT);
+
+       return new CardState(faceUpCards, drawPile.size(), 0, drawPile, SortedBag.of());
+    }
+
+    public CardState withDrawnFaceUpCard(int slot){
+        Preconditions.checkArgument(drawPile.isEmpty());
+        Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);
+
+        topCard = drawPile.topCard();
+        drawPile = drawPile.withoutTopCard();
+
+        faceUpCards.set(slot, topCard);
+
+        return new CardState(faceUpCards, drawPile.size(), this.discardsSize(), drawPile, this.discardPile);
+    }
+    public Card topDeckCard(){
+        return this.faceUpCard(0);
+    }
+    public CardState withoutTopDeckCard(){
 
     }
-    public static CardState of(Deck<Card> deck){return null;}
+    public CardState withDeckRecreatedFromDiscards(Random rng){
+        return
+    }
+    public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
 
-    public CardState withDrawnFaceUpCard(int slot){return null;}
-    public Card topDeckCard(){return null;}
-    public CardState withoutTopDeckCard(){return null;}
-    public CardState withDeckRecreatedFromDiscards(Random rng){return null;}
-    public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){return null;}
+    }
 }
