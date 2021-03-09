@@ -38,12 +38,12 @@ public final class CardState extends PublicCardState{
         return new CardState(newFaceUpCards, DRAW_PILE.withoutTopCard().size(), this.discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
     public Card topDeckCard(){
-        Preconditions.checkArgument(DRAW_PILE.size() != 0);
+        Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
         return DRAW_PILE.topCard();
     }
     public CardState withoutTopDeckCard(){
-        Preconditions.checkArgument(DRAW_PILE.size() != 0);
-        return new CardState(faceUpCards(), deckSize(), discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
+            return new CardState(faceUpCards(), deckSize() - 1, discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
     public CardState withDeckRecreatedFromDiscards(Random rng){
         Preconditions.checkArgument(DRAW_PILE.isEmpty());
