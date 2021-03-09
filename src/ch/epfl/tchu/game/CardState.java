@@ -14,7 +14,11 @@ public final class CardState extends PublicCardState{
         super(faceUpCards, deckSize, discardsSize);
         Preconditions.checkArgument(discardPile.size()>=0);
         DRAW_PILE = drawPile;
-        TOP_CARD = DRAW_PILE.topCard();
+        if(!DRAW_PILE.isEmpty()){
+            TOP_CARD = DRAW_PILE.topCard();
+        }else{
+            TOP_CARD = null;
+        }
         DISCARD_PILE = discardPile;
     }
 
@@ -43,7 +47,7 @@ public final class CardState extends PublicCardState{
     }
     public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
-            return new CardState(faceUpCards(), deckSize() - 1, discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        return new CardState(faceUpCards(), deckSize() - 1, discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
     public CardState withDeckRecreatedFromDiscards(Random rng){
         Preconditions.checkArgument(DRAW_PILE.isEmpty());

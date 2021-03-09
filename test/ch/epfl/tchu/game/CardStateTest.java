@@ -110,9 +110,9 @@ class CardStateTest {
         System.out.println("draw pile number is: "+ state81.deckSize());
 
         CardState state82 = state81.withoutTopDeckCard();
-        System.out.println("draw pile number is: "+ state81.deckSize());
+        System.out.println("draw pile number is: "+ state82.deckSize());
 
-        CardState newState =  state81.withDeckRecreatedFromDiscards(new Random());
+        CardState newState =  state82.withDeckRecreatedFromDiscards(new Random());
         System.out.println(newState.faceUpCards());
 
     }
