@@ -6,7 +6,6 @@ import java.util.*;
 
 public final class CardState extends PublicCardState{
 
-    //private final List<Card> FACE_UP_CARDS;
     private final Deck<Card> DRAW_PILE;
     private final SortedBag<Card> DISCARD_PILE;
     private final Card TOP_CARD;
@@ -14,7 +13,7 @@ public final class CardState extends PublicCardState{
     private CardState(List<Card> faceUpCards, int deckSize, int discardsSize, Deck<Card> drawPile, SortedBag<Card> discardPile){
         super(faceUpCards, deckSize, discardsSize);
         Preconditions.checkArgument(discardPile.size()>=0);
-        this.DRAW_PILE = drawPile;
+        DRAW_PILE = drawPile;
         TOP_CARD = DRAW_PILE.topCard();
         DISCARD_PILE = discardPile; //how to do copy?
     }
