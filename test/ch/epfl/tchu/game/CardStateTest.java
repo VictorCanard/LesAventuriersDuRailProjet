@@ -28,15 +28,7 @@ class CardStateTest {
         return Deck.of(cardsA, new Random());
     }
 
-   /* static Deck<Card> deckBuilder2(){
-        SortedBag.Builder<Card> cardsBuilder1 = new SortedBag.Builder<>();
-        for (Card w : List.of(Card.LOCOMOTIVE, Card.BLUE, Card.BLACK, Card.GREEN, Card.YELLOW, Card.BLUE, Card.BLUE, Card.BLUE, Card.BLUE, Card.BLUE)) {
-            cardsBuilder1.add(w);
-        }
-        SortedBag<Card> cardsA = cardsBuilder1.build();
 
-        return Deck.of(cardsA, new Random());
-    }*/
 
     static SortedBag<Card> discardBuilder(){
         SortedBag.Builder<Card> cardsBuilder1 = new SortedBag.Builder<>();

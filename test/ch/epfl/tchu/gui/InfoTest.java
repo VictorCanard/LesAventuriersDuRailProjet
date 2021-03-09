@@ -1,12 +1,14 @@
 package ch.epfl.tchu.gui;
 
 import ch.epfl.RouteTestMap;
+import ch.epfl.TestMap;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SplittableRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +25,8 @@ class InfoTest {
                     StringsFr.WHITE_CARD,
                     StringsFr.YELLOW_CARD,
                     StringsFr.LOCOMOTIVE_CARD);
+    private final static List<Card> cards = Card.ALL;
+    private final static SortedBag<Card> bagOfCards = SortedBag.of(cards.subList(0,2));
 
 
 
@@ -126,9 +130,9 @@ class InfoTest {
     }
 
     @Test
-    void claimedRoute() { //?????
+    void claimedRoute() {
         List<Card> cards = Card.ALL;
-        String expected = String.format(CLAIMED_ROUTE, playerOneName, RouteTestMap.route1.toString(), "1 carte noire et 1 carte violette");
+        String expected = String.format(CLAIMED_ROUTE, playerOneName, RouteTestMap.route1.toString(), "1 noire, et 1 violette");
         String actual = playerOneInfo.claimedRoute(RouteTestMap.route1, SortedBag.of(cards.subList(0,2)));
 
         assertEquals(expected,actual);
@@ -148,21 +152,54 @@ class InfoTest {
 
     @Test
     void drewAdditionalCards() {
+
+        String expected1 = String.format(ADDITIONAL_CARDS_ARE, "1 noire, et 1 violette");
+        String expected2 = String.format(SOME_ADDITIONAL_COST, 2, "s");
+        String expectedFinal = String.format("%s%s", expected1,expected2);
+        String actual = playerOneInfo.drewAdditionalCards(bagOfCards, 2);
+
+        assertEquals(expectedFinal,actual);
+
+        String expected3 = String.format(NO_ADDITIONAL_COST);
+        String expectedFinal2 = String.format("%s%s", expected1,expected3);
+        String actual2 = playerOneInfo.drewAdditionalCards(bagOfCards, 0);
+
+        assertEquals(expectedFinal2,actual2);
     }
 
     @Test
     void didNotClaimRoute() {
+        String expected = String.format(DID_NOT_CLAIM_ROUTE, playerOneName, RouteTestMap.route1);
+
+        String actual = playerOneInfo.didNotClaimRoute(RouteTestMap.route1);
+
+        assertEquals(expected,actual);
     }
 
     @Test
     void lastTurnBegins() {
+        String expected = String.format(LAST_TURN_BEGINS, playerOneName, 5, "s");
+
+        String actual = playerOneInfo.lastTurnBegins(5);
+
+        assertEquals(expected,actual);
     }
 
     @Test
     void getsLongestTrailBonus() {
+        String expected = String.format(GETS_BONUS, playerOneName, "Yverdon"+ StringsFr.EN_DASH_SEPARATOR+"Lucerne");
+
+        String actual = playerOneInfo.getsLongestTrailBonus(TestMap.testTrail1);
+
+        assertEquals(expected,actual);
     }
 
     @Test
     void won() {
+        String expected = String.format(WINS, playerOneName, 15,"s",  10,"s");
+
+        String actual = playerOneInfo.won(15, 10);
+
+        assertEquals(expected,actual);
     }
 }

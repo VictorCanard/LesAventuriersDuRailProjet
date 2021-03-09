@@ -31,6 +31,8 @@ public final class Info {
         String cardFrenchName = listOfAllCards.get(card.ordinal());
 
         return String.format("%s%s",cardFrenchName, StringsFr.plural(count));
+
+
     }
 
     public static String draw(List<String> playerNames, int points){
@@ -56,7 +58,7 @@ public final class Info {
         return String.format(StringsFr.DREW_BLIND_CARD, playerName);
     }
     public String drewVisibleCard(Card card){
-        return String.format(StringsFr.DREW_VISIBLE_CARD, cardName(card, 1));
+        return String.format(StringsFr.DREW_VISIBLE_CARD, playerName, cardName(card, 1));
     }
     public String claimedRoute(Route route, SortedBag<Card> cards){
         return String.format(StringsFr.CLAIMED_ROUTE, playerName, route, cardNames(cards));
@@ -69,7 +71,7 @@ public final class Info {
 
         String additionalCostMessage;
 
-        if(additionalCost > 0){
+        if(additionalCost == 0){
             additionalCostMessage = String.format(StringsFr.NO_ADDITIONAL_COST);
         }
         else{
@@ -82,7 +84,7 @@ public final class Info {
         return String.format(StringsFr.DID_NOT_CLAIM_ROUTE, playerName, route);
     }
     public String lastTurnBegins(int carCount){
-        return String.format(StringsFr.LAST_TURN_BEGINS, playerName, carCount);
+        return String.format(StringsFr.LAST_TURN_BEGINS, playerName, carCount, StringsFr.plural(carCount));
     }
     public String getsLongestTrailBonus(Trail longestTrail){
         String trailName = String.format("%s%s%s", longestTrail.station1(), StringsFr.EN_DASH_SEPARATOR, longestTrail.station2());
