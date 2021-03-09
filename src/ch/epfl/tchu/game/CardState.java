@@ -15,7 +15,7 @@ public final class CardState extends PublicCardState{
         Preconditions.checkArgument(discardPile.size()>=0);
         DRAW_PILE = drawPile;
         TOP_CARD = DRAW_PILE.topCard();
-        DISCARD_PILE = discardPile; //how to do copy?
+        DISCARD_PILE = discardPile;
     }
 
     public static CardState of(Deck<Card> deck){
@@ -28,13 +28,14 @@ public final class CardState extends PublicCardState{
     }
 
     public CardState withDrawnFaceUpCard(int slot){
-        Preconditions.checkArgument(DRAW_PILE.isEmpty());
+        Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
         Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);
 
-        List<Card> newFaceUp = faceUpCards();
-        newFaceUp.set(slot, TOP_CARD);
+        List<Card> newFaceUpCards = new ArrayList<>();
+        newFaceUpCards.addAll(this.faceUpCards());
+        newFaceUpCards.set(slot, TOP_CARD);
 
-        return new CardState(newFaceUp, DRAW_PILE.withoutTopCard().size(), this.discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        return new CardState(newFaceUpCards, DRAW_PILE.withoutTopCard().size(), this.discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
     public Card topDeckCard(){
         Preconditions.checkArgument(DRAW_PILE.size() != 0);
@@ -47,7 +48,7 @@ public final class CardState extends PublicCardState{
     public CardState withDeckRecreatedFromDiscards(Random rng){
         Preconditions.checkArgument(DRAW_PILE.isEmpty());
 
-        Deck<Card> newDrawPile = Deck.of(DISCARD_PILE, rng); //is it not empty?????????????
+        Deck<Card> newDrawPile = Deck.of(DISCARD_PILE, rng);
 
         return new CardState(faceUpCards(), newDrawPile.size(), 0, newDrawPile, SortedBag.of());
     }
