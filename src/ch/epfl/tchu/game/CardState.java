@@ -4,12 +4,24 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import java.util.*;
 
+/**
+ * @author Anne-Marie Rusu (296098)
+ */
 public final class CardState extends PublicCardState{
 
     private final Deck<Card> DRAW_PILE;
     private final SortedBag<Card> DISCARD_PILE;
     private final Card TOP_CARD;
 
+    /**
+     * CardState constructor (private so the class has control on the arguments that are passed)
+     * @param faceUpCards : cards in the faceUp Pile
+     * @param deckSize : size of the Deck
+     * @param discardsSize : size of the Discard Pile
+     * @param drawPile : size of the draw Pile
+     * @param discardPile : cards in the Discard Pile
+     * @throws IllegalArgumentException if the size of the discard pile is negative
+     */
     private CardState(List<Card> faceUpCards, int deckSize, int discardsSize, Deck<Card> drawPile, SortedBag<Card> discardPile){
         super(faceUpCards, deckSize, discardsSize);
         Preconditions.checkArgument(discardPile.size()>=0);
@@ -22,6 +34,13 @@ public final class CardState extends PublicCardState{
         DISCARD_PILE = discardPile;
     }
 
+    /**
+     * Static method to initialize a card state
+     * @param deck : Deck of cards to make a new card state
+     * Makes a list of cards to be face-up from the deck and creates a draw pile
+     * @throws IllegalArgumentException if the size of the deck given as an argument is strictly inferior to 5 cards
+     * @return a new card state with no discards, a certain number of faceup Cards and the rest of the deck as a draw pile
+     */
     public static CardState of(Deck<Card> deck){
         Preconditions.checkArgument(deck.size()>=Constants.FACE_UP_CARDS_COUNT);
 
@@ -31,6 +50,14 @@ public final class CardState extends PublicCardState{
         return new CardState(faceUpCards, newDrawPile.size(), 0, newDrawPile, SortedBag.of());
     }
 
+    /**
+     *Returns a new set of cards nearly identical to this but where the visible card of index slot has been replaced by the one on top of the draw pile
+     * (the one of top of the draw pile is thus removed from the draw pile)
+     * @param slot : index of the face up card to be replaced
+     * @throws IllegalArgumentException if the draw pile isn't empty
+     * @throws IndexOutOfBoundsException if the index slot isn't included in [0;5[
+     * @return a new set of cards with different faceUp and draw piles
+     */
     public CardState withDrawnFaceUpCard(int slot){
         Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
         Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);

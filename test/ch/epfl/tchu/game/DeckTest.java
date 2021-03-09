@@ -29,6 +29,27 @@ class DeckTest {
         }
     }
     @Test
+    void checkThrowsExceptions(){
+        assertThrows(IllegalArgumentException.class,() ->{
+            deck1.topCards(-1);
+
+        });
+        assertThrows(IllegalArgumentException.class,() ->{
+
+            deck1.topCards(15);
+        });
+        assertThrows(IllegalArgumentException.class,() ->{
+            deck1.withoutTopCards(-1);
+
+        });
+        assertThrows(IllegalArgumentException.class,() ->{
+            deck1.withoutTopCards(17);
+
+        });
+
+
+    }
+    @Test
     void of() {
         Deck<Card> deck1 = Deck.of(testBag, new Random());
         assertTrue(!deck1.isEmpty());
@@ -55,6 +76,12 @@ class DeckTest {
 
         assertTrue(newDeck.isEmpty());
         assertTrue(newDeck.size()==0);
+        assertThrows(IllegalArgumentException.class,() ->{
+            newDeck.topCard();
+        });
+        assertThrows(IllegalArgumentException.class,() ->{
+            newDeck.withoutTopCard();
+        });
     }
 
     @Test
