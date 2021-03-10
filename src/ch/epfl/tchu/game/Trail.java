@@ -44,22 +44,30 @@ public final class Trail {
             for (Trail currentTrail: trails) {
                 List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routes);
 
+                longestTrail = returnLongestTrailBetweenCurrentLongestAndNew(currentTrail, longestTrail);
+
                 for (Route route: routesToProlong) {
                     List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.ROUTES));
                     newListOfRoutes.add(route);
 
                     Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), route.stationOpposite(currentTrail.station2()));
 
-                    if(newTrailIsLonger(newTrail, longestTrail)){
-                        longestTrail = newTrail;
-                    }
+                    longestTrail = returnLongestTrailBetweenCurrentLongestAndNew(newTrail, longestTrail);
+
                     newTrails.add(newTrail);
                 }
+
             }
             trails = newTrails;
         }
         return longestTrail;
 
+    }
+    private static Trail returnLongestTrailBetweenCurrentLongestAndNew(Trail newTrail, Trail currentLongestTrail){
+        if(newTrailIsLonger(newTrail, currentLongestTrail)){
+            return newTrail;
+        }
+        return currentLongestTrail;
     }
     private static boolean newTrailIsLonger(Trail newTrail, Trail currentLongestTrail){
         return (newTrail.length() > currentLongestTrail.length());
@@ -68,8 +76,9 @@ public final class Trail {
     private static List<Trail> listOfTrailsWithOneRoute(List<Route> routes){
         List<Trail> trailsToReturn = new ArrayList<>();
 
-        for(Route route: routes){
+        for(Route route: routes){ //Initializes two trails one with the route in the right order and one where the stations are inverted
             trailsToReturn.add(new Trail(new ArrayList<>(Collections.singleton(route)), route.station1(), route.station2()));
+            trailsToReturn.add(new Trail(new ArrayList<>(Collections.singleton(route)), route.station2(), route.station1()));
         }
         return trailsToReturn;
     }
@@ -137,7 +146,7 @@ public final class Trail {
             Station currentStation = ROUTES.get(0).station1();
 
             text.append(currentStation.name())
-                .append(StringsFr.EN_DASH_SEPARATOR);
+                .append(" - ");
 
             for (int i = 0; i < ROUTES.size()-1; i++) {
                 currentStation = ROUTES.get(i).stationOpposite(currentStation);
