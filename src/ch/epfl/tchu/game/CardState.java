@@ -68,14 +68,34 @@ public final class CardState extends PublicCardState{
 
         return new CardState(newFaceUpCards, DRAW_PILE.withoutTopCard().size(), this.discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
+
+    /**
+     * Getter for the deck's top card
+     * @throws IllegalArgumentException if draw pile is empty
+     * @return the card at the top of the deck
+     */
     public Card topDeckCard(){
         Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
         return DRAW_PILE.topCard();
     }
+
+    /**
+     * Getter for a new deck identical but without the top card
+     * @throws IllegalArgumentException if draw pile is empty
+     * @return a deck without top card
+     */
     public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
         return new CardState(faceUpCards(), deckSize() - 1, discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
+
+    /**
+     * Getter for a new draw pile recreated from the discard pile
+     * (the drawPile is shuffled by the method of() from the class Deck)
+     * @param rng : the random number generator to shuffle the draw pile
+     * @throws IllegalArgumentException if the draw pile is not empty
+     * @return a new draw pile
+     */
     public CardState withDeckRecreatedFromDiscards(Random rng){
         Preconditions.checkArgument(DRAW_PILE.isEmpty());
 
@@ -83,6 +103,12 @@ public final class CardState extends PublicCardState{
 
         return new CardState(faceUpCards(), newDrawPile.size(), 0, newDrawPile, SortedBag.of());
     }
+
+    /**
+     * Getter for a new CardState with additional cards added to the discard pile
+     * @param additionalDiscards : cards to add to this CardState's discard pile
+     * @return a new CardState with different cards
+     */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
         return new CardState(super.faceUpCards(), super.deckSize(), additionalDiscards.size(), DRAW_PILE, additionalDiscards);
     }
