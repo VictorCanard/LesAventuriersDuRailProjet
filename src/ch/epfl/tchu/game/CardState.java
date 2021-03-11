@@ -39,7 +39,7 @@ public final class CardState extends PublicCardState{
      * @param deck : Deck of cards to make a new card state
      * Makes a list of cards to be face-up from the deck and creates a draw pile
      * @throws IllegalArgumentException if the size of the deck given as an argument is strictly inferior to 5 cards
-     * @return a new card state with no discards, a certain number of faceup Cards and the rest of the deck as a draw pile
+     * @return a new card state with no discards, a certain number of face-up Cards and the rest of the deck as a draw pile
      */
     public static CardState of(Deck<Card> deck){
         Preconditions.checkArgument(deck.size()>=Constants.FACE_UP_CARDS_COUNT);
@@ -62,8 +62,7 @@ public final class CardState extends PublicCardState{
         Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
         Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);
 
-        List<Card> newFaceUpCards = new ArrayList<>();
-        newFaceUpCards.addAll(this.faceUpCards());
+        List<Card> newFaceUpCards = new ArrayList<>(this.faceUpCards());
         newFaceUpCards.set(slot, TOP_CARD);
 
         return new CardState(newFaceUpCards, DRAW_PILE.withoutTopCard().size(), this.discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);

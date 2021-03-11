@@ -14,9 +14,6 @@ class CardStateTest {
     CardState state1 =  CardState.of(drawPile);
     Deck<Card> drawPile2 = CardStateTest.deckBuilder();
     SortedBag<Card> discards = CardStateTest.discardBuilder();
-   // Deck<Card> drawPile3 = CardStateTest.deckBuilder2();
-   // CardState finalState = CardState.of(drawPile3);
-
 
     static Deck<Card> deckBuilder(){
         SortedBag.Builder<Card> cardsBuilder1 = new SortedBag.Builder<>();
@@ -28,8 +25,6 @@ class CardStateTest {
         return Deck.of(cardsA, new Random());
     }
 
-
-
     static SortedBag<Card> discardBuilder(){
         SortedBag.Builder<Card> cardsBuilder1 = new SortedBag.Builder<>();
         for (Card w : List.of(Card.LOCOMOTIVE, Card.GREEN, Card.YELLOW, Card.LOCOMOTIVE, Card.BLUE, Card.LOCOMOTIVE, Card.GREEN, Card.YELLOW, Card.LOCOMOTIVE, Card.BLUE)) {
@@ -38,6 +33,11 @@ class CardStateTest {
         SortedBag<Card> cardsA = cardsBuilder1.build();
         return cardsA;
     }
+    @Test
+    void myTest(){
+
+    }
+
 
     @Test
     void of() {
