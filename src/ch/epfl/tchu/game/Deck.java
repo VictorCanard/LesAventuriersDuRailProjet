@@ -3,7 +3,6 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -17,7 +16,7 @@ public final class Deck<C extends Comparable<C>> {
     private final List<C> DECK_CARDS;
 
     private Deck(List<C> shuffledCards){
-        DECK_CARDS = shuffledCards;
+        DECK_CARDS = List.copyOf(shuffledCards);
     }
 
     /**

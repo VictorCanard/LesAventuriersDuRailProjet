@@ -178,12 +178,14 @@ class InfoTest {
         String expectedFinal = String.format("%s%s", expected1,expected2);
         String actual = playerOneInfo.drewAdditionalCards(bagOfCards, 2);
 
+        System.out.println(expectedFinal);
         assertEquals(expectedFinal,actual);
 
         String expected3 = String.format(NO_ADDITIONAL_COST);
         String expectedFinal2 = String.format("%s%s", expected1,expected3);
         String actual2 = playerOneInfo.drewAdditionalCards(bagOfCards, 0);
 
+        System.out.println(expectedFinal2);
         assertEquals(expectedFinal2,actual2);
     }
 
