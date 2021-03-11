@@ -35,7 +35,7 @@ public class PublicCardState {
     }
 
     /**
-     * Getter for the cards that are face-up
+     * Getter for the 5 cards that are face-up
      * @return a list of cards
      */
     public List<Card> faceUpCards(){
