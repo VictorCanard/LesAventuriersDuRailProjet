@@ -14,19 +14,45 @@ class DeckTest {
 
     Deck<Card> deck1 = Deck.of(testBag, new Random());
 
+    public static SortedBag.Builder builder = new SortedBag.Builder();
+    public static SortedBag<Card> emptySortedBag = builder.build();
 
+    public final static Random NON_RANDOM = new Random(){
+        @Override
+        public int nextInt(int i){
+            return i-1;
+        }
+    };
+
+    @Test
+    void nonRandomTest(){
+        SortedBag<String> cards = SortedBag.of(2, "as de pique", 3, "dame de cœur");
+        Deck<String> deck = Deck.of(cards, NON_RANDOM);
+
+        for (int i = 0; i < deck.size(); i++) {
+            assertEquals(cards.get(i), deck.topCard());
+            deck = deck.withoutTopCard();
+        }
+    }
 
     @Test
     void checkIfRandom(){
-        Deck<Card> deck1 = Deck.of(testBag, new Random());
-        Deck<Card> deck2 = Deck.of(testBag, new Random());
+        Deck<Card> deck1 = Deck.of(preciseBag, new Random());
+        Deck<Card> deck2 = Deck.of(preciseBag, new Random());
 
-        for (int i = 0; i < testBag.size(); i++) {
-            System.out.println(deck1.topCard());
+        int counter =0;
+
+        for (int i = 0; i < preciseBag.size(); i++) {
+            Card card1 = deck1.topCard();
+            System.out.println(card1);
             deck1 = deck1.withoutTopCard();
-            System.out.println(deck2.topCard());
+            Card card2 = deck2.topCard();
+            System.out.println(card2);
             deck2 = deck2.withoutTopCard();
+            counter = card1.equals(card2) ? counter+1 : counter;
+
         }
+        assertTrue(counter<3);
     }
     @Test
     void checkThrowsExceptions(){
@@ -66,12 +92,18 @@ class DeckTest {
     void size() {
         Deck<Card> deck1 = Deck.of(testBag, new Random());
         assertTrue(deck1.size()==12);
+
+        Deck<Card> deck2 = Deck.of(emptySortedBag, new Random());
+        assertTrue(deck2.size()==0);
+
+        SortedBag<Card> newBag = SortedBag.of(5, Card.BLUE, 20, Card.BLACK);
+        Deck<Card> deck3 = Deck.of(newBag, new Random());
+        assertTrue(deck3.size()==25);
     }
 
     @Test
     void isEmpty() {
-        SortedBag.Builder builder = new SortedBag.Builder();
-        SortedBag<Card> emptySortedBag = builder.build();
+
         Deck<Card> newDeck = Deck.of(emptySortedBag, new Random());
 
         assertTrue(newDeck.isEmpty());
@@ -86,8 +118,14 @@ class DeckTest {
 
     @Test
     void topCard() {
-        Deck<Card> deck1 = Deck.of(testBag, new Random());
-        System.out.println(deck1.topCard());
+
+        for (int i = 0; i < 10; i++) {
+            Deck<Card> deck1 = Deck.of(testBag, NON_RANDOM);
+            for (int j = 0; j < deck1.size(); j++) {
+                assertEquals(testBag.get(j), deck1.topCard());
+                deck1 = deck1.withoutTopCard();
+            }
+        }
 
     }
 

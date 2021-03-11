@@ -38,6 +38,12 @@ class InfoTest {
         String actualName = Info.cardName(testCard, 1);
 
         assertEquals(expectedName,actualName);
+
+        Card testCard2 = Card.LOCOMOTIVE;
+        String expectedName2 = "locomotive";
+        String actualName2 = Info.cardName(testCard2, 1);
+
+        assertEquals(expectedName2,actualName2);
     }
 
     @Test
@@ -94,6 +100,11 @@ class InfoTest {
         String actual = playerOneInfo.keptTickets(5);
 
         assertEquals(expected,actual);
+
+        String expected2 = String.format(KEPT_N_TICKETS, playerOneName, 1, "");
+        String actual2 = playerOneInfo.keptTickets(1);
+
+        assertEquals(expected2,actual2);
     }
 
     @Test
@@ -110,6 +121,10 @@ class InfoTest {
         String actual = playerOneInfo.drewTickets(5);
 
         assertEquals(expected,actual);
+        String expected2 = String.format(DREW_TICKETS, playerOneName, 1, "");
+        String actual2 = playerOneInfo.drewTickets(1);
+
+        assertEquals(expected2,actual2);
     }
 
     @Test
@@ -127,6 +142,11 @@ class InfoTest {
         String actual = playerOneInfo.drewVisibleCard(Card.BLACK);
 
         assertEquals(expected,actual);
+
+        String expected2 = String.format(DREW_VISIBLE_CARD, playerOneName, listOfAllCards.get(8));
+        String actual2 = playerOneInfo.drewVisibleCard(Card.LOCOMOTIVE);
+
+        assertEquals(expected2,actual2);
     }
 
     @Test
@@ -142,8 +162,8 @@ class InfoTest {
     void attemptsTunnelClaim() {
         List<Card> cards = Card.ALL;
 
-        String expected = String.format(ATTEMPTS_TUNNEL_CLAIM, playerOneName, RouteTestMap.route1, "1 noire, et 1 violette");
-        String actual = playerOneInfo.attemptsTunnelClaim(RouteTestMap.route1, SortedBag.of(cards.subList(0,2)));
+        String expected = String.format(ATTEMPTS_TUNNEL_CLAIM, playerOneName, RouteTestMap.route1, "1 noire, 1 violette, et 1 bleue");
+        String actual = playerOneInfo.attemptsTunnelClaim(RouteTestMap.route1, SortedBag.of(cards.subList(0,3)));
 
 
         assertEquals(expected,actual);
@@ -201,5 +221,10 @@ class InfoTest {
         String actual = playerOneInfo.won(15, 10);
 
         assertEquals(expected,actual);
+        String expected2 = String.format(WINS, playerOneName, 1,"",  0,"s");
+
+        String actual2 = playerOneInfo.won(1, 0);
+
+        assertEquals(expected2,actual2);
     }
 }
