@@ -16,24 +16,20 @@ public final class CardState extends PublicCardState{
     /**
      * CardState constructor (private so the class has control on the arguments that are passed)
      * @param faceUpCards : cards in the faceUp Pile
-     * @param deckSize : size of the Deck (draw pile)
-     * @param discardsSize : size of the Discard Pile
      * @param drawPile : cards of the Draw Pile
      * @param discardPile : cards in the Discard Pile
      * @throws IllegalArgumentException if the size of the discard pile is negative
      */
-    private CardState(List<Card> faceUpCards, int deckSize, int discardsSize, Deck<Card> drawPile, SortedBag<Card> discardPile){
-        super(faceUpCards, deckSize, discardsSize);
+    private CardState(List<Card> faceUpCards, Deck<Card> drawPile, SortedBag<Card> discardPile){
+        super(faceUpCards, drawPile.size(), discardPile.size());
         Preconditions.checkArgument(discardPile.size()>=0);
-        DRAW_PILE = drawPile;
 
-        if(!DRAW_PILE.isEmpty()){
-            TOP_CARD = DRAW_PILE.topCard();
-        }else{
-            TOP_CARD = null;
-        }
+        DRAW_PILE = drawPile;
+        TOP_CARD = (DRAW_PILE.isEmpty()) ? null : DRAW_PILE.topCard();
+
         DISCARD_PILE = discardPile;
     }
+
 
     /**
      * Static method to initialize a card state
@@ -45,7 +41,7 @@ public final class CardState extends PublicCardState{
     public static CardState of(Deck<Card> deck){
         Preconditions.checkArgument(deck.size()>=Constants.FACE_UP_CARDS_COUNT);
 
-        List<Card> faceUpCards = new ArrayList();
+        List<Card> faceUpCards = new ArrayList<>();
         Deck<Card> deckCopy = deck;
 
         for (int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
@@ -54,7 +50,7 @@ public final class CardState extends PublicCardState{
         }
         Deck<Card> newDrawPile = deckCopy;
 
-        return new CardState(faceUpCards, newDrawPile.size(), 0, newDrawPile, SortedBag.of());
+        return new CardState(faceUpCards,  newDrawPile, SortedBag.of());
     }
 
     /**
@@ -72,7 +68,7 @@ public final class CardState extends PublicCardState{
         List<Card> newFaceUpCards = new ArrayList<>(this.faceUpCards());
         newFaceUpCards.set(slot, TOP_CARD);
 
-        return new CardState(newFaceUpCards, DRAW_PILE.withoutTopCard().size(), this.discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        return new CardState(newFaceUpCards, DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
 
     /**
@@ -92,7 +88,7 @@ public final class CardState extends PublicCardState{
      */
     public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
-        return new CardState(faceUpCards(), deckSize() - 1, discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        return new CardState(faceUpCards(),  DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
 
     /**
@@ -107,7 +103,7 @@ public final class CardState extends PublicCardState{
 
         Deck<Card> newDrawPile = Deck.of(DISCARD_PILE, rng);
 
-        return new CardState(faceUpCards(), newDrawPile.size(), 0, newDrawPile, SortedBag.of());
+        return new CardState(faceUpCards(), newDrawPile, SortedBag.of());
     }
 
     /**
@@ -116,6 +112,6 @@ public final class CardState extends PublicCardState{
      * @return a new CardState with the updated discard pile
      */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
-        return new CardState(faceUpCards(), deckSize(), additionalDiscards.size(), DRAW_PILE, additionalDiscards);
+        return new CardState(faceUpCards(), DRAW_PILE, additionalDiscards);
     }
 }
