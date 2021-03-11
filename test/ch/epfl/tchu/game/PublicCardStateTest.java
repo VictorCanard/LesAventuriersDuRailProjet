@@ -12,7 +12,9 @@ class PublicCardStateTest {
     List<Card> faceUpCardsFAIL = new ArrayList<Card>(List.of(Card.BLUE, Card.RED));
     List<Card> pioche = new ArrayList<>(List.of(Card.BLUE, Card.BLACK, Card.LOCOMOTIVE,Card.BLACK, Card.BLUE, Card.LOCOMOTIVE, Card.BLUE, Card.RED ));
     List<Card> discards = new ArrayList<>(List.of(Card.BLUE));
+
     List<Card> piocheEmpty = new ArrayList<>();
+    List<Card> discardsEmpty = new ArrayList<>();
 
     int myTotal = 14;
     int myDiscarded = 1;
@@ -30,6 +32,12 @@ class PublicCardStateTest {
         assertThrows(IllegalArgumentException.class, () ->
         {
             PublicCardState cardStateFAIL = new PublicCardState(faceUpCards1, -2, discards.size());
+
+        });
+
+        assertThrows(IllegalArgumentException.class, () ->
+        {
+            PublicCardState cardStateFAIL = new PublicCardState(piocheEmpty, 5, discards.size());
 
         });
     }
@@ -56,7 +64,6 @@ class PublicCardStateTest {
             cardState1.faceUpCard(7);
 
         });
-
     }
 
     @Test
@@ -73,5 +80,6 @@ class PublicCardStateTest {
     @Test
     void discardsSize() {
         assertEquals(myDiscarded, discards.size());
+        assertEquals(0, discardsEmpty.size());
     }
 }

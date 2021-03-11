@@ -16,9 +16,9 @@ public final class CardState extends PublicCardState{
     /**
      * CardState constructor (private so the class has control on the arguments that are passed)
      * @param faceUpCards : cards in the faceUp Pile
-     * @param deckSize : size of the Deck
+     * @param deckSize : size of the Deck (draw pile)
      * @param discardsSize : size of the Discard Pile
-     * @param drawPile : size of the draw Pile
+     * @param drawPile : cards of the Draw Pile
      * @param discardPile : cards in the Discard Pile
      * @throws IllegalArgumentException if the size of the discard pile is negative
      */
@@ -85,7 +85,7 @@ public final class CardState extends PublicCardState{
      */
     public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
-        return new CardState(faceUpCards(), deckSize() - 1, discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        return new CardState(super.faceUpCards(), deckSize() - 1, super.discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
 
     /**
@@ -93,20 +93,20 @@ public final class CardState extends PublicCardState{
      * (the drawPile is shuffled by the method of() from the class Deck)
      * @param rng : the random number generator to shuffle the draw pile
      * @throws IllegalArgumentException if the draw pile is not empty
-     * @return a new draw pile
+     * @return a new CardState with the new draw pile
      */
     public CardState withDeckRecreatedFromDiscards(Random rng){
         Preconditions.checkArgument(DRAW_PILE.isEmpty());
 
         Deck<Card> newDrawPile = Deck.of(DISCARD_PILE, rng);
 
-        return new CardState(faceUpCards(), newDrawPile.size(), 0, newDrawPile, SortedBag.of());
+        return new CardState(super.faceUpCards(), newDrawPile.size(), 0, newDrawPile, SortedBag.of());
     }
 
     /**
      * Getter for a new CardState with additional cards added to the discard pile
      * @param additionalDiscards : cards to add to this CardState's discard pile
-     * @return a new CardState with different cards
+     * @return a new CardState with the updated discard pile
      */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
         return new CardState(super.faceUpCards(), super.deckSize(), additionalDiscards.size(), DRAW_PILE, additionalDiscards);
