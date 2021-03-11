@@ -2,11 +2,9 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
-import ch.epfl.tchu.game.Color;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Trail;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 

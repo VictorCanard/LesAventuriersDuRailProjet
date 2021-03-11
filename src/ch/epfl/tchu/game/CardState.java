@@ -26,6 +26,7 @@ public final class CardState extends PublicCardState{
         super(faceUpCards, deckSize, discardsSize);
         Preconditions.checkArgument(discardPile.size()>=0);
         DRAW_PILE = drawPile;
+
         if(!DRAW_PILE.isEmpty()){
             TOP_CARD = DRAW_PILE.topCard();
         }else{
@@ -44,7 +45,11 @@ public final class CardState extends PublicCardState{
     public static CardState of(Deck<Card> deck){
         Preconditions.checkArgument(deck.size()>=Constants.FACE_UP_CARDS_COUNT);
 
-        List<Card> faceUpCards = deck.topCards(Constants.FACE_UP_CARDS_COUNT).toList();
+        List<Card> faceUpCards = new ArrayList();
+        for (int i = 0; i < deck.size(); i++) {
+            faceUpCards.add(deck.topCard());
+            deck = deck.withoutTopCard();
+        }
         Deck<Card> newDrawPile = deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT);
 
         return new CardState(faceUpCards, newDrawPile.size(), 0, newDrawPile, SortedBag.of());
