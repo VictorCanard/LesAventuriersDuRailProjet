@@ -85,7 +85,7 @@ public final class CardState extends PublicCardState{
      */
     public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
-        return new CardState(super.faceUpCards(), deckSize() - 1, super.discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        return new CardState(faceUpCards(), deckSize() - 1, discardsSize(), DRAW_PILE.withoutTopCard(), DISCARD_PILE);
     }
 
     /**
@@ -100,7 +100,7 @@ public final class CardState extends PublicCardState{
 
         Deck<Card> newDrawPile = Deck.of(DISCARD_PILE, rng);
 
-        return new CardState(super.faceUpCards(), newDrawPile.size(), 0, newDrawPile, SortedBag.of());
+        return new CardState(faceUpCards(), newDrawPile.size(), 0, newDrawPile, SortedBag.of());
     }
 
     /**
@@ -109,6 +109,6 @@ public final class CardState extends PublicCardState{
      * @return a new CardState with the updated discard pile
      */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
-        return new CardState(super.faceUpCards(), super.deckSize(), additionalDiscards.size(), DRAW_PILE, additionalDiscards);
+        return new CardState(faceUpCards(), deckSize(), additionalDiscards.size(), DRAW_PILE, additionalDiscards);
     }
 }
