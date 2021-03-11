@@ -46,11 +46,13 @@ public final class CardState extends PublicCardState{
         Preconditions.checkArgument(deck.size()>=Constants.FACE_UP_CARDS_COUNT);
 
         List<Card> faceUpCards = new ArrayList();
-        for (int i = 0; i < deck.size(); i++) {
-            faceUpCards.add(deck.topCard());
-            deck = deck.withoutTopCard();
+        Deck<Card> deckCopy = deck;
+
+        for (int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
+            faceUpCards.add(deckCopy.topCard());
+            deckCopy = deckCopy.withoutTopCard();
         }
-        Deck<Card> newDrawPile = deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT);
+        Deck<Card> newDrawPile = deckCopy;
 
         return new CardState(faceUpCards, newDrawPile.size(), 0, newDrawPile, SortedBag.of());
     }

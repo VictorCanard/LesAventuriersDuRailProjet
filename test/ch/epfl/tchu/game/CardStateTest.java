@@ -89,6 +89,8 @@ class CardStateTest {
         System.out.println("---------------");
         CardState state3 = CardState.of(drawPile2);
         System.out.println("deck size: " + state3.deckSize());
+        System.out.println("top 5 cards of deck: " + drawPile2.topCards(5));
+
         System.out.println("face up cards: "+ state3.faceUpCards());
         System.out.println("top deck card: " + state3.topDeckCard());
         System.out.println("replacing slot 2 of face up cards with top deck card" + state3.withDrawnFaceUpCard(2).faceUpCards());
