@@ -44,7 +44,10 @@ public final class CardState extends PublicCardState{
     public static CardState of(Deck<Card> deck){
         Preconditions.checkArgument(deck.size()>=Constants.FACE_UP_CARDS_COUNT);
 
-        List<Card> faceUpCards = deck.topCards(Constants.FACE_UP_CARDS_COUNT).toList();
+        List<Card> faceUpCards = new ArrayList();
+        for (int i = 0; i < deck.size(); i++) {
+            faceUpCards.add(deck.topCard());
+        }
         Deck<Card> newDrawPile = deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT);
 
         return new CardState(faceUpCards, newDrawPile.size(), 0, newDrawPile, SortedBag.of());
