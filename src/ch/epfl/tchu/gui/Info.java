@@ -1,5 +1,6 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Route;
@@ -190,7 +191,7 @@ public final class Info {
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
         ListIterator<Card> iterator = bagOfCards.toList().listIterator();
 
-        while(iterator.hasNext() && iterator.nextIndex() < bagOfCards.size()-1) {
+        while(iterator.hasNext() && iterator.nextIndex() < bagOfCards.size()-2) {
             Card nextCard = iterator.next();
             int n = bagOfCards.countOf(nextCard);
 
@@ -200,6 +201,15 @@ public final class Info {
                     .append(cardName(nextCard, n))
                     .append(", ");
         }
+
+        Card secondToLastCard = iterator.next();
+        int countOfSecondToLastCard = bagOfCards.countOf(secondToLastCard);
+        stringOfAllCardNamesToReturn
+                .append(countOfSecondToLastCard)
+                .append(" ")
+                .append(cardName(secondToLastCard, countOfSecondToLastCard))
+                .append(" ");
+
         Card lastCard = iterator.next();
         int countOfLastCard = bagOfCards.countOf(lastCard);
         stringOfAllCardNamesToReturn.append("et ")

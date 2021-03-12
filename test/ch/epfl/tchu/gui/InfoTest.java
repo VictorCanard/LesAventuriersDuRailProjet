@@ -152,7 +152,7 @@ class InfoTest {
     @Test
     void claimedRoute() {
         List<Card> cards = Card.ALL;
-        String expected = String.format(CLAIMED_ROUTE, playerOneName, RouteTestMap.route1.toString(), "1 noire, et 1 violette");
+        String expected = String.format(CLAIMED_ROUTE, playerOneName, RouteTestMap.route1.toString(), "1 noire et 1 violette");
         String actual = playerOneInfo.claimedRoute(RouteTestMap.route1, SortedBag.of(cards.subList(0,2)));
 
         assertEquals(expected,actual);
@@ -162,7 +162,7 @@ class InfoTest {
     void attemptsTunnelClaim() {
         List<Card> cards = Card.ALL;
 
-        String expected = String.format(ATTEMPTS_TUNNEL_CLAIM, playerOneName, RouteTestMap.route1, "1 noire, 1 violette, et 1 bleue");
+        String expected = String.format(ATTEMPTS_TUNNEL_CLAIM, playerOneName, RouteTestMap.route1, "1 noire, 1 violette et 1 bleue");
         String actual = playerOneInfo.attemptsTunnelClaim(RouteTestMap.route1, SortedBag.of(cards.subList(0,3)));
 
 
@@ -173,7 +173,7 @@ class InfoTest {
     @Test
     void drewAdditionalCards() {
 
-        String expected1 = String.format(ADDITIONAL_CARDS_ARE, "1 noire, et 1 violette");
+        String expected1 = String.format(ADDITIONAL_CARDS_ARE, "1 noire et 1 violette");
         String expected2 = String.format(SOME_ADDITIONAL_COST, 2, "s");
         String expectedFinal = String.format("%s%s", expected1,expected2);
         String actual = playerOneInfo.drewAdditionalCards(bagOfCards, 2);
