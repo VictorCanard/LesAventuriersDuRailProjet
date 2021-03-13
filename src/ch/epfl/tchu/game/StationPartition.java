@@ -6,10 +6,7 @@ import java.util.stream.IntStream;
 
 public final class StationPartition implements StationConnectivity {
 
-//partitions array initialised with their own ids (0-50)
     private final int[] PARTITIONS;
-
-
 
 
     private StationPartition(int[] repLinks) { //array already with the representatives in the entries (idk if flattened or not)
@@ -25,6 +22,7 @@ public final class StationPartition implements StationConnectivity {
             Preconditions.checkArgument(stationCount>=0);
 
             int [] idArray = IntStream.range(0, stationCount).toArray(); //ex now you have a table from 0 to 25 because 26 excluded
+            //but what if you have stations 0, 24, 25... what about all the other stations and their representatives?
         }
 
         public Builder connect(Station s1, Station s2){ //je ne comprends pas comment choisir "aleatoirement" le representant, cest nous qui choisisons ou cest Random
