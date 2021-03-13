@@ -1,14 +1,32 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
+import java.util.stream.IntStream;
+
 public final class StationPartition implements StationConnectivity {
 
+//partitions array initialised with their own ids (0-50)
+    private int[] partitions = IntStream.range(0, 51).toArray();
+
+
+
+
     private StationPartition(int[] repLinks) {
-        repLinks = new int[ChMap.stations().size()];
+        repLinks = IntStream.range(0, repLinks.length).toArray();  ///???????????
+
     }
 
     public final class Builder{
 
+
+
+
+
         public Builder(int stationCount){
+            Preconditions.checkArgument(stationCount>=0);
+
+            int [] idArray = new int[stationCount];
 
         }
 
@@ -19,9 +37,9 @@ public final class StationPartition implements StationConnectivity {
         public StationPartition build(){
 
         }
-        private int representative(int station){
+        private int representative(int stationId){
 
-           // return representative id of subset that station is in
+           return
         }
     }
 
@@ -37,10 +55,17 @@ public final class StationPartition implements StationConnectivity {
     //table 0-50, the largest id is 50????????
     @Override
     public boolean connected(Station s1, Station s2) {
+        int id1 = s1.id();
+        int id2 = s2.id();
 
+        if(/*id 1 hors tableau ou id2 hors tableau*/){
+            if(id1 ==id2){
+                return true;
+            }
+            return false;
+        }
 
-
-        return false;
+        return true; //because id in bounds of tableau means forcement they're connected????
     }
 
 
