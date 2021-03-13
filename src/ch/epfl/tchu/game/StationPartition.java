@@ -7,38 +7,42 @@ import java.util.stream.IntStream;
 public final class StationPartition implements StationConnectivity {
 
 //partitions array initialised with their own ids (0-50)
-    private int[] partitions = IntStream.range(0, 51).toArray();
+    private final int[] PARTITIONS;
 
 
 
 
-    private StationPartition(int[] repLinks) {
-        repLinks = IntStream.range(0, repLinks.length).toArray();  ///???????????
-
+    private StationPartition(int[] repLinks) { //array already with the representatives in the entries (idk if flattened or not)
+       PARTITIONS = new int[repLinks.length];
+        for(int i= 0; i< repLinks.length; i++){
+            PARTITIONS[i] = repLinks[i];
+        }
     }
 
     public final class Builder{
 
-
-
-
-
-        public Builder(int stationCount){
+        public Builder(int stationCount){ //argument is what was calculated in PlayerState ticketPoints. ex if max station id is 25, gives 26
             Preconditions.checkArgument(stationCount>=0);
 
-            int [] idArray = new int[stationCount];
-
+            int [] idArray = IntStream.range(0, stationCount).toArray(); //ex now you have a table from 0 to 25 because 26 excluded
         }
 
-        public Builder connect(Station s1, Station s2){
+        public Builder connect(Station s1, Station s2){ //je ne comprends pas comment choisir "aleatoirement" le representant, cest nous qui choisisons ou cest Random
+           int id1 = s1.id();
+           int id2 = s2.id();
+
+           //connect one representative to the other (which has to automatically change the representative of all the elements of the subset)
 
         }
 
         public StationPartition build(){
-
+            //flattens the representation
+            //uses array created in builder i assume
+            //method: go in each index and replace the entry: (x) with the entry at index (x)  and repeat until you reach index = entry
+            //returns new StationPartition(new array created by method) which is the flattened representation
         }
         private int representative(int stationId){
-
+        //manipulates the deep representation apparently
            return
         }
     }
@@ -60,12 +64,13 @@ public final class StationPartition implements StationConnectivity {
 
         if(/*id 1 hors tableau ou id2 hors tableau*/){
             if(id1 ==id2){
-                return true;
+                return true; //meaning the stations are the same
             }
             return false;
+        }else{
+            //if representative of id1 and id2 are the same return true
         }
 
-        return true; //because id in bounds of tableau means forcement they're connected????
     }
 
 
