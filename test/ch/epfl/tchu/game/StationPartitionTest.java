@@ -28,7 +28,8 @@ class StationPartitionTest {
     @Test
     void myTest(){
         builder.connect(BER, FRI);
-        builder.connect(LAU, FRI);
+        builder.connect(LAU, INT);
+        builder.connect(BER, INT);
 
 
         builder.build();

@@ -47,11 +47,11 @@ public final class StationPartition implements StationConnectivity {
 
            if(chosen == true){
                partitionsArray[rep1] = rep2;
-               System.out.println("the chosen representative is: " + rep2 + " :" +s2.name());
+               System.out.println("the chosen representative ID is: " + rep2 );
 
            }else{
                partitionsArray[rep2] = rep1;
-               System.out.println("the chosen representative is: " + rep1 + " :" +s1.name());
+               System.out.println("the chosen representative ID is: " + rep1);
            }
             System.out.println("deep rep after connecting " + s1.name() + " to " + s2.name());
             for(int i = 0; i< partitionsArray.length; i++){
@@ -67,7 +67,10 @@ public final class StationPartition implements StationConnectivity {
                 if(i == partitionsArray[i]){
                     continue;
                 }else{
+                    System.out.println("im being replaced. Before: " + i + "-" +partitionsArray[i]);
                     replaceRepresentative(i, partitionsArray[i]);
+                    partitionsArray[i] = stationIndex;
+                    System.out.println( "my rep after the change: " +partitionsArray[i]);
                 }
              }
             return new StationPartition(partitionsArray);
@@ -77,11 +80,14 @@ public final class StationPartition implements StationConnectivity {
             //returns new StationPartition(new array created by method) which is the flattened representation
 
         }
-        private int replaceRepresentative(int index, int entry) {
+        int stationIndex;
+        private void replaceRepresentative(int index, int entry) {
             if( partitionsArray[entry]== entry){
-               return partitionsArray[index] = entry;
+                System.out.println("i changed the entry at " + index + " to " + entry);
+               stationIndex = entry;
+            }else {
+                replaceRepresentative(entry, representative(entry));
             }
-           return replaceRepresentative(entry, representative(entry));
         }
 
         private int representative(int stationId){
