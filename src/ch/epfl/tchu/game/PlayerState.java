@@ -121,9 +121,10 @@ public final class PlayerState extends PublicPlayerState {
         StationPartition stationPartition = builder.build();
         for (Ticket ticket:TICKETS
              ) {
-            ticket.points(); //Partition
+          //  ticket.points(); //Partition
 
         }
+        return 0;
     }
     public int finalPoints(){
         return claimPoints() + ticketPoints();

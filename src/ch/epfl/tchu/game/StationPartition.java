@@ -14,8 +14,11 @@ public final class StationPartition implements StationConnectivity {
        PARTITIONS = new int[repLinks.length];
         for(int i= 0; i< repLinks.length; i++){
             PARTITIONS[i] = repLinks[i];
+            System.out.print(PARTITIONS[i] + ", ");
         }
+        System.out.println("\n*************************");
         STATION_COUNT = Builder.theStationCount;
+
     }
 
     public static final class Builder{
@@ -27,6 +30,13 @@ public final class StationPartition implements StationConnectivity {
             Preconditions.checkArgument(stationCount>=0);
             theStationCount = stationCount;
             partitionsArray = IntStream.range(0, stationCount).toArray(); //ex now you have a table from 0 to 25 because 26 excluded
+
+            //for testing only:
+            for(int i = 0; i<stationCount; i++){
+                System.out.print(partitionsArray[i] + ", ");
+            }
+            System.out.println("\n-------------------------------");
+
         }
 
         public Builder connect(Station s1, Station s2){
@@ -37,18 +47,23 @@ public final class StationPartition implements StationConnectivity {
 
            if(chosen == true){
                partitionsArray[rep1] = rep2;
+               System.out.println("the chosen representative is: " + rep2 + " :" +s2.name());
 
            }else{
                partitionsArray[rep2] = rep1;
+               System.out.println("the chosen representative is: " + rep1 + " :" +s1.name());
            }
+            System.out.println("deep rep after connecting " + s1.name() + " to " + s2.name());
+            for(int i = 0; i< partitionsArray.length; i++){
+                System.out.print(partitionsArray[i] + ", ");
+            }
+            System.out.println("\n&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
            return this;
         }
 
         public StationPartition build(){
-            boolean notFinished = true;
 
             for(int i = 0; i< partitionsArray.length; i++){
-                int rep = i;
                 if(i == partitionsArray[i]){
                     continue;
                 }else{
