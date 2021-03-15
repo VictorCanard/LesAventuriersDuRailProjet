@@ -185,7 +185,7 @@ public final class Info {
         return String.format(StringsFr.WINS, playerName, points,StringsFr.plural(points), loserPoints, StringsFr.plural(loserPoints));
     }
 
-    private static String cardNames(SortedBag<Card> bagOfCards){
+    private String cardNames(SortedBag<Card> bagOfCards){
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
 
 
@@ -203,7 +203,7 @@ public final class Info {
         }
         return stringOfAllCardNamesToReturn.toString();
     }
-    private static List<String> getListOfCards(Set<Card> cardSet, SortedBag<Card> originalBag){
+    private List<String> getListOfCards(Set<Card> cardSet, SortedBag<Card> originalBag){
         List<String> stringList = new ArrayList<>();
 
         for (Card currentCard:

@@ -10,7 +10,7 @@ public final class PlayerState extends PublicPlayerState {
     private final SortedBag<Card> cards;
     private final List<Route> routes;
 
-    PlayerState(SortedBag<Ticket> tickets, SortedBag<Card> cards, List<Route> routes){
+    public PlayerState(SortedBag<Ticket> tickets, SortedBag<Card> cards, List<Route> routes){
         super(tickets.size(), cards.size(), routes);
 
         this.tickets = SortedBag.of(tickets);
@@ -118,10 +118,20 @@ public final class PlayerState extends PublicPlayerState {
         }
         maxStationId ++;
         StationPartition.Builder builder = new StationPartition.Builder(maxStationId);
+
+        for (Route route: ROUTES
+             ) {
+            builder.connect(route.station1(), route.station2());
+        }
+
         StationPartition stationPartition = builder.build();
 
-        //Todo: What to do with partition at this point ?
-        return 0;
+        for (Ticket ticket: TICKETS
+             ) {
+            ticketPoints += ticket.points(stationPartition);
+        }
+
+        return ticketPoints;
     }
     public int finalPoints(){
         return claimPoints() + ticketPoints();

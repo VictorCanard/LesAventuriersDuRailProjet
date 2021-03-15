@@ -50,8 +50,8 @@ public interface TestMap {
         //Routes
 
         List<Route> routes = ChMap.routes();
-        Route placeholderRoute = TestMap.routes.get(66);
-        Route YVE_NEU = new Route(placeholderRoute.id(), placeholderRoute.station2(), placeholderRoute.station1(),placeholderRoute.length() ,placeholderRoute.level(),placeholderRoute.color());
+
+        Route YVE_NEU = TestMap.routes.get(66);
         Route BER_NEU = TestMap.routes.get(18);
         Route BER_LUC = TestMap.routes.get(16);
         Route AT1_STG_1 = TestMap.routes.get(0);

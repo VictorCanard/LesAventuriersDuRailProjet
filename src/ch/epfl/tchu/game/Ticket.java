@@ -93,7 +93,7 @@ public final class Ticket  implements Comparable<Ticket>{
      * or min to be lost.
      */
     public int points(StationConnectivity connectivity){
-        int pointsToBeReturned = -100;
+        int pointsToBeReturned = Integer.MIN_VALUE;
 
         for (Trip trip: trips) {
             pointsToBeReturned = Math.max(pointsToBeReturned, trip.points(connectivity));
