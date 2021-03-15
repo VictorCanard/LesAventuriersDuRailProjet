@@ -1,7 +1,5 @@
 package ch.epfl.tchu.game;
 
-import ch.epfl.tchu.gui.StringsFr;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,14 +11,14 @@ import java.util.List;
 
 public final class Trail {
 
-    private final List<Route> ROUTES;
-    private final Station STATION1;
-    private final Station STATION2;
+    private final List<Route> routes;
+    private final Station station1;
+    private final Station station2;
 
     private Trail(List<Route> routes, Station station1, Station station2){
-        this.STATION1 = station1;
-        this.STATION2 = station2;
-        this.ROUTES = List.copyOf(routes);
+        this.station1 = station1;
+        this.station2 = station2;
+        this.routes = List.copyOf(routes);
     }
 
     /**
@@ -47,7 +45,7 @@ public final class Trail {
                 longestTrail = returnLongestTrailBetweenCurrentLongestAndNew(currentTrail, longestTrail);
 
                 for (Route route: routesToProlong) {
-                    List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.ROUTES));
+                    List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.routes));
                     newListOfRoutes.add(route);
 
                     Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), route.stationOpposite(currentTrail.station2()));
@@ -88,7 +86,7 @@ public final class Trail {
         Station trailEndStationToWhichRoutesCanBeAdded = trail.station2();
 
         for (Route routeThatCouldBeAdded: routes) {
-            if(!(trail.ROUTES.contains(routeThatCouldBeAdded))){
+            if(!(trail.routes.contains(routeThatCouldBeAdded))){
 
                 if(checkIfNewRouteCanBeAdded(routeThatCouldBeAdded, trailEndStationToWhichRoutesCanBeAdded)) {
                     routesToReturn.add(routeThatCouldBeAdded);
@@ -109,7 +107,7 @@ public final class Trail {
     public int length(){
         int length = 0;
 
-        for (Route route:ROUTES) {
+        for (Route route: routes) {
             length += route.length();
         }
         return length;
@@ -120,7 +118,7 @@ public final class Trail {
      * @return the first station of the trail
      */
     public Station station1(){
-        return (length() == 0) ? null : STATION1;
+        return (length() == 0) ? null : station1;
     }
 
     /**
@@ -128,7 +126,7 @@ public final class Trail {
      * @return the second station of the trail
      */
     public Station station2(){
-        return (length() == 0) ? null : STATION2;
+        return (length() == 0) ? null : station2;
     }
 
     /**
@@ -137,19 +135,19 @@ public final class Trail {
      */
     @Override
     public String toString() {
-        if(ROUTES.isEmpty()){
+        if(routes.isEmpty()){
             return "";
         }
         else{
             StringBuilder text = new StringBuilder();
 
-            Station currentStation = ROUTES.get(0).station1();
+            Station currentStation = routes.get(0).station1();
 
             text.append(currentStation.name())
                 .append(" - ");
 
-            for (int i = 0; i < ROUTES.size()-1; i++) {
-                currentStation = ROUTES.get(i).stationOpposite(currentStation);
+            for (int i = 0; i < routes.size()-1; i++) {
+                currentStation = routes.get(i).stationOpposite(currentStation);
                 text.append(currentStation.name())
                     .append(" - ");
             }

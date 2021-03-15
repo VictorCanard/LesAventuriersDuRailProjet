@@ -9,8 +9,8 @@ import ch.epfl.tchu.Preconditions;
  */
 
 public final class Station {
-    private int id;
-    private String name;
+    private final int id;
+    private final String name;
 
     /**
      * A train station, defined by its id and name

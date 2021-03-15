@@ -9,9 +9,9 @@ import java.util.*;
  */
 public final class CardState extends PublicCardState{
 
-    private final Deck<Card> DRAW_PILE;
-    private final SortedBag<Card> DISCARD_PILE;
-    private final Card TOP_CARD;
+    private final Deck<Card> drawPile;
+    private final SortedBag<Card> discardPile;
+    private final Card topCard;
 
     /**
      * CardState constructor (private so the class has control on the arguments that are passed)
@@ -24,10 +24,10 @@ public final class CardState extends PublicCardState{
         super(faceUpCards, drawPile.size(), discardPile.size());
         Preconditions.checkArgument(discardPile.size()>=0);
 
-        DRAW_PILE = drawPile;
-        TOP_CARD = (DRAW_PILE.isEmpty()) ? null : DRAW_PILE.topCard();
+        this.drawPile = drawPile;
+        topCard = (this.drawPile.isEmpty()) ? null : this.drawPile.topCard();
 
-        DISCARD_PILE = discardPile;
+        this.discardPile = discardPile;
     }
 
 
@@ -62,13 +62,13 @@ public final class CardState extends PublicCardState{
      * @return a new set of cards with different faceUp and draw piles
      */
     public CardState withDrawnFaceUpCard(int slot){
-        Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
+        Preconditions.checkArgument(!(drawPile.isEmpty()));
         Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);
 
         List<Card> newFaceUpCards = new ArrayList<>(this.faceUpCards());
-        newFaceUpCards.set(slot, TOP_CARD);
+        newFaceUpCards.set(slot, topCard);
 
-        return new CardState(newFaceUpCards, DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        return new CardState(newFaceUpCards, drawPile.withoutTopCard(), discardPile);
     }
 
     /**
@@ -77,8 +77,8 @@ public final class CardState extends PublicCardState{
      * @return the card at the top of the deck
      */
     public Card topDeckCard(){
-        Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
-        return DRAW_PILE.topCard();
+        Preconditions.checkArgument(!(drawPile.isEmpty()));
+        return drawPile.topCard();
     }
 
     /**
@@ -87,8 +87,8 @@ public final class CardState extends PublicCardState{
      * @return a deck without top card
      */
     public CardState withoutTopDeckCard(){
-        Preconditions.checkArgument(!(DRAW_PILE.isEmpty()));
-        return new CardState(faceUpCards(),  DRAW_PILE.withoutTopCard(), DISCARD_PILE);
+        Preconditions.checkArgument(!(drawPile.isEmpty()));
+        return new CardState(faceUpCards(),  drawPile.withoutTopCard(), discardPile);
     }
 
     /**
@@ -99,9 +99,9 @@ public final class CardState extends PublicCardState{
      * @return a new CardState with the new draw pile
      */
     public CardState withDeckRecreatedFromDiscards(Random rng){
-        Preconditions.checkArgument(DRAW_PILE.isEmpty());
+        Preconditions.checkArgument(drawPile.isEmpty());
 
-        Deck<Card> newDrawPile = Deck.of(DISCARD_PILE, rng);
+        Deck<Card> newDrawPile = Deck.of(discardPile, rng);
 
         return new CardState(faceUpCards(), newDrawPile, SortedBag.of());
     }
@@ -112,6 +112,6 @@ public final class CardState extends PublicCardState{
      * @return a new CardState with the updated discard pile
      */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
-        return new CardState(faceUpCards(), DRAW_PILE, additionalDiscards);
+        return new CardState(faceUpCards(), drawPile, additionalDiscards);
     }
 }

@@ -4,9 +4,7 @@ public final class Preconditions {
     /**
      * Private constructor to make it impossible to make an instance of this class
      */
-    private Preconditions(){
-
-    }
+    private Preconditions(){}
 
     /**
      * Throws an IllegalArgumentException if the argument isn't true

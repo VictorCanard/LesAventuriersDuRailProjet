@@ -32,10 +32,13 @@ class StationPartitionTest {
         builder.connect(BER, INT);
 
 
-        builder.build();
+        StationPartition partition = builder.build();
+        assertTrue(partition.connected(BER, LAU));
+        assertTrue(!(partition.connected(SOL, BER)));
     }
 
     @Test
     void connected() {
+
     }
 }

@@ -14,12 +14,12 @@ import java.util.Objects;
  */
 
 public final class Route {
-    private final String ID;
-    private final Station STATION1;
-    private final Station STATION2;
-    private final int LENGTH;
-    private final Level LEVEL;
-    private final Color COLOR;
+    private final String id;
+    private final Station station1;
+    private final Station station2;
+    private final int length;
+    private final Level level;
+    private final Color color;
 
     /** Constructs a route based on specific given parameters as seen below
      * @param id : Route's unique identifier
@@ -35,12 +35,12 @@ public final class Route {
 
         Preconditions.checkArgument(!(station1.equals(station2)|| length<Constants.MIN_ROUTE_LENGTH || length > Constants.MAX_ROUTE_LENGTH));
 
-        this.ID = Objects.requireNonNull(id);
-        this.STATION1 = Objects.requireNonNull(station1);
-        this.STATION2 = Objects.requireNonNull(station2);
-        this.LEVEL = Objects.requireNonNull(level);
-        this.COLOR = color;
-        this.LENGTH = length;
+        this.id = Objects.requireNonNull(id);
+        this.station1 = Objects.requireNonNull(station1);
+        this.station2 = Objects.requireNonNull(station2);
+        this.level = Objects.requireNonNull(level);
+        this.color = color;
+        this.length = length;
     }
 
     /**
@@ -57,7 +57,7 @@ public final class Route {
      * @return id
      */
     public String id() {
-        return ID;
+        return id;
     }
 
     /**
@@ -65,7 +65,7 @@ public final class Route {
      * @return Station 1
      */
     public Station station1() {
-        return STATION1;
+        return station1;
     }
 
     /**
@@ -73,14 +73,14 @@ public final class Route {
      * @return Station 2
      */
     public Station station2() {
-        return STATION2;
+        return station2;
     }
 
     /** Getter for the route's length
      * @return length of route from 1 to 6
      */
     public int length() {
-        return LENGTH;
+        return length;
     }
 
     /**
@@ -88,7 +88,7 @@ public final class Route {
      * @return overground or underground
      */
     public Level level() {
-        return LEVEL;
+        return level;
     }
 
     /**
@@ -96,7 +96,7 @@ public final class Route {
      * @return a specific color or null for neutral
      */
     public Color color() {
-        return COLOR;
+        return color;
     }
 
     /**
@@ -104,7 +104,7 @@ public final class Route {
      * @return List with both stations
      */
     public List<Station> stations(){
-        return List.of(STATION1, STATION2);
+        return List.of(station1, station2);
     }
 
     /**- Gets the opposite station to the one given as an argument
@@ -116,11 +116,11 @@ public final class Route {
 
         Preconditions.checkArgument(stations().contains(station));
 
-        if(station.equals(STATION1)){
-            return STATION2;
+        if(station.equals(station1)){
+            return station2;
         }
         else{
-            return STATION1;
+            return station1;
         }
     }
 
@@ -139,26 +139,26 @@ public final class Route {
     public List<SortedBag<Card>> possibleClaimCards(){
         List<SortedBag<Card>> possibleCards = new ArrayList<>();
 
-        if(LEVEL == Level.UNDERGROUND) {
-            if (COLOR != null) {  // Underground route with a specific non-neutral color
-                for (int i = 0; i <= LENGTH; i++) {
-                    possibleCards.add(SortedBag.of(LENGTH - i, Card.of(COLOR), i, Card.LOCOMOTIVE));
+        if(level == Level.UNDERGROUND) {
+            if (color != null) {  // Underground route with a specific non-neutral color
+                for (int i = 0; i <= length; i++) {
+                    possibleCards.add(SortedBag.of(length - i, Card.of(color), i, Card.LOCOMOTIVE));
                 }
             } else {  //Underground route with neutral color
 
-                for (int i = 0; i < LENGTH; i++) {
+                for (int i = 0; i < length; i++) {
                     for (Card c : Card.CARS) {
-                        possibleCards.add(SortedBag.of(LENGTH - i, c, i, Card.LOCOMOTIVE));
+                        possibleCards.add(SortedBag.of(length - i, c, i, Card.LOCOMOTIVE));
                     }
                 }
-                possibleCards.add(SortedBag.of(LENGTH, Card.LOCOMOTIVE));
+                possibleCards.add(SortedBag.of(length, Card.LOCOMOTIVE));
             }
-        }else if(COLOR == null){ // Overground route with neutral color
+        }else if(color == null){ // Overground route with neutral color
             for(Card c : Card.CARS) {
-                possibleCards.add(SortedBag.of(LENGTH, c));
+                possibleCards.add(SortedBag.of(length, c));
             }
         }else {  //Overground route with a specific non-neutral color
-            possibleCards.add(SortedBag.of(LENGTH, Card.of(COLOR)));
+            possibleCards.add(SortedBag.of(length, Card.of(color)));
         }
         return possibleCards;
     }
@@ -174,9 +174,9 @@ public final class Route {
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
 
         int aCCC;
-        Preconditions.checkArgument(LEVEL == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
+        Preconditions.checkArgument(level == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
 
-        if(claimCards.equals(SortedBag.of(LENGTH, Card.LOCOMOTIVE))){
+        if(claimCards.equals(SortedBag.of(length, Card.LOCOMOTIVE))){
             aCCC = drawnCards.countOf(Card.LOCOMOTIVE);
         }else {
             aCCC = drawnCards.countOf(claimCards.get(0)) + drawnCards.countOf(Card.LOCOMOTIVE);
@@ -189,11 +189,11 @@ public final class Route {
      * (depends on the route's length)
      */
     public int claimPoints(){
-        return Constants.ROUTE_CLAIM_POINTS.get(LENGTH);
+        return Constants.ROUTE_CLAIM_POINTS.get(length);
     }
 
     @Override
     public String toString() {
-        return String.format("%s%s%s",STATION1, StringsFr.EN_DASH_SEPARATOR, STATION2);
+        return String.format("%s%s%s", station1, StringsFr.EN_DASH_SEPARATOR, station2);
     }
 }

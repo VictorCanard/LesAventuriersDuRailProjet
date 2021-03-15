@@ -7,9 +7,9 @@ import java.util.Objects;
 
 public class PublicCardState {
 
-    private final List<Card> FACEUPCARDS;
-    private final int DECKSIZE;
-    private final int DISCARDSSIZE;
+    private final List<Card> faceUpCards;
+    private final int deckSize;
+    private final int discardsSize;
 
     /**
      * PublicCardState constructor
@@ -21,9 +21,9 @@ public class PublicCardState {
      */
     public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize){
         Preconditions.checkArgument(faceUpCards.size() == Constants.FACE_UP_CARDS_COUNT && deckSize >=0 && discardsSize >=0);
-        this.FACEUPCARDS = List.copyOf(faceUpCards);
-        this.DECKSIZE = deckSize;
-        this.DISCARDSSIZE = discardsSize;
+        this.faceUpCards = List.copyOf(faceUpCards);
+        this.deckSize = deckSize;
+        this.discardsSize = discardsSize;
     }
 
     /**
@@ -31,7 +31,7 @@ public class PublicCardState {
      * @return sum of the sizes of the deck pile, discard pile and the amount of faceup cards
      */
     public int totalSize(){
-        return DECKSIZE + DISCARDSSIZE + FACEUPCARDS.size();
+        return deckSize + discardsSize + faceUpCards.size();
     }
 
     /**
@@ -39,7 +39,7 @@ public class PublicCardState {
      * @return a list of cards
      */
     public List<Card> faceUpCards(){
-        return FACEUPCARDS;
+        return faceUpCards;
     }
 
     /**
@@ -50,7 +50,7 @@ public class PublicCardState {
      */
     public Card faceUpCard(int slot){
         Objects.checkIndex(slot, 5);
-        return FACEUPCARDS.get(slot);
+        return faceUpCards.get(slot);
     }
 
     /**
@@ -58,7 +58,7 @@ public class PublicCardState {
      * @return an integer
      */
     public int deckSize(){
-        return DECKSIZE;
+        return deckSize;
     }
 
     /**
@@ -66,7 +66,7 @@ public class PublicCardState {
      * @return true if it is, false if it isn't
      */
     public boolean isDeckEmpty(){
-        return DECKSIZE==0;
+        return deckSize ==0;
     }
 
     /**
@@ -74,6 +74,6 @@ public class PublicCardState {
      * @return an integer
      */
     public int discardsSize(){
-        return DISCARDSSIZE;
+        return discardsSize;
     }
 }

@@ -12,9 +12,9 @@ import java.util.Objects;
  * @author Victor Jean Canard-Duchene (326913)
  */
 public final class Trip {
-    private final Station FROM;
-    private final Station TO;
-    private final int POINTS;
+    private final Station from;
+    private final Station to;
+    private final int points;
 
     /**
      * Constructs a trip with the given stations and number of points attributed to it
@@ -26,12 +26,12 @@ public final class Trip {
      * @throws NullPointerException if the stations are null
      */
     public Trip(Station from, Station to, int points) {
-        this.FROM = Objects.requireNonNull(from);
-        this.TO = Objects.requireNonNull(to);
+        this.from = Objects.requireNonNull(from);
+        this.to = Objects.requireNonNull(to);
 
         Preconditions.checkArgument(points>0);
 
-        this.POINTS = points;
+        this.points = points;
     }
 
     /**
@@ -62,7 +62,7 @@ public final class Trip {
      * @return : departure station
      */
     public Station from(){
-        return FROM;
+        return from;
     }
 
     /**
@@ -70,7 +70,7 @@ public final class Trip {
      * @return : arrival station
      */
     public Station to(){
-        return TO;
+        return to;
     }
 
     /**
@@ -78,7 +78,7 @@ public final class Trip {
      * @return : points attributed to the trip
      */
     public int points(){
-        return POINTS;
+        return points;
     }
 
     /**
@@ -87,9 +87,9 @@ public final class Trip {
      * @return : positive points for a connection, negative points otherwise
      */
     public int points(StationConnectivity connectivity){
-        if(connectivity.connected(FROM, TO)){
-            return POINTS;
+        if(connectivity.connected(from, to)){
+            return points;
         }
-        return -POINTS;
+        return -points;
     }
 }

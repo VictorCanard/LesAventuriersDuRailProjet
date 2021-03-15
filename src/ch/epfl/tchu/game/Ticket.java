@@ -12,8 +12,8 @@ import java.util.*;
 
 public final class Ticket  implements Comparable<Ticket>{
 
-    private final String TEXT;
-    private final String DELIMITER = ", ";
+    private final String text;
+    private final String delimiter = ", ";
     private String departure;
 
     private List<Trip> trips;
@@ -40,9 +40,9 @@ public final class Ticket  implements Comparable<Ticket>{
         departure = this.trips.get(0).from().name();
 
         if(this.trips.size()>1){ //The first format where there's only one destination
-            TEXT = String.format("%s - {%s}", departure,Ticket.computeText(DELIMITER, this.trips));
+            text = String.format("%s - {%s}", departure,Ticket.computeText(delimiter, this.trips));
         }else {
-            TEXT = String.format("%s - %s", departure,Ticket.computeText(DELIMITER, this.trips));
+            text = String.format("%s - %s", departure,Ticket.computeText(delimiter, this.trips));
         }
 
     }
@@ -63,7 +63,7 @@ public final class Ticket  implements Comparable<Ticket>{
      * @return : text of the ticket
      */
     public String text(){
-        return TEXT;
+        return text;
     }
 
     /**

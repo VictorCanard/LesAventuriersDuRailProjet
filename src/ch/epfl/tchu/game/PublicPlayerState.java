@@ -3,31 +3,31 @@ package ch.epfl.tchu.game;
 import java.util.List;
 
 public class PublicPlayerState {
-    private final int TICKET_COUNT;
-    private final int CARD_COUNT;
-    private final List<Route> ROUTES;
-    private final int CAR_COUNT;
-    private final int CLAIM_POINTS;
+    private final int ticketCount;
+    private final int cardCount;
+    private final List<Route> routes;
+    private final int carCount;
+    private final int claimPoints;
 
     public PublicPlayerState(int ticketCount, int cardCount, List<Route> routes){
-        this.TICKET_COUNT = ticketCount;
-        this.CARD_COUNT = cardCount;
-        this.ROUTES = List.copyOf(routes);
-        this.CAR_COUNT = calculateCarCount(ROUTES);
-        this.CLAIM_POINTS  = calculateClaimPoints(ROUTES);
+        this.ticketCount = ticketCount;
+        this.cardCount = cardCount;
+        this.routes = List.copyOf(routes);
+        this.carCount = calculateCarCount(this.routes);
+        this.claimPoints = calculateClaimPoints(this.routes);
     }
 
     public int ticketCount(){
-        return TICKET_COUNT;
+        return ticketCount;
     }
     public int cardCount(){
-        return CARD_COUNT;
+        return cardCount;
     }
     public List<Route> routes(){
-        return ROUTES;
+        return routes;
     }
-    public int carCount(){return CAR_COUNT;}
-    public int claimPoints(){return CLAIM_POINTS;}
+    public int carCount(){return carCount;}
+    public int claimPoints(){return claimPoints;}
 
     private int calculateCarCount(List<Route> routes){
         int carCount = Constants.INITIAL_CAR_COUNT;
