@@ -119,11 +119,8 @@ public final class PlayerState extends PublicPlayerState {
         maxStationId ++;
         StationPartition.Builder builder = new StationPartition.Builder(maxStationId);
         StationPartition stationPartition = builder.build();
-        for (Ticket ticket:TICKETS
-             ) {
-          //  ticket.points(); //Partition
 
-        }
+        //Todo: What to do with partition at this point ?
         return 0;
     }
     public int finalPoints(){
