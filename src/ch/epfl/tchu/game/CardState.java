@@ -102,7 +102,6 @@ public final class CardState extends PublicCardState{
         Preconditions.checkArgument(drawPile.isEmpty());
 
         Deck<Card> newDrawPile = Deck.of(discardPile, rng);
-
         return new CardState(faceUpCards(), newDrawPile, SortedBag.of());
     }
 
@@ -112,6 +111,7 @@ public final class CardState extends PublicCardState{
      * @return a new CardState with the updated discard pile
      */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
-        return new CardState(faceUpCards(), drawPile, additionalDiscards);
+        SortedBag<Card> newDiscards = discardPile.union(additionalDiscards);
+        return new CardState(faceUpCards(), drawPile, newDiscards);
     }
 }
