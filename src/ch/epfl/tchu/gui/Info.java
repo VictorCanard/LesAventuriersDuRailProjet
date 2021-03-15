@@ -189,7 +189,7 @@ public final class Info {
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
 
 
-         List<String> cardList = getListOfCards(bagOfCards.toSet(), bagOfCards);
+        List<String> cardList = getListOfCards(bagOfCards.toSet(), bagOfCards);
 
         for (int i = 0; i < cardList.size(); i++) {
             String commaSeparator = (i < cardList.size() -2) ? ", " : "";
@@ -207,7 +207,7 @@ public final class Info {
         List<String> stringList = new ArrayList<>();
 
         for (Card currentCard:
-             cardSet) {
+                cardSet) {
             int multiplicity = originalBag.countOf(currentCard);
             String stringToAdd = new StringBuilder()
                     .append(multiplicity)
