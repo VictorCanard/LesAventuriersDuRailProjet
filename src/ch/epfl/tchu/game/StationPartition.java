@@ -2,6 +2,7 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 
+import java.util.Collections;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -12,8 +13,10 @@ public final class StationPartition implements StationConnectivity {
 
     private StationPartition(int[] repLinks) {
        PARTITIONS = new int[repLinks.length];
+       System.arraycopy(repLinks, 0, PARTITIONS, 0, repLinks.length);
+
         for(int i= 0; i< repLinks.length; i++){
-            PARTITIONS[i] = repLinks[i];
+
             System.out.print(PARTITIONS[i] + ", ");
         }
         System.out.println("\n*************************");
@@ -25,6 +28,7 @@ public final class StationPartition implements StationConnectivity {
 
         private static int theStationCount;
         private int[] partitionsArray;
+        private int stationIndex;
 
         public Builder(int stationCount){ //argument is what was calculated in PlayerState ticketPoints. ex if max station id is 25, gives 26
             Preconditions.checkArgument(stationCount>=0);
@@ -80,7 +84,7 @@ public final class StationPartition implements StationConnectivity {
             //returns new StationPartition(new array created by method) which is the flattened representation
 
         }
-        int stationIndex;
+
         private void replaceRepresentative(int index, int entry) {
             if( partitionsArray[entry]== entry){
                 System.out.println("i changed the entry at " + index + " to " + entry);
