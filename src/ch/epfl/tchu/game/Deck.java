@@ -13,10 +13,10 @@ import java.util.Random;
  * @param <C> : the type of card. In this project: card/locomotive or tickets
  */
 public final class Deck<C extends Comparable<C>> {
-    private final List<C> DECK_CARDS;
+    private final List<C> deckCards;
 
     private Deck(List<C> shuffledCards){
-        DECK_CARDS = List.copyOf(shuffledCards);
+        deckCards = List.copyOf(shuffledCards);
     }
 
     /**
@@ -38,7 +38,7 @@ public final class Deck<C extends Comparable<C>> {
      * @return the size of the deck
      */
     public int size(){
-        return DECK_CARDS.size();
+        return deckCards.size();
     }
 
     /**
@@ -46,7 +46,7 @@ public final class Deck<C extends Comparable<C>> {
      * @return true if the deck has no cards, false otherwise
      */
     public boolean isEmpty(){
-        return DECK_CARDS.isEmpty();
+        return deckCards.isEmpty();
     }
 
     /**
@@ -56,7 +56,7 @@ public final class Deck<C extends Comparable<C>> {
      */
     public C topCard(){
         Preconditions.checkArgument(!isEmpty());
-        return DECK_CARDS.get(0);
+        return deckCards.get(0);
     }
 
     /**
@@ -67,7 +67,7 @@ public final class Deck<C extends Comparable<C>> {
     public Deck<C> withoutTopCard(){
         Preconditions.checkArgument(!isEmpty());
 
-        return new Deck<>(DECK_CARDS.subList(1, size()));
+        return new Deck<>(deckCards.subList(1, size()));
     }
 
     /**
@@ -79,7 +79,7 @@ public final class Deck<C extends Comparable<C>> {
     public SortedBag<C> topCards(int count){
         Preconditions.checkArgument(0<=count && count <=size());
 
-        SortedBag<C> topCards = SortedBag.of(DECK_CARDS.subList(0, count));
+        SortedBag<C> topCards = SortedBag.of(deckCards.subList(0, count));
         return topCards;
     }
 
@@ -92,6 +92,6 @@ public final class Deck<C extends Comparable<C>> {
     public Deck<C> withoutTopCards(int count){
         Preconditions.checkArgument(0<=count && count <=size());
 
-        return new Deck<>(DECK_CARDS.subList(count,size()));
+        return new Deck<>(deckCards.subList(count,size()));
     }
 }

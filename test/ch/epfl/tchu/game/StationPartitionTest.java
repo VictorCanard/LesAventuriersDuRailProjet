@@ -24,18 +24,21 @@ class StationPartitionTest {
     private static final Station YVE = new Station(12, "Yverdon");
     private static final Station ZOU = new Station(13, "Zoug");
     private static final Station ZUR = new Station(14, "Zürich");
+    private static final Station FR4 = new Station(50, "France");
+
 
     @Test
-    void myTest(){
+    void connected() {
         builder.connect(BER, FRI);
         builder.connect(LAU, INT);
         builder.connect(BER, INT);
 
 
-        builder.build();
-    }
+        StationPartition partition = builder.build();
+        assertTrue(partition.connected(BER, LAU));
+        assertTrue(!(partition.connected(SOL, BER)));
+        assertTrue(partition.connected(FR4, FR4));
+        assertTrue(!(partition.connected(FR4, LAU)));
 
-    @Test
-    void connected() {
     }
 }

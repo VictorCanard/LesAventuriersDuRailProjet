@@ -2,6 +2,11 @@ package ch.epfl.tchu.game;
 
 import java.util.List;
 
+/**
+ * The players partaking in the game
+ * @author Anne-Marie Rusu (296098)
+ */
+
 public enum PlayerId {
     PLAYER_1, PLAYER_2;
 
@@ -20,7 +25,6 @@ public enum PlayerId {
      * @return the next player
      */
     public PlayerId next(){
-
         if(this.equals(PLAYER_1)){
             return PLAYER_2;
         }else{

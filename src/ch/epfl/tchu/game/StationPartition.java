@@ -1,102 +1,41 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
-
-import java.util.Collections;
-import java.util.Random;
 import java.util.stream.IntStream;
 
 public final class StationPartition implements StationConnectivity {
-
-    private final int[] PARTITIONS;
-    private final int STATION_COUNT;
+    private final int[] partitions;
 
     private StationPartition(int[] repLinks) {
-       PARTITIONS = new int[repLinks.length];
-       System.arraycopy(repLinks, 0, PARTITIONS, 0, repLinks.length);
-
-        for(int i= 0; i< repLinks.length; i++){
-
-            System.out.print(PARTITIONS[i] + ", ");
-        }
-        System.out.println("\n*************************");
-        STATION_COUNT = Builder.theStationCount;
-
+        partitions = repLinks.clone();
     }
 
     public static final class Builder{
-
-        private static int theStationCount;
         private int[] partitionsArray;
-        private int stationIndex;
 
-        public Builder(int stationCount){ //argument is what was calculated in PlayerState ticketPoints. ex if max station id is 25, gives 26
+        public Builder(int stationCount){
             Preconditions.checkArgument(stationCount>=0);
-            theStationCount = stationCount;
-            partitionsArray = IntStream.range(0, stationCount).toArray(); //ex now you have a table from 0 to 25 because 26 excluded
-
-            //for testing only:
-            for(int i = 0; i<stationCount; i++){
-                System.out.print(partitionsArray[i] + ", ");
-            }
-            System.out.println("\n-------------------------------");
-
+            partitionsArray = IntStream.range(0, stationCount).toArray();
         }
 
         public Builder connect(Station s1, Station s2){
-           int rep1 = representative(s1.id());
-           int rep2 = representative(s2.id());
-           Random rand = new Random();
-           boolean chosen =  rand.nextBoolean();
-
-           if(chosen == true){
-               partitionsArray[rep1] = rep2;
-               System.out.println("the chosen representative ID is: " + rep2 );
-
-           }else{
-               partitionsArray[rep2] = rep1;
-               System.out.println("the chosen representative ID is: " + rep1);
-           }
-            System.out.println("deep rep after connecting " + s1.name() + " to " + s2.name());
-            for(int i = 0; i< partitionsArray.length; i++){
-                System.out.print(partitionsArray[i] + ", ");
-            }
-            System.out.println("\n&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-           return this;
+            partitionsArray[representative(s2.id())] = representative(s1.id());
+            return this;
         }
 
         public StationPartition build(){
-
             for(int i = 0; i< partitionsArray.length; i++){
-                if(i == partitionsArray[i]){
-                    continue;
-                }else{
-                    System.out.println("im being replaced. Before: " + i + "-" +partitionsArray[i]);
-                    replaceRepresentative(i, partitionsArray[i]);
-                    partitionsArray[i] = stationIndex;
-                    System.out.println( "my rep after the change: " +partitionsArray[i]);
-                }
+                partitionsArray[i] = representative(i);
              }
             return new StationPartition(partitionsArray);
-            //flattens the representation
-            //uses array created in builder i assume
-            //method: go in each index and replace the entry: (x) with the entry at index (x)  and repeat until you reach index = entry
-            //returns new StationPartition(new array created by method) which is the flattened representation
-
-        }
-
-        private void replaceRepresentative(int index, int entry) {
-            if( partitionsArray[entry]== entry){
-                System.out.println("i changed the entry at " + index + " to " + entry);
-               stationIndex = entry;
-            }else {
-                replaceRepresentative(entry, representative(entry));
-            }
         }
 
         private int representative(int stationId){
             Preconditions.checkArgument(stationId>=0);
-            return partitionsArray[stationId];
+            if(partitionsArray[stationId] == stationId){
+                return partitionsArray[stationId];
+            }
+            return representative(partitionsArray[stationId]);
         }
     }
 
@@ -106,23 +45,15 @@ public final class StationPartition implements StationConnectivity {
      * @param s2 : second train station
      * @return : true if they are connected by a (single) players wagons, false otherwise
      */
-    //Prenez garde au fait que la méthode connected doit également accepter des gares dont l'identité est hors des
-    // bornes du tableau passé à son constructeur. Lorsqu'au moins une des gares qu'on lui passe est ainsi hors bornes,
-    // elle ne retourne vrai que si les deux gares ont la même identité.
-
     @Override
     public boolean connected(Station s1, Station s2) {
         int id1 = s1.id();
         int id2 = s2.id();
-
-        if(id1>STATION_COUNT || id2>STATION_COUNT) {
-            if (id1 == id2) {
-                return true; //meaning the stations are the same
-            }
+        if(id1>= partitions.length || id2>= partitions.length) {
+            if (id1 == id2) { return true;}
+            return false;
         }
-        if(PARTITIONS[id1] == PARTITIONS[id2]){
-                return true;
-        }
+        if(partitions[id1] == partitions[id2]){ return true;}
         return false;
     }
 }

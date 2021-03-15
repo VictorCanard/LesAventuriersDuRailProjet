@@ -1,6 +1,5 @@
 package ch.epfl.tchu.gui;
 
-import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Route;
@@ -14,7 +13,7 @@ import java.util.*;
  */
 public final class Info {
     private final String playerName;
-    private final static List<String> listOfAllCards =
+    private final static List<String> LIST_OF_ALL_CARDS =
             List.of(StringsFr.BLACK_CARD,
                     StringsFr.VIOLET_CARD,
                     StringsFr.BLUE_CARD,
@@ -40,7 +39,7 @@ public final class Info {
      * @return message including the french name of the given card, in plural if there is more than one
      */
     public static String cardName(Card card, int count){
-        String cardFrenchName = listOfAllCards.get(card.ordinal());
+        String cardFrenchName = LIST_OF_ALL_CARDS.get(card.ordinal());
 
         return String.format("%s%s",cardFrenchName, StringsFr.plural(count));
     }
@@ -190,7 +189,7 @@ public final class Info {
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
 
 
-         List<String> cardList = getListOfCards(bagOfCards.toSet(), bagOfCards);
+        List<String> cardList = getListOfCards(bagOfCards.toSet(), bagOfCards);
 
         for (int i = 0; i < cardList.size(); i++) {
             String commaSeparator = (i < cardList.size() -2) ? ", " : "";
@@ -208,7 +207,7 @@ public final class Info {
         List<String> stringList = new ArrayList<>();
 
         for (Card currentCard:
-             cardSet) {
+                cardSet) {
             int multiplicity = originalBag.countOf(currentCard);
             String stringToAdd = new StringBuilder()
                     .append(multiplicity)
