@@ -8,34 +8,19 @@ public final class StationPartition implements StationConnectivity {
 
     private StationPartition(int[] repLinks) {
         partitions = repLinks.clone();
-    /*test*/for (int i = 0; i< partitions.length; i++){
-            System.out.print(partitions[i] + ", ");
-        }
-    /*end*/  System.out.println("\n*************************");
     }
 
     public static final class Builder{
         private int[] partitionsArray;
 
-        public Builder(int stationCount){ //argument is what was calculated in PlayerState ticketPoints. ex if max station id is 25, gives 26
+        public Builder(int stationCount){
             Preconditions.checkArgument(stationCount>=0);
-            partitionsArray = IntStream.range(0, stationCount).toArray(); //ex now you have a table from 0 to 25 because 26 excluded
-
-    /*test*/        for(int i = 0; i<stationCount; i++){
-                System.out.print(partitionsArray[i] + ", ");
-            }
-    /*end*/     System.out.println("\n-------------------------------");
+            partitionsArray = IntStream.range(0, stationCount).toArray();
         }
 
         public Builder connect(Station s1, Station s2){
             partitionsArray[representative(s2.id())] = representative(s1.id());
-
-   /*test*/  System.out.println("deep rep after connecting " + s1.name() + " to " + s2.name());
-            for(int i = 0; i< partitionsArray.length; i++){
-                System.out.print(partitionsArray[i] + ", ");
-            }
-    /*end*/   System.out.println("\n&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-           return this;
+            return this;
         }
 
         public StationPartition build(){
