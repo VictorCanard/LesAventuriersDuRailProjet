@@ -5,8 +5,7 @@ import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Trail;
 
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * Text describing the progression of the game
@@ -188,34 +187,36 @@ public final class Info {
 
     private static String cardNames(SortedBag<Card> bagOfCards){
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
-        ListIterator<Card> iterator = bagOfCards.toList().listIterator();
 
-        while(iterator.hasNext() && iterator.nextIndex() < bagOfCards.size()-2) {
-            Card nextCard = iterator.next();
-            int n = bagOfCards.countOf(nextCard);
+
+         List<String> cardList = getListOfCards(bagOfCards.toSet(), bagOfCards);
+
+        for (int i = 0; i < cardList.size(); i++) {
+            String commaSeparator = (i < cardList.size() -2) ? ", " : "";
+            String andSeparator = (i == cardList.size() -2 ) ? StringsFr.AND_SEPARATOR : "";
 
             stringOfAllCardNamesToReturn
-                    .append(n)
-                    .append(" ")
-                    .append(cardName(nextCard, n))
-                    .append(", ");
+                    .append(cardList.get(i))
+                    .append(commaSeparator)
+                    .append(andSeparator);
+
         }
-
-        Card secondToLastCard = iterator.next();
-        int countOfSecondToLastCard = bagOfCards.countOf(secondToLastCard);
-        stringOfAllCardNamesToReturn
-                .append(countOfSecondToLastCard)
-                .append(" ")
-                .append(cardName(secondToLastCard, countOfSecondToLastCard))
-                .append(" ");
-
-        Card lastCard = iterator.next();
-        int countOfLastCard = bagOfCards.countOf(lastCard);
-        stringOfAllCardNamesToReturn.append("et ")
-                                    .append(countOfLastCard)
-                                    .append(" ")
-                                    .append(cardName(lastCard, countOfLastCard));
-
         return stringOfAllCardNamesToReturn.toString();
     }
+    private static List<String> getListOfCards(Set<Card> cardSet, SortedBag<Card> originalBag){
+        List<String> stringList = new ArrayList<>();
+
+        for (Card currentCard:
+             cardSet) {
+            int multiplicity = originalBag.countOf(currentCard);
+            String stringToAdd = new StringBuilder()
+                    .append(multiplicity)
+                    .append(" ")
+                    .append(cardName(currentCard, multiplicity))
+                    .toString();
+            stringList.add(stringToAdd);
+        }
+        return stringList;
+    }
+
 }

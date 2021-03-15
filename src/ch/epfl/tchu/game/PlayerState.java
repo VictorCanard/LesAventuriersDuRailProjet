@@ -6,16 +6,16 @@ import ch.epfl.tchu.SortedBag;
 import java.util.*;
 
 public final class PlayerState extends PublicPlayerState {
-    private final SortedBag<Ticket> tickets;
-    private final SortedBag<Card> cards;
-    private final List<Route> routes;
+    private final SortedBag<Ticket> TICKETS;
+    private final SortedBag<Card> CARDS;
+    private final List<Route> ROUTES;
 
     PlayerState(SortedBag<Ticket> tickets, SortedBag<Card> cards, List<Route> routes){
         super(tickets.size(), cards.size(), routes);
 
-        this.tickets = SortedBag.of(tickets);
-        this.cards = SortedBag.of(cards);
-        this.routes = List.copyOf(routes);
+        this.TICKETS = SortedBag.of(tickets);
+        this.CARDS = SortedBag.of(cards);
+        this.ROUTES = List.copyOf(routes);
 
     }
     public static PlayerState initial(SortedBag<Card> initialCards){
@@ -23,29 +23,29 @@ public final class PlayerState extends PublicPlayerState {
         return new PlayerState(SortedBag.of(), initialCards, Collections.emptyList()); //Does emptyList work here ?
     }
     public SortedBag<Ticket> tickets(){
-        return this.tickets;
+        return this.TICKETS;
     }
     public PlayerState withAddedTickets(SortedBag<Ticket> newTickets){
         SortedBag.Builder<Ticket> builder = new SortedBag.Builder<>();
-        builder.add(this.tickets)
+        builder.add(this.TICKETS)
                 .add(newTickets);
 
-        return new PlayerState(builder.build(),this.cards, this.routes);
+        return new PlayerState(builder.build(),this.CARDS, this.ROUTES);
     }
     public SortedBag<Card> cards(){
-        return this.cards;
+        return this.CARDS;
     }
     public PlayerState withAddedCard(Card card){
         SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-        builder.add(this.cards)
+        builder.add(this.CARDS)
                 .add(card);
-        return new PlayerState(this.tickets, builder.build(), this.routes);
+        return new PlayerState(this.TICKETS, builder.build(), this.ROUTES);
     }
     public PlayerState withAddedCards(SortedBag<Card> additionalCards){
         SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-        builder.add(this.cards)
+        builder.add(this.CARDS)
                 .add(additionalCards);
-        return new PlayerState(this.tickets, builder.build(), this.routes);
+        return new PlayerState(this.TICKETS, builder.build(), this.ROUTES);
     }
     public boolean canClaimRoute(Route route){
         boolean enoughWagonsLeft = hasEnoughWagonsLeft(route);
@@ -53,7 +53,7 @@ public final class PlayerState extends PublicPlayerState {
 
         for (SortedBag<Card> sortedBag: route.possibleClaimCards()
              ) {
-            playerHasNeccessaryCards = (this.cards.contains(sortedBag)) ? true : playerHasNeccessaryCards;
+            playerHasNeccessaryCards = (this.CARDS.contains(sortedBag)) ? true : playerHasNeccessaryCards;
         }
 
         return enoughWagonsLeft && playerHasNeccessaryCards;
@@ -76,7 +76,7 @@ public final class PlayerState extends PublicPlayerState {
 
         Preconditions.checkArgument(correctAdditionalCardsCount && initialCardsNotNull && initialCardsNotTooManyTypes && rightNumberOfDrawnCards);
 
-        SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards);
+        SortedBag<Card> playerCardsWithoutInitialCards = this.CARDS.difference(initialCards);
         SortedBag.Builder<Card> usableCards = new SortedBag.Builder<>();
 
         Card initialCard = initialCards.get(0);
@@ -100,30 +100,27 @@ public final class PlayerState extends PublicPlayerState {
     }
 
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards){
-        List<Route> routeList = new ArrayList<>(this.routes);
+        List<Route> routeList = new ArrayList<>(this.ROUTES);
         routeList.add(route);
 
-        SortedBag<Card> finalSortedBag = this.cards.difference(claimCards);
+        SortedBag<Card> finalSortedBag = this.CARDS.difference(claimCards);
 
-        return new PlayerState(this.tickets, finalSortedBag,  routeList );
+        return new PlayerState(this.TICKETS, finalSortedBag,  routeList );
     }
     public int ticketPoints(){
         int ticketPoints = 0;
         int maxStationId = 0;
 
         for (Route route:
-             this.routes) {
+             this.ROUTES) {
             int maxIdOfStations = Math.max(route.station1().id(), route.station2().id());
             maxStationId = Math.max(maxIdOfStations, maxStationId);
         }
         maxStationId ++;
         StationPartition.Builder builder = new StationPartition.Builder(maxStationId);
         StationPartition stationPartition = builder.build();
-        for (Ticket ticket: tickets
-             ) {
-          //  ticket.points(); //Partition
 
-        }
+        //Todo: What to do with partition at this point ?
         return 0;
     }
     public int finalPoints(){
