@@ -51,6 +51,7 @@ public final class StationPartition implements StationConnectivity {
         int id2 = s2.id();
         if(id1>= partitions.length || id2>= partitions.length) {
             if (id1 == id2) { return true;}
+            return false;
         }
         if(partitions[id1] == partitions[id2]){ return true;}
         return false;
