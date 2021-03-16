@@ -9,7 +9,7 @@ class StationPartitionTest {
 
     StationPartition.Builder builder = new StationPartition.Builder(15);
     StationPartition.Builder builderEmpty = new StationPartition.Builder(0);
-    StationPartition.Builder builderOne = new StationPartition.Builder(15);
+    StationPartition.Builder builderOne = new StationPartition.Builder(1);
 
 
     private static final Station BER = new Station(0, "Berne");
@@ -46,9 +46,38 @@ class StationPartitionTest {
         assertTrue(partition.connected(FR4, FR4));
         assertTrue(!(partition.connected(FR4, LAU)));
         assertTrue(partition.connected(WAS, ZUR));
-
-
-
-
     }
+
+    @Test
+    void connectedEmpty(){
+//you can make an empty array, but then you cant connect anything so whats the point? we dont even have
+        //an exception to be thrown in the connect method......
+        assertThrows(IndexOutOfBoundsException.class, () ->
+        {
+            builderEmpty.connect(BER, BER);
+        });
+        StationPartition partition = builderEmpty.build();
+        //expected empty array;
+        assertTrue(partition.connected(FRI, FRI));
+        assertTrue(!(partition.connected(BER, FRI)));
+    }
+
+    @Test
+    void connectedOne(){
+        builderOne.connect(BER,BER);
+
+        assertThrows(IndexOutOfBoundsException.class, () ->
+        {
+            builderOne.connect(FRI, BER);
+        });
+
+        StationPartition partition = builderOne.build();
+
+        assertTrue(partition.connected(BER, BER));
+        assertTrue(partition.connected(ZUR, ZUR));
+        assertTrue(!(partition.connected(LAU, SOL)));
+    }
+
+
+
 }
