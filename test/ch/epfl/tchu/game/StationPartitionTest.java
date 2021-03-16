@@ -6,8 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StationPartitionTest {
 
-    int [] actualFlattenedArray = {3,1,3,3,4,3,13,7,7,13,7,13,12,13,14};
+
     StationPartition.Builder builder = new StationPartition.Builder(15);
+    StationPartition.Builder builderEmpty = new StationPartition.Builder(0);
+    StationPartition.Builder builderOne = new StationPartition.Builder(15);
+
 
     private static final Station BER = new Station(0, "Berne");
     private static final Station DEL = new Station(1, "Delémont");
@@ -32,13 +35,20 @@ class StationPartitionTest {
         builder.connect(BER, FRI);
         builder.connect(LAU, INT);
         builder.connect(BER, INT);
-
+        builder.connect(ZUR, SOL);
+        builder.connect(WAS, SOL);
 
         StationPartition partition = builder.build();
+        int [] expectedArray = {0, 1, 0, 0, 4, 0, 6, 7, 8, 9, 10, 11 , 12, 11, 11};
+
         assertTrue(partition.connected(BER, LAU));
         assertTrue(!(partition.connected(SOL, BER)));
         assertTrue(partition.connected(FR4, FR4));
         assertTrue(!(partition.connected(FR4, LAU)));
+        assertTrue(partition.connected(WAS, ZUR));
+
+
+
 
     }
 }
