@@ -36,8 +36,8 @@ class PlayerStateTest {
     @Test
     void initial() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new PlayerState(ticketList, testBag, listeRoutes);
-        })
+         //   new PlayerState(ticketList, testBag, listeRoutes);
+        });
     }
 
     @Test

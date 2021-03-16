@@ -119,14 +119,14 @@ public final class PlayerState extends PublicPlayerState {
         maxStationId ++;
         StationPartition.Builder builder = new StationPartition.Builder(maxStationId);
 
-        for (Route route: ROUTES
+        for (Route route: routes
              ) {
             builder.connect(route.station1(), route.station2());
         }
 
         StationPartition stationPartition = builder.build();
 
-        for (Ticket ticket: TICKETS
+        for (Ticket ticket: tickets
              ) {
             ticketPoints += ticket.points(stationPartition);
         }
