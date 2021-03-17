@@ -4,6 +4,7 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.StringsFr;
 
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
