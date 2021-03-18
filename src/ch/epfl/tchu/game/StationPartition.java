@@ -3,26 +3,51 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import java.util.stream.IntStream;
 
+/**
+ * @author Anne-Marie Rusu
+ */
+
 public final class StationPartition implements StationConnectivity {
     private final int[] partitions;
 
+    /**
+     * Private Builder
+     * @param repLinks : links (numbers) pointing to each station's representative
+     */
     private StationPartition(int[] repLinks) {
         partitions = repLinks.clone();
     }
 
+    /**
+     * Builder for the outer class StationPartition
+     */
     public static final class Builder{
         private int[] partitionsArray;
 
+        /**
+         * Constructs an array ranging from 0 included to the station count excluded
+         * @param stationCount : the max id of the group of stations
+         */
         public Builder(int stationCount){
             Preconditions.checkArgument(stationCount>=0);
             partitionsArray = IntStream.range(0, stationCount).toArray();
         }
 
+        /**
+         * Connects two stations by assigning to station 2, station 1's representative
+         * @param s1 : First station
+         * @param s2 : Second station to which we assign S1's representative
+         * @return this with the new connection
+         */
         public Builder connect(Station s1, Station s2){
             partitionsArray[representative(s2.id())] = representative(s1.id());
             return this;
         }
 
+        /**
+         * Flattens the array by having each of the stations point directly to their representative
+         * @return a new StationPartition with a flattened representation of the partitions
+         */
         public StationPartition build(){
             for(int i = 0; i< partitionsArray.length; i++){
                 partitionsArray[i] = representative(i);
@@ -30,6 +55,12 @@ public final class StationPartition implements StationConnectivity {
             return new StationPartition(partitionsArray);
         }
 
+        /**
+         * Finds the representative associated to this station id.
+         * Either it finds it directly or it employs a recursive algorithm to follow the links up to the main representative
+         * @param stationId : the id of which we want to know the (in)direct representative
+         * @return the id of the station's representative or calls itself again until it finds it
+         */
         private int representative(int stationId){
             Preconditions.checkArgument(stationId>=0);
             if(partitionsArray[stationId] == stationId){
