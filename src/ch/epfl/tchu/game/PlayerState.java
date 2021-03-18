@@ -42,10 +42,9 @@ public final class PlayerState extends PublicPlayerState {
         return new PlayerState(this.tickets, builder.build(), this.routes);
     }
     public PlayerState withAddedCards(SortedBag<Card> additionalCards){
-        SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-        builder.add(this.cards)
-                .add(additionalCards);
-        return new PlayerState(this.tickets, builder.build(), this.routes);
+        SortedBag<Card> newBagOfCards = this.cards.union(additionalCards);
+
+        return new PlayerState(this.tickets, newBagOfCards, this.routes);
     }
     public boolean canClaimRoute(Route route){
         boolean enoughWagonsLeft = hasEnoughWagonsLeft(route);
@@ -59,6 +58,7 @@ public final class PlayerState extends PublicPlayerState {
         return enoughWagonsLeft && playerHasNeccessaryCards;
     }
     private boolean hasEnoughWagonsLeft(Route route){
+
         return super.carCount() >= route.length();
     }
     public List<SortedBag<Card>> possibleClaimCards(Route route){
@@ -88,7 +88,7 @@ public final class PlayerState extends PublicPlayerState {
                     .add(numberOfSameColorCardsToAdd, initialCard);
 
         SortedBag<Card> cardSortedBag = usableCards.build();
-        Set<SortedBag<Card>> sortedBagSet =cardSortedBag.subsetsOfSize(2);
+        Set<SortedBag<Card>> sortedBagSet =cardSortedBag.subsetsOfSize(additionalCardsCount);
 
         List<SortedBag<Card>> options = new ArrayList<>(sortedBagSet);
 
