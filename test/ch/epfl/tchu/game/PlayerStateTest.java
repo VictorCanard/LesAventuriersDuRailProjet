@@ -11,11 +11,16 @@ import static ch.epfl.TestMap.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerStateTest {
-    public final Ticket LAU_STG = new Ticket(LAU, STG, 13);
-    public final Ticket LAU_BER = new Ticket(LAU, BER, 2);
-    public final Ticket LAU_FR1 = new Ticket(LAU, FR1, 5);
+    private static final Station NEU = new Station(19, "Neuchâtel");
+    private static final Station FRI = new Station(9, "Fribourg");
 
-    public SortedBag<Ticket> ticketSortedBag = SortedBag.of(1, LAU_BER, 1, LAU_STG);
+    public final Ticket LAU_STGT = new Ticket(LAU, STG, 13);
+    public final Ticket LAU_BERT = new Ticket(LAU, BER, 2);
+    public final Ticket LAU_FR1T = new Ticket(LAU, FR1, 5);
+    public final Ticket YVE_NEUT = new Ticket(YVE, NEU, 6);
+
+    public SortedBag<Ticket> ticketSortedBag = SortedBag.of(1, LAU_BERT, 1, LAU_STGT);
+    public SortedBag<Ticket> bagForPoints = SortedBag.of(1, YVE_NEUT, 1, LAU_BERT);
 
     public SortedBag<Card> cardSortedBag = SortedBag.of(1, Card.BLACK, 2, Card.WHITE);
 
@@ -36,9 +41,14 @@ class PlayerStateTest {
     Route FR1_MAR_1 = TestMap.routes.get(41);
     Route LUC_SCZ_1 = TestMap.routes.get(61);
 
+    Route FRI_LAU1 = new Route("FRI_LAU_1",FRI, LAU, 3,Route.Level.OVERGROUND, Color.RED);
+
 
     List<Route> listeRoutes = List.of(YVE_NEU,BER_LUC,BER_NEU, AT1_STG_1, BAD_BAL_1,BER_FRI_1,FR1_MAR_1,LUC_SCZ_1);
-    List<Route> listeRoutes2 = List.of(RouteTestMap.route1,RouteTestMap.route2, RouteTestMap.route3, RouteTestMap.route4, RouteTestMap.route5, RouteTestMap.route6, RouteTestMap.route7, RouteTestMap.route8 );
+    List<Route> listeRoutes2 = List.of(RouteTestMap.route1,RouteTestMap.route2, RouteTestMap.route3, RouteTestMap.route4, RouteTestMap.route5, RouteTestMap.route6, RouteTestMap.route7, RouteTestMap.route8, FRI_LAU1);
+
+    List<Route> listeRoutes3 = listeRoutes.subList(0,4);
+
 
     @Test
     void initial() {
@@ -68,10 +78,10 @@ class PlayerStateTest {
     void withAddedTickets() {
         PlayerState playerState = new PlayerState(ticketSortedBag,initialCards,  listeRoutes);
         int expectedNumber = 3;
-        SortedBag<Ticket> expected = ticketSortedBag.union(SortedBag.of(LAU_FR1));
+        SortedBag<Ticket> expected = ticketSortedBag.union(SortedBag.of(LAU_FR1T));
 
 
-        playerState = playerState.withAddedTickets(SortedBag.of(LAU_FR1));
+        playerState = playerState.withAddedTickets(SortedBag.of(LAU_FR1T));
         SortedBag<Ticket> actual = playerState.tickets();
         int actualNumber = playerState.tickets().size();
 
@@ -232,11 +242,29 @@ class PlayerStateTest {
 
     @Test
     void ticketPoints() {
+        PlayerState testPlayerState = new PlayerState(bagForPoints, initialCards, listeRoutes3);
+
+        int expected = 4;
+        int actualPoints = testPlayerState.ticketPoints();
+
+        assertEquals(expected, actualPoints);
+
+        //Second example with one ticket
+        SortedBag<Ticket> bagWithOnlyOneTicket = SortedBag.of(LAU_FR1T);
+
+        PlayerState testPlayerState2 = new PlayerState(bagWithOnlyOneTicket, initialCards, listeRoutes2);
+
+        int expected2 = -5;
+        int actualPoints2 = testPlayerState2.ticketPoints();
+
+        assertEquals(expected2, actualPoints2);
+
 
 
     }
 
     @Test
     void finalPoints() {
+
     }
 }
