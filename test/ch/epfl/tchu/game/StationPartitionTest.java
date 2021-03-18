@@ -10,6 +10,7 @@ class StationPartitionTest {
     StationPartition.Builder builder = new StationPartition.Builder(15);
     StationPartition.Builder builderEmpty = new StationPartition.Builder(0);
     StationPartition.Builder builderOne = new StationPartition.Builder(1);
+    StationPartition.Builder builderALL = new StationPartition.Builder(5);
 
 
     private static final Station BER = new Station(0, "Berne");
@@ -76,6 +77,18 @@ class StationPartitionTest {
         assertTrue(partition.connected(BER, BER));
         assertTrue(partition.connected(ZUR, ZUR));
         assertTrue(!(partition.connected(LAU, SOL)));
+    }
+
+    @Test
+    void connectedALL(){
+        builderALL.connect(BER, DEL);
+        builderALL.connect(FRI, LCF);
+        builderALL.connect(INT, LCF);
+        builderALL.connect(LCF, BER);
+
+        StationPartition partition = builderALL.build();
+
+        assertTrue(partition.connected(BER, FRI));
     }
 
 
