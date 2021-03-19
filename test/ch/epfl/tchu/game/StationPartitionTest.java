@@ -1,5 +1,6 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.SortedBag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +31,21 @@ class StationPartitionTest {
     private static final Station ZUR = new Station(14, "Zürich");
     private static final Station FR4 = new Station(50, "France");
 
+
+    @Test
+    void newTestAntoine(){
+        Station s1 = BER;
+        Station s2 = DEL;
+        Station s3 = FRI;
+        Station s4 = INT;
+        builder.connect(s1, s2);
+        builder.connect(s3, s4);
+        builder.connect(s3, s1);
+
+        StationPartition sp = builder.build();
+
+        assertTrue(sp.connected(s2, s3));
+    }
 
     @Test
     void connected() {

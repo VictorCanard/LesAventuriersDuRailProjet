@@ -59,6 +59,16 @@ class PlayerStateTest {
 
 
     }
+    @Test
+    void EricTest(){
+        SortedBag<Card> intialCards =  SortedBag.of(6, Card.GREEN, 4, Card.LOCOMOTIVE);
+        SortedBag<Card> cardsPLayed = SortedBag.of(Card.GREEN);
+        SortedBag<Card> drawnCards = SortedBag.of(1, Card.VIOLET, 2, Card.LOCOMOTIVE);
+
+        PlayerState test = new PlayerState(ticketSortedBag, intialCards, listeRoutes3);
+        List<SortedBag<Card>> actual = test.possibleAdditionalCards(2, cardsPLayed,drawnCards);
+        System.out.println(actual);
+    }
 
     @Test
     void tickets() {
