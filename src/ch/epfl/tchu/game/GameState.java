@@ -22,14 +22,29 @@ public final class GameState extends PublicGameState{
         return publicPlayerStateMap;
     }
     public static GameState initial(SortedBag<Ticket> tickets, Random rng){
+        //Tickets
         Deck<Ticket> ticketDeck = Deck.of(tickets, rng);
 
-        Deck<Card> cardDeck = Deck.of(Constants.ALL_CARDS, rng).withoutTopCards(8);
+        //PlayerStateMap
+        Map<PlayerId, PlayerState> playerStateMap = new EnumMap<>(PlayerId.class);
+
+        Deck<Card> initialDeck = Deck.of(Constants.ALL_CARDS, rng);
+
+        for (PlayerId playerId : PlayerId.values()){
+            SortedBag<Card> top4Cards = initialDeck.topCards(4);
+            initialDeck = initialDeck.withoutTopCards(4);
+
+            PlayerState playerState = PlayerState.initial(top4Cards);
+            playerStateMap.put(playerId, playerState);
+        }
+
+        Deck<Card> cardDeck = initialDeck;
+        CardState cardState = CardState.of(cardDeck);
 
         int firstPlayerIndex = rng.nextInt(2);
         PlayerId firstPlayerId = PlayerId.ALL.get(firstPlayerIndex);
 
-        return new GameState(tickets.size(), ticketDeck, );
+        return new GameState(ticketDeck, cardState,firstPlayerId, playerStateMap, null );
     }
 
     @Override
