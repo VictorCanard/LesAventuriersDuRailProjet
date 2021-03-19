@@ -25,7 +25,6 @@ class PlayerStateTest {
     public SortedBag<Card> cardSortedBag = SortedBag.of(1, Card.BLACK, 2, Card.WHITE);
 
     SortedBag<Card> testBag = SortedBag.of(5, Card.BLUE, 7, Card.GREEN);
-    SortedBag<Card> preciseBag = SortedBag.of(Card.ALL);
     SortedBag<Card> initialCards = SortedBag.of(2, Card.BLUE, 2, Card.WHITE);
     SortedBag<Card> cardsPlayedInitially = SortedBag.of(4, Card.BLUE);
     SortedBag<Card> drawnCards = SortedBag.of(2, Card.LOCOMOTIVE, 1, Card.WHITE);
@@ -223,6 +222,17 @@ class PlayerStateTest {
 
         System.out.println(sortedBagList4);
 
+        //playerCards: 5xBlue, 2xLocomotive. Empty case, player has no additional cards he could play.
+        SortedBag<Card> initialPlayerCards5 = SortedBag.of(5, Card.BLUE, 2, Card.LOCOMOTIVE);
+        SortedBag<Card> cardsThatWerePlayed = SortedBag.of(2, Card.LOCOMOTIVE);
+        SortedBag<Card> cardsThatWereDrawn = SortedBag.of(1, Card.LOCOMOTIVE, 1, Card.RED).union(SortedBag.of(1, Card.BLUE));
+
+        PlayerState testPlayerState6 = new PlayerState(ticketSortedBag, initialPlayerCards5,  listeRoutes);
+
+        List<SortedBag<Card>> sortedBagList5 = testPlayerState6.possibleAdditionalCards(1, cardsThatWerePlayed, cardsThatWereDrawn);
+
+        System.out.println(sortedBagList5);
+
 
     }
 
@@ -258,6 +268,15 @@ class PlayerStateTest {
         int actualPoints2 = testPlayerState2.ticketPoints();
 
         assertEquals(expected2, actualPoints2);
+
+        //Third example: No ticket
+        SortedBag<Ticket> bagWithNoTicket = SortedBag.of();
+        PlayerState testPlayerState3 = new PlayerState(bagWithNoTicket, initialCards, listeRoutes3);
+
+        int expected3 = 0;
+        int actualPoints3 = testPlayerState3.ticketPoints();
+
+        assertEquals(expected3,actualPoints3);
 
 
 

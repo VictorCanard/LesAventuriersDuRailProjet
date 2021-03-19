@@ -149,6 +149,10 @@ public final class PlayerState extends PublicPlayerState {
                     .add(numberOfSameColorCardsToAdd, initialCard);
 
         SortedBag<Card> cardSortedBag = usableCards.build();
+
+        if(cardSortedBag.isEmpty()){
+            return Collections.emptyList();
+        }
         Set<SortedBag<Card>> sortedBagSet =cardSortedBag.subsetsOfSize(additionalCardsCount);
 
         List<SortedBag<Card>> options = new ArrayList<>(sortedBagSet);
