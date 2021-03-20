@@ -100,7 +100,7 @@ public final class PlayerState extends PublicPlayerState {
 
         for (SortedBag<Card> sortedBag: route.possibleClaimCards()
              ) {
-            playerHasNecessaryCards = (this.cards.contains(sortedBag)) ? true : playerHasNecessaryCards;
+            playerHasNecessaryCards = this.cards.contains(sortedBag) || playerHasNecessaryCards;
         }
         return enoughWagonsLeft && playerHasNecessaryCards;
     }

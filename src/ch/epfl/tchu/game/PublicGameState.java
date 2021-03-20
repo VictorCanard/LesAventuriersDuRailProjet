@@ -25,18 +25,20 @@ public class PublicGameState {
         this.currentPlayerId = Objects.requireNonNull(currentPlayerId);
         this.playerState = Objects.requireNonNull(playerState);
         this.lastPlayer = lastPlayer;
-
     }
 
     public int ticketsCount(){
         return ticketListSize;
     }
+
     public boolean canDrawTickets(){
         return !publicCardState.isDeckEmpty();
     }
+
     public PublicCardState cardState(){
         return publicCardState;
     }
+
     public boolean canDrawCards(){
         int numberOfCardsInDrawPile = publicCardState.deckSize();
         int numberOfCardsInDiscardPile = publicCardState.discardsSize();
@@ -44,8 +46,11 @@ public class PublicGameState {
         return (numberOfCardsInDiscardPile + numberOfCardsInDrawPile) >= 5;
     }
     public PlayerId currentPlayerId(){return currentPlayerId;}
+
     public PublicPlayerState playerState(PlayerId playerId){return playerState.get(playerId);}
+
     public PublicPlayerState currentPlayerState(){return playerState.get(currentPlayerId);}
+
     public List<Route> claimedRoutes(){
         List<Route> playerOneRoutes = playerState(PlayerId.PLAYER_1).routes();
         List<Route> playerTwoRoutes = playerState(PlayerId.PLAYER_2).routes();
