@@ -3,13 +3,11 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public final class GameState extends PublicGameState{
-    private final Map<PlayerId, PlayerState> playerStateMap; //?
+   // private final Map<PlayerId, PlayerState> playerStateMap;
+    private final Map<PlayerId, PlayerState> playerStateMap = new TreeMap<>(); //treeMap so its ordered
     private final Deck<Ticket> ticketDeck;
     private final CardState cardState;
 
@@ -20,7 +18,8 @@ public final class GameState extends PublicGameState{
                       PlayerId lastPlayer) {
         super(ticketDeck.size(), cardState, currentPlayerId, makePublic(playerState), lastPlayer);
         this.ticketDeck = ticketDeck;
-        this.playerStateMap = playerState;
+        //this.playerStateMap = playerState;
+        this.playerStateMap.putAll(playerState); //unsure due to immutability/ need to clone map rather than put it in the variable?????
         this.cardState = cardState;
     }
     private static Map<PlayerId, PublicPlayerState> makePublic(Map<PlayerId, PlayerState> playerStateMap){
@@ -88,7 +87,7 @@ public final class GameState extends PublicGameState{
     }
 
     //Group 2
-    GameState withInitiallyChosenTickets(PlayerId playerId, SortedBag<Ticket> chosenTickets){ // i think???
+    public GameState withInitiallyChosenTickets(PlayerId playerId, SortedBag<Ticket> chosenTickets){ // i think???
         playerStateMap.put(playerId, playerStateMap.get(playerId).withAddedTickets(chosenTickets));
         return new GameState(ticketDeck, cardState, this.currentPlayerId(), playerStateMap, this.lastPlayer());
     }
