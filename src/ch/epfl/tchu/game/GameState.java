@@ -6,10 +6,12 @@ import ch.epfl.tchu.SortedBag;
 import java.util.*;
 
 public final class GameState extends PublicGameState{
-   // private final Map<PlayerId, PlayerState> playerStateMap;
-    private final Map<PlayerId, PlayerState> playerStateMap = new TreeMap<>(); //treeMap so its ordered
+    private final Map<PlayerId, PlayerState> playerStateMap;
     private final Deck<Ticket> ticketDeck;
     private final CardState cardState;
+    private final PlayerId lastPlayer;
+    private final PlayerId currentPlayer;
+
 
     private GameState(Deck<Ticket> ticketDeck,
                       CardState cardState,
@@ -17,10 +19,13 @@ public final class GameState extends PublicGameState{
                       Map<PlayerId, PlayerState> playerState,
                       PlayerId lastPlayer) {
         super(ticketDeck.size(), cardState, currentPlayerId, makePublic(playerState), lastPlayer);
-        this.ticketDeck = ticketDeck;
-        //this.playerStateMap = playerState;
-        this.playerStateMap.putAll(playerState); //unsure due to immutability/ need to clone map rather than put it in the variable?????
+
         this.cardState = cardState;
+        this.ticketDeck = ticketDeck;
+        this.playerStateMap = Map.copyOf(playerState);
+        this.lastPlayer = lastPlayer;
+        this.currentPlayer = currentPlayerId;
+
     }
     private static Map<PlayerId, PublicPlayerState> makePublic(Map<PlayerId, PlayerState> playerStateMap){
         Map<PlayerId, PublicPlayerState> publicPlayerStateMap = new EnumMap<>(PlayerId.class);
@@ -120,7 +125,19 @@ public final class GameState extends PublicGameState{
     }
 
     //Group 3
-    public boolean lastTurnBegins(){return false;}
-    public GameState forNextTurn(){return null;}
+    public boolean lastTurnBegins(){
+        boolean lastPlayerIsUnknown = (lastPlayer == null);
+
+        int currentPlayerNumberOfWagons = currentPlayerState().carCount();
+        boolean onlyTwoWagonsLeftOrLess = currentPlayerNumberOfWagons <= 2;
+
+        return lastPlayerIsUnknown && onlyTwoWagonsLeftOrLess;
+    }
+    public GameState forNextTurn(){
+        PlayerId lastPlayer = (lastTurnBegins()) ? currentPlayer : null;
+        PlayerId otherPlayer = (currentPlayer == PlayerId.PLAYER_1) ? PlayerId.PLAYER_2 : PlayerId.PLAYER_1;
+
+        return new GameState(ticketDeck, cardState, otherPlayer, playerStateMap, lastPlayer);
+    }
 
 }
