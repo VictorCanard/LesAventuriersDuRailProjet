@@ -124,8 +124,7 @@ public final class GameState extends PublicGameState{
     public GameState withCardsDeckRecreatedIfNeeded(Random rng){
         return new GameState(ticketDeck, cardState.withDeckRecreatedFromDiscards(rng), this.currentPlayerId(), playerStateMap, this.lastPlayer());
     }
-
-    //Group 2
+//Group 2
 
     /**
      * Returns an identical gamestate but with the player's initially chosen tickets added
@@ -138,8 +137,10 @@ public final class GameState extends PublicGameState{
         PlayerState playerStateToModify = playerStateMap.get(playerId);
         Preconditions.checkArgument(playerStateToModify.tickets().size()== 0);
 
-        playerStateMap.put(playerId, playerStateToModify.withAddedTickets(chosenTickets));
-        return new GameState(ticketDeck, cardState, this.currentPlayerId(), playerStateMap, this.lastPlayer());
+        Map<PlayerId, PlayerState> psMap = new TreeMap<>(playerStateMap);
+
+        psMap.put(playerId, playerStateToModify.withAddedTickets(chosenTickets));
+        return new GameState(ticketDeck, cardState, this.currentPlayerId(), psMap, this.lastPlayer());
     }
 
     /**
@@ -151,8 +152,9 @@ public final class GameState extends PublicGameState{
      */
     public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets, SortedBag<Ticket> chosenTickets){ //i think???
         Preconditions.checkArgument(drawnTickets.contains(chosenTickets));
-        playerStateMap.put(currentPlayer, currentPlayerState().withAddedTickets(chosenTickets));
-        return new GameState(ticketDeck.withoutTopCards(drawnTickets.size()), cardState, currentPlayer, playerStateMap, lastPlayer);
+        Map<PlayerId, PlayerState> psMap = new TreeMap<>(playerStateMap);
+        psMap.put(currentPlayer, currentPlayerState().withAddedTickets(chosenTickets));
+        return new GameState(ticketDeck.withoutTopCards(drawnTickets.size()), cardState, currentPlayer, psMap, lastPlayer);
     }
 
     /**
@@ -165,8 +167,9 @@ public final class GameState extends PublicGameState{
         Preconditions.checkArgument(canDrawCards());
 
         Card card = cardState.faceUpCard(slot);
-        playerStateMap.put(currentPlayer, playerStateMap.get(this.currentPlayerId()).withAddedCard(card));
-        return new GameState(ticketDeck, cardState.withDrawnFaceUpCard(slot), currentPlayer, playerStateMap, lastPlayer);
+        Map<PlayerId, PlayerState> psMap = new TreeMap<>(playerStateMap);
+        psMap.put(currentPlayer, playerStateMap.get(this.currentPlayerId()).withAddedCard(card));
+        return new GameState(ticketDeck, cardState.withDrawnFaceUpCard(slot), currentPlayer, psMap, lastPlayer);
     }
 
     /**
@@ -176,9 +179,9 @@ public final class GameState extends PublicGameState{
      */
     public GameState withBlindlyDrawnCard(){
         Preconditions.checkArgument(canDrawCards());
-
-        playerStateMap.put(this.currentPlayerId(), playerStateMap.get(this.currentPlayerId()).withAddedCard(cardState.topDeckCard()));
-        return new GameState(ticketDeck, cardState.withoutTopDeckCard(), this.currentPlayerId(), playerStateMap, this.lastPlayer());
+        Map<PlayerId, PlayerState> psMap = new TreeMap<>(playerStateMap);
+        psMap.put(this.currentPlayerId(), playerStateMap.get(this.currentPlayerId()).withAddedCard(cardState.topDeckCard()));
+        return new GameState(ticketDeck, cardState.withoutTopDeckCard(), this.currentPlayerId(), psMap, this.lastPlayer());
     }
 
     /**
@@ -189,9 +192,9 @@ public final class GameState extends PublicGameState{
      * @return a new gamestate
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards){
-
-        playerStateMap.put(this.currentPlayerId(), playerStateMap.get(this.currentPlayerId()).withClaimedRoute(route, cards));
-        return new GameState(ticketDeck, cardState, this.currentPlayerId(), playerStateMap, this.lastPlayer());
+        Map<PlayerId, PlayerState> psMap = new TreeMap<>(playerStateMap);
+        psMap.put(this.currentPlayerId(), playerStateMap.get(this.currentPlayerId()).withClaimedRoute(route, cards));
+        return new GameState(ticketDeck, cardState, this.currentPlayerId(), psMap, this.lastPlayer());
     }
 
     //Group 3
