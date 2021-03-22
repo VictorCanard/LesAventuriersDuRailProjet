@@ -141,7 +141,7 @@ public final class Trail {
         else{
             StringBuilder text = new StringBuilder();
 
-            Station currentStation = routes.get(0).station1();
+            Station currentStation = station1;
 
             text.append(currentStation.name())
                 .append(" - ");

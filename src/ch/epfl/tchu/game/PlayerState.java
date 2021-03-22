@@ -110,14 +110,26 @@ public final class PlayerState extends PublicPlayerState {
     }
 
     /**
-     * Determines the lists of cards the player can use to claim a given route
+     * Determines the lists of cards this player can use to claim a given route
      * @param route : the route to be claimed
      * @return the lists of possible cards to be used to claim the route
      * @throws IllegalArgumentException if the player does not have enough wagons to claim the route
      */
     public List<SortedBag<Card>> possibleClaimCards(Route route){
         Preconditions.checkArgument(hasEnoughWagonsLeft(route));
-        return route.possibleClaimCards();
+
+        List<SortedBag<Card>> listOfAllPossibleClaimCards = route.possibleClaimCards();
+
+        List<SortedBag<Card>> sortedBagListToReturn = new ArrayList<>();
+        for (SortedBag sortedBag: listOfAllPossibleClaimCards
+             ) {
+            if(this.cards.contains(sortedBag)){
+                sortedBagListToReturn.add(sortedBag);
+            }
+
+        }
+        return sortedBagListToReturn;
+
     }
 
     /**
@@ -142,15 +154,22 @@ public final class PlayerState extends PublicPlayerState {
 
         Card initialCard = initialCards.get(0);
 
-        int numberOfLocomotiveCardsToAdd = playerCardsWithoutInitialCards.countOf(Card.LOCOMOTIVE);
         int numberOfSameColorCardsToAdd = playerCardsWithoutInitialCards.countOf(initialCard);
+
+        int numberOfLocomotiveCardsToAdd = 0;
+
+        if(!initialCard.equals(Card.LOCOMOTIVE)){
+            numberOfLocomotiveCardsToAdd = playerCardsWithoutInitialCards.countOf(Card.LOCOMOTIVE);
+        }
+
+
 
         usableCards.add(numberOfLocomotiveCardsToAdd, Card.LOCOMOTIVE)
                     .add(numberOfSameColorCardsToAdd, initialCard);
 
         SortedBag<Card> cardSortedBag = usableCards.build();
 
-        if(cardSortedBag.isEmpty()){
+        if(cardSortedBag.size() < additionalCardsCount){
             return Collections.emptyList();
         }
         Set<SortedBag<Card>> sortedBagSet =cardSortedBag.subsetsOfSize(additionalCardsCount);
