@@ -163,7 +163,6 @@ public final class PlayerState extends PublicPlayerState {
         }
 
 
-
         usableCards.add(numberOfLocomotiveCardsToAdd, Card.LOCOMOTIVE)
                     .add(numberOfSameColorCardsToAdd, initialCard);
 

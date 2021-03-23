@@ -210,7 +210,7 @@ public final class Info {
                 cardSet) {
             int multiplicity = originalBag.countOf(currentCard);
             String stringToAdd = new StringBuilder()
-                    .append(multiplicity)
+                    .append(multiplicity) //1 violette
                     .append(" ")
                     .append(cardName(currentCard, multiplicity))
                     .toString();
