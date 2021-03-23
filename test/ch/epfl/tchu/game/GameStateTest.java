@@ -57,6 +57,8 @@ class GameStateTest implements ChMapTest {
 
     GameState nonRandomState = GameState.initial(ticketBuilder(), NON_RANDOM);
 
+    GameState stateWithFewTickets = GameState.initial(SortedBag.of(1, BAL_STG,1, BAL_BER), NON_RANDOM);
+
 
 
     static SortedBag<Ticket> ticketBuilder(){
@@ -90,11 +92,23 @@ class GameStateTest implements ChMapTest {
     }
     @Test
     void topTickets(){
+        SortedBag<Ticket> actual = normalState.topTickets(2);
+        SortedBag<Ticket> expected = SortedBag.of(1, new Ticket(BAL, BER, 5), 1,new Ticket(BAL, BRI, 10));
 
+        assertEquals(expected, actual);
     }
 
     @Test
     void withoutTopTickets() {
+        SortedBag<Ticket> actual = stateWithFewTickets.topTickets(2);
+        SortedBag<Ticket> expected = SortedBag.of(1, BAL_STG,
+                1,BAL_BER);
+
+        assertEquals(expected, actual);
+        assertTrue(actual.size()==2);
+
+
+
     }
     @Test
     void withoutTopTicketsFails() {
@@ -108,6 +122,10 @@ class GameStateTest implements ChMapTest {
 
     @Test
     void topCard() {
+        Card topCardActual = nonRandomState.topCard();
+        Card expected = Card.LOCOMOTIVE;
+
+        assertEquals(expected, topCardActual);
 
     }
     @Test
@@ -131,6 +149,16 @@ class GameStateTest implements ChMapTest {
 
     @Test
     void withoutTopCard() {
+        CardState expected = CardState.of(Deck.of(Constants.ALL_CARDS, NON_RANDOM));
+        GameState gs = nonRandomState;
+
+        for (int i = 0; i < expected.deckSize(); i++) {
+            assertEquals(expected.topDeckCard(), gs.topCard());
+            expected = expected.withoutTopDeckCard();
+            gs = gs.withoutTopCard();
+        }
+
+
     }
     @Test
     void withoutTopCardFails() {
@@ -141,11 +169,18 @@ class GameStateTest implements ChMapTest {
 
     @Test
     void withMoreDiscardedCards() {
+
     }
 
 
     @Test
     void withCardsDeckRecreatedIfNeeded() {
+        //Deck is empty so it's recreated from discards
+        var emptyGS = makeDeckEmpty().withCardsDeckRecreatedIfNeeded(NON_RANDOM);
+        emptyGS.withCardsDeckRecreatedIfNeeded(new Random(1));
+
+        //Deck is not empty, should return a nearly identical gs
+        normalState.withCardsDeckRecreatedIfNeeded(NON_RANDOM);
     }
 
 //group 2
@@ -195,24 +230,26 @@ class GameStateTest implements ChMapTest {
         });
 
     }
+
     @Test
     void withBlindlyDrawnCard() {
     }
-
-    @Test
-    void withClaimedRoute() {
-    }
-
-
-
-
     @Test
     void withBlindlyDrawnCardFails() {
     }
 
     @Test
+    void withClaimedRoute() {
+    }
+    @Test
     void withClaimedRouteFails() {
     }
+
+
+
+
+
+
 //group 3
     @Test
     void lastTurnBegins() {

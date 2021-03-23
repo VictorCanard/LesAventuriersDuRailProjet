@@ -122,7 +122,10 @@ public final class GameState extends PublicGameState{
      * @return identical game state or with a new draw pile from the discards pile.
      */
     public GameState withCardsDeckRecreatedIfNeeded(Random rng){
-        return new GameState(ticketDeck, cardState.withDeckRecreatedFromDiscards(rng), this.currentPlayerId(), playerStateMap, this.lastPlayer());
+        if(cardState.isDeckEmpty()){
+            return new GameState(ticketDeck, cardState.withDeckRecreatedFromDiscards(rng), this.currentPlayerId(), playerStateMap, this.lastPlayer());
+        }
+        return new GameState(ticketDeck, cardState, this.currentPlayerId(), playerStateMap, this.lastPlayer());
     }
 //Group 2
 
