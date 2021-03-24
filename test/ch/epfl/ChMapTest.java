@@ -74,7 +74,29 @@ public interface ChMapTest {
             DE1, DE2, DE3, DE4, DE5, AT1, AT2, AT3, IT1, IT2, IT3, IT4, IT5, FR1, FR2, FR3, FR4);
 
     // Routes
-     List<Route> ALL_ROUTES = List.of(
+    Route route1 = new Route("AT1_STG_1", AT1, STG, 4, Route.Level.UNDERGROUND, null);
+    Route route2 = new Route("BAD_BAL_1", BAD, BAL, 3, Route.Level.UNDERGROUND, Color.RED);
+    Route route3 = new Route("BAD_OLT_1", BAD, OLT, 2, Route.Level.OVERGROUND, Color.VIOLET);
+    Route route4 = new Route("BAD_ZUR_1", BAD, ZUR, 1, Route.Level.OVERGROUND, Color.YELLOW);
+    Route route5 = new Route("BAL_DE1_1", BAL, DE1, 1, Route.Level.UNDERGROUND, Color.BLUE);
+    Route route6 = new Route("BEL_WAS_1", BEL, WAS, 4, Route.Level.UNDERGROUND, null);
+    Route route7 = new Route("BEL_WAS_2", BEL, WAS, 4, Route.Level.UNDERGROUND, null);
+    Route route8 = new Route("BER_LUC_1", BER, LUC, 4, Route.Level.OVERGROUND, null);
+
+    List<Route> routesTo2Cars = List.of(
+            new Route("BRI_LOC_1", BRI, LOC, 6, Route.Level.UNDERGROUND, null),
+            new Route("GEN_YVE_1", GEN, YVE, 6, Route.Level.OVERGROUND, null),
+            new Route("BRU_COI_1", BRU, COI, 5, Route.Level.UNDERGROUND, null),
+            new Route("COI_WAS_1", COI, WAS, 5, Route.Level.UNDERGROUND, null),
+            new Route("BER_LUC_1", BER, LUC, 4, Route.Level.OVERGROUND, null),
+            new Route("AT1_STG_1", AT1, STG, 4, Route.Level.UNDERGROUND, null),
+            new Route("AT2_VAD_1", AT2, VAD, 1, Route.Level.UNDERGROUND, Color.RED),
+            new Route("BAD_BAL_1", BAD, BAL, 3, Route.Level.UNDERGROUND, Color.RED),
+            new Route("BEL_WAS_1", BEL, WAS, 4, Route.Level.UNDERGROUND, null)
+            );
+
+
+    List<Route> ALL_ROUTES = List.of(
             new Route("AT1_STG_1", AT1, STG, 4, Route.Level.UNDERGROUND, null),
             new Route("AT2_VAD_1", AT2, VAD, 1, Route.Level.UNDERGROUND, Color.RED),
             new Route("BAD_BAL_1", BAD, BAL, 3, Route.Level.UNDERGROUND, Color.RED),

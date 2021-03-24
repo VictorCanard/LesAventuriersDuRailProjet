@@ -1,6 +1,7 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.ChMapTest;
+import ch.epfl.RouteTestMap;
 import ch.epfl.tchu.SortedBag;
 
 import org.junit.jupiter.api.Test;
@@ -69,16 +70,33 @@ class GameStateTest implements ChMapTest {
         return ticketsB.build();
     }
 
+    PlayerState playerState1 = new PlayerState(SortedBag.of(1, ChMapTest.ZUR_VAD, 1, ChMapTest.ZUR_COUNTRY), SortedBag.of(3, Card.BLUE, 1, Card.ORANGE), List.of(ChMapTest.route1, ChMapTest.route8, ChMapTest.route6));
+    PlayerState playerState2 = new PlayerState(SortedBag.of(1, ChMapTest.BAL_BER, 1, ChMapTest.ZUR_COUNTRY), SortedBag.of(3, Card.LOCOMOTIVE, 2, Card.RED), List.of(ChMapTest.route3, ChMapTest.route4));
+
+
+
     @Test
     void initial() {
+        GameState initialState = GameState.initial(ticketBuilder(), new Random()); //initial state with all the tickets
+        //debug to see inside i guess
+        System.out.println("initialState first player is : " + initialState.currentPlayerId());
+        assertEquals(ChMap.tickets().size(), initialState.ticketsCount());
+        assertEquals(Constants.ALL_CARDS.size()-8-5, initialState.cardState().deckSize());
+        //"la pioche des cartes contient les cartes de Constants.ALL_CARDS, sans les 8 (2×4) du dessus,
+        // distribuées aux joueurs " (mais cardState enleve aussi 5 cartes) ?
+
+        GameState emptyTicketsState = GameState.initial(SortedBag.of(), new Random());
+        assertEquals(0, emptyTicketsState.ticketsCount());
     }
 
     @Test
     void playerState() {
+        PlayerState ps = normalState.playerState(PlayerId.PLAYER_1); //should be same as initial see debug
     }
 
     @Test
     void currentPlayerState() {
+        PlayerState ps = normalState.currentPlayerState();
     }
 //group 1
     @Test
@@ -251,6 +269,8 @@ class GameStateTest implements ChMapTest {
 
     @Test
     void withClaimedRoute() {
+
+        //car number goes down but not cards of player
     }
     @Test
     void withClaimedRouteFails() {
@@ -264,9 +284,33 @@ class GameStateTest implements ChMapTest {
 //group 3
     @Test
     void lastTurnBegins() {
+       assertFalse(normalState.lastTurnBegins());
+
+       GameState s1 = normalState.withClaimedRoute(ChMapTest.routesTo2Cars.get(0), SortedBag.of(6, Card.LOCOMOTIVE));
+       GameState s2 = s1.withClaimedRoute(ChMapTest.routesTo2Cars.get(1), SortedBag.of(6, Card.LOCOMOTIVE));
+       GameState s3= s2.withClaimedRoute(ChMapTest.routesTo2Cars.get(2), SortedBag.of(5, Card.LOCOMOTIVE));
+       GameState s4 = s3.withClaimedRoute(ChMapTest.routesTo2Cars.get(3), SortedBag.of(5, Card.LOCOMOTIVE));
+       GameState s5 = s4.withClaimedRoute(ChMapTest.routesTo2Cars.get(4), SortedBag.of(4, Card.LOCOMOTIVE));
+       GameState s6 = s5.withClaimedRoute(ChMapTest.routesTo2Cars.get(5), SortedBag.of(4, Card.LOCOMOTIVE));
+       GameState s7 = s6.withClaimedRoute(ChMapTest.routesTo2Cars.get(6), SortedBag.of(1, Card.RED));
+       GameState s8 = s7.withClaimedRoute(ChMapTest.routesTo2Cars.get(7), SortedBag.of(3, Card.RED));
+       GameState s9 = s8.withClaimedRoute(ChMapTest.routesTo2Cars.get(8), SortedBag.of(4, Card.LOCOMOTIVE));
+    assertTrue(s9.lastTurnBegins());
     }
 
     @Test
     void forNextTurn() {
+        GameState s1 = normalState.withClaimedRoute(ChMapTest.routesTo2Cars.get(0), SortedBag.of(6, Card.LOCOMOTIVE));
+        GameState s2 = s1.withClaimedRoute(ChMapTest.routesTo2Cars.get(1), SortedBag.of(6, Card.LOCOMOTIVE));
+        GameState s3= s2.withClaimedRoute(ChMapTest.routesTo2Cars.get(2), SortedBag.of(5, Card.LOCOMOTIVE));
+        GameState s4 = s3.withClaimedRoute(ChMapTest.routesTo2Cars.get(3), SortedBag.of(5, Card.LOCOMOTIVE));
+        GameState s5 = s4.withClaimedRoute(ChMapTest.routesTo2Cars.get(4), SortedBag.of(4, Card.LOCOMOTIVE));
+        GameState s6 = s5.withClaimedRoute(ChMapTest.routesTo2Cars.get(5), SortedBag.of(4, Card.LOCOMOTIVE));
+        GameState s7 = s6.withClaimedRoute(ChMapTest.routesTo2Cars.get(6), SortedBag.of(1, Card.RED));
+        GameState s8 = s7.withClaimedRoute(ChMapTest.routesTo2Cars.get(7), SortedBag.of(3, Card.RED));
+        GameState s9 = s8.withClaimedRoute(ChMapTest.routesTo2Cars.get(8), SortedBag.of(4, Card.LOCOMOTIVE));
+        GameState s10 = s9.forNextTurn();
+
+
     }
 }

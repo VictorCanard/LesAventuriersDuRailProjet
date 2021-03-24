@@ -216,12 +216,13 @@ public final class GameState extends PublicGameState{
      * @return true if the last player is not already known and if the current player has at most 2 cars left
      */
     public boolean lastTurnBegins(){
-        boolean lastPlayerIsUnknown = (lastPlayer == null);
+        /*boolean lastPlayerIsUnknown = (lastPlayer == null);
 
         int currentPlayerNumberOfCars = currentPlayerState().carCount();
         boolean onlyTwoWagonsLeftOrLess = currentPlayerNumberOfCars <= 2;
 
-        return lastPlayerIsUnknown && onlyTwoWagonsLeftOrLess;
+        return lastPlayerIsUnknown && onlyTwoWagonsLeftOrLess; */
+        return (lastPlayer == null)&&(currentPlayerState().carCount()<=2);
     }
 
     /**
