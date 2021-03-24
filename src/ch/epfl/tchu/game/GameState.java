@@ -5,6 +5,11 @@ import ch.epfl.tchu.SortedBag;
 
 import java.util.*;
 
+/**
+ *Describes the state of the game at a point in time
+ * @author Victor Canard-Duchêne (326913)
+ * @author Anne-Marie Rusu (296098)
+ */
 public final class GameState extends PublicGameState{
     private final Map<PlayerId, PlayerState> playerStateMap;
     private final Deck<Ticket> ticketDeck;
@@ -12,7 +17,6 @@ public final class GameState extends PublicGameState{
     private final PlayerId lastPlayer;
     private final PlayerId currentPlayer;
     private final Map<PlayerId, PlayerState> psMap;
-
 
 
     private GameState(Deck<Ticket> ticketDeck,
@@ -35,6 +39,13 @@ public final class GameState extends PublicGameState{
         publicPlayerStateMap.putAll(playerStateMap);
         return publicPlayerStateMap;
     }
+
+    /**
+     * Creates the initial state of the game
+     * @param tickets : the group of tickets to be used in the game
+     * @param rng : an instance of a random number generator, used to "shuffle" the deck of tickets
+     * @return a new GameState representing the initial state of the game
+     */
     public static GameState initial(SortedBag<Ticket> tickets, Random rng){
         //Tickets
         Deck<Ticket> ticketDeck = Deck.of(tickets, rng);
@@ -200,17 +211,27 @@ public final class GameState extends PublicGameState{
     }
 
     //Group 3
+
+    /**
+     * Determines when the last turn of the game begins
+     * @return true if the last player is not already known and if the current player has at most 2 cars left
+     */
     public boolean lastTurnBegins(){
         boolean lastPlayerIsUnknown = (lastPlayer == null);
 
-        int currentPlayerNumberOfWagons = currentPlayerState().carCount();
-        boolean onlyTwoWagonsLeftOrLess = currentPlayerNumberOfWagons <= 2;
+        int currentPlayerNumberOfCars = currentPlayerState().carCount();
+        boolean onlyTwoWagonsLeftOrLess = currentPlayerNumberOfCars <= 2;
 
         return lastPlayerIsUnknown && onlyTwoWagonsLeftOrLess;
     }
+
+    /**
+     *The state of the game where it's the next player's turn to play
+     * @return a new GameState where its the next player's turn
+     */
     public GameState forNextTurn(){
         PlayerId lastPlayer = (lastTurnBegins()) ? currentPlayer : null;
-        PlayerId otherPlayer = (currentPlayer == PlayerId.PLAYER_1) ? PlayerId.PLAYER_2 : PlayerId.PLAYER_1;
+        PlayerId otherPlayer = currentPlayer.next();
 
         return new GameState(ticketDeck, cardState, otherPlayer, playerStateMap, lastPlayer);
     }

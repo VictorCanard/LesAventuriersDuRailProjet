@@ -121,7 +121,7 @@ public final class PlayerState extends PublicPlayerState {
         List<SortedBag<Card>> listOfAllPossibleClaimCards = route.possibleClaimCards();
 
         List<SortedBag<Card>> sortedBagListToReturn = new ArrayList<>();
-        for (SortedBag sortedBag: listOfAllPossibleClaimCards
+        for (SortedBag<Card> sortedBag: listOfAllPossibleClaimCards
              ) {
             if(this.cards.contains(sortedBag)){
                 sortedBagListToReturn.add(sortedBag);
@@ -129,7 +129,6 @@ public final class PlayerState extends PublicPlayerState {
 
         }
         return sortedBagListToReturn;
-
     }
 
     /**
