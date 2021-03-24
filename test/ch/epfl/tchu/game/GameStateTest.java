@@ -148,10 +148,13 @@ class GameStateTest implements ChMapTest {
     }
 
     @Test
-    void withoutTopCard() {
+    void withoutTopCard() { //Check that top card returns the first card and works for the whole deck
         CardState expected = CardState.of(Deck.of(Constants.ALL_CARDS, NON_RANDOM));
         GameState gs = nonRandomState;
 
+        for (int i = 0; i < 8; i++) {
+            expected = expected.withoutTopDeckCard(); //Remove the top 8 cards to then compare this cs to the actual gs
+        }
         for (int i = 0; i < expected.deckSize(); i++) {
             assertEquals(expected.topDeckCard(), gs.topCard());
             expected = expected.withoutTopDeckCard();
@@ -168,7 +171,9 @@ class GameStateTest implements ChMapTest {
     }
 
     @Test
-    void withMoreDiscardedCards() {
+    void withMoreDiscardedCards() { //I just check those in the debugger
+        var DiscardCards = SortedBag.of(1, Card.VIOLET, 5, Card.BLUE);
+        var actualGS = nonRandomState.withMoreDiscardedCards(DiscardCards);
 
     }
 
@@ -176,11 +181,15 @@ class GameStateTest implements ChMapTest {
     @Test
     void withCardsDeckRecreatedIfNeeded() {
         //Deck is empty so it's recreated from discards
-        var emptyGS = makeDeckEmpty().withCardsDeckRecreatedIfNeeded(NON_RANDOM);
-        emptyGS.withCardsDeckRecreatedIfNeeded(new Random(1));
+        var emptyGS = makeDeckEmpty().withMoreDiscardedCards(SortedBag.of(5, Card.VIOLET)).withCardsDeckRecreatedIfNeeded(NON_RANDOM);
+        assertTrue( emptyGS.cardState().isDeckEmpty());
 
-        //Deck is not empty, should return a nearly identical gs
-        normalState.withCardsDeckRecreatedIfNeeded(NON_RANDOM);
+        var newRecreatedDeck = emptyGS.withCardsDeckRecreatedIfNeeded(new Random(1));
+        assertTrue(newRecreatedDeck.cardState().deckSize() == 5);
+
+        //Deck is not empty, should return the same gs
+        var recreatedDeck = normalState.withCardsDeckRecreatedIfNeeded(NON_RANDOM);
+        assertEquals(normalState, recreatedDeck);
     }
 
 //group 2
@@ -189,12 +198,14 @@ class GameStateTest implements ChMapTest {
         SortedBag<Ticket> firstTwoTickets = SortedBag.of(1,ChMapTest.BAL_BER, 1 , ChMapTest.ZUR_COUNTRY);
         SortedBag<Ticket> lastTicket = SortedBag.of(ChMapTest.BER_COI);
         SortedBag<Ticket> chosenTickets = firstTwoTickets.union(lastTicket);
-        normalState.withInitiallyChosenTickets(PlayerId.PLAYER_1, chosenTickets);
+
+        var newState = normalState.withInitiallyChosenTickets(PlayerId.PLAYER_1, chosenTickets);
+
 
 
     }
     @Test
-    void withInitiallyChosenTicketsFails(){
+    void withInitiallyChosenTicketsFails(){ //As the player has at least one ticket already
         SortedBag<Ticket> firstTwoTickets = SortedBag.of(1,ChMapTest.BAL_BER, 1 , ChMapTest.ZUR_COUNTRY);
         SortedBag<Ticket> lastTicket = SortedBag.of(ChMapTest.BER_COI);
         SortedBag<Ticket> chosenTickets = firstTwoTickets.union(lastTicket);
