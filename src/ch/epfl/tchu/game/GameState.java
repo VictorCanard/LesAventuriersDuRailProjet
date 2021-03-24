@@ -206,7 +206,6 @@ public final class GameState extends PublicGameState{
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards){
         psMap.put(currentPlayer, playerStateMap.get(currentPlayer).withClaimedRoute(route, cards));
-
         return new GameState(ticketDeck, cardState, currentPlayer, psMap, lastPlayer);
     }
 

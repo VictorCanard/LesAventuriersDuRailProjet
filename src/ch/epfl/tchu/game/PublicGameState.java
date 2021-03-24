@@ -1,6 +1,8 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -96,12 +98,11 @@ public class PublicGameState {
      * @return a list of all the routes claimed by both the players
      */
     public List<Route> claimedRoutes(){
-        List<Route> playerOneRoutes = playerState(PlayerId.PLAYER_1).routes();
-        List<Route> playerTwoRoutes = playerState(PlayerId.PLAYER_2).routes();
 
-        playerOneRoutes.addAll(playerTwoRoutes);
-
-        return playerOneRoutes; // Now total list of routes
+        return new ArrayList<>(){{
+            addAll(playerState(PlayerId.PLAYER_1).routes());
+            addAll(playerState(PlayerId.PLAYER_2).routes());
+        }};
     }
 
     /**

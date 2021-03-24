@@ -92,7 +92,7 @@ class GameStateTest implements ChMapTest {
     }
     @Test
     void topTickets(){
-        SortedBag<Ticket> actual = normalState.topTickets(2);
+        SortedBag<Ticket> actual = normalState.topTickets(2); //i think you meant to use the non random state
         SortedBag<Ticket> expected = SortedBag.of(1, new Ticket(BAL, BER, 5), 1,new Ticket(BAL, BRI, 10));
 
         assertEquals(expected, actual);
