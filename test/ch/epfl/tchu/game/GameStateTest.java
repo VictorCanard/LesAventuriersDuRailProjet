@@ -92,8 +92,8 @@ class GameStateTest implements ChMapTest {
     }
     @Test
     void topTickets(){
-        SortedBag<Ticket> actual = normalState.topTickets(2);
-        SortedBag<Ticket> expected = SortedBag.of(1, new Ticket(BAL, BER, 5), 1,new Ticket(BAL, BRI, 10));
+        SortedBag<Ticket> actual = nonRandomState.topTickets(2);
+        SortedBag<Ticket> expected =SortedBag.of(ticketBuilder().toList().subList(0, 2));
 
         assertEquals(expected, actual);
     }
@@ -123,7 +123,7 @@ class GameStateTest implements ChMapTest {
     @Test
     void topCard() {
         Card topCardActual = nonRandomState.topCard();
-        Card expected = Card.LOCOMOTIVE;
+        Card expected = Card.VIOLET;
 
         assertEquals(expected, topCardActual);
 
@@ -181,10 +181,10 @@ class GameStateTest implements ChMapTest {
     @Test
     void withCardsDeckRecreatedIfNeeded() {
         //Deck is empty so it's recreated from discards
-        var emptyGS = makeDeckEmpty().withMoreDiscardedCards(SortedBag.of(5, Card.VIOLET)).withCardsDeckRecreatedIfNeeded(NON_RANDOM);
+        var emptyGS = makeDeckEmpty();
         assertTrue( emptyGS.cardState().isDeckEmpty());
 
-        var newRecreatedDeck = emptyGS.withCardsDeckRecreatedIfNeeded(new Random(1));
+        var newRecreatedDeck = emptyGS.withMoreDiscardedCards(SortedBag.of(5, Card.VIOLET)).withCardsDeckRecreatedIfNeeded(new Random(1));
         assertTrue(newRecreatedDeck.cardState().deckSize() == 5);
 
         //Deck is not empty, should return the same gs
@@ -199,7 +199,14 @@ class GameStateTest implements ChMapTest {
         SortedBag<Ticket> lastTicket = SortedBag.of(ChMapTest.BER_COI);
         SortedBag<Ticket> chosenTickets = firstTwoTickets.union(lastTicket);
 
-        var newState = normalState.withInitiallyChosenTickets(PlayerId.PLAYER_1, chosenTickets);
+        var newState = GameState.initial(SortedBag.of(), NON_RANDOM).withInitiallyChosenTickets(PlayerId.PLAYER_1, chosenTickets);
+
+        var iterator = chosenTickets.iterator();
+
+        for (Ticket ticket: newState.topTickets(newState.ticketsCount())
+             ) {
+            assertEquals(iterator.next(), ticket);
+        }
 
 
 
@@ -215,10 +222,23 @@ class GameStateTest implements ChMapTest {
             stateWithFewTickets.withInitiallyChosenTickets(PlayerId.PLAYER_1, chosenTickets);
         });
 
+
+
     }
 
     @Test
-    void withChosenAdditionalTickets() {
+    void withChosenAdditionalTickets() { // TO test with more cases
+        var drawnT = SortedBag.of(1, BAL_BER, 1, BER_COI);
+        var keptT = SortedBag.of(1, BAL_BER);
+
+        var ticketDeck = drawnT.union(keptT);
+
+        var stateWithMoreTickets = GameState.initial(ticketDeck, NON_RANDOM).withChosenAdditionalTickets(drawnT, keptT);
+
+        for (Ticket ticket: stateWithMoreTickets.topTickets(stateWithMoreTickets.ticketsCount())
+             ) {
+            assertEquals(keptT.get(0), ticket);
+        }
     }
     @Test
     void withChosenAdditionalTicketsFails() {
@@ -230,7 +250,22 @@ class GameStateTest implements ChMapTest {
         });
     }
     @Test
-    void withDrawnFaceUpCard() {
+    void withDrawnFaceUpCard() { //Use a for loop here to test more cases
+        var gs = GameState.initial(SortedBag.of(), new Random(1)); // 8 Black, 8 Violet....(Shuffled)
+
+        var faceUpCards = gs.cardState().faceUpCards();
+        var topFUCard = faceUpCards.get(0);
+        var topDeckCard = gs.topCard();
+
+        var gsWithDFUC = gs.withDrawnFaceUpCard(0);
+        var newFUCard = gsWithDFUC.cardState().faceUpCard(0);
+        var topPlayerCard = gsWithDFUC.currentPlayerState().cards().get(gsWithDFUC.currentPlayerState().cardCount()-1);
+
+        assertEquals(topDeckCard, newFUCard);
+        assertEquals(topFUCard, topPlayerCard);
+
+
+
     }
     @Test
     void withDrawnFaceUpCardFails() {
@@ -244,21 +279,59 @@ class GameStateTest implements ChMapTest {
 
     @Test
     void withBlindlyDrawnCard() {
+        var gs = nonRandomState;
+
+
+        var initialDS = gs.cardState().deckSize();
+
+        var newGsWithBDC = gs;
+
+        for (int i = 1; i < initialDS-4; i++) {
+            newGsWithBDC = newGsWithBDC.withBlindlyDrawnCard();
+
+            assertEquals(initialDS-i,newGsWithBDC.cardState().deckSize()); //A card was removed from the draw pile
+            assertEquals(4+i, newGsWithBDC.currentPlayerState().cards().size()); //It was placed in the current player's hand
+
+
+        }
+
     }
     @Test
     void withBlindlyDrawnCardFails() {
+        GameState finalStateWithNoPossibilityToDrawCards = makeDeckEmpty();
+        assertThrows(IllegalArgumentException.class, ()-> {
+            finalStateWithNoPossibilityToDrawCards.withDrawnFaceUpCard(10);
+        });
+
     }
 
     @Test
     void withClaimedRoute() {
+        Route route1 = new Route("AT1_STG_1", AT1, STG, 4, Route.Level.UNDERGROUND, null);
+        var cards1 = SortedBag.of(4, Card.BLACK);
+
+        var gs1 = nonRandomState.withClaimedRoute(route1, cards1);
+
+        assertTrue(gs1.currentPlayerState().cardCount() == nonRandomState.currentPlayerState().cardCount() - cards1.size());
+        assertTrue(gs1.currentPlayerState().routes().contains(route1));
+
+        Route route2 = new Route("BAD_BAL_1", BAD, BAL, 3, Route.Level.UNDERGROUND, Color.RED);
+        var cards2 = SortedBag.of(3, Card.RED);
+
+        var gs2 = normalState;
+
+        for (int i = 0; i < 30; i++) { //Simulate the player drawing card so he can capture the above route
+            gs2 =  gs2.withBlindlyDrawnCard();
+        }
+         gs2 = gs2.withClaimedRoute(route2, cards2);
+
+        int playerCardCount = gs2.currentPlayerState().cardCount();
+        int cardsInitially =  normalState.currentPlayerState().cardCount();
+        int cardsWithOperations = cardsInitially - cards2.size() + 30;
+
+        assertEquals(cardsWithOperations, playerCardCount);
+        assertTrue(gs2.currentPlayerState().routes().contains(route2));
     }
-    @Test
-    void withClaimedRouteFails() {
-    }
-
-
-
-
 
 
 //group 3

@@ -31,7 +31,7 @@ public final class GameState extends PublicGameState{
         this.playerStateMap = Map.copyOf(playerState);
         this.currentPlayer = currentPlayerId;
         this.lastPlayer = lastPlayer;
-        this.psMap = new TreeMap<>(playerStateMap);
+        this.psMap = new EnumMap<>(playerStateMap);
 
     }
     private static Map<PlayerId, PublicPlayerState> makePublic(Map<PlayerId, PlayerState> playerStateMap){
@@ -166,14 +166,17 @@ public final class GameState extends PublicGameState{
      * @throws IllegalArgumentException if drawn tickets does not contain the chosen tickets
      * @return new GameState
      */
-    public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets, SortedBag<Ticket> chosenTickets){ //i think???
+    public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets, SortedBag<Ticket> chosenTickets){
         Preconditions.checkArgument(drawnTickets.contains(chosenTickets));
+
         psMap.put(currentPlayer, currentPlayerState().withAddedTickets(chosenTickets));
+
         return new GameState(ticketDeck.withoutTopCards(drawnTickets.size()), cardState, currentPlayer, psMap, lastPlayer);
     }
 
     /**
-     * Returns a new gamestate where the chosen card at index slot was taken from the drawn pile and put into the player's hand
+     * Returns a new gamestate where the chosen card at index slot was taken from the face-up cards and put into the player's hand
+     * And the chosen card in the face up cards was replaced with the one at the top of the deck
      * @param slot : the index of the drawn face-up
      * @throws IllegalArgumentException if it's not possible to draw cards
      * @return a new GameState
@@ -181,8 +184,8 @@ public final class GameState extends PublicGameState{
     public GameState withDrawnFaceUpCard(int slot){
         Preconditions.checkArgument(canDrawCards());
 
-        Card card = cardState.faceUpCard(slot);
-        psMap.put(currentPlayer, playerStateMap.get(currentPlayer).withAddedCard(card));
+        Card cardToAdd = cardState.faceUpCard(slot);
+        psMap.put(currentPlayer, currentPlayerState().withAddedCard(cardToAdd));
         return new GameState(ticketDeck, cardState.withDrawnFaceUpCard(slot), currentPlayer, psMap, lastPlayer);
     }
 
@@ -193,7 +196,10 @@ public final class GameState extends PublicGameState{
      */
     public GameState withBlindlyDrawnCard(){
         Preconditions.checkArgument(canDrawCards());
-        psMap.put(currentPlayer, playerStateMap.get(currentPlayer).withAddedCard(cardState.topDeckCard()));
+
+        Card cardOnTopOfTheDeck = cardState.topDeckCard();
+
+        psMap.put(currentPlayer, currentPlayerState().withAddedCard(cardOnTopOfTheDeck));
         return new GameState(ticketDeck, cardState.withoutTopDeckCard(), currentPlayer, psMap, lastPlayer);
     }
 
@@ -205,7 +211,7 @@ public final class GameState extends PublicGameState{
      * @return a new gamestate
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards){
-        psMap.put(currentPlayer, playerStateMap.get(currentPlayer).withClaimedRoute(route, cards));
+        psMap.put(currentPlayer, currentPlayerState().withClaimedRoute(route, cards));
 
         return new GameState(ticketDeck, cardState, currentPlayer, psMap, lastPlayer);
     }
