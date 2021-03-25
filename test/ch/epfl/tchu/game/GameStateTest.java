@@ -337,13 +337,13 @@ class GameStateTest implements ChMapTest {
         Route route2 = new Route("BAD_BAL_1", BAD, BAL, 3, Route.Level.UNDERGROUND, Color.RED);
         var cards2 = SortedBag.of(3, Card.RED);
 
-        //car number goes down but not cards of player
+
     }
     @Test
     void withClaimedRouteFails() {
-    }
 
         var gs2 = normalState;
+        var cards2 = SortedBag.of(3, Card.RED);
 
         for (int i = 0; i < 30; i++) { //Simulate the player drawing card so he can capture the above route
             gs2 =  gs2.withBlindlyDrawnCard();
