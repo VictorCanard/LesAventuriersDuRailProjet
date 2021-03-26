@@ -6,8 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/ch/epfl/tchu/game" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/sigcheck" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/sigcheck" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/bin" />
     </content>
     <orderEntry type="inheritedJdk" />

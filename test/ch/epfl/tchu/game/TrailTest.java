@@ -1,6 +1,6 @@
 package ch.epfl.tchu.game;
 
-import ch.epfl.TestMap;
+import ch.epfl.tchu.TestMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

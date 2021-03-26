@@ -28,7 +28,7 @@ public final class GameState extends PublicGameState{
 
         this.cardState = cardState;
         this.ticketDeck = ticketDeck;
-        this.playerStateMap = Map.copyOf(playerState);
+        this.playerStateMap = Map.copyOf(playerState); //Immutable collection
         this.currentPlayer = currentPlayerId;
         this.lastPlayer = lastPlayer;
         this.psMap = new EnumMap<>(playerStateMap);
@@ -53,20 +53,20 @@ public final class GameState extends PublicGameState{
         //PlayerStateMap
         Map<PlayerId, PlayerState> playerStateMap = new EnumMap<>(PlayerId.class);
 
-        Deck<Card> initialDeck = Deck.of(Constants.ALL_CARDS, rng);
+        Deck<Card> initialDeck = Deck.of(Constants.ALL_CARDS, rng); 
 
-        for (PlayerId playerId : PlayerId.values()){
+        for (PlayerId playerId : PlayerId.values()){ //Initializes each player's deck to the top 4 cards of the deck (and then the 4 next)
             SortedBag<Card> top4Cards = initialDeck.topCards(4);
             initialDeck = initialDeck.withoutTopCards(4);
 
-            PlayerState playerState = PlayerState.initial(top4Cards);
+            PlayerState playerState = PlayerState.initial(top4Cards); //Initializes a new PlayerState with these cards and places it in the map
             playerStateMap.put(playerId, playerState);
         }
 
-        Deck<Card> cardDeck = initialDeck;
-        CardState cardState = CardState.of(cardDeck);
+        Deck<Card> cardDeck = initialDeck; //Deck without the top 8 cards
+        CardState cardState = CardState.of(cardDeck); //Makes a CardState of that initial deck (5 face-up cards, a draw-pile and an empty discard pile)
 
-        int firstPlayerIndex = rng.nextInt(2);
+        int firstPlayerIndex = rng.nextInt(2); //Picks a player at random
         PlayerId firstPlayerId = PlayerId.ALL.get(firstPlayerIndex);
 
         return new GameState(ticketDeck, cardState,firstPlayerId, playerStateMap, null );
@@ -92,7 +92,7 @@ public final class GameState extends PublicGameState{
 
     /**
      * Return a new game state without the count number of tickets
-      * @param count : number of tickets we don't want in this new gamestate
+      * @param count : number of tickets we don't want in this new GameState
      * @throws IllegalFormatCodePointException if the count is negative or strictly superior to the player's number of tickets
      * @return a new game state with count tickets removed
      */
@@ -112,9 +112,9 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a gameState without the top card
+     * Returns a GameState without the top card
      * @throws IllegalArgumentException if the deck is empty
-     * @return a new Gamestate without the top card
+     * @return a new GameState without the top card
      */
     public GameState withoutTopCard(){
         Preconditions.checkArgument(cardState.deckSize()!=0);
@@ -122,7 +122,7 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Makes a new gamestate with more cards included in the discard pile
+     * Makes a new GameState with more cards included in the discard pile
      * @param discardedCards : cards to add to card's state discard pile
      * @return a new game state with more discarded cards
      */
@@ -131,7 +131,7 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns an identical gamestate except if the draw pile is empty in which case it creates a new from the discards pile and shuffles it
+     * Returns an identical GameState except if the draw pile is empty in which case it creates a new from the discards pile and shuffles it
      * @param rng : Random Number Generator to shuffle the new deck created from the discard pile
      * @return identical game state or with a new draw pile from the discards pile.
      */
@@ -144,7 +144,7 @@ public final class GameState extends PublicGameState{
 //Group 2
 
     /**
-     * Returns an identical gamestate but with the player's initially chosen tickets added
+     * Returns an identical GameState but with the player's initially chosen tickets added
      * @param playerId : Player 1 or 2, the player that has chosen these tickets
      * @param chosenTickets : tickets chosen at the start of the game
      * @throws IllegalArgumentException if the player has at least one ticket already
@@ -160,7 +160,7 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a new gamestate with less tickets in the ticket pile as these are now in the player's state
+     * Returns a new GameState with less tickets in the ticket pile as these are now in the player's state
      * @param drawnTickets : all tickets drawn by the player initially
      * @param chosenTickets : tickets kept by the player
      * @throws IllegalArgumentException if drawn tickets does not contain the chosen tickets
@@ -175,7 +175,7 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a new gamestate where the chosen card at index slot was taken from the face-up cards and put into the player's hand
+     * Returns a new GameState where the chosen card at index slot was taken from the face-up cards and put into the player's hand
      * And the chosen card in the face up cards was replaced with the one at the top of the deck
      * @param slot : the index of the drawn face-up
      * @throws IllegalArgumentException if it's not possible to draw cards
@@ -190,9 +190,9 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a new gamestate where the deck's top card has been placed in the current player's hand
+     * Returns a new GameState where the deck's top card has been placed in the current player's hand
      * @throws IllegalArgumentException if it's not possible to draw cards
-     * @return a new modified gamestate
+     * @return a new modified GameState
      */
     public GameState withBlindlyDrawnCard(){
         Preconditions.checkArgument(canDrawCards());
@@ -204,11 +204,11 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a new gameState where the current player has claimed a given route with a given set cards
+     * Returns a new GameState where the current player has claimed a given route with a given set cards
      * (thus adds the route to the player's collection and removes the cards he used)
      * @param route : the claimed route
      * @param cards : the claim cards
-     * @return a new gamestate
+     * @return a new GameState
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards){
         psMap.put(currentPlayer, currentPlayerState().withClaimedRoute(route, cards));

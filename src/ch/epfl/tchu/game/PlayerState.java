@@ -54,8 +54,10 @@ public final class PlayerState extends PublicPlayerState {
      */
     public PlayerState withAddedTickets(SortedBag<Ticket> newTickets){
         SortedBag.Builder<Ticket> builder = new SortedBag.Builder<>();
-        builder.add(this.tickets)
+        builder
+                .add(this.tickets)
                 .add(newTickets);
+
         return new PlayerState(builder.build(),this.cards, this.routes);
     }
 
@@ -74,7 +76,8 @@ public final class PlayerState extends PublicPlayerState {
      */
     public PlayerState withAddedCard(Card card){
         SortedBag.Builder<Card> builder = new SortedBag.Builder<>();
-        builder.add(this.cards)
+        builder
+                .add(this.cards)
                 .add(card);
         return new PlayerState(this.tickets, builder.build(), this.routes);
     }

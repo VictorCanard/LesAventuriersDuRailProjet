@@ -1,14 +1,12 @@
 package ch.epfl.tchu.gui;
 
-import ch.epfl.RouteTestMap;
-import ch.epfl.TestMap;
+import ch.epfl.tchu.RouteTestMap;
+import ch.epfl.tchu.TestMap;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.SplittableRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
 

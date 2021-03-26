@@ -1,6 +1,6 @@
 package ch.epfl.tchu.game;
 
-import ch.epfl.RouteTestMap;
+import ch.epfl.tchu.RouteTestMap;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,6 +1,6 @@
 // Rigel stage 1
 
-package ch.epfl;
+package ch.epfl.tchu;
 
 import ch.epfl.tchu.Preconditions;
 import org.junit.jupiter.api.Test;

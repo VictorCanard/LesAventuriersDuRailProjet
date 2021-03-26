@@ -1,7 +1,7 @@
 package ch.epfl.tchu.game;
 
-import ch.epfl.ChMapTest;
-import ch.epfl.RouteTestMap;
+import ch.epfl.tchu.ChMapTest;
+
 import ch.epfl.tchu.SortedBag;
 
 import org.junit.jupiter.api.Test;
@@ -209,6 +209,9 @@ class GameStateTest implements ChMapTest {
         //Deck is not empty, should return the same gs
         var recreatedDeck = normalState.withCardsDeckRecreatedIfNeeded(NON_RANDOM);
         assertEquals(normalState, recreatedDeck);
+
+        //test with empty discard pile
+        var deckWithEmptyDP = makeDeckEmpty().withCardsDeckRecreatedIfNeeded(NON_RANDOM);
     }
 
 //group 2
@@ -341,18 +344,20 @@ class GameStateTest implements ChMapTest {
     }
     @Test
     void withClaimedRouteFails() {
-    }
+
 
         var gs2 = normalState;
 
-        for (int i = 0; i < 30; i++) { //Simulate the player drawing card so he can capture the above route
+        for (int i = 0; i < 40; i++) { //Simulate the player drawing card so he can capture the above route
             gs2 =  gs2.withBlindlyDrawnCard();
         }
+        var cards2 = SortedBag.of(3, Card.RED);
          gs2 = gs2.withClaimedRoute(route2, cards2);
+
 
         int playerCardCount = gs2.currentPlayerState().cardCount();
         int cardsInitially =  normalState.currentPlayerState().cardCount();
-        int cardsWithOperations = cardsInitially - cards2.size() + 30;
+        int cardsWithOperations = cardsInitially - cards2.size() + 40;
 
         assertEquals(cardsWithOperations, playerCardCount);
         assertTrue(gs2.currentPlayerState().routes().contains(route2));

@@ -1,4 +1,4 @@
-package ch.epfl;
+package ch.epfl.tchu;
 
 import ch.epfl.tchu.game.*;
 

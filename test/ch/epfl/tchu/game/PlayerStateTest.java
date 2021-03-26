@@ -1,13 +1,13 @@
 package ch.epfl.tchu.game;
 
-import ch.epfl.RouteTestMap;
-import ch.epfl.TestMap;
+import ch.epfl.tchu.RouteTestMap;
+import ch.epfl.tchu.TestMap;
 import ch.epfl.tchu.SortedBag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static ch.epfl.TestMap.*;
+import static ch.epfl.tchu.TestMap.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerStateTest {

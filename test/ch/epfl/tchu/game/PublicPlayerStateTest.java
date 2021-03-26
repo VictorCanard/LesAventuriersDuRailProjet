@@ -1,7 +1,7 @@
 package ch.epfl.tchu.game;
 
-import ch.epfl.RouteTestMap;
-import ch.epfl.TestMap;
+import ch.epfl.tchu.RouteTestMap;
+import ch.epfl.tchu.TestMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
