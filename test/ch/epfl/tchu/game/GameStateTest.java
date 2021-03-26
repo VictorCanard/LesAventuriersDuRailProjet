@@ -340,7 +340,7 @@ class GameStateTest implements ChMapTest {
         Route route2 = new Route("BAD_BAL_1", BAD, BAL, 3, Route.Level.UNDERGROUND, Color.RED);
         var cards2 = SortedBag.of(3, Card.RED);
 
-        //car number goes down but not cards of player
+
     }
     @Test
     void withClaimedRouteFails() {
