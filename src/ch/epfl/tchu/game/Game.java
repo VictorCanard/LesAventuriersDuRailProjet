@@ -9,6 +9,7 @@ import java.util.Random;
 
 public final class Game implements Player { //No constructor as the class is only functional; it shouldn't be instantiable
     private static Map<PlayerId, Player> players;
+    private static PlayerId firstPlayer;
 
 
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
@@ -22,7 +23,15 @@ public final class Game implements Player { //No constructor as the class is onl
         }
         //ReceiveInfo
 
+        //Do While (!lastTurn())
+            //TurnKind
+            //switch()
+        // CurrentPlayer = GameState.initial().currentPlayerState();
+
+        //Fin du jeu
+
     }
+
 
     private void receiveInfoForAll(String infoToReceive){
         for (Player player: players.values()
@@ -31,7 +40,7 @@ public final class Game implements Player { //No constructor as the class is onl
         }
     }
     private void updateAllStates(PublicGameState newState, Map<PlayerId, PlayerState> bothPlayersOwnStates){
-        PlayerId playerOne = PlayerId.PLAYER_1;
+        PlayerId playerOne = firstPlayer;
 
         for (Player player: players.values()
         ) {
@@ -40,6 +49,17 @@ public final class Game implements Player { //No constructor as the class is onl
         }
     }
 
+    private void drawTickets(){
+
+    }
+    private void drawCards(){
+
+    }
+    //Anne-Marie
+    private void claimRoute(){
+
+    }
+    //Victor
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
 
@@ -70,6 +90,8 @@ public final class Game implements Player { //No constructor as the class is onl
         return null;
     }
 
+
+    //Anne-Marie
     @Override
     public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
         return null;
