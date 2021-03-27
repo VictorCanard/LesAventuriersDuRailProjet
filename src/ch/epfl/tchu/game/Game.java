@@ -15,32 +15,89 @@ public final class Game { //No constructor as the class is only functional; it s
     private static Map<PlayerId, String> playerNames;
     private static SortedBag<Ticket> ticketOptions;
     private static Map<PlayerId, Info> infoGenerators;
+    private static GameState gameState;
+
 
 
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
         Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
 
-        players = Map.copyOf(players);
-        playerNames = Map.copyOf(playerNames);
-        ticketOptions = tickets;
-        infoGenerators = new EnumMap<>(PlayerId.class);
+        Game.players = Map.copyOf(players);
+        Game.playerNames = Map.copyOf(playerNames);
+        Game.ticketOptions = tickets;
+        Game.infoGenerators = new EnumMap<>(PlayerId.class);
+        Game.gameState = GameState.initial(tickets, rng);
+        Game.firstPlayer = gameState.currentPlayerId();
 
+        initial();
+
+        do {
+            nextTurn();
+
+        }while(! isLastTurn());
+
+        endOfGame();
+
+
+
+
+
+    }
+    private static void initial(){
         for (Map.Entry<PlayerId, Player> playerMapEntry: players.entrySet() // Call initPlayers() for both players and initializes their Info generators
-             ) {
+        ) {
             PlayerId currentPlayerIdInTheLoop = playerMapEntry.getKey();
             Player currentPlayer  = playerMapEntry.getValue();
 
-            currentPlayer.initPlayers(currentPlayerIdInTheLoop, playerNames);
             infoGenerators.put(currentPlayerIdInTheLoop, new Info(playerNames.get(currentPlayerIdInTheLoop)));
+            currentPlayer.initPlayers(currentPlayerIdInTheLoop, playerNames);
+
         }
-        //ReceiveInfo
+    }
+    private static void nextTurn(){
+        PlayerId playerOne = firstPlayer;
 
-        //Do While (!lastTurn())
-            //TurnKind
-            //switch()
-        // CurrentPlayer = GameState.initial().currentPlayerState();
+        for (Player player: players.values()
+        ) {
+            Player.TurnKind playerChoice = player.nextTurn();
 
-        //Fin du jeu
+            switch (playerChoice){
+                case DRAW_CARDS:
+                    drawCards(player);
+                    break;
+                case DRAW_TICKETS:
+                    drawTickets(player);
+                    break;
+                case CLAIM_ROUTE:
+                    claimRoute(player);
+                    break;
+
+            }
+            playerOne = playerOne.next(); //To call the method updateState for playerTwo as well
+        }
+
+
+    }
+    private static boolean isLastTurn(){
+        return gameState.lastTurnBegins();
+
+    }
+    private static void endOfGame(){
+        //One more turn
+
+        //Calculate final points
+        Map<PlayerId, Integer> playerTotalPoints = new EnumMap<>(PlayerId.class);
+        int finalPointsRoutesAndTickets = 0;
+        int longestTrailBonus = 0;
+        int finalPlayerPoints = 0;
+
+        for (PlayerId playerId : PlayerId.values()) {
+            PlayerState currentPlayerState = gameState.playerState(playerId);
+            finalPointsRoutesAndTickets = currentPlayerState.finalPoints();
+
+        }
+        int routes = Trail.longest(currentPlayerState.routes());
+        playerTotalPoints.put(playerId, finalPoints);
 
     }
 
@@ -62,17 +119,22 @@ public final class Game { //No constructor as the class is only functional; it s
 
     }
 
-    private void drawTickets(){
-        chooseTickets(ticketOptions);
+    private static void drawTickets(Player player){
+        player.chooseTickets(ticketOptions);
     }
-    private void drawCards(){
-        drawSlot();
-        drawSlot();
+    private static void drawCards(Player player){
+        for (int i = 0; i < 2; i++) {
+            player.drawSlot();
+        }
+
 
     }
     //Anne-Marie
-    private void claimRoute(){
+    private static void claimRoute(Player player){
 
+    }
+    
+    private static void calculateTotal(Player player){
     }
 
 }
