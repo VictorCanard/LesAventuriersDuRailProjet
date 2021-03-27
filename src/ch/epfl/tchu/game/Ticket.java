@@ -28,21 +28,21 @@ public final class Ticket  implements Comparable<Ticket>{
      * @throws IllegalArgumentException if trips is empty or if all departure stations aren't the same
      */
     public Ticket(List<Trip> trips){
-
         this.trips = List.copyOf(trips);
 
         for(Trip t : this.trips){
-            departureStationsNames.add(t.from().name());
+            this.departureStationsNames.add(t.from().name());
         }
 
         Preconditions.checkArgument(departureStationsNames.size() == 1);
 
-        departure = this.trips.get(0).from().name();
+        this.departure = this.trips.get(0).from().name();
 
-        if(this.trips.size()>1){ //The first format where there's only one destination
-            text = String.format("%s - {%s}", departure,Ticket.computeText(delimiter, this.trips));
-        }else {
-            text = String.format("%s - %s", departure,Ticket.computeText(delimiter, this.trips));
+        if(this.trips.size() <= 1){ //The first format where there's only one destination
+            this.text = String.format("%s - %s", departure,Ticket.computeText(delimiter, this.trips));
+
+        }else { //Multiple Destinations
+            this.text = String.format("%s - {%s}", departure,Ticket.computeText(delimiter, this.trips));
         }
 
     }
@@ -54,7 +54,6 @@ public final class Ticket  implements Comparable<Ticket>{
      * @param points : number of points allocated for the corresponding trip
      */
     public Ticket(Station from, Station to, int points){
-
         this(List.of(new Trip(from, to, points)));
     }
 

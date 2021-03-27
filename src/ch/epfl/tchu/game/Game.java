@@ -38,10 +38,6 @@ public final class Game { //No constructor as the class is only functional; it s
 
         endOfGame();
 
-
-
-
-
     }
     private static void initial(){
         for (Map.Entry<PlayerId, Player> playerMapEntry: players.entrySet() // Call initPlayers() for both players and initializes their Info generators
@@ -86,29 +82,24 @@ public final class Game { //No constructor as the class is only functional; it s
         //One more turn
 
         //Calculate final points
-        Map<PlayerId, Integer> playerTotalPoints = new EnumMap<>(PlayerId.class);
-        int finalPointsRoutesAndTickets = 0;
-        int longestTrailBonus = 0;
-        int finalPlayerPoints = 0;
-
-        for (PlayerId playerId : PlayerId.values()) {
-            PlayerState currentPlayerState = gameState.playerState(playerId);
-            finalPointsRoutesAndTickets = currentPlayerState.finalPoints();
+        for (Player player : players.values()
+             ) {
+            int totalPoints = calculateTotal(player);
+            //Get PlayerInfoGenerator and apply method getsLongestTrailBonus();
+            receiveInfoForAll();
 
         }
-        int routes = Trail.longest(currentPlayerState.routes());
-        playerTotalPoints.put(playerId, finalPoints);
 
     }
 
 
-    private void receiveInfoForAll(String infoToReceive){
+    private static void receiveInfoForAll(String infoToReceive){
         for (Player player: players.values()
              ) {
             player.receiveInfo(infoToReceive);
         }
     }
-    private void updateAllStates(PublicGameState newState, Map<PlayerId, PlayerState> bothPlayersOwnStates){
+    private static void updateAllStates(PublicGameState newState, Map<PlayerId, PlayerState> bothPlayersOwnStates){
         PlayerId playerOne = firstPlayer;
 
         for (Player player: players.values()
@@ -134,7 +125,30 @@ public final class Game { //No constructor as the class is only functional; it s
 
     }
     
-    private static void calculateTotal(Player player){
+    private static int calculateTotal(Player player){
+        PlayerState currentPlayerState = gameState.playerState();
+
+
+        return currentPlayerState.finalPoints();
+
+    }
+
+    //Returns a negative int if the second player has a longer trail than the first
+    //Returns a positive int if the first player has a longer trail than the second
+    //Returns 0 if they both have trails of equal length
+    private static int longestTrail(){
+        Map<PlayerId, Integer> playerIdIntegerMap = new EnumMap<>(PlayerId.class);
+
+        for (Map.Entry<PlayerId, Player> playerMapEntry : players.entrySet()) {
+            PlayerId currentPlayerId = playerMapEntry.getKey();
+
+            PlayerState currentPlayerState = gameState.playerState(currentPlayerId);
+            int length = Trail.longest(currentPlayerState.routes()).length();
+
+            playerIdIntegerMap.put(currentPlayerId, length);
+        }
+
+        return Integer.compare(playerIdIntegerMap.get(PlayerId.PLAYER_1), playerIdIntegerMap.get(PlayerId.PLAYER_2));
     }
 
 }

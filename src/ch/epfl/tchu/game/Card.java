@@ -19,7 +19,7 @@ public enum Card {
     WHITE(Color.WHITE),
     LOCOMOTIVE(null);
 
-    private Color color;
+    private final Color color;
     /**
      * List of all the types of cards
      */
