@@ -56,8 +56,8 @@ public final class GameState extends PublicGameState{
         Deck<Card> initialDeck = Deck.of(Constants.ALL_CARDS, rng); 
 
         for (PlayerId playerId : PlayerId.values()){ //Initializes each player's deck to the top 4 cards of the deck (and then the 4 next)
-            SortedBag<Card> top4Cards = initialDeck.topCards(4);
-            initialDeck = initialDeck.withoutTopCards(4);
+            SortedBag<Card> top4Cards = initialDeck.topCards(Constants.INITIAL_CARDS_COUNT);
+            initialDeck = initialDeck.withoutTopCards(Constants.INITIAL_CARDS_COUNT);
 
             PlayerState playerState = PlayerState.initial(top4Cards); //Initializes a new PlayerState with these cards and places it in the map
             playerStateMap.put(playerId, playerState);
@@ -66,7 +66,7 @@ public final class GameState extends PublicGameState{
         Deck<Card> cardDeck = initialDeck; //Deck without the top 8 cards
         CardState cardState = CardState.of(cardDeck); //Makes a CardState of that initial deck (5 face-up cards, a draw-pile and an empty discard pile)
 
-        int firstPlayerIndex = rng.nextInt(2); //Picks a player at random
+        int firstPlayerIndex = rng.nextInt(PlayerId.COUNT); //Picks a player at random
         PlayerId firstPlayerId = PlayerId.ALL.get(firstPlayerIndex);
 
         return new GameState(ticketDeck, cardState,firstPlayerId, playerStateMap, null );
@@ -212,8 +212,9 @@ public final class GameState extends PublicGameState{
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards){
         psMap.put(currentPlayer, currentPlayerState().withClaimedRoute(route, cards));
+        CardState newState = cardState.withMoreDiscardedCards(cards);
 
-        return new GameState(ticketDeck, cardState, currentPlayer, psMap, lastPlayer);
+        return new GameState(ticketDeck, newState, currentPlayer, psMap, lastPlayer);
     }
 
     //Group 3
