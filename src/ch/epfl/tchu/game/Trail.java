@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.gui.StringsFr;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -105,12 +107,7 @@ public final class Trail {
      * @return length of the trail
      */
     public int length(){
-        int length = 0;
-
-        for (Route route: routes) {
-            length += route.length();
-        }
-        return length;
+        return routes.stream().mapToInt(Route::length).sum();
     }
 
     /**
@@ -118,7 +115,7 @@ public final class Trail {
      * @return the first station of the trail
      */
     public Station station1(){
-        return (length() == 0) ? null : station1;
+        return  station1;
     }
 
     /**
@@ -126,7 +123,7 @@ public final class Trail {
      * @return the second station of the trail
      */
     public Station station2(){
-        return (length() == 0) ? null : station2;
+        return station2;
     }
 
     /**
@@ -137,20 +134,22 @@ public final class Trail {
     public String toString() {
         if(routes.isEmpty()){
             return "";
-        }
-        else{
-            StringBuilder text = new StringBuilder();
-
-            Station currentStation = station1;
-
-            text.append(currentStation.name())
-                .append(" - ");
-
-            for (int i = 0; i < routes.size()-1; i++) {
-                currentStation = routes.get(i).stationOpposite(currentStation);
-                text.append(currentStation.name())
-                    .append(" - ");
             }
+        else{
+                StringBuilder text = new StringBuilder()
+                        .append(station1)
+                        .append(StringsFr.EN_DASH_SEPARATOR);
+
+//                Station currentStation = station1;
+//
+//                text.append(currentStation.name())
+//                        .append(" - ");
+//
+//                for (int i = 0; i < routes.size()-1; i++) {
+//                    currentStation = routes.get(i).stationOpposite(currentStation);
+//                    text.append(currentStation.name())
+//                        .append(" - ");
+//                }
             return String.format("%s%s (%s)", text, station2(), length());
         }
     }

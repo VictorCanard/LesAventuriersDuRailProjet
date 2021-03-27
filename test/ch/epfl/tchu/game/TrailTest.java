@@ -1,6 +1,7 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.TestMap;
+import ch.epfl.tchu.gui.StringsFr;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -57,18 +58,34 @@ class TrailTest implements TestMap {
         assertTrue(expectedStation.equals(actualStation));
     }
 
+//    @Test
+//    void testToString() {
+//        Trail longestTrail = Trail.longest(listeRoutes);
+//        Trail longestTrail2 = Trail.longest(listeRoutes2);
+//
+//
+//        String expectedString = "Yverdon - Neuchâtel - Berne - Lucerne - Schwyz (9)";
+//        String actualString = longestTrail.toString();
+//
+//        assertEquals(expectedString,actualString);
+//
+//        String expectedString2 = "Berne - Fribourg (1)";
+//        String actualString2 = longestTrail2.toString();
+//
+//       assertEquals(expectedString2, actualString2);
+//    }
     @Test
     void testToString() {
         Trail longestTrail = Trail.longest(listeRoutes);
         Trail longestTrail2 = Trail.longest(listeRoutes2);
 
 
-        String expectedString = "Yverdon - Neuchâtel - Berne - Lucerne - Schwyz (9)";
+        String expectedString = "Yverdon" + StringsFr.EN_DASH_SEPARATOR + "Schwyz (9)";
         String actualString = longestTrail.toString();
 
         assertEquals(expectedString,actualString);
 
-        String expectedString2 = "Berne - Fribourg (1)";
+        String expectedString2 = "Berne" + StringsFr.EN_DASH_SEPARATOR+ "Fribourg (1)";
         String actualString2 = longestTrail2.toString();
 
        assertEquals(expectedString2, actualString2);

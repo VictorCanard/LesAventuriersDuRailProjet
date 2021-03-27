@@ -86,7 +86,7 @@ public final class Game { //No constructor as the class is only functional; it s
              ) {
             int totalPoints = calculateTotal(player);
             //Get PlayerInfoGenerator and apply method getsLongestTrailBonus();
-            receiveInfoForAll();
+            //receiveInfoForAll();
 
         }
 
@@ -126,10 +126,11 @@ public final class Game { //No constructor as the class is only functional; it s
     }
     
     private static int calculateTotal(Player player){
-        PlayerState currentPlayerState = gameState.playerState();
-
-
-        return currentPlayerState.finalPoints();
+//        PlayerState currentPlayerState = gameState.playerState();
+//
+//
+//        return currentPlayerState.finalPoints();
+        return 0;
 
     }
 
