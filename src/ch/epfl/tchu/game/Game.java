@@ -2,24 +2,36 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.gui.Info;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public final class Game implements Player { //No constructor as the class is only functional; it shouldn't be instantiable
+public final class Game { //No constructor as the class is only functional; it shouldn't be instantiable
     private static Map<PlayerId, Player> players;
     private static PlayerId firstPlayer;
+    private static Map<PlayerId, String> playerNames;
+    private static SortedBag<Ticket> ticketOptions;
+    private static Map<PlayerId, Info> infoGenerators;
 
 
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
         Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
 
         players = Map.copyOf(players);
+        playerNames = Map.copyOf(playerNames);
+        ticketOptions = tickets;
+        infoGenerators = new EnumMap<>(PlayerId.class);
 
-        for (Player player: players.values() // Call initPlayers()
+        for (Map.Entry<PlayerId, Player> playerMapEntry: players.entrySet() // Call initPlayers() for both players and initializes their Info generators
              ) {
+            PlayerId currentPlayerIdInTheLoop = playerMapEntry.getKey();
+            Player currentPlayer  = playerMapEntry.getValue();
 
+            currentPlayer.initPlayers(currentPlayerIdInTheLoop, playerNames);
+            infoGenerators.put(currentPlayerIdInTheLoop, new Info(playerNames.get(currentPlayerIdInTheLoop)));
         }
         //ReceiveInfo
 
@@ -47,73 +59,20 @@ public final class Game implements Player { //No constructor as the class is onl
             player.updateState(newState, bothPlayersOwnStates.get(playerOne));
             playerOne = playerOne.next(); //To call the method updateState for playerTwo as well
         }
+
     }
 
     private void drawTickets(){
-
+        chooseTickets(ticketOptions);
     }
     private void drawCards(){
+        drawSlot();
+        drawSlot();
 
     }
     //Anne-Marie
     private void claimRoute(){
 
     }
-    //Victor
-    @Override
-    public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
 
-    }
-
-    @Override
-    public void receiveInfo(String info) {
-
-    }
-
-    @Override
-    public void updateState(PublicGameState newState, PlayerState ownState) {
-
-    }
-
-    @Override
-    public void setInitialTicketChoice(SortedBag<Ticket> tickets) {
-
-    }
-
-    @Override
-    public SortedBag<Ticket> chooseInitialTickets() {
-        return null;
-    }
-
-    @Override
-    public TurnKind nextTurn() {
-        return null;
-    }
-
-
-    //Anne-Marie
-    @Override
-    public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
-        return null;
-    }
-
-    @Override
-    public int drawSlot() {
-        return 0;
-    }
-
-    @Override
-    public Route claimedRoute() {
-        return null;
-    }
-
-    @Override
-    public SortedBag<Card> initialClaimCards() {
-        return null;
-    }
-
-    @Override
-    public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
-        return null;
-    }
 }
