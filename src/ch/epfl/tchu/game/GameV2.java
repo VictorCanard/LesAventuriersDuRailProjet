@@ -2,170 +2,219 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
-import ch.epfl.tchu.game.*;
+
+import ch.epfl.tchu.game.Route.Level;
 import ch.epfl.tchu.gui.Info;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public final class GameV2 { //No constructor as the class is only functional; it shouldn't be instantiable
-        private static Map<PlayerId, Player> players;
-        private static PlayerId firstPlayer;
-        private static Map<PlayerId, String> playerNames;
-        private static SortedBag<Ticket> ticketOptions;
-        private static Map<PlayerId, Info> infoGenerators;
-        private static ch.epfl.tchu.game.GameState GameState;
+
+    private static Map<PlayerId, Player> players;
+    private static Map<PlayerId, String> playerNames;
+    private static Map<PlayerId, Info> infoGenerators;
+    private static Map<PlayerId, Integer> keptTicketNumber;
+
+    private static Deck<Ticket> ticketDeck;
+    private static GameState gameState;
+    private static Random rng;
 
 
+    public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
+        Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
 
-        public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
-            //Todo Repair the map as players is not according to the randomly generated player 1, but is in the original order
-            Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
+//before the game starts
+        GameV2.rng = rng;
+        GameV2.players = Map.copyOf(players);
+        GameV2.playerNames = Map.copyOf(playerNames);
+        GameV2.ticketDeck = Deck.of(tickets, rng);
+        GameV2.infoGenerators = new EnumMap<>(PlayerId.class); //initialized in initializePlayers
+        GameV2.gameState = GameState.initial(tickets, rng);
 
-            GameV2.players = Map.copyOf(players);
-            GameV2.playerNames = Map.copyOf(playerNames);
-            GameV2.ticketOptions = tickets;
-            GameV2.infoGenerators = new EnumMap<>(PlayerId.class);
-            GameV2.GameState = GameState.initial(tickets, rng);
-            GameV2.firstPlayer = GameState.currentPlayerId();
 
-            initial();
+        setup();
 
-            do {
-                nextTurn();
+//the actual game starts
 
-            }while(! isLastTurn());
+        do{
 
-            endOfGameV2();
-
+            nextTurn();
         }
-        private static void initial(){
-            players.forEach((k,v)->{ //Calls intiPlayers and initializes info generators
-                infoGenerators.put(k, new Info(playerNames.get(k)));
-                v.initPlayers(k, playerNames);
-            });
+        while(!isLastTurn()); //This needs to happen n+1 times, length of the game and one more turn.
 
-            //For  both players:
-            // Set initial tickets
+        endOfGame();
+
+    }
+    private static void setup(){
+        initializePlayers();
+
+        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).willPlayFirst());
+
+        distributeInitialTickets();
+        //already initialized infoGenerators in initializePlayers()
+        infoGenerators.forEach((playerId, info) -> receiveInfoForAll(info.keptTickets(keptTicketNumber.get(playerId))));
+    }
+
+    private static void receiveInfoForAll(String infoToReceive){
+        players.forEach((playerId, player) -> player.receiveInfo(infoToReceive));
+    }
+
+    private static void updateAllStates(PublicGameState newState){
+        players.forEach((playerId, player)-> player.updateState(newState,  gameState.playerState(playerId)));
+    }
+
+
+    private static void initializePlayers(){
+        players.forEach((playerId, player)->{
+            infoGenerators.put(playerId, new Info(playerNames.get(playerId)));
+            player.initPlayers(playerId, playerNames);
+        });
+    }
+
+    private static void distributeInitialTickets() {
+        players.forEach((playerId, player)->{
+            player.setInitialTicketChoice(ticketDeck.topCards(Constants.INITIAL_TICKETS_COUNT));
+            ticketDeck.withoutTopCards(Constants.INITIAL_TICKETS_COUNT);
+
+            player.updateState(gameState, gameState.playerState(playerId)); //call actual method bc its in the middle of instructions in for each
+
+            player.chooseInitialTickets();
+            keptTicketNumber.put(playerId, player.chooseInitialTickets().size());
+        });
+    }
+
+    private static void nextTurn(){
+        updateAllStates(gameState);
+
+        players.forEach((playerId, player) ->{
+            //receiveInfoForAll();
             //updateStateForAll()
-            //Choose initial tickets
-            //receiveInfoForAll();
-        }
-        private static void nextTurn(){
-            players.forEach((k,v) ->{
-                //receiveInfoForAll();
-                //updateStateForAll()
-                Player.TurnKind playerChoice = v.nextTurn();
+            Player.TurnKind playerChoice = player.nextTurn();
 
-                switch (playerChoice){
-                    case DRAW_CARDS:
-                        drawCards(v);
-                        break;
-                    case DRAW_TICKETS:
-                        drawTickets(v);
-                        break;
-                    case CLAIM_ROUTE:
-                        claimRoute(v);
-                        break;
+            switch (playerChoice){
+                case DRAW_CARDS:
+                    drawCards(player);
+                    break;
+                case DRAW_TICKETS:
+                    drawTickets(player);
+                    break;
+                case CLAIM_ROUTE:
+                    claimRoute(player);
+                    break;
 
-                }
-
-            });
-
-
-
-        }
-        private static boolean isLastTurn(){
-            return GameState.lastTurnBegins();
-
-        }
-        private static void endOfGameV2(){
-            //receiveInfoForAll(); It's last turn
-            //One more turn
-
-            //Calculate final points
-            players.forEach(((playerId, player) -> {
-                int totalPoints = calculateTotal(player);
-
-                //Get PlayerInfoGenerator and apply method getsLongestTrailBonus();
-                //receiveInfoForAll();
-            }));
-
-            //updateStateForAll()
-            //receiveInfoForAll(); The winner or both ex aequo
-
-        }
-
-
-        private static void receiveInfoForAll(String infoToReceive){
-            players.forEach((playerId, player) ->{
-                player.receiveInfo(infoToReceive);
-            });
-        }
-        private static void updateAllStates(PublicGameState newState, Map<PlayerId, PlayerState> bothPlayersOwnStates){
-            players.forEach((playerId,player) ->{
-                player.updateState(newState, bothPlayersOwnStates.get(playerId));
-            });
-
-        }
-
-        private static void drawTickets(Player player){
-            //receiveInfoForAll();
-            SortedBag<Ticket> keptTickets = player.chooseTickets(ticketOptions);
-            //receiveInfoForAll();
-        }
-        private static void drawCards(Player player){
-            //receiveInfoForAll();
-            for (int i = 0; i < 2; i++) {
-                //withCardsDeckRecreatedIfNeeded
-                int drawSlot = player.drawSlot();
-                //receiveInfoForAll(); The player has chosen a card from the deck (-1) or from the FU Cards (0-4)
-                //updateStateForAll()
             }
+            gameState = gameState.forNextTurn();
+
+        });
 
 
-        }
-        //Anne-Marie
-        private static void claimRoute(Player player){ //withCardsDeckRecreatedIfNeeded
-            //receiveInfoForAll(); Cartes initiales et additionnelles
-            //If (tunnel){
-            ////receiveInfoForAll(); It's a tunnel
-            //receiveInfoForAll(); Additional Claim Cards
-            //if (can't or doesn't want to capture the tunnel){
-            //receiveInfoForAll();
-
-        }
-
-        private static int calculateTotal(Player player){
-        /*PlayerState currentPlayerState = GameState.playerState();
-
-        if(longestTrail() >= 0){
-
-        }
-
-        return currentPlayerState.finalPoints() + ;*/
-            return 0;
-
-
-        }
-
-        //Returns a negative int if the second player has a longer trail than the first
-        //Returns a positive int if the first player has a longer trail than the second
-        //Returns 0 if they both have trails of equal length
-        private static int longestTrail(){
-            Map<PlayerId, Integer> playerIdIntegerMap = new EnumMap<>(PlayerId.class);
-
-            players.forEach((playerId, player) -> {
-                PlayerState currentPlayerState = GameState.playerState(playerId);
-                int length = Trail.longest(currentPlayerState.routes()).length();
-                playerIdIntegerMap.put(playerId, length);
-
-            });
-
-            return Integer.compare(playerIdIntegerMap.get(PlayerId.PLAYER_1), playerIdIntegerMap.get(PlayerId.PLAYER_2));
-        }
 
     }
 
 
+
+    private static boolean isLastTurn(){
+        return gameState.lastTurnBegins();
+
+    }
+    private static void endOfGame(){
+        updateAllStates(gameState);
+
+        //receiveInfoForAll(); It's last turn
+        //One more turn
+
+        //Calculate final points
+        players.forEach(((playerId, player) -> {
+            int totalPoints = calculateTotal(player);
+
+            //Get PlayerInfoGenerator and apply method getsLongestTrailBonus();
+            //receiveInfoForAll();
+        }));
+
+        //updateStateForAll()
+        //receiveInfoForAll(); The winner or both ex aequo
+
+    }
+
+
+    private static void drawTickets(Player player){
+        //receiveInfoForAll();
+        SortedBag<Ticket> ticketOptions = ticketDeck.topCards(Constants.IN_GAME_TICKETS_COUNT);
+        //update state here?
+        SortedBag<Ticket> keptTickets = player.chooseTickets(ticketOptions);
+        //receiveInfoForAll();
+
+
+
+    }
+    private static void drawCards(Player player){
+        for (int i = 0; i < 2; i++) {
+            //withCardsDeckRecreatedIfNeeded
+            int drawSlot = player.drawSlot();
+            //receiveInfoForAll(); The player has chosen a card from the deck (-1) or from the FU Cards (0-4)
+            //updateStateForAll()
+        }
+
+
+    }
+
+    private static void claimRoute(Player player){
+        player.claimedRoute();
+        player.initialClaimCards();
+
+        if(player.claimedRoute().level() == Level.UNDERGROUND) {
+            //idk if im supposed to do this here
+            SortedBag.Builder<Card> additionalCardsBuild = new SortedBag.Builder<>();
+
+            for(int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
+                gameState.withCardsDeckRecreatedIfNeeded(new Random());
+                additionalCardsBuild.add(gameState.topCard());
+                gameState.withoutTopCard();
+            }
+            SortedBag<Card> additionalCards = additionalCardsBuild.build();
+
+
+
+            //player.chooseAdditionalCards(/*list of sorted bags of cards*/);
+
+            //this returns a list of cards but what to put in the first argument
+            gameState.playerState(gameState.currentPlayerId()).possibleAdditionalCards(0, player.initialClaimCards(), additionalCards);
+
+            //if these 3 cards imply the use of additional cards
+            //call chooseAdditionalCards with the options of cards they can use
+            //but then they can also back out?????????
+
+        }
+
+
+    }
+
+    private static int calculateTotal(Player player){
+//        PlayerState currentPlayerState = gameState.playerState();
+//
+//
+//        return currentPlayerState.finalPoints();
+        return 0;
+
+    }
+
+    //Returns a negative int if the second player has a longer trail than the first
+    //Returns a positive int if the first player has a longer trail than the second
+    //Returns 0 if they both have trails of equal length
+    private static int longestTrail(){
+        Map<PlayerId, Integer> playerIdIntegerMap = new EnumMap<>(PlayerId.class);
+
+        players.forEach((playerId, player) -> {
+            PlayerState currentPlayerState = gameState.playerState(playerId);
+            int length = Trail.longest(currentPlayerState.routes()).length();
+            playerIdIntegerMap.put(playerId, length);
+
+        });
+
+        return Integer.compare(playerIdIntegerMap.get(PlayerId.PLAYER_1), playerIdIntegerMap.get(PlayerId.PLAYER_2));
+    }
+
+}
