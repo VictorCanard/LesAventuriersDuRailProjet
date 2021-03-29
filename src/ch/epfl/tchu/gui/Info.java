@@ -113,7 +113,7 @@ public final class Info {
      * @return message including the route that was claimed by the player and the cards used to claim it
      */
     public String claimedRoute(Route route, SortedBag<Card> cards){
-        return String.format(StringsFr.CLAIMED_ROUTE, playerName, route, cardNames(cards));
+        return String.format(StringsFr.CLAIMED_ROUTE, playerName, toString(route), cardNames(cards));
     }
 
     /**
@@ -123,7 +123,7 @@ public final class Info {
      * @return message including the tunnel to be attempted and the initial cards played by the player
      */
     public String attemptsTunnelClaim(Route route, SortedBag<Card> initialCards){
-        return String.format(StringsFr.ATTEMPTS_TUNNEL_CLAIM, playerName, route, cardNames(initialCards));
+        return String.format(StringsFr.ATTEMPTS_TUNNEL_CLAIM, playerName, toString(route), cardNames(initialCards));
     }
 
     /**
@@ -153,7 +153,7 @@ public final class Info {
      * @return message including the route that was not claimed by the player
      */
     public String didNotClaimRoute(Route route){
-        return String.format(StringsFr.DID_NOT_CLAIM_ROUTE, playerName, route);
+        return String.format(StringsFr.DID_NOT_CLAIM_ROUTE, playerName, toString(route));
     }
 
     /**
@@ -217,6 +217,12 @@ public final class Info {
             stringList.add(stringToAdd);
         }
         return stringList;
+    }
+
+    private String toString(Route route){
+
+        return String.format("%s%s%s", route.station1(), StringsFr.EN_DASH_SEPARATOR, route.station2());
+
     }
 
 }

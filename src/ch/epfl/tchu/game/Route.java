@@ -114,15 +114,9 @@ public final class Route {
      * @return oppositeStation
      */
     public Station stationOpposite(Station station){
-
         Preconditions.checkArgument(stations().contains(station));
 
-        if(station.equals(station1)){
-            return station2;
-        }
-        else{
-            return station1;
-        }
+        return (station.equals(station1)) ? station2 : station1;
     }
 
     /** Determines all the possible combinations of cards which can be played to capture this route using in particular the level, color and length of the route
@@ -173,9 +167,9 @@ public final class Route {
      * @return an int from 0 to 3 (both extremities included)
      */
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
+        Preconditions.checkArgument(level == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
 
         int aCCC;
-        Preconditions.checkArgument(level == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
 
         if(claimCards.equals(SortedBag.of(length, Card.LOCOMOTIVE))){
             aCCC = drawnCards.countOf(Card.LOCOMOTIVE);
@@ -193,8 +187,5 @@ public final class Route {
         return Constants.ROUTE_CLAIM_POINTS.get(length);
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s%s%s", station1, StringsFr.EN_DASH_SEPARATOR, station2);
-    }
+
 }

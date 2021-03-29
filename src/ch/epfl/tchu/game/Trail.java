@@ -18,9 +18,9 @@ public final class Trail {
     private final Station station2;
 
     private Trail(List<Route> routes, Station station1, Station station2){
+        this.routes = List.copyOf(routes);
         this.station1 = station1;
         this.station2 = station2;
-        this.routes = List.copyOf(routes);
     }
 
     /**
@@ -76,25 +76,33 @@ public final class Trail {
     private static List<Trail> listOfTrailsWithOneRoute(List<Route> routes){
         List<Trail> trailsToReturn = new ArrayList<>();
 
-        for(Route route: routes){ //Initializes two trails one with the route in the right order and one where the stations are inverted
-            trailsToReturn.add(new Trail(new ArrayList<>(Collections.singleton(route)), route.station1(), route.station2()));
-            trailsToReturn.add(new Trail(new ArrayList<>(Collections.singleton(route)), route.station2(), route.station1()));
-        }
+        routes.forEach((route) -> {   //Initializes two trails one with the route in the right order and one where the stations are inverted
+            trailsToReturn.add(new Trail(List.of(route), route.station1(), route.station2()));
+            trailsToReturn.add(new Trail(List.of(route), route.station2(), route.station1()));
+        });
+
         return trailsToReturn;
     }
 
     private static List<Route> findRoutesToProlongTrail(Trail trail, List<Route> routes){
         List<Route> routesToReturn = new ArrayList<>();
+        List<Route> trailRoutes = trail.routes;
+
         Station trailEndStationToWhichRoutesCanBeAdded = trail.station2();
 
+        routes.forEach((routeThatCouldBeAdded) ->{
+            if(checkIfNewRouteCanBeAdded(routeThatCouldBeAdded, trailEndStationToWhichRoutesCanBeAdded)) {
+                routesToReturn.add(routeThatCouldBeAdded);
+            }
+
+        });
+        /*trailRoutes.removeAll();
         for (Route routeThatCouldBeAdded: routes) {
             if(!(trail.routes.contains(routeThatCouldBeAdded))){
 
-                if(checkIfNewRouteCanBeAdded(routeThatCouldBeAdded, trailEndStationToWhichRoutesCanBeAdded)) {
-                    routesToReturn.add(routeThatCouldBeAdded);
-                }
+
             }
-        }
+        }*/
         return routesToReturn;
     }
 
@@ -107,7 +115,10 @@ public final class Trail {
      * @return length of the trail
      */
     public int length(){
-        return routes.stream().mapToInt(Route::length).sum();
+        return routes
+                .stream()
+                .mapToInt(Route::length)
+                .sum();
     }
 
     /**
@@ -134,24 +145,27 @@ public final class Trail {
     public String toString() {
         if(routes.isEmpty()){
             return "";
-            }
-        else{
-                StringBuilder text = new StringBuilder()
-                        .append(station1)
-                        .append(StringsFr.EN_DASH_SEPARATOR);
+        }
 
-//                Station currentStation = station1;
-//
-//                text.append(currentStation.name())
-//                        .append(" - ");
-//
-//                for (int i = 0; i < routes.size()-1; i++) {
-//                    currentStation = routes.get(i).stationOpposite(currentStation);
-//                    text.append(currentStation.name())
-//                        .append(" - ");
-//                }
-            return String.format("%s%s (%s)", text, station2(), length());
+        StringBuilder text = new StringBuilder()
+                .append(station1)
+                .append(StringsFr.EN_DASH_SEPARATOR)
+                .append(station2);
+
+/*
+                Station currentStation = station1;
+
+                text.append(currentStation.name())
+                        .append(" - ");
+
+                for (int i = 0; i < routes.size()-1; i++) {
+                    currentStation = routes.get(i).stationOpposite(currentStation);
+                    text.append(currentStation.name())
+                        .append(" - ");
+                }
+*/
+        return String.format("%s (%s)", text, length());
         }
     }
 
-}
+
