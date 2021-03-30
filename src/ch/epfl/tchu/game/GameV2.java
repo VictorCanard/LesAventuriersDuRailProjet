@@ -125,7 +125,7 @@ public final class GameV2 { //No constructor as the class is only functional; it
 
         calculateTotal();
         players.forEach(((playerId, player) -> {
-            int totalPoints =
+            //int totalPoints =
 
 
             //Get PlayerInfoGenerator and apply method getsLongestTrailBonus();
@@ -133,8 +133,8 @@ public final class GameV2 { //No constructor as the class is only functional; it
         }));
 
         //updateStateForAll()
-        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).won());
-        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).draw(playerNames.values(), ));
+//        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).won());
+//        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).draw(playerNames.values(), ));
 
 
     }
@@ -212,7 +212,7 @@ public final class GameV2 { //No constructor as the class is only functional; it
     private static int calculateTotal(){
         TreeSet<Trail> longest = longestTrails();
 
-
+        return 0;
     }
 
     //Returns a negative int if the second player has a longer trail than the first
@@ -226,7 +226,8 @@ public final class GameV2 { //No constructor as the class is only functional; it
             trailSet.add(playerLongestTrail);
         });
 
-        return trailSet;
+        //return trailSet;
+        return null;
     }
 
 }

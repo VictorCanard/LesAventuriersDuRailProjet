@@ -86,13 +86,14 @@ public final class Trail {
 
     private static List<Route> findRoutesToProlongTrail(Trail trail, List<Route> routes){
         List<Route> routesToReturn = new ArrayList<>();
-        List<Route> trailRoutes = trail.routes;
+        List<Route> trailRoutes = trail.routes; //Immutable collection
 
         Station trailEndStationToWhichRoutesCanBeAdded = trail.station2();
 
         routes.forEach((routeThatCouldBeAdded) ->{
             if(checkIfNewRouteCanBeAdded(routeThatCouldBeAdded, trailEndStationToWhichRoutesCanBeAdded)) {
                 routesToReturn.add(routeThatCouldBeAdded);
+                routes.remove(routeThatCouldBeAdded);
             }
 
         });
