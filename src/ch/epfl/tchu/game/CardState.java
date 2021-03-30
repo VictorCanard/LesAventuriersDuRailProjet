@@ -22,7 +22,6 @@ public final class CardState extends PublicCardState{
      */
     private CardState(List<Card> faceUpCards, Deck<Card> drawPile, SortedBag<Card> discardPile){
         super(faceUpCards, drawPile.size(), discardPile.size());
-        Preconditions.checkArgument(discardPile.size()>=0);
 
         this.drawPile = drawPile;
         topCard = (this.drawPile.isEmpty()) ? null : this.drawPile.topCard();

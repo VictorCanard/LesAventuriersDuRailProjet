@@ -1,6 +1,7 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.gui.Info;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -29,41 +30,67 @@ class GameTest {
         private int turnCounter;
         private PlayerState ownState;
         private GameState gameState;
+        private PublicGameState currentState;
+        private Info infoGenerator;
+        private SortedBag<Ticket> distributedTickets;
 
         // Lorsque nextTurn retourne CLAIM_ROUTE
         private Route routeToClaim;
         private SortedBag<Card> initialClaimCards;
 
-        public TestPlayer(long randomSeed, List<Route> allRoutes) {
+
+        public TestPlayer(long randomSeed, List<Route> allRoutes, String playerName) {
             this.rng = new Random(randomSeed);
             this.allRoutes = List.copyOf(allRoutes);
             this.turnCounter = 0;
+            this.infoGenerator = new Info(playerName);
         }
 
         @Override
         public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
+            receiveInfo(ownID.name());
 
+            playerNames.forEach(((playerId, name) -> {
+                receiveInfo(playerId +" is "+ name + ".");
+            }));
         }
 
         @Override
         public void receiveInfo(String info) {
-
+            System.out.println(info);
         }
 
         @Override
         public void updateState(PublicGameState newState, PlayerState ownState) {
-            this.gameState = gameState;
+            this.currentState = newState;
             this.ownState = ownState;
         }
 
         @Override
         public void setInitialTicketChoice(SortedBag<Ticket> tickets) {
+            this.distributedTickets = tickets;
+            receiveInfo("Les 5 billets qui vont été distribués sont " + tickets);
 
         }
 
         @Override
         public SortedBag<Ticket> chooseInitialTickets() {
-            return null;
+            //Chooses 3 random tickets
+            SortedBag.Builder<Ticket> chosenTickets =  new SortedBag.Builder<>();
+
+            int numberOfKeptTickets = rng.nextInt(3) + 3; //Can keep 3 to 5 tickets
+
+            for (int i = 0; i < numberOfKeptTickets; i++) {
+                int randomSlot = rng.nextInt(5);
+
+                SortedBag<Ticket> chosenTicket = SortedBag.of(distributedTickets.get(randomSlot));
+                chosenTickets.add(chosenTicket);
+                this.distributedTickets = distributedTickets.difference(chosenTicket);
+
+            }
+            return chosenTickets.build();
+
+
         }
 
         @Override
@@ -89,7 +116,23 @@ class GameTest {
 
         @Override
         public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
-            return null;
+            receiveInfo("Voici les billets tirés "+ options);
+            receiveInfo("Lesquels voulez-vous garder ?");
+
+            SortedBag.Builder<Ticket> chosenTickets =  new SortedBag.Builder<>();
+
+            int numberOfKeptTickets = rng.nextInt(3) + 1; //Can keep 1, 2 or 3 tickets
+
+            for (int i = 0; i < numberOfKeptTickets; i++) {
+                int randomSlot = rng.nextInt(3);
+
+                SortedBag<Ticket> chosenTicket = SortedBag.of(options.get(randomSlot));
+                chosenTickets.add(chosenTicket);
+                options = options.difference(chosenTicket); //Not sure this will affect the var options
+
+            }
+            return chosenTickets.build();
+
         }
 
         @Override

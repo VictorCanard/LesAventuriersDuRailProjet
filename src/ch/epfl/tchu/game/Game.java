@@ -183,7 +183,7 @@ public final class Game { //No constructor as the class is only functional; it s
             SortedBag<Card> additionalCards = additionalCardsBuild.build();
 
 
-            claimedRoute.additionalClaimCardsCount();
+
             claimedRoute.possibleClaimCards();
             //player.chooseAdditionalCards(/*list of sorted bags of cards*/);
 

@@ -6,10 +6,7 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Route.Level;
 import ch.epfl.tchu.gui.Info;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public final class GameV2 { //No constructor as the class is only functional; it shouldn't be instantiable
 
@@ -90,7 +87,7 @@ public final class GameV2 { //No constructor as the class is only functional; it
         updateAllStates(gameState);
 
         players.forEach((playerId, player) ->{
-            //receiveInfoForAll();
+            receiveInfoForAll(infoGenerators.get(playerId).canPlay());
             //updateStateForAll()
             Player.TurnKind playerChoice = player.nextTurn();
 
@@ -109,9 +106,6 @@ public final class GameV2 { //No constructor as the class is only functional; it
             gameState = gameState.forNextTurn();
 
         });
-
-
-
     }
 
 
@@ -123,39 +117,62 @@ public final class GameV2 { //No constructor as the class is only functional; it
     private static void endOfGame(){
         updateAllStates(gameState);
 
-        //receiveInfoForAll(); It's last turn
+        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount()));
+
         //One more turn
 
         //Calculate final points
+
+        calculateTotal();
         players.forEach(((playerId, player) -> {
-            int totalPoints = calculateTotal(player);
+            int totalPoints =
+
 
             //Get PlayerInfoGenerator and apply method getsLongestTrailBonus();
             //receiveInfoForAll();
         }));
 
         //updateStateForAll()
-        //receiveInfoForAll(); The winner or both ex aequo
+        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).won());
+        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).draw(playerNames.values(), ));
+
 
     }
 
 
     private static void drawTickets(Player player){
-        //receiveInfoForAll();
+
+        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).drewTickets(Constants.IN_GAME_TICKETS_COUNT));
         SortedBag<Ticket> ticketOptions = ticketDeck.topCards(Constants.IN_GAME_TICKETS_COUNT);
         //update state here?
+
         SortedBag<Ticket> keptTickets = player.chooseTickets(ticketOptions);
-        //receiveInfoForAll();
+
+        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).keptTickets(keptTickets.size()));
 
 
 
     }
     private static void drawCards(Player player){
         for (int i = 0; i < 2; i++) {
-            //withCardsDeckRecreatedIfNeeded
+            gameState = gameState.withCardsDeckRecreatedIfNeeded(rng); //To avoid the deck from being empty
             int drawSlot = player.drawSlot();
-            //receiveInfoForAll(); The player has chosen a card from the deck (-1) or from the FU Cards (0-4)
+
             //updateStateForAll()
+
+            if(drawSlot == -1){
+                gameState = gameState.withBlindlyDrawnCard();
+                receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).drewBlindCard());
+            }
+            //drawSlot = 0 to 4
+            else{
+                Card chosenVisibleCard = gameState.cardState().faceUpCard(drawSlot);
+
+                gameState = gameState.withDrawnFaceUpCard(drawSlot);
+                receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).drewVisibleCard(chosenVisibleCard));
+            }
+
+
         }
 
 
@@ -192,29 +209,24 @@ public final class GameV2 { //No constructor as the class is only functional; it
 
     }
 
-    private static int calculateTotal(Player player){
-//        PlayerState currentPlayerState = gameState.playerState();
-//
-//
-//        return currentPlayerState.finalPoints();
-        return 0;
+    private static int calculateTotal(){
+        TreeSet<Trail> longest = longestTrails();
+
 
     }
 
     //Returns a negative int if the second player has a longer trail than the first
     //Returns a positive int if the first player has a longer trail than the second
     //Returns 0 if they both have trails of equal length
-    private static int longestTrail(){
-        Map<PlayerId, Integer> playerIdIntegerMap = new EnumMap<>(PlayerId.class);
+    private static TreeSet<Trail> longestTrails(){
+        Set<Trail> trailSet = new TreeSet<>();
 
-        players.forEach((playerId, player) -> {
-            PlayerState currentPlayerState = gameState.playerState(playerId);
-            int length = Trail.longest(currentPlayerState.routes()).length();
-            playerIdIntegerMap.put(playerId, length);
-
+        players.forEach((playerId, player)->{
+            Trail playerLongestTrail = Trail.longest(gameState.playerState(playerId).routes());
+            trailSet.add(playerLongestTrail);
         });
 
-        return Integer.compare(playerIdIntegerMap.get(PlayerId.PLAYER_1), playerIdIntegerMap.get(PlayerId.PLAYER_2));
+        return trailSet;
     }
 
 }
