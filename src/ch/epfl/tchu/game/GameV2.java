@@ -14,13 +14,20 @@ public final class GameV2 { //No constructor as the class is only functional; it
     private static Map<PlayerId, String> playerNames;
     private static Map<PlayerId, Info> infoGenerators;
     private static Map<PlayerId, Integer> keptTicketNumber;
+    private static Map<PlayerId, Trail> eachPlayerLongestTrail;
+    private static Map<PlayerId, Integer> finalPoints;
+    private static Map<PlayerId, PlayerState> eachPlayerState;
+    private static Map<PlayerId, Boolean> hasBonus;
 
     private static Deck<Ticket> ticketDeck;
     private static GameState gameState;
     private static Random rng;
+    private static int bonusComparator;
+
 
 
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
+        //Todo: Make maps according to firstPlayerId (right now it's always PLAYER1 then PLAYER2)
         Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
 
 //before the game starts
@@ -114,30 +121,7 @@ public final class GameV2 { //No constructor as the class is only functional; it
         return gameState.lastTurnBegins();
 
     }
-    private static void endOfGame(){
-        updateAllStates(gameState);
 
-        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount()));
-
-        //One more turn
-
-        //Calculate final points
-
-        calculateTotal();
-        players.forEach(((playerId, player) -> {
-            //int totalPoints =
-
-
-            //Get PlayerInfoGenerator and apply method getsLongestTrailBonus();
-            //receiveInfoForAll();
-        }));
-
-        //updateStateForAll()
-//        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).won());
-//        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).draw(playerNames.values(), ));
-
-
-    }
 
 
     private static void drawTickets(Player player){
@@ -208,26 +192,58 @@ public final class GameV2 { //No constructor as the class is only functional; it
 
 
     }
+    private static void endOfGame(){
+        updateAllStates(gameState);
 
-    private static int calculateTotal(){
-        TreeSet<Trail> longest = longestTrails();
+        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount())); //LastTurnBegins
 
-        return 0;
+        //One more turn
+
+        //Calculate final points
+
+        calculateTotal();
+
+        players.forEach(((playerId, player) -> {
+            finalPoints.put(playerId, eachPlayerState.get(playerId).finalPoints())
+
+            //Get PlayerInfoGenerator and apply method getsLongestTrailBonus();
+            receiveInfoForAll();
+        }));
+
+        updateAllStates(gameState);
+
+        String info;
+
+        if(hasBonus.get(gameState.currentPlayerId())){
+            info = infoGenerators.get(gameState.currentPlayerId()).won();
+        }else if(){
+            info = infoGenerators.get(gameState.currentPlayerId().next()).won();
+        }else{
+            info = infoGenerators.get(gameState.currentPlayerId()).draw(playerNames.values(), );
+        }
+
+        receiveInfoForAll(info);
+
+
+    }
+    private static void calculateTotal() {
+        calculateLongestTrails();
+
+        bonusComparator = Integer.compare(eachPlayerLongestTrail.get(gameState.currentPlayerId()).length(), eachPlayerLongestTrail.get(gameState.currentPlayerId().next()).length());
+
+        players.forEach(((playerId, player) -> {
+            hasBonus.put(playerId, )
+        }));
     }
 
-    //Returns a negative int if the second player has a longer trail than the first
-    //Returns a positive int if the first player has a longer trail than the second
-    //Returns 0 if they both have trails of equal length
-    private static TreeSet<Trail> longestTrails(){
-        Set<Trail> trailSet = new TreeSet<>();
+    private static void calculateLongestTrails(){
 
         players.forEach((playerId, player)->{
             Trail playerLongestTrail = Trail.longest(gameState.playerState(playerId).routes());
-            trailSet.add(playerLongestTrail);
+            eachPlayerLongestTrail.put(playerId, playerLongestTrail);
         });
 
-        //return trailSet;
-        return null;
+
     }
 
 }

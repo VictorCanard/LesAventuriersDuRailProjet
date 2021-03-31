@@ -2,9 +2,12 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.gui.StringsFr;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *A trail formed from a list of routes between two given stations
@@ -30,6 +33,7 @@ public final class Trail {
      */
     public static Trail longest(List<Route> routes){
         Trail emptyTrail = new Trail(List.copyOf(routes), null, null);
+        ArrayList<Route> routesForImmutable = new ArrayList<>(routes);
 
         List<Trail> trails = listOfTrailsWithOneRoute(routes);
 
@@ -39,25 +43,28 @@ public final class Trail {
         Trail longestTrail = (trails.isEmpty()) ? emptyTrail : trails.get(0);
 
         while(!(trails.isEmpty())){
-            List<Trail> newTrails = new ArrayList<>();
+            ArrayList<Trail> newTrails = new ArrayList<>();
+
 
             for (Trail currentTrail: trails) {
-                List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routes);
+                List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routesForImmutable);
 
                 longestTrail = returnLongestTrailBetweenCurrentLongestAndNew(currentTrail, longestTrail);
 
-                for (Route route: routesToProlong) {
+                routesToProlong.forEach((routeToProlong) ->{
                     List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.routes));
-                    newListOfRoutes.add(route);
-
-                    Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), route.stationOpposite(currentTrail.station2()));
-
-                    longestTrail = returnLongestTrailBetweenCurrentLongestAndNew(newTrail, longestTrail);
+                    newListOfRoutes.add(routeToProlong);
+                    Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), routeToProlong.stationOpposite(currentTrail.station2()));
 
                     newTrails.add(newTrail);
-                }
+                });
+
 
             }
+            newTrails.add(longestTrail);
+
+            longestTrail = newTrails.stream().max(Comparator.comparingInt(Trail::length)).get();
+
             trails = newTrails;
         }
         return longestTrail;
@@ -84,26 +91,17 @@ public final class Trail {
         return trailsToReturn;
     }
 
-    private static List<Route> findRoutesToProlongTrail(Trail trail, List<Route> routes){
-        List<Route> routesToReturn = new ArrayList<>();
-        List<Route> trailRoutes = trail.routes; //Immutable collection
+    private static List<Route> findRoutesToProlongTrail(Trail trail, ArrayList<Route> routes){
 
         Station trailEndStationToWhichRoutesCanBeAdded = trail.station2();
 
-        routes.forEach((routeThatCouldBeAdded) ->{
-            if(checkIfNewRouteCanBeAdded(routeThatCouldBeAdded, trailEndStationToWhichRoutesCanBeAdded)) {
-                routesToReturn.add(routeThatCouldBeAdded);
-                routes.remove(routeThatCouldBeAdded);
-            }
-
-        });
-        /*trailRoutes.removeAll();
-        for (Route routeThatCouldBeAdded: routes) {
-            if(!(trail.routes.contains(routeThatCouldBeAdded))){
+        List<Route> routesToReturn = routes
+                                            .stream()
+                                            .filter(route -> checkIfNewRouteCanBeAdded(route, trailEndStationToWhichRoutesCanBeAdded))
+                                            .filter(route -> !(trail.routes.contains(route)))
+                                            .collect(Collectors.toList());
 
 
-            }
-        }*/
         return routesToReturn;
     }
 
