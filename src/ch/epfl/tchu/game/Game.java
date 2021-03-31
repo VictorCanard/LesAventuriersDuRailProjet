@@ -10,69 +10,56 @@ import java.util.*;
 
 public final class Game { //No constructor as the class is only functional; it shouldn't be instantiable
 
-    private static Map<PlayerId, Player> players;
-    private static Map<PlayerId, String> playerNames;
-    private static Map<PlayerId, Info> infoGenerators;
-    private static Map<PlayerId, Integer> keptTicketNumber;
-
-    private static Deck<Ticket> ticketDeck;
-    private static GameState gameState;
-    private static Random rng;
-
-
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
         Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
 
 //before the game starts
-        Game.rng = rng;
-        Game.players = Map.copyOf(players);
-        Game.playerNames = Map.copyOf(playerNames);
-        Game.ticketDeck = Deck.of(tickets, rng);
-        Game.infoGenerators = new EnumMap<>(PlayerId.class); //initialized in initializePlayers
-        Game.gameState = GameState.initial(tickets, rng);
+        Deck<Ticket> ticketDeck = Deck.of(tickets, rng);
+        Map<PlayerId, Info> infoGenerators = new EnumMap<>(PlayerId.class); //initialized in initializePlayers
+        GameState gameState = GameState.initial(tickets, rng);
+        Map<PlayerId, Integer> keptTicketNumber = new EnumMap<>(PlayerId.class);
 
+        setup(players, infoGenerators, playerNames, ticketDeck, gameState, keptTicketNumber);
 
-        setup();
-        
 //the actual game starts
-        
+
         do{
-            
-            nextTurn();
+
+            nextTurn(players, infoGenerators, gameState, ticketDeck);
         }
-        while(!isLastTurn()); //This needs to happen n+1 times, length of the game and one more turn. 
-        
-        endOfGame(); 
+        while(!isLastTurn(gameState)); //This needs to happen n+1 times, length of the game and one more turn.
+
+        endOfGame(players, gameState);
 
     }
-    private static void setup(){
-        initializePlayers();
-        
-        receiveInfoForAll(infoGenerators.get(gameState.currentPlayerId()).willPlayFirst());
+    private static void setup(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, Map<PlayerId, String> playerNames, Deck<Ticket> ticketDeck, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
+        initializePlayers(players, playerNames, infoGenerators);
 
-        distributeInitialTickets();
+        receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).willPlayFirst());
+
+        distributeInitialTickets(players, ticketDeck, gameState, keptTicketNumber);
         //already initialized infoGenerators in initializePlayers()
-        infoGenerators.forEach((playerId, info) -> receiveInfoForAll(info.keptTickets(keptTicketNumber.get(playerId))));
+        infoGenerators.forEach((playerId, info) -> receiveInfoForAll(players, info.keptTickets(keptTicketNumber.get(playerId))));
     }
 
-    private static void receiveInfoForAll(String infoToReceive){
+    private static void receiveInfoForAll(Map<PlayerId, Player> players, String infoToReceive){
         players.forEach((playerId, player) -> player.receiveInfo(infoToReceive));
     }
 
-    private static void updateAllStates(PublicGameState newState){
-        players.forEach((playerId, player)-> player.updateState(newState,  gameState.playerState(playerId)));
+    private static void updateAllStates(Map<PlayerId, Player> players, GameState gameState){
+        players.forEach((playerId, player)-> player.updateState(gameState,  gameState.playerState(playerId)));
     }
 
 
 
-    private static void initializePlayers(){
+    private static void initializePlayers(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId, Info> infoGenerators){
         players.forEach((playerId, player)->{
             infoGenerators.put(playerId, new Info(playerNames.get(playerId)));
             player.initPlayers(playerId, playerNames);
         });
     }
 
-    private static void distributeInitialTickets() {
+    private static void distributeInitialTickets(Map<PlayerId, Player> players, Deck<Ticket> ticketDeck, GameState gameState, Map<PlayerId, Integer> keptTicketNumber) {
         players.forEach((playerId, player)->{
             player.setInitialTicketChoice(ticketDeck.topCards(Constants.INITIAL_TICKETS_COUNT));
             ticketDeck.withoutTopCards(Constants.INITIAL_TICKETS_COUNT);
@@ -84,42 +71,42 @@ public final class Game { //No constructor as the class is only functional; it s
         });
     }
 
-    private static void nextTurn(){
-        updateAllStates(gameState);
+    private static void nextTurn(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, GameState gameState, Deck<Ticket> ticketDeck){
+        updateAllStates(players, gameState);
 
-        players.forEach((playerId, player) ->{ 
+        players.forEach((playerId, player) ->{
             //receiveInfoForAll();
             //updateStateForAll()
             Player.TurnKind playerChoice = player.nextTurn();
 
             switch (playerChoice){
                 case DRAW_CARDS:
-                    drawCards(player);
+                    drawCards(player, gameState);
                     break;
                 case DRAW_TICKETS:
-                    drawTickets(player);
+                    drawTickets(player, ticketDeck);
                     break;
                 case CLAIM_ROUTE:
-                    claimRoute(player);
+                    claimRoute(players, playerId, gameState, infoGenerators);
                     break;
 
             }
-            gameState = gameState.forNextTurn();
+            gameState.forNextTurn();
 
         });
-        
-            
-            
-        }
 
 
 
-    private static boolean isLastTurn(){
+    }
+
+
+
+    private static boolean isLastTurn(GameState gameState){
         return gameState.lastTurnBegins();
 
     }
-    private static void endOfGame(){
-        updateAllStates(gameState);
+    private static void endOfGame(Map<PlayerId, Player> players, GameState gameState){
+        updateAllStates(players, gameState);
 
         //receiveInfoForAll(); It's last turn
         //One more turn
@@ -138,17 +125,14 @@ public final class Game { //No constructor as the class is only functional; it s
     }
 
 
-    private static void drawTickets(Player player){
+    private static void drawTickets(Player player, Deck<Ticket> ticketDeck){
         //receiveInfoForAll();
         SortedBag<Ticket> ticketOptions = ticketDeck.topCards(Constants.IN_GAME_TICKETS_COUNT);
         //update state here?
         SortedBag<Ticket> keptTickets = player.chooseTickets(ticketOptions);
         //receiveInfoForAll();
-
-
-
     }
-    private static void drawCards(Player player){
+    private static void drawCards(Player player, GameState gameState){
         for (int i = 0; i < 2; i++) {
             //withCardsDeckRecreatedIfNeeded
             int drawSlot = player.drawSlot();
@@ -167,35 +151,41 @@ public final class Game { //No constructor as the class is only functional; it s
 
     }
 
-    private static void claimRoute(Player player){
+    private static void claimRoute(Map<PlayerId, Player> players, PlayerId playerId, GameState gameState, Map<PlayerId, Info> infoGenerators){
+        //additional cost,
+        Player player = players.get(playerId);
         Route claimedRoute = player.claimedRoute();
         SortedBag<Card>  initialClaimCards = player.initialClaimCards();
 
-        if(player.claimedRoute().level() == Level.UNDERGROUND) {
-            //idk if im supposed to do this here
-            SortedBag.Builder<Card> additionalCardsBuild = new SortedBag.Builder<>();
+        PlayerState playerState = gameState.playerState(playerId);
+        // List<SortedBag<Card>> possibleClaimCards = playerState.possibleClaimCards(claimedRoute);
+
+
+        if(claimedRoute.level() == Level.UNDERGROUND) {
+
+            infoGenerators.get(playerId).attemptsTunnelClaim(claimedRoute, initialClaimCards);
+
+            SortedBag.Builder<Card> drawCardsBuild = new SortedBag.Builder<>();
 
             for(int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
-                gameState.withCardsDeckRecreatedIfNeeded(new Random());
-                additionalCardsBuild.add(gameState.topCard());
-                gameState.withoutTopCard();
+                gameState = gameState.withCardsDeckRecreatedIfNeeded(new Random());
+                drawCardsBuild.add(gameState.topCard());
+                gameState = gameState.withoutTopCard();
             }
-            SortedBag<Card> additionalCards = additionalCardsBuild.build();
+            SortedBag<Card> drawnCards = drawCardsBuild.build();
 
-
-
-            claimedRoute.possibleClaimCards();
-            //player.chooseAdditionalCards(/*list of sorted bags of cards*/);
-
-            //this returns a list of cards but what to put in the first argument
-            gameState.playerState(gameState.currentPlayerId()).possibleAdditionalCards(0, player.initialClaimCards(), additionalCards);
-
-            //if these 3 cards imply the use of additional cards
-            //call chooseAdditionalCards with the options of cards they can use
-            //but then they can also back out?????????
-
-
+            List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards), initialClaimCards, drawnCards);
+            //verify if it returns an empty list or not
+            player.chooseAdditionalCards(possibleAdditionalCards); //distinction here
         }
+
+        //when you claim a route you:
+        //for tunnel: draw cards out of the pioche and into the discard pile
+        //take cards from the player and put them in the discard pile
+        //add route to players player state and game state
+
+
+
 
 
     }
@@ -212,7 +202,7 @@ public final class Game { //No constructor as the class is only functional; it s
     //Returns a negative int if the second player has a longer trail than the first
     //Returns a positive int if the first player has a longer trail than the second
     //Returns 0 if they both have trails of equal length
-    private static int longestTrail(){
+    private static int longestTrail(Map<PlayerId, Player> players, GameState gameState){
         Map<PlayerId, Integer> playerIdIntegerMap = new EnumMap<>(PlayerId.class);
 
         players.forEach((playerId, player) -> {
