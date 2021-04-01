@@ -52,6 +52,7 @@ public final class Info {
      */
     public static String draw(List<String> playerNames, int points){
         String playersMessage = String.format("%s%s%s", playerNames.get(0), StringsFr.AND_SEPARATOR, playerNames.get(1));
+
         return String.format(StringsFr.DRAW, playersMessage, points);
     }
 
@@ -138,11 +139,12 @@ public final class Info {
         String additionalCostMessage;
 
         if(additionalCost == 0){
-            additionalCostMessage = String.format(StringsFr.NO_ADDITIONAL_COST);
+            additionalCostMessage = StringsFr.NO_ADDITIONAL_COST;
         }
         else{
             additionalCostMessage = String.format(StringsFr.SOME_ADDITIONAL_COST, additionalCost, StringsFr.plural(additionalCost));
         }
+
         return String.format("%s%s", additionalCards, additionalCostMessage);
 
     }
@@ -172,6 +174,7 @@ public final class Info {
      */
     public String getsLongestTrailBonus(Trail longestTrail){
         String trailName = String.format("%s%s%s", longestTrail.station1(), StringsFr.EN_DASH_SEPARATOR, longestTrail.station2());
+
         return String.format(StringsFr.GETS_BONUS, playerName, trailName);
     }
 
@@ -188,12 +191,11 @@ public final class Info {
     private String cardNames(SortedBag<Card> bagOfCards){
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
 
-
         List<String> cardList = getListOfCards(bagOfCards.toSet(), bagOfCards);
 
         for (int i = 0; i < cardList.size(); i++) {
-            String commaSeparator = (i < cardList.size() -2) ? ", " : "";
-            String andSeparator = (i == cardList.size() -2 ) ? StringsFr.AND_SEPARATOR : "";
+            String commaSeparator = (i < cardList.size() -2) ? ", " : ""; //Only adds commas for n-2 objects
+            String andSeparator = (i == cardList.size() -2 ) ? StringsFr.AND_SEPARATOR : ""; //Only adds an And Separator after the second to last object
 
             stringOfAllCardNamesToReturn
                     .append(cardList.get(i))
@@ -206,23 +208,22 @@ public final class Info {
     private List<String> getListOfCards(Set<Card> cardSet, SortedBag<Card> originalBag){
         List<String> stringList = new ArrayList<>();
 
-        for (Card currentCard:
-                cardSet) {
+        for (Card currentCard: cardSet) {
             int multiplicity = originalBag.countOf(currentCard);
+
             String stringToAdd = new StringBuilder()
-                    .append(multiplicity) //1 violette
+                    .append(multiplicity)
                     .append(" ")
                     .append(cardName(currentCard, multiplicity))
                     .toString();
+
             stringList.add(stringToAdd);
         }
         return stringList;
     }
 
     private String toString(Route route){
-
         return String.format("%s%s%s", route.station1(), StringsFr.EN_DASH_SEPARATOR, route.station2());
-
     }
 
 }

@@ -2,9 +2,7 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.gui.StringsFr;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,24 +30,24 @@ public final class Trail {
      * @return the longest trail
      */
     public static Trail longest(List<Route> routes){
-        Trail emptyTrail = new Trail(List.copyOf(routes), null, null);
-        ArrayList<Route> routesForImmutable = new ArrayList<>(routes);
+        Trail longestTrail = new Trail(List.copyOf(routes), null, null);
+
+        if(routes.isEmpty()){
+            return longestTrail;
+        }
+
+        ArrayList<Route> routeArrayList = new ArrayList<>(routes);
 
         List<Trail> trails = listOfTrailsWithOneRoute(routes);
 
-        //If there are no trails ie because there are no routes in the list, then return emptyTrail
-        //Else, return the first trail
-
-        Trail longestTrail = (trails.isEmpty()) ? emptyTrail : trails.get(0);
+        //Finds the longest trail composed of one route. This will ensure the method works for disconnected routes.
+        longestTrail = trails.stream().max(Comparator.comparingInt(Trail::length)).get();
 
         while(!(trails.isEmpty())){
             ArrayList<Trail> newTrails = new ArrayList<>();
 
-
             for (Trail currentTrail: trails) {
-                List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routesForImmutable);
-
-                longestTrail = returnLongestTrailBetweenCurrentLongestAndNew(currentTrail, longestTrail);
+                List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routeArrayList);
 
                 routesToProlong.forEach((routeToProlong) ->{
                     List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.routes));
@@ -61,24 +59,18 @@ public final class Trail {
 
 
             }
-            newTrails.add(longestTrail);
 
-            longestTrail = newTrails.stream().max(Comparator.comparingInt(Trail::length)).get();
+            ArrayList<Trail> allTrails = new ArrayList<>(newTrails);
+            allTrails.add(longestTrail);
+
+            longestTrail = allTrails.stream().max(Comparator.comparingInt(Trail::length)).get();
 
             trails = newTrails;
         }
         return longestTrail;
 
     }
-    private static Trail returnLongestTrailBetweenCurrentLongestAndNew(Trail newTrail, Trail currentLongestTrail){
-        if(newTrailIsLonger(newTrail, currentLongestTrail)){
-            return newTrail;
-        }
-        return currentLongestTrail;
-    }
-    private static boolean newTrailIsLonger(Trail newTrail, Trail currentLongestTrail){
-        return (newTrail.length() > currentLongestTrail.length());
-    }
+
 
     private static List<Trail> listOfTrailsWithOneRoute(List<Route> routes){
         List<Trail> trailsToReturn = new ArrayList<>();
@@ -95,14 +87,14 @@ public final class Trail {
 
         Station trailEndStationToWhichRoutesCanBeAdded = trail.station2();
 
-        List<Route> routesToReturn = routes
-                                            .stream()
-                                            .filter(route -> checkIfNewRouteCanBeAdded(route, trailEndStationToWhichRoutesCanBeAdded))
-                                            .filter(route -> !(trail.routes.contains(route)))
-                                            .collect(Collectors.toList());
+        return routes
+                    .stream()
+                    .filter(route -> checkIfNewRouteCanBeAdded(route, trailEndStationToWhichRoutesCanBeAdded))
+                    .filter(route -> !(trail.routes.contains(route)))
+                    .collect(Collectors.toList());
 
 
-        return routesToReturn;
+
     }
 
     private static boolean checkIfNewRouteCanBeAdded(Route newRoute, Station trailEndStation){
@@ -151,7 +143,7 @@ public final class Trail {
                 .append(StringsFr.EN_DASH_SEPARATOR)
                 .append(station2);
 
-/*
+/* For test purposes:
                 Station currentStation = station1;
 
                 text.append(currentStation.name())

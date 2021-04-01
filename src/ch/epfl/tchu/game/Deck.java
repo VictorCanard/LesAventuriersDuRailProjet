@@ -13,11 +13,10 @@ import java.util.Random;
  * @param <C> : the type of card. In this project: card/locomotive or tickets
  */
 public final class Deck<C extends Comparable<C>> {
-    private final List<C> deckCards;
+    private final List<C> deckOfCards;
 
     private Deck(List<C> shuffledCards){
-
-        deckCards = List.copyOf(shuffledCards);
+        deckOfCards = List.copyOf(shuffledCards);
     }
 
     /**
@@ -29,7 +28,7 @@ public final class Deck<C extends Comparable<C>> {
      */
     public static <C extends Comparable<C>> Deck<C> of(SortedBag<C> cards, Random rng){
         List<C> listOfCards = cards.toList();
-        Collections.shuffle(listOfCards, rng);
+        Collections.shuffle(cards.toList(), rng);
 
         return new Deck<>(listOfCards);
     }
@@ -39,7 +38,7 @@ public final class Deck<C extends Comparable<C>> {
      * @return the size of the deck
      */
     public int size(){
-        return deckCards.size();
+        return deckOfCards.size();
     }
 
     /**
@@ -47,7 +46,7 @@ public final class Deck<C extends Comparable<C>> {
      * @return true if the deck has no cards, false otherwise
      */
     public boolean isEmpty(){
-        return deckCards.isEmpty();
+        return deckOfCards.isEmpty();
     }
 
     /**
@@ -57,7 +56,8 @@ public final class Deck<C extends Comparable<C>> {
      */
     public C topCard(){
         Preconditions.checkArgument(!isEmpty());
-        return deckCards.get(0);
+
+        return deckOfCards.get(0);
     }
 
     /**
@@ -68,7 +68,7 @@ public final class Deck<C extends Comparable<C>> {
     public Deck<C> withoutTopCard(){
         Preconditions.checkArgument(!isEmpty());
 
-        return new Deck<>(deckCards.subList(1, size()));
+        return new Deck<>(deckOfCards.subList(1, size()));
     }
 
     /**
@@ -80,7 +80,7 @@ public final class Deck<C extends Comparable<C>> {
     public SortedBag<C> topCards(int count){
         Preconditions.checkArgument(0<=count && count <=size());
 
-        SortedBag<C> topCards = SortedBag.of(deckCards.subList(0, count));
+        SortedBag<C> topCards = SortedBag.of(deckOfCards.subList(0, count));
         return topCards;
     }
 
@@ -93,6 +93,6 @@ public final class Deck<C extends Comparable<C>> {
     public Deck<C> withoutTopCards(int count){
         Preconditions.checkArgument(0<=count && count <=size());
 
-        return new Deck<>(deckCards.subList(count,size()));
+        return new Deck<>(deckOfCards.subList(count,size()));
     }
 }
