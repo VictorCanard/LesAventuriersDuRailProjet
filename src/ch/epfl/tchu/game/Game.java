@@ -7,7 +7,6 @@ import ch.epfl.tchu.game.Route.Level;
 import ch.epfl.tchu.gui.Info;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class Game { //No constructor as the class is only functional; it shouldn't be instantiable
 
@@ -251,7 +250,7 @@ public final class Game { //No constructor as the class is only functional; it s
             endOfGameMessage = infoGenerators.get(currentPlayerId).won(nextPlayerPoints, currentPlayerPoints);
 
         }else{ //Both players came to a draw
-            endOfGameMessage = infoGenerators.get(currentPlayerId).draw(new ArrayList<>(playerNames.values()), currentPlayerPoints);
+            endOfGameMessage = Info.draw(new ArrayList<>(playerNames.values()), currentPlayerPoints);
 
         }
 
