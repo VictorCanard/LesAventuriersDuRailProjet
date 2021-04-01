@@ -5,6 +5,7 @@ import ch.epfl.tchu.SortedBag;
 
 import ch.epfl.tchu.game.Route.Level;
 import ch.epfl.tchu.gui.Info;
+import ch.epfl.tchu.gui.StringsFr;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -91,7 +92,7 @@ public final class Game { //No constructor as the class is only functional; it s
                     for (int i = 0; i < 2; i++) {
                         gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
                         int drawSlot = currentPlayer.drawSlot();
-                        //updateStateForAll
+
                         if(drawSlot == Constants.DECK_SLOT){
                             //DeckCard
                             gameState = gameState.withBlindlyDrawnCard();
@@ -119,15 +120,12 @@ public final class Game { //No constructor as the class is only functional; it s
 
                     break;
                 case CLAIM_ROUTE:
-                    //additional cost,
                     Player player = players.get(currentPlayerId);
                     Route claimedRoute = player.claimedRoute();
                     SortedBag<Card>  initialClaimCards = player.initialClaimCards();
-
                     PlayerState playerState = gameState.playerState(currentPlayerId);
 
                     if(claimedRoute.level() == Level.UNDERGROUND) {
-
                         infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards);
 
                         SortedBag.Builder<Card> drawCardsBuild = new SortedBag.Builder<>();
@@ -138,21 +136,29 @@ public final class Game { //No constructor as the class is only functional; it s
                             gameState = gameState.withoutTopCard();
                         }
                         SortedBag<Card> drawnCards = drawCardsBuild.build();
+                        int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
+                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).drewAdditionalCards(drawnCards, additionalCost));
 
                         List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards), initialClaimCards, drawnCards);
-                        //verify if it returns an empty list or not
-                        player.chooseAdditionalCards(possibleAdditionalCards); //distinction here
+
+                        if(possibleAdditionalCards.isEmpty()){
+                            receiveInfoForAll(players, infoGenerators.get(currentPlayerId).didNotClaimRoute(claimedRoute));
+                        }else{
+                           SortedBag<Card> tunnelCards = player.chooseAdditionalCards(possibleAdditionalCards);
+                            gameState = gameState.withClaimedRoute(claimedRoute, tunnelCards);
+                            receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, tunnelCards));
+                        }
+
+                    }else{
+                        gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
+                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
                     }
 
-                    //when you claim a route you:
-                    //for tunnel: draw cards out of the pioche and into the discard pile
-                    //take cards from the player and put them in the discard pile
-                    //add route to players player state and game state
                     break;
-
             }
             gameState = gameState.forNextTurn();
-
+            updateAllStates(players, gameState);
+            receiveInfoForAll(players, infoGenerators.get(currentPlayerId.next()).canPlay());
     }
 
 
