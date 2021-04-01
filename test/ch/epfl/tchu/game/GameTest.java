@@ -101,6 +101,17 @@ class GameTest {
 
             // Détermine les routes dont ce joueur peut s'emparer
             List<Route> claimableRoutes = List.of();
+
+            PlayerState playerState = gameState.currentPlayerState();
+
+            for (Route route: allRoutes
+                 ) {
+                if(playerState.canClaimRoute(route)){
+                    claimableRoutes.add(route);
+                }
+            }
+
+
             if (claimableRoutes.isEmpty()) {
                 return TurnKind.DRAW_CARDS;
             } else {
@@ -128,7 +139,7 @@ class GameTest {
 
                 SortedBag<Ticket> chosenTicket = SortedBag.of(options.get(randomSlot));
                 chosenTickets.add(chosenTicket);
-                options = options.difference(chosenTicket); //Not sure this will affect the var options
+                options = options.difference(chosenTicket); //Not sure this will affect the var options and effectively remove these tickets from the game
 
             }
             return chosenTickets.build();
