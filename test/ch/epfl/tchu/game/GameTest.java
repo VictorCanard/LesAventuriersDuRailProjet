@@ -133,6 +133,7 @@ class GameTest {
             SortedBag.Builder<Ticket> chosenTickets =  new SortedBag.Builder<>();
 
             int numberOfKeptTickets = rng.nextInt(3) + 1; //Can keep 1, 2 or 3 tickets
+            System.out.println("Number of kept tickets: " + numberOfKeptTickets);
 
             for (int i = 0; i < numberOfKeptTickets; i++) {
                 int randomSlot = rng.nextInt(3);

@@ -5,7 +5,6 @@ import ch.epfl.tchu.SortedBag;
 
 import ch.epfl.tchu.game.Route.Level;
 import ch.epfl.tchu.gui.Info;
-import ch.epfl.tchu.gui.StringsFr;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,11 +28,12 @@ public final class Game { //No constructor as the class is only functional; it s
 
         do{
 
-            nextTurn(playerMap, infoGenerators, gameState, ticketDeck, rng);
+           nextTurn(playerMap, infoGenerators, gameState, ticketDeck, rng);
+
         }
         while(!isLastTurn(gameState));
 
-        endOfGame(playerMap, namesOfPlayers, infoGenerators, gameState);
+        endOfGame(playerMap, namesOfPlayers, infoGenerators, gameState, ticketDeck, rng);
 
     }
     private static void setup(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, Map<PlayerId, String> playerNames, Deck<Ticket> ticketDeck, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
@@ -79,86 +79,91 @@ public final class Game { //No constructor as the class is only functional; it s
 
     private static void nextTurn(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, GameState gameState, Deck<Ticket> ticketDeck, Random rng){
         updateAllStates(players, gameState);
-            //receiveInfoForAll();
-            //updateStateForAll()
 
-            PlayerId currentPlayerId = gameState.currentPlayerId();
-            Player currentPlayer = players.get(currentPlayerId);
-            Player.TurnKind playerChoice = currentPlayer.nextTurn();
+        PlayerId currentPlayerId = gameState.currentPlayerId();
+        Player currentPlayer = players.get(currentPlayerId);
+        Player.TurnKind playerChoice = currentPlayer.nextTurn();
 
-            switch (playerChoice){
-                case DRAW_CARDS:
+        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).canPlay());
 
-                    for (int i = 0; i < 2; i++) {
-                        gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
-                        int drawSlot = currentPlayer.drawSlot();
+        switch (playerChoice){
+            case DRAW_CARDS:
 
-                        if(drawSlot == Constants.DECK_SLOT){
-                            //DeckCard
-                            gameState = gameState.withBlindlyDrawnCard();
-                            receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewBlindCard());
+                for (int i = 0; i < 2; i++) {
+                    gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
+                    int drawSlot = currentPlayer.drawSlot();
 
-                        }
-                        else{
-                            Card chosenVisibleCard = gameState.cardState().faceUpCard(drawSlot);
+                    if(drawSlot == Constants.DECK_SLOT){
+                        //DeckCard
+                        gameState = gameState.withBlindlyDrawnCard();
+                        receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewBlindCard());
 
-                            gameState = gameState.withDrawnFaceUpCard(drawSlot);
-                            receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewVisibleCard(chosenVisibleCard));
-                        }
-
-                        updateAllStates(players, gameState);
                     }
-                    break;
-                case DRAW_TICKETS:
-                    receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewTickets(Constants.IN_GAME_TICKETS_COUNT));
+                    else{
+                        Card chosenVisibleCard = gameState.cardState().faceUpCard(drawSlot);
 
-                    SortedBag<Ticket> ticketOptions = ticketDeck.topCards(Constants.IN_GAME_TICKETS_COUNT);
+                        gameState = gameState.withDrawnFaceUpCard(drawSlot);
+                        receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewVisibleCard(chosenVisibleCard));
+                    }
 
-                    SortedBag<Ticket> keptTickets = currentPlayer.chooseTickets(ticketOptions);
+                    updateAllStates(players, gameState);
+                }
+                break;
+            case DRAW_TICKETS:
+                receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewTickets(Constants.IN_GAME_TICKETS_COUNT));
 
-                    receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).keptTickets(keptTickets.size()));
+                SortedBag<Ticket> ticketOptions = ticketDeck.topCards(Constants.IN_GAME_TICKETS_COUNT);
 
-                    break;
-                case CLAIM_ROUTE:
-                    Player player = players.get(currentPlayerId);
-                    Route claimedRoute = player.claimedRoute();
-                    SortedBag<Card>  initialClaimCards = player.initialClaimCards();
-                    PlayerState playerState = gameState.playerState(currentPlayerId);
+                SortedBag<Ticket> keptTickets = currentPlayer.chooseTickets(ticketOptions);
 
-                    if(claimedRoute.level() == Level.UNDERGROUND) {
-                        infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards);
+                receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).keptTickets(keptTickets.size()));
 
-                        SortedBag.Builder<Card> drawCardsBuild = new SortedBag.Builder<>();
+                break;
+            case CLAIM_ROUTE:
+                Player player = players.get(currentPlayerId);
+                Route claimedRoute = player.claimedRoute();
+                SortedBag<Card>  initialClaimCards = player.initialClaimCards();
+                PlayerState playerState = gameState.playerState(currentPlayerId);
 
-                        for(int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
-                            gameState = gameState.withCardsDeckRecreatedIfNeeded(new Random());
-                            drawCardsBuild.add(gameState.topCard());
-                            gameState = gameState.withoutTopCard();
-                        }
-                        SortedBag<Card> drawnCards = drawCardsBuild.build();
-                        int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
-                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).drewAdditionalCards(drawnCards, additionalCost));
+                if(claimedRoute.level() == Level.UNDERGROUND) {
+                    infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards);
 
-                        List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards), initialClaimCards, drawnCards);
+                    SortedBag.Builder<Card> drawCardsBuild = new SortedBag.Builder<>();
 
-                        if(possibleAdditionalCards.isEmpty()){
-                            receiveInfoForAll(players, infoGenerators.get(currentPlayerId).didNotClaimRoute(claimedRoute));
-                        }else{
-                           SortedBag<Card> tunnelCards = player.chooseAdditionalCards(possibleAdditionalCards);
-                            gameState = gameState.withClaimedRoute(claimedRoute, tunnelCards);
-                            receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, tunnelCards));
-                        }
+                    for(int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
+                        gameState = gameState.withCardsDeckRecreatedIfNeeded(new Random());
+                        drawCardsBuild.add(gameState.topCard());
+                        gameState = gameState.withoutTopCard();
+                    }
+                    SortedBag<Card> drawnCards = drawCardsBuild.build();
+                    int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
+                    receiveInfoForAll(players, infoGenerators.get(currentPlayerId).drewAdditionalCards(drawnCards, additionalCost));
 
+                    List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards), initialClaimCards, drawnCards);
+
+                    if(possibleAdditionalCards.isEmpty()){
+                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).didNotClaimRoute(claimedRoute));
                     }else{
-                        gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
-                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
+                        SortedBag<Card> tunnelCards = player.chooseAdditionalCards(possibleAdditionalCards);
+                        gameState = gameState.withClaimedRoute(claimedRoute, tunnelCards);
+                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, tunnelCards));
                     }
 
-                    break;
-            }
-            gameState = gameState.forNextTurn();
-            updateAllStates(players, gameState);
-            receiveInfoForAll(players, infoGenerators.get(currentPlayerId.next()).canPlay());
+                }else{
+                    gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
+                    receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
+                }
+
+                break;
+        }
+        gameState = gameState.forNextTurn();
+
+        updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
+
+
+
+
+
     }
 
 
@@ -167,25 +172,34 @@ public final class Game { //No constructor as the class is only functional; it s
         return gameState.lastTurnBegins();
 
     }
-    private static void endOfGame(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId, Info> infoGenerators, GameState gameState){
+    private static void endOfGame(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId, Info> infoGenerators, GameState gameState, Deck<Ticket> ticketDeck, Random rng){
         updateAllStates(players, gameState);
 
         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount())); //LastTurnBegins
 
         //One more turn
 
+        nextTurn(players, infoGenerators, gameState, ticketDeck, rng);
+        gameState = gameState.forNextTurn();
+
+        nextTurn(players, infoGenerators, gameState, ticketDeck, rng);
+        gameState = gameState.forNextTurn();
+
+
         //Calculate final points
 
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
 
+        GameState finalGameState = gameState;
+
         players.forEach(((playerId, player) -> {
             //Calculate longest trails
-            Trail playerLongestTrail = Trail.longest(gameState.playerState(playerId).routes());
+            Trail playerLongestTrail = Trail.longest(finalGameState.playerState(playerId).routes());
             eachPlayerAssociatedTrails.put(playerId, playerLongestTrail);
 
             //Put final Points (Without the longest trail bonus)
-            associatedPlayerPoints.put(playerId, gameState.playerState(playerId).finalPoints());
+            associatedPlayerPoints.put(playerId, finalGameState.playerState(playerId).finalPoints());
 
 
         }));
@@ -237,7 +251,7 @@ public final class Game { //No constructor as the class is only functional; it s
             endOfGameMessage = infoGenerators.get(currentPlayerId).won(nextPlayerPoints, currentPlayerPoints);
 
         }else{ //Both players came to a draw
-            endOfGameMessage = infoGenerators.get(currentPlayerId).draw(playerNames.values().stream().collect(Collectors.toList()), currentPlayerPoints);
+            endOfGameMessage = infoGenerators.get(currentPlayerId).draw(new ArrayList<>(playerNames.values()), currentPlayerPoints);
 
         }
 
