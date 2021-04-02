@@ -130,12 +130,12 @@ public final class Game { //No constructor as the class is only functional; it s
                 PlayerState playerState = gameState.playerState(currentPlayerId);
 
                 if(claimedRoute.level() == Level.UNDERGROUND) {
-                    infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards);
+                    receiveInfoForAll(players, infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards));
 
                     SortedBag.Builder<Card> drawCardsBuild = new SortedBag.Builder<>();
 
                     for(int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
-                        gameState = gameState.withCardsDeckRecreatedIfNeeded(new Random());
+                        gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
                         drawCardsBuild.add(gameState.topCard());
                         gameState = gameState.withoutTopCard();
                     }

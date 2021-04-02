@@ -26,8 +26,8 @@ class GameTest {
 
         Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, "Jacob", PlayerId.PLAYER_2, "Martha");
 
-        TestPlayer player1 = new TestPlayer(1l, routes, playerNames.get(PlayerId.PLAYER_1));
-        TestPlayer player2 = new TestPlayer(2l, routes, playerNames.get(PlayerId.PLAYER_2));
+        TestPlayer player1 = new TestPlayer(1L, routes, playerNames.get(PlayerId.PLAYER_1));
+        TestPlayer player2 = new TestPlayer(2L, routes, playerNames.get(PlayerId.PLAYER_2));
 
         Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
 
@@ -117,6 +117,7 @@ class GameTest {
 
         }
 
+
         @Override
         public TurnKind nextTurn() {
             turnCounter += 1;
@@ -140,7 +141,7 @@ class GameTest {
 
                 routeToClaim = route;
                 initialClaimCards = cards.get(0);
-                return TurnKind.CLAIM_ROUTE;
+                return TurnKind.CLAIM_ROUTE; //fails here because gameState is null apparently (line 138 in Game, when setting the new gameState for tunnel)
             }
             else if(gameState.canDrawCards()){
                 return TurnKind.DRAW_CARDS;
@@ -175,22 +176,23 @@ class GameTest {
 
         @Override
         public int drawSlot() {
-            return 0;
+            return rng.nextInt(6)-1; //the player chooses randomly where they take the card from
         }
 
         @Override
         public Route claimedRoute() {
-            return null;
+            return routeToClaim;
         }
 
         @Override
         public SortedBag<Card> initialClaimCards() {
-            return null;
+            return initialClaimCards;
         }
 
         @Override
         public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
-            return null;
+            int index = rng.nextInt(options.size());
+            return options.get(index);
         }
     }
 
