@@ -127,7 +127,7 @@ public final class Game { //No constructor as the class is only functional; it s
                 Player player = players.get(currentPlayerId);
                 Route claimedRoute = player.claimedRoute();
                 SortedBag<Card>  initialClaimCards = player.initialClaimCards();
-                PlayerState playerState = gameState.playerState(currentPlayerId);
+
 
                 if(claimedRoute.level() == Level.UNDERGROUND) {
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards));
@@ -140,10 +140,12 @@ public final class Game { //No constructor as the class is only functional; it s
                         gameState = gameState.withoutTopCard();
                     }
                     SortedBag<Card> drawnCards = drawCardsBuild.build();
+
                     int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).drewAdditionalCards(drawnCards, additionalCost));
 
-                    List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards), initialClaimCards, drawnCards);
+                    PlayerState playerState = gameState.playerState(currentPlayerId);
+                    List<SortedBag<Card>> possibleAdditionalCards = new ArrayList<>(playerState.possibleAdditionalCards(claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards), initialClaimCards, drawnCards));
 
                     if(possibleAdditionalCards.isEmpty()){
                         receiveInfoForAll(players, infoGenerators.get(currentPlayerId).didNotClaimRoute(claimedRoute));
