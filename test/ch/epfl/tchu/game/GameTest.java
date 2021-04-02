@@ -39,7 +39,17 @@ class GameTest {
         Game.play(players, playerNames, initialTickets, realRandom);
     }
 
-
+    private static class AssertAndInfo{
+        private static void displayCardState(PublicCardState publicCardState){
+            System.out.printf("Taille du deck: %s     Taille de la défausse: %s\n", publicCardState.deckSize(), publicCardState.discardsSize());
+        }
+        private static void displayGameState(PublicGameState publicGameState){
+            System.out.printf("CanDrawCards : %s     CanDrawTickets : %s     Current Player Id : %s      LastPlayer : %s\n", publicGameState.canDrawCards(), publicGameState.canDrawTickets(), publicGameState.currentPlayerId(), publicGameState.lastPlayer());
+        }
+        private static void displayPlayerInfo(PlayerState playerState){
+            System.out.printf("Nombre de voitures: %s      Nombre de cartes: %s     Nombre de tickets: %s     ", playerState.carCount(), playerState.cardCount(), playerState.ticketCount());
+        }
+    }
 
 
     private static final class TestPlayer implements Player {
@@ -51,7 +61,7 @@ class GameTest {
 
         private int turnCounter;
         private PlayerState ownState;
-        private GameState gameState;
+
         private PublicGameState currentState;
         private Info infoGenerator;
         private SortedBag<Ticket> distributedTickets;
@@ -81,13 +91,18 @@ class GameTest {
 
         @Override
         public void receiveInfo(String info) {
-            System.out.println(ownId + ": " +info);
+            System.out.println(ownId + " received info " +info);
         }
 
         @Override
         public void updateState(PublicGameState newState, PlayerState ownState) {
             this.currentState = newState;
             this.ownState = ownState;
+
+
+            AssertAndInfo.displayGameState(newState);
+            AssertAndInfo.displayCardState(newState.cardState());
+            AssertAndInfo.displayPlayerInfo(ownState);
         }
 
         @Override
@@ -143,7 +158,7 @@ class GameTest {
                 initialClaimCards = cards.get(0);
                 return TurnKind.CLAIM_ROUTE; //fails here because gameState is null apparently (line 138 in Game, when setting the new gameState for tunnel)
             }
-            else if(gameState.canDrawCards()){
+            else if(currentState.canDrawCards()){
                 return TurnKind.DRAW_CARDS;
             }
             else{
