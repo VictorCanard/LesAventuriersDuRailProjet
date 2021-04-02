@@ -4,6 +4,7 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Describes the player's situation at a point in the game
@@ -36,7 +37,8 @@ public final class PlayerState extends PublicPlayerState {
      */
     public static PlayerState initial(SortedBag<Card> initialCards){
         Preconditions.checkArgument(initialCards.size()==4);
-        return new PlayerState(SortedBag.of(), initialCards, Collections.emptyList()); //Does emptyList work here ?
+
+        return new PlayerState(SortedBag.of(), initialCards, Collections.emptyList());
     }
 
     /**
@@ -53,12 +55,9 @@ public final class PlayerState extends PublicPlayerState {
      * @return a new PlayerState with more tickets in the players possession
      */
     public PlayerState withAddedTickets(SortedBag<Ticket> newTickets){
-        SortedBag.Builder<Ticket> builder = new SortedBag.Builder<>();
-        builder
-                .add(this.tickets)
-                .add(newTickets);
+        SortedBag<Ticket> newBagOfTickets = this.tickets.union(newTickets);
 
-        return new PlayerState(builder.build(),this.cards, this.routes);
+        return new PlayerState(newBagOfTickets ,this.cards, this.routes);
     }
 
     /**
@@ -70,7 +69,9 @@ public final class PlayerState extends PublicPlayerState {
     }
 
     /**
-     * The state of the player after they have drawn one additional card
+     * The state of the player after they have drawn one additional card.
+     * (The Builder was used here to create only one additional sorted bag,
+     * whereas the union method would have created two, one for the single card and one for the final result with the union method.
      * @param card : the card to give to the player
      * @return a new PlayerState with one additional card in their possession
      */
@@ -79,6 +80,7 @@ public final class PlayerState extends PublicPlayerState {
         builder
                 .add(this.cards)
                 .add(card);
+
         return new PlayerState(this.tickets, builder.build(), this.routes);
     }
 
@@ -89,6 +91,7 @@ public final class PlayerState extends PublicPlayerState {
      */
     public PlayerState withAddedCards(SortedBag<Card> additionalCards){
         SortedBag<Card> newBagOfCards = this.cards.union(additionalCards);
+
         return new PlayerState(this.tickets, newBagOfCards, this.routes);
     }
 
@@ -99,15 +102,19 @@ public final class PlayerState extends PublicPlayerState {
      */
     public boolean canClaimRoute(Route route){
         boolean enoughWagonsLeft = hasEnoughWagonsLeft(route);
-        boolean playerHasNecessaryCards = false;
 
-        for (SortedBag<Card> sortedBag: route.possibleClaimCards()
-             ) {
-            playerHasNecessaryCards = this.cards.contains(sortedBag) || playerHasNecessaryCards;
-        }
+        boolean playerHasNecessaryCards = route.possibleClaimCards()
+                                                .stream()
+                                                .anyMatch((sortedBag) -> this.cards.contains(sortedBag)); //Tests for each sorted bag of cards if the player has one of these combination of cards
+
         return enoughWagonsLeft && playerHasNecessaryCards;
     }
 
+    /**
+     * Returns true if the player has at least as many cars left as the length of the route he wants to claim
+     * @param route : route the player would like to claim
+     * @return true if the player has enough cars left, false otherwise.
+     */
     private boolean hasEnoughWagonsLeft(Route route){
         return super.carCount() >= route.length();
     }
@@ -121,16 +128,11 @@ public final class PlayerState extends PublicPlayerState {
     public List<SortedBag<Card>> possibleClaimCards(Route route){
         Preconditions.checkArgument(hasEnoughWagonsLeft(route));
 
-        List<SortedBag<Card>> listOfAllPossibleClaimCards = route.possibleClaimCards();
+        List<SortedBag<Card>> sortedBagListToReturn = route.possibleClaimCards()
+                                                            .stream()
+                                                            .filter(sortedBag -> this.cards.contains(sortedBag))
+                                                            .collect(Collectors.toList());
 
-        List<SortedBag<Card>> sortedBagListToReturn = new ArrayList<>();
-        for (SortedBag<Card> sortedBag: listOfAllPossibleClaimCards
-             ) {
-            if(this.cards.contains(sortedBag)){
-                sortedBagListToReturn.add(sortedBag);
-            }
-
-        }
         return sortedBagListToReturn;
     }
 
@@ -164,16 +166,15 @@ public final class PlayerState extends PublicPlayerState {
             numberOfLocomotiveCardsToAdd = playerCardsWithoutInitialCards.countOf(Card.LOCOMOTIVE);
         }
 
-
         usableCards.add(numberOfLocomotiveCardsToAdd, Card.LOCOMOTIVE)
-                    .add(numberOfSameColorCardsToAdd, initialCard);
+                   .add(numberOfSameColorCardsToAdd, initialCard);
 
         SortedBag<Card> cardSortedBag = usableCards.build();
 
         if(cardSortedBag.size() < additionalCardsCount){
             return Collections.emptyList();
         }
-        Set<SortedBag<Card>> sortedBagSet =cardSortedBag.subsetsOfSize(additionalCardsCount);
+        Set<SortedBag<Card>> sortedBagSet = cardSortedBag.subsetsOfSize(additionalCardsCount);
 
         List<SortedBag<Card>> options = new ArrayList<>(sortedBagSet);
 
@@ -193,6 +194,7 @@ public final class PlayerState extends PublicPlayerState {
         routeList.add(route);
 
         SortedBag<Card> finalSortedBag = this.cards.difference(claimCards);
+
         return new PlayerState(this.tickets, finalSortedBag,  routeList );
     }
 
@@ -204,6 +206,7 @@ public final class PlayerState extends PublicPlayerState {
         int ticketPoints = 0;
         int maxStationId = 0;
 
+        //maxStationId = routes.stream().max((r1, r2) -> Integer.compare(Math.max(r2.station1().id(), r2.station2().id()), Math.max(r1.station1().id(), r1.station2().id()))).;
         for (Route route:
              this.routes) {
             int maxIdOfStations = Math.max(route.station1().id(), route.station2().id());

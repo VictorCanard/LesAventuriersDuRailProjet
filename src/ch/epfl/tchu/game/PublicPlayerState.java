@@ -23,6 +23,7 @@ public class PublicPlayerState {
      */
     public PublicPlayerState(int ticketCount, int cardCount, List<Route> routes){
         Preconditions.checkArgument(ticketCount>= 0 && cardCount >= 0);
+
         this.ticketCount = ticketCount;
         this.cardCount = cardCount;
         this.routes = List.copyOf(routes);
@@ -66,22 +67,32 @@ public class PublicPlayerState {
      */
     public int claimPoints(){return claimPoints;}
 
+    /**
+     * Calculates the number of cars. Subtracts from the initial car count, the sum of each captured route's length.
+     * @param routes : routes captured by the player
+     * @return the actual car count
+     */
     private int calculateCarCount(List<Route> routes){
-        int carCount = Constants.INITIAL_CAR_COUNT;
-        for (Route route: routes
-             ) {
-            carCount -= route.length();
+        int initialCarCount = Constants.INITIAL_CAR_COUNT;
+        int usedCarCount = routes
+                                .stream()
+                                .mapToInt(Route::length)
+                                .sum();
 
-        }
-        return carCount;
+        return initialCarCount - usedCarCount;
     }
-    private int calculateClaimPoints(List<Route> routes){
-        int claimPoints = 0;
-        for (Route route: routes
-        ) {
-            claimPoints += route.claimPoints();
 
-        }
+    /**
+     * Calculates the number of claim points. Adds up the sum of each captured route's claim points.
+     * @param routes : routes captured by the player
+     * @return the actual claim points
+     */
+    private int calculateClaimPoints(List<Route> routes){
+        int claimPoints = routes
+                                .stream()
+                                .mapToInt(Route::claimPoints)
+                                .sum();
+
         return claimPoints;
     }
 

@@ -188,33 +188,54 @@ public final class Info {
         return String.format(StringsFr.WINS, playerName, points,StringsFr.plural(points), loserPoints, StringsFr.plural(loserPoints));
     }
 
+    /**
+     * Transforms a route into a textual representation
+     * @param route : route we want the text formatting of
+     * @return the route's textual representation
+     */
+    private String toString(Route route){
+        return String.format("%s%s%s", route.station1(), StringsFr.EN_DASH_SEPARATOR, route.station2());
+    }
+
+    /**
+     * Returns a string with a formatted list of cards (adds the delimiters 'and' as well as ', ' at the right points in the text)
+     * @param bagOfCards : cards in a sortedBag that we want the textual representation of (in French, with commas and an AND_SEPARATOR)
+     * @return string of all card names formatted
+     */
     private String cardNames(SortedBag<Card> bagOfCards){
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
 
-        List<String> cardList = getListOfCards(bagOfCards.toSet(), bagOfCards);
+        List<String> cardList = getListOfCards(bagOfCards);
 
         for (int i = 0; i < cardList.size(); i++) {
             String commaSeparator = (i < cardList.size() -2) ? ", " : ""; //Only adds commas for n-2 objects
             String andSeparator = (i == cardList.size() -2 ) ? StringsFr.AND_SEPARATOR : ""; //Only adds an And Separator after the second to last object
 
             stringOfAllCardNamesToReturn
-                    .append(cardList.get(i))
-                    .append(commaSeparator)
-                    .append(andSeparator);
+                    .append(cardList.get(i)) //Name of the card in French
+                    .append(commaSeparator)  //Comma if it is needed
+                    .append(andSeparator);   //And separator before the last item
 
         }
         return stringOfAllCardNamesToReturn.toString();
     }
-    private List<String> getListOfCards(Set<Card> cardSet, SortedBag<Card> originalBag){
+
+
+    /**
+     * Returns a bag of cards as a list of card names in French
+     * @param originalBag : bag of cards we want to transform in a list of cards
+     * @return a sorted bag's associated list of cards
+     */
+    private List<String> getListOfCards(SortedBag<Card> originalBag){
         List<String> stringList = new ArrayList<>();
 
-        for (Card currentCard: cardSet) {
+        for (Card currentCard: originalBag.toSet()) {
             int multiplicity = originalBag.countOf(currentCard);
 
             String stringToAdd = new StringBuilder()
-                    .append(multiplicity)
+                    .append(multiplicity) //Number of cards
                     .append(" ")
-                    .append(cardName(currentCard, multiplicity))
+                    .append(cardName(currentCard, multiplicity)) //Name of the card in French, plural or singular
                     .toString();
 
             stringList.add(stringToAdd);
@@ -222,8 +243,6 @@ public final class Info {
         return stringList;
     }
 
-    private String toString(Route route){
-        return String.format("%s%s%s", route.station1(), StringsFr.EN_DASH_SEPARATOR, route.station2());
-    }
+
 
 }

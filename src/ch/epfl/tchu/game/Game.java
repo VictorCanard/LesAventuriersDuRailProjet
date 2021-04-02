@@ -44,15 +44,19 @@ public final class Game { //No constructor as the class is only functional; it s
 
         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).willPlayFirst());
     //Distributing Tickets
-        players.forEach((playerId, player)->{
+
+        for (Map.Entry<PlayerId, Player> entry : players.entrySet()) {
+            PlayerId key = entry.getKey();
+            Player player = entry.getValue();
+
             player.setInitialTicketChoice(ticketDeck.topCards(Constants.INITIAL_TICKETS_COUNT));
-            ticketDeck.withoutTopCards(Constants.INITIAL_TICKETS_COUNT);
+            ticketDeck = ticketDeck.withoutTopCards(Constants.INITIAL_TICKETS_COUNT);
 
-            player.updateState(gameState, gameState.playerState(playerId)); //call actual method bc its in the middle of instructions in for each
+            player.updateState(gameState, gameState.playerState(key)); //call actual method bc its in the middle of instructions in for each
 
-            player.chooseInitialTickets();
-            keptTicketNumber.put(playerId, player.chooseInitialTickets().size());
-        });
+            SortedBag<Ticket> tickets = player.chooseInitialTickets();
+            keptTicketNumber.put(key, tickets.size());
+        }
 
         infoGenerators.forEach((playerId, info) -> receiveInfoForAll(players, info.keptTickets(keptTicketNumber.get(playerId))));
     }
@@ -90,7 +94,8 @@ public final class Game { //No constructor as the class is only functional; it s
 
                 for (int i = 0; i < 2; i++) {
                     gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
-                    int drawSlot = currentPlayer.drawSlot();
+
+                    int drawSlot = currentPlayer.drawSlot(); //-1, 0->4
 
                     if(drawSlot == Constants.DECK_SLOT){
                         //DeckCard
