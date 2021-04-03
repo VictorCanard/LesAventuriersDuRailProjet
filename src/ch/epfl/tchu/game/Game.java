@@ -23,17 +23,17 @@ public final class Game { //No constructor as the class is only functional; it s
 
         setup(playerMap, infoGenerators, namesOfPlayers, ticketDeck, gameState, keptTicketNumber);
 
-        boolean islastturn = false;
-        int counter = 0;
+        //Plays one round first so as to make sure the condition lastTurnBegins() is tested at the right moment
+        gameState = nextTurn(playerMap, infoGenerators, gameState, ticketDeck, rng);
 
-//the actual game starts
-
-        do{
-            gameState = nextTurn(playerMap, infoGenerators, gameState, ticketDeck, rng).forNextTurn();
+        //the actual game starts
+        while(!isLastTurn(gameState)){
+            gameState = gameState.forNextTurn();
+            gameState = nextTurn(playerMap, infoGenerators, gameState, ticketDeck, rng);
 
         }
-        while(!isLastTurn(gameState));
 
+        //Last turn begins returned true thus the end of game is activated
         endOfGame(playerMap, namesOfPlayers, infoGenerators, gameState, ticketDeck, rng);
 
     }
@@ -134,6 +134,7 @@ public final class Game { //No constructor as the class is only functional; it s
                 if(claimedRoute.level() == Level.UNDERGROUND) {
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards));
 
+                    //Building the 3 cards drawn from the deck
                     SortedBag.Builder<Card> drawCardsBuild = new SortedBag.Builder<>();
 
                     for(int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
@@ -143,37 +144,45 @@ public final class Game { //No constructor as the class is only functional; it s
                     }
                     SortedBag<Card> drawnCards = drawCardsBuild.build();
 
+                    //Calculating additional cost
                     int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
 
+                    //Displaying that cost for all players and the drawn cards
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).drewAdditionalCards(drawnCards, additionalCost));
 
                     PlayerState playerState = gameState.playerState(currentPlayerId);
-
                     List<SortedBag<Card>> possibleAdditionalCards = List.of();
 
-                    if(additionalCost > 0){
+                    if(additionalCost > 0){ //Additional cost is between 1 and 3 (both included)
+                        //Cards the player could play
                        possibleAdditionalCards = playerState.possibleAdditionalCards(additionalCost, initialClaimCards, drawnCards);
+
+                        if(possibleAdditionalCards.isEmpty()){ //Player can't play any additional cards
+                            receiveInfoForAll(players, infoGenerators.get(currentPlayerId).didNotClaimRoute(claimedRoute));
+
+                        }else{ //The player can play additional cards. Asks the player which set of cards he want to play.
+                            SortedBag<Card> tunnelCards = player.chooseAdditionalCards(possibleAdditionalCards);
+
+                            gameState = putInDiscard(gameState, initialClaimCards.union(tunnelCards).union(drawnCards)); //Cards the player played, drawn cards and the additional cards he played
+                            gameState = gameState.withClaimedRoute(claimedRoute, tunnelCards); //Claimed route
+
+                            receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, tunnelCards));
+                        }
                     }
-
-                    if(possibleAdditionalCards.isEmpty()){
-                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).didNotClaimRoute(claimedRoute));
-                    }else{
-                        SortedBag<Card> tunnelCards = player.chooseAdditionalCards(possibleAdditionalCards);
-
-                        gameState = gameState.withMoreDiscardedCards(initialClaimCards.union(tunnelCards));
-                        gameState = gameState.withClaimedRoute(claimedRoute, tunnelCards);
-
-                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, tunnelCards));
+                    else{ //No additional cost
+                        gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
+                        gameState = putInDiscard(gameState, initialClaimCards);
+                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
                     }
 
                 }else{
                     gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
+                    gameState = putInDiscard(gameState, initialClaimCards);
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
                 }
 
                 break;
         }
-
 
         updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
 
@@ -181,6 +190,9 @@ public final class Game { //No constructor as the class is only functional; it s
 
     }
 
+    private static GameState putInDiscard(GameState gameState, SortedBag<Card> discardCards){
+        return gameState.withMoreDiscardedCards(discardCards);
+    }
 
 
     private static boolean isLastTurn(GameState gameState){

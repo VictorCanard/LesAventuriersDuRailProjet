@@ -26,28 +26,44 @@ class GameTest {
 
         Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, "Jacob", PlayerId.PLAYER_2, "Martha");
 
-        TestPlayer player1 = new TestPlayer(1L, routes, playerNames.get(PlayerId.PLAYER_1));
-        TestPlayer player2 = new TestPlayer(2L, routes, playerNames.get(PlayerId.PLAYER_2));
+        TestPlayer player1 = new TestPlayer((long) Math.random()*1000, routes, playerNames.get(PlayerId.PLAYER_1), false);
+        TestPlayer player2 = new TestPlayer((long) Math.random()*2000, routes, playerNames.get(PlayerId.PLAYER_2), false);
 
         Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
 
         SortedBag<Ticket> initialTickets = SortedBag.of(ChMap.tickets());
 
-        Random realRandom = new Random(1000);
+
         Random nonRandom = NON_RANDOM;
 
-        Game.play(players, playerNames, initialTickets, realRandom);
+
+
+        for (int i = 0; i < 100; i++) {
+            Random realRandom = new Random((long) (1000*i + Math.random()*10));
+            Game.play(players, playerNames, initialTickets, realRandom);
+
+        }
+
     }
 
     private static class AssertAndInfo{
-        private static void displayCardState(PublicCardState publicCardState){
-            System.out.printf("Taille du deck: %s     Taille de la défausse: %s\n", publicCardState.deckSize(), publicCardState.discardsSize());
+        private static PlayerId firstPlayer;
+
+        private static String displayCardState(PublicCardState publicCardState){
+            return String.format("Taille du deck: %s     Taille de la défausse: %s\n", publicCardState.deckSize(), publicCardState.discardsSize());
         }
-        private static void displayGameState(PublicGameState publicGameState){
-            System.out.printf("CanDrawCards : %s     CanDrawTickets : %s     Current Player Id : %s      LastPlayer : %s\n", publicGameState.canDrawCards(), publicGameState.canDrawTickets(), publicGameState.currentPlayerId(), publicGameState.lastPlayer());
+        private static String displayGameState(PublicGameState publicGameState) {
+            if (publicGameState.currentPlayerId() == PlayerId.PLAYER_1) {
+                return String.format("CanDrawCards : %s     CanDrawTickets : %s     Current Player Id : %s      LastPlayer : %s\n", publicGameState.canDrawCards(), publicGameState.canDrawTickets(), publicGameState.currentPlayerId(), publicGameState.lastPlayer());
+            }
+            return "";
         }
-        private static void displayPlayerInfo(PlayerState playerState){
-            System.out.printf("Nombre de voitures: %s      Nombre de cartes: %s     Nombre de tickets: %s     ", playerState.carCount(), playerState.cardCount(), playerState.ticketCount());
+        private static String displayPlayerInfo(PlayerState playerState){
+            return String.format("Nombre de voitures: %s      Nombre de cartes: %s     Nombre de tickets: %s     ", playerState.carCount(), playerState.cardCount(), playerState.ticketCount());
+        }
+
+        private static String displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
+            return String.format("Total Number of Cards =" + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
         }
     }
 
@@ -71,12 +87,15 @@ class GameTest {
         private Route routeToClaim;
         private SortedBag<Card> initialClaimCards;
 
+        private final boolean messageDebug;
 
-        public TestPlayer(long randomSeed, List<Route> allRoutes, String playerName) {
+
+        public TestPlayer(long randomSeed, List<Route> allRoutes, String playerName, boolean gameMessagesWanted) {
             this.rng = new Random(randomSeed);
             this.allRoutes = List.copyOf(allRoutes);
             this.turnCounter = 0;
             this.infoGenerator = new Info(playerName);
+            this.messageDebug = gameMessagesWanted;
         }
 
         @Override
@@ -91,18 +110,23 @@ class GameTest {
 
         @Override
         public void receiveInfo(String info) {
-            System.out.println(ownId + " received info " +info);
+            if(messageDebug || (currentState.lastPlayer() != null && currentState.lastPlayer() == ownId)){
+                System.out.println(ownId + " received info " +info);
+            }
         }
+
+
 
         @Override
         public void updateState(PublicGameState newState, PlayerState ownState) {
             this.currentState = newState;
             this.ownState = ownState;
 
-
-            AssertAndInfo.displayGameState(newState);
-            AssertAndInfo.displayCardState(newState.cardState());
-            AssertAndInfo.displayPlayerInfo(ownState);
+            //AssertANdINfo
+            receiveInfo(AssertAndInfo.displayGameState(newState));
+            receiveInfo(AssertAndInfo.displayCardState(newState.cardState()));
+            receiveInfo(AssertAndInfo.displayPlayerInfo(ownState));
+            receiveInfo(AssertAndInfo.displayTotalNumberOfCards(newState.cardState(), newState));
         }
 
         @Override
@@ -177,7 +201,7 @@ class GameTest {
             System.out.println("Number of kept tickets: " + numberOfKeptTickets);
 
             for (int i = 0; i < numberOfKeptTickets; i++) {
-                int randomSlot = rng.nextInt(3);
+                int randomSlot = rng.nextInt(options.size());
 
 
                 SortedBag<Ticket> chosenTicket = SortedBag.of(options.get(randomSlot));
