@@ -35,11 +35,10 @@ class GameTest {
 
 
         for (int i = 0; i < 100; i++) {
-            Random realRandom = new Random((long) (1000*i + Math.random()*10));
+            Random realRandom = new Random(i);
 
-
-            TestPlayer player1 = new TestPlayer((long) Math.random()*1000, routes, playerNames.get(PlayerId.PLAYER_1), false);
-            TestPlayer player2 = new TestPlayer((long) Math.random()*2000, routes, playerNames.get(PlayerId.PLAYER_2), false);
+            TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), false);
+            TestPlayer player2 = new TestPlayer(200000000 * i, routes, playerNames.get(PlayerId.PLAYER_2), false);
 
             Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
             Game.play(players, playerNames, initialTickets, realRandom);
