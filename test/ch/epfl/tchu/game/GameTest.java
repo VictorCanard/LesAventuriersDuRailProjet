@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 class GameTest {
 
-    private final List<Route> routes = ChMap.routes();
+    private final List<Route> routes = ChMap.routes().stream().filter(((route -> route.id().endsWith("_2")))).collect(Collectors.toList());
+
     public final static Random NON_RANDOM = new Random(){
         @Override
         public int nextInt(int i){
@@ -33,7 +34,6 @@ class GameTest {
 
         Random nonRandom = NON_RANDOM;
 
-
         for (int i = 0; i < 100; i++) {
             Random realRandom = new Random(i);
 
@@ -50,18 +50,20 @@ class GameTest {
     private static class AssertAndInfo{
         private static PlayerId firstPlayer;
 
+        private static boolean isFirstTimePrinted = true;
+
         private static boolean gameInfo = false;
         private static boolean playerInfo = false;
         private static boolean cardInfo = false;
 
         private static void displayInfo(int turnCounter, PublicGameState publicGameState, PublicCardState publicCardState, PlayerState playerState, String playerName){
-            if(gameInfo){
+            if(gameInfo && isFirstTimePrinted){
                 displayGameState(publicGameState);
             }
             if (playerInfo){
                 displayPlayerInfo(playerName, playerState);
             }
-            if(cardInfo){
+            if(cardInfo && isFirstTimePrinted){
                 displayCardState(publicCardState);
                 displayTotalNumberOfCards(publicCardState, publicGameState);
             }
@@ -69,6 +71,7 @@ class GameTest {
                 System.out.printf("---------------------------%s___TURN # %s----------------------------\n", playerName, turnCounter);
             }
 
+            isFirstTimePrinted = ! isFirstTimePrinted;
         }
 
         private static void displayCardState(PublicCardState publicCardState){
@@ -87,8 +90,12 @@ class GameTest {
         private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
             System.out.printf("Total Number of Cards = \n" + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
         }
-        private static void displayEndOfGameMessage(String message){
-            System.out.println(message);
+        private static void displayEndOfGameMessage(PublicGameState publicGameState, String message){
+            if (isFirstTimePrinted){
+                System.out.println(message);
+
+            }
+            isFirstTimePrinted = ! isFirstTimePrinted;
         }
     }
 
@@ -139,7 +146,7 @@ class GameTest {
         public void receiveInfo(String info) {
 
             if(info.contains("remporte") || info.contains("ex æqo") ){
-                AssertAndInfo.displayEndOfGameMessage(info);
+                AssertAndInfo.displayEndOfGameMessage(currentState, info);
             }
 
             if(playerMessageDebug){
@@ -211,6 +218,7 @@ class GameTest {
                 List<SortedBag<Card>> cards = this.ownState.possibleClaimCards(route);
 
                 routeToClaim = route;
+                //allRoutes = all.remove(routeToClaim);
                 initialClaimCards = cards.get(0);
                 return TurnKind.CLAIM_ROUTE;
             }
