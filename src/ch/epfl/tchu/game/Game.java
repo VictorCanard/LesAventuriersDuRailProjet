@@ -110,7 +110,7 @@ public final class Game {
      * @param gameState : the current state of the game
      * @param ticketDeck : the tickets available in the ticket draw pile
      * @param rng : an instance of a random number
-     * @return the gameState at the end of the turn
+     * @return the new gameState at the end of the turn
      */
     private static GameState nextTurn(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, GameState gameState, Deck<Ticket> ticketDeck, Random rng){
         updateAllStates(players, gameState);
