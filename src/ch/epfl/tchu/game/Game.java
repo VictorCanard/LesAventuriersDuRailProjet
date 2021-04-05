@@ -32,7 +32,7 @@ public final class Game {
         Map<PlayerId, String> namesOfPlayers = Map.copyOf(playerNames);
         Map<PlayerId, Player> playerMap = Map.copyOf(players);
 
-        setup(playerMap, namesOfPlayers,infoGenerators,  gameState, keptTicketNumber);
+        gameState = setup(playerMap, namesOfPlayers,infoGenerators,  gameState, keptTicketNumber);
 
         //Plays one round first so as to make sure the condition lastTurnBegins() is tested at the right moment
         gameState = nextTurn(playerMap, infoGenerators, gameState, rng);
@@ -58,7 +58,7 @@ public final class Game {
      * @param gameState : the current state of the game
      * @param keptTicketNumber : the number of kept tickets the player has chosen
      */
-    private static void setup(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames,Map<PlayerId, Info> infoGenerators, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
+    private static GameState setup(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames,Map<PlayerId, Info> infoGenerators, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
     //Initializing players
         players.forEach((playerId, player)->{
             infoGenerators.put(playerId, new Info(playerNames.get(playerId)));
@@ -77,14 +77,19 @@ public final class Game {
 
             player.updateState(gameState, gameState.playerState(playerId)); //So the player can see the tickets he can choose from
 
-            SortedBag<Ticket> tickets = player.chooseInitialTickets(); //Asks the player to choose tickets from the set of options determined in setInitialTicketChoice
-// I believe this changes the players playerState as well but why doesnt it show up in console :(
-            gameState = gameState.withInitiallyChosenTickets(playerId, tickets);
-            keptTicketNumber.put(playerId, tickets.size());
+            
+            
+            SortedBag<Ticket> chosenTickets = player.chooseInitialTickets(); //Asks the player to choose tickets from the set of options determined in setInitialTicketChoice
+
+            gameState = gameState.withInitiallyChosenTickets(playerId, chosenTickets);
+
+            keptTicketNumber.put(playerId, chosenTickets.size());
             updateAllStates(players, gameState);
         }
 
         infoGenerators.forEach((playerId, info) -> receiveInfoForAll(players, info.keptTickets(keptTicketNumber.get(playerId))));
+
+        return gameState;
     }
 
     /**
@@ -202,43 +207,27 @@ public final class Game {
                         }else{ //The player can play additional cards. Asks the player which set of cards he want to play.
                             SortedBag<Card> tunnelCards = player.chooseAdditionalCards(possibleAdditionalCards);
                             gameState = gameState.withMoreDiscardedCards(drawnCards);
-            //no            gameState = putInDiscard(gameState, initialClaimCards.union(tunnelCards).union(drawnCards)); //Cards the player played, drawn cards and the additional cards he played
                             gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)); //Claimed route
 
                             receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
+
                         }
+                        break;
                     }
                     else{ //No additional cost
-                        gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
-                        gameState = putInDiscard(gameState, drawnCards);
-                        receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
+                        gameState = gameState.withMoreDiscardedCards(drawnCards);
                     }
 
-                }else{ //Overground route
-                    gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
-            //no        gameState = putInDiscard(gameState, initialClaimCards);
-                    receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
                 }
+                //Overground route
+                gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
+                receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
 
                 break;
         }
-
-        //updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
-
         return gameState;
 
     }
-//is this really necessary? it just returns a method we can use directly
-    /**
-     * Puts the discarded cards in the gameState's discard pile
-     * @param gameState : state of the game
-     * @param discardCards : cards to add to the game's discard
-     * @return a new game state with more discards
-     */
-    private static GameState putInDiscard(GameState gameState, SortedBag<Card> discardCards){
-        return gameState.withMoreDiscardedCards(discardCards);
-    }
-
 
     /**
      * Plays the last two turns of tCHu, then calculates who gets the longest trail bonus and who won in the end or if there has been a draw

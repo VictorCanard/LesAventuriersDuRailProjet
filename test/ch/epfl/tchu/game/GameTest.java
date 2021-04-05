@@ -34,12 +34,12 @@ class GameTest {
     }
     @Test
     void playWorks100Times(){
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 100; i++) {
             Random realRandom = new Random(i);
 
             GameTest.routes = ChMap.routes().stream().filter(((route -> !route.id().endsWith("_2")))).collect(Collectors.toList());
 
-            TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), true);
+            TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), false);
             TestPlayer player2 = new TestPlayer(200000000L * i, routes, playerNames.get(PlayerId.PLAYER_2), false);
 
             Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
@@ -54,11 +54,11 @@ class GameTest {
         private static boolean isFirstTimePrinted = true;
         private static boolean isFirstEOF = true;
 
-        private static boolean gameInfo = true;
-        private static boolean playerInfo = true;
-        private static boolean cardInfo = true;
+        private static boolean gameInfo = false;
+        private static boolean playerInfo = false;
+        private static boolean cardInfo = false;
 
-        private static List<Route> routeList = new ArrayList<>();
+        public static List<Route> routeList = new ArrayList<>();
 
         private static void displayInfo(int turnCounter, PublicGameState publicGameState, PublicCardState publicCardState, PlayerState playerState, String playerName){
             if(gameInfo && isFirstTimePrinted){
@@ -102,7 +102,7 @@ class GameTest {
             else{
                 routeList.addAll(publicPlayerState.routes());
                 Set<Route> routeSet = new HashSet<>(routeList);
-                //assert routeSet.size() == routeList.size(); //To see if there any duplicates
+                assert routeSet.size() == routeList.size(); //To see if there any duplicates
             }
             isFirstEOF = ! isFirstEOF;
 
@@ -136,8 +136,10 @@ class GameTest {
 
 
         public TestPlayer(long randomSeed, List<Route> allRoutes, String playerName, boolean playerMessagesWanted) {
+            AssertAndInfo.routeList = new ArrayList<>();
+
             this.rng = new Random(randomSeed);
-            this.allRoutes = allRoutes;
+            this.allRoutes = List.copyOf(allRoutes);
             this.turnCounter = 0;
             this.infoGenerator = new Info(playerName);
             this.playerMessageDebug = playerMessagesWanted;
@@ -172,7 +174,6 @@ class GameTest {
         public void updateState(PublicGameState newState, PlayerState ownState) {
             this.currentState = newState;
             this.ownState = ownState;
-
 
         }
 
@@ -219,7 +220,7 @@ class GameTest {
 
             for (Route route: allRoutes
                  ) {
-                if(ownState.canClaimRoute(route)){
+                if(ownState.canClaimRoute(route) && !currentState.claimedRoutes().contains(route)){
                     claimableRoutes.add(route);
                 }
             }
@@ -230,7 +231,7 @@ class GameTest {
                 List<SortedBag<Card>> cards = this.ownState.possibleClaimCards(route);
 
                 routeToClaim = route;
-                allRoutes.remove(routeToClaim);
+
                 initialClaimCards = cards.get(0);
                 return TurnKind.CLAIM_ROUTE;
             }
