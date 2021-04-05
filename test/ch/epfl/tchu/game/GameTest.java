@@ -12,8 +12,7 @@ import java.util.stream.Collectors;
 
 class GameTest {
 
-    private final List<Route> routes = ChMap.routes().stream().filter(((route -> route.id().endsWith("_2")))).collect(Collectors.toList());
-
+    public static List<Route> routes;
     public final static Random NON_RANDOM = new Random(){
         @Override
         public int nextInt(int i){
@@ -36,6 +35,8 @@ class GameTest {
 
         for (int i = 0; i < 100; i++) {
             Random realRandom = new Random(i);
+
+            GameTest.routes = ChMap.routes().stream().filter(((route -> !route.id().endsWith("_2")))).collect(Collectors.toList());
 
             TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), false);
             TestPlayer player2 = new TestPlayer(200000000 * i, routes, playerNames.get(PlayerId.PLAYER_2), false);
@@ -90,12 +91,15 @@ class GameTest {
         private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
             System.out.printf("Total Number of Cards = \n" + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
         }
-        private static void displayEndOfGameMessage(PublicGameState publicGameState, String message){
+        private static void displayEndOfGameMessage(PublicPlayerState publicPlayerState, String message){
             if (isFirstTimePrinted){
                 System.out.println(message);
 
+
             }
             isFirstTimePrinted = ! isFirstTimePrinted;
+
+
         }
     }
 
@@ -125,7 +129,7 @@ class GameTest {
 
         public TestPlayer(long randomSeed, List<Route> allRoutes, String playerName, boolean playerMessagesWanted) {
             this.rng = new Random(randomSeed);
-            this.allRoutes = List.copyOf(allRoutes);
+            this.allRoutes = allRoutes;
             this.turnCounter = 0;
             this.infoGenerator = new Info(playerName);
             this.playerMessageDebug = playerMessagesWanted;
@@ -146,7 +150,7 @@ class GameTest {
         public void receiveInfo(String info) {
 
             if(info.contains("remporte") || info.contains("ex æqo") ){
-                AssertAndInfo.displayEndOfGameMessage(currentState, info);
+                AssertAndInfo.displayEndOfGameMessage(ownState, info);
             }
 
             if(playerMessageDebug){
@@ -218,7 +222,7 @@ class GameTest {
                 List<SortedBag<Card>> cards = this.ownState.possibleClaimCards(route);
 
                 routeToClaim = route;
-                //allRoutes = all.remove(routeToClaim);
+                allRoutes.remove(routeToClaim);
                 initialClaimCards = cards.get(0);
                 return TurnKind.CLAIM_ROUTE;
             }
