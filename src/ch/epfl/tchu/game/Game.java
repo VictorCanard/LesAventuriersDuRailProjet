@@ -159,7 +159,6 @@ public final class Game {
                 Route claimedRoute = player.claimedRoute();
                 SortedBag<Card>  initialClaimCards = player.initialClaimCards();
 
-
                 if(claimedRoute.level() == Level.UNDERGROUND) {
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards));
 
@@ -187,26 +186,27 @@ public final class Game {
                        possibleAdditionalCards = playerState.possibleAdditionalCards(additionalCost, initialClaimCards, drawnCards);
 
                         if(possibleAdditionalCards.isEmpty()){ //Player can't play any additional cards
+                            gameState = gameState.withMoreDiscardedCards(drawnCards);
                             receiveInfoForAll(players, infoGenerators.get(currentPlayerId).didNotClaimRoute(claimedRoute));
 
                         }else{ //The player can play additional cards. Asks the player which set of cards he want to play.
                             SortedBag<Card> tunnelCards = player.chooseAdditionalCards(possibleAdditionalCards);
+                            gameState = gameState.withMoreDiscardedCards(drawnCards);
+            //no            gameState = putInDiscard(gameState, initialClaimCards.union(tunnelCards).union(drawnCards)); //Cards the player played, drawn cards and the additional cards he played
+                            gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)); //Claimed route
 
-                            gameState = putInDiscard(gameState, initialClaimCards.union(tunnelCards).union(drawnCards)); //Cards the player played, drawn cards and the additional cards he played
-                            gameState = gameState.withClaimedRoute(claimedRoute, tunnelCards); //Claimed route
-
-                            receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, tunnelCards));
+                            receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
                         }
                     }
                     else{ //No additional cost
                         gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
-                        gameState = putInDiscard(gameState, initialClaimCards);
+                        gameState = putInDiscard(gameState, drawnCards);
                         receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
                     }
 
                 }else{ //Overground route
                     gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
-                    gameState = putInDiscard(gameState, initialClaimCards);
+            //no        gameState = putInDiscard(gameState, initialClaimCards);
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
                 }
 
@@ -218,7 +218,7 @@ public final class Game {
         return gameState;
 
     }
-
+//is this really necessary? it just returns a method we can use directly
     /**
      * Puts the discarded cards in the gameState's discard pile
      * @param gameState : state of the game

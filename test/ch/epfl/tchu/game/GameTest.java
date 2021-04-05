@@ -34,13 +34,13 @@ class GameTest {
     }
     @Test
     void playWorks100Times(){
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1; i++) {
             Random realRandom = new Random(i);
 
             GameTest.routes = ChMap.routes().stream().filter(((route -> !route.id().endsWith("_2")))).collect(Collectors.toList());
 
-            TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), false);
-            TestPlayer player2 = new TestPlayer(200000000L * i, routes, playerNames.get(PlayerId.PLAYER_2), false);
+            TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), true);
+            TestPlayer player2 = new TestPlayer(200000000L * i, routes, playerNames.get(PlayerId.PLAYER_2), true);
 
             Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
             Game.play(players, playerNames, initialTickets, realRandom);
@@ -54,9 +54,9 @@ class GameTest {
         private static boolean isFirstTimePrinted = true;
         private static boolean isFirstEOF = true;
 
-        private static boolean gameInfo = false;
-        private static boolean playerInfo = false;
-        private static boolean cardInfo = false;
+        private static boolean gameInfo = true;
+        private static boolean playerInfo = true;
+        private static boolean cardInfo = true;
 
         private static List<Route> routeList = new ArrayList<>();
 
@@ -92,7 +92,7 @@ class GameTest {
         }
 
         private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
-            System.out.printf("Total Number of Cards = \n" + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
+            System.out.print("Total Number of Cards = \n" + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
         }
         private static void displayEndOfGameMessage(PublicPlayerState publicPlayerState, String message){
             if (isFirstEOF){
@@ -179,7 +179,7 @@ class GameTest {
         @Override
         public void setInitialTicketChoice(SortedBag<Ticket> tickets) {
             this.distributedTickets = tickets;
-            receiveInfo("Les 5 billets qui vous ont été distribués sont " + distributedTickets.stream().map((ticket -> ticket.text())).collect(Collectors.joining(", ")));
+            receiveInfo("Les 5 billets qui vous ont été distribués sont " + distributedTickets.stream().map((Ticket::text)).collect(Collectors.joining(", ")));
 
         }
 
