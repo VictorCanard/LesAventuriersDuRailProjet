@@ -72,7 +72,7 @@ class GameTest {
                 displayTotalNumberOfCards(publicCardState, publicGameState);
             }
             if(gameInfo || playerInfo || cardInfo){
-                System.out.printf("---------------------------%s___TURN # %s----------------------------\n", playerName, turnCounter);
+                System.out.printf("\n---------------------------%s___TURN # %s----------------------------\n", playerName, turnCounter);
             }
             isFirstEOF = true;
             isFirstTimePrinted = ! isFirstTimePrinted;
@@ -92,7 +92,7 @@ class GameTest {
         }
 
         private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
-            System.out.print("Total Number of Cards = \n" + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
+            System.out.print("Total Number of Cards = " + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
         }
         private static void displayEndOfGameMessage(PublicPlayerState publicPlayerState, String message){
             if (isFirstEOF){
