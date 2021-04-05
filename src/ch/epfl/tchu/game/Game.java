@@ -218,7 +218,7 @@ public final class Game {
         return gameState;
 
     }
-
+//is this really necessary? it just returns a method we can use directly
     /**
      * Puts the discarded cards in the gameState's discard pile
      * @param gameState : state of the game
