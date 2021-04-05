@@ -184,7 +184,7 @@ public final class Game { //No constructor as the class is only functional; it s
                 break;
         }
 
-        updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
+        //updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
 
         return gameState;
 

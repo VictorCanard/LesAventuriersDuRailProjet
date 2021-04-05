@@ -13,6 +13,11 @@ import java.util.stream.Collectors;
 class GameTest {
 
     public static List<Route> routes;
+
+    private static final Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, "Jacob", PlayerId.PLAYER_2, "Martha");
+    private static final SortedBag<Ticket> initialTickets = SortedBag.of(ChMap.tickets());
+
+
     public final static Random NON_RANDOM = new Random(){
         @Override
         public int nextInt(int i){
@@ -24,15 +29,11 @@ class GameTest {
     @Test
     void play() {
 
-        Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, "Jacob", PlayerId.PLAYER_2, "Martha");
 
 
-
-        SortedBag<Ticket> initialTickets = SortedBag.of(ChMap.tickets());
-
-
-        Random nonRandom = NON_RANDOM;
-
+    }
+    @Test
+    void playWorks100Times(){
         for (int i = 0; i < 100; i++) {
             Random realRandom = new Random(i);
 
@@ -45,17 +46,19 @@ class GameTest {
             Game.play(players, playerNames, initialTickets, realRandom);
 
         }
-
     }
 
     private static class AssertAndInfo{
         private static PlayerId firstPlayer;
 
         private static boolean isFirstTimePrinted = true;
+        private static boolean isFirstEOF = true;
 
         private static boolean gameInfo = false;
         private static boolean playerInfo = false;
         private static boolean cardInfo = false;
+
+        private static List<Route> routeList = new ArrayList<>();
 
         private static void displayInfo(int turnCounter, PublicGameState publicGameState, PublicCardState publicCardState, PlayerState playerState, String playerName){
             if(gameInfo && isFirstTimePrinted){
@@ -71,7 +74,7 @@ class GameTest {
             if(gameInfo || playerInfo || cardInfo){
                 System.out.printf("---------------------------%s___TURN # %s----------------------------\n", playerName, turnCounter);
             }
-
+            isFirstEOF = true;
             isFirstTimePrinted = ! isFirstTimePrinted;
         }
 
@@ -92,12 +95,17 @@ class GameTest {
             System.out.printf("Total Number of Cards = \n" + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
         }
         private static void displayEndOfGameMessage(PublicPlayerState publicPlayerState, String message){
-            if (isFirstTimePrinted){
+            if (isFirstEOF){
                 System.out.println(message);
-
-
+                routeList.addAll(publicPlayerState.routes());
             }
-            isFirstTimePrinted = ! isFirstTimePrinted;
+            else{
+                routeList.addAll(publicPlayerState.routes());
+                Set<Route> routeSet = new HashSet<>(routeList);
+                //assert routeSet.size() == routeList.size(); //To see if there any duplicates
+            }
+            isFirstEOF = ! isFirstEOF;
+
 
 
         }
