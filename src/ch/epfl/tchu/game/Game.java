@@ -214,7 +214,7 @@ public final class Game {
                 break;
         }
 
-        updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
+        //updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
 
         return gameState;
 
