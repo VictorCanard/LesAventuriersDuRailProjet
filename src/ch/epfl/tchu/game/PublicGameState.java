@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Describes the state of the game at a point in time, visible to everyone
@@ -13,9 +14,11 @@ import java.util.Objects;
  */
 public class PublicGameState {
     private final int ticketListSize;
+
     private final PublicCardState publicCardState;
+
     private final PlayerId currentPlayerId;
-    private final Map<PlayerId, PublicPlayerState> playerState;
+    private final Map<PlayerId, PublicPlayerState> playerStates;
     private final PlayerId lastPlayer;
 
     /**
@@ -27,7 +30,7 @@ public class PublicGameState {
      * @param lastPlayer : when it is known, the last player to have a turn at the end of the game
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer){
-        boolean positiveTicketCount = ticketsCount >=0;
+        boolean positiveTicketCount = ticketsCount >= 0;
         boolean exactlyTwoPairs = playerState.size() == 2;
 
         Preconditions.checkArgument(positiveTicketCount && exactlyTwoPairs);
@@ -35,7 +38,7 @@ public class PublicGameState {
         this.ticketListSize = ticketsCount;
         this.publicCardState = Objects.requireNonNull(cardState);
         this.currentPlayerId = Objects.requireNonNull(currentPlayerId);
-        this.playerState = Objects.requireNonNull(playerState);
+        this.playerStates = Objects.requireNonNull(playerState);
         this.lastPlayer = lastPlayer;
     }
 
@@ -52,7 +55,7 @@ public class PublicGameState {
      * @return true if the ticket draw pile isn't empty, false otherwise
      */
     public boolean canDrawTickets(){
-        return ticketListSize!=0;
+        return ticketListSize != 0;
     }
 
     /**
@@ -85,13 +88,13 @@ public class PublicGameState {
      * @param playerId the player which we want to know the state of
      * @return the given player's visible player state
      */
-    public PublicPlayerState playerState(PlayerId playerId){return playerState.get(playerId);}
+    public PublicPlayerState playerState(PlayerId playerId){return playerStates.get(playerId);}
 
     /**
      * Getter for the current player's state
      * @return the current player's visible player state
      */
-    public PublicPlayerState currentPlayerState(){return playerState.get(currentPlayerId);}
+    public PublicPlayerState currentPlayerState(){return playerStates.get(currentPlayerId);}
 
     /**
      * Getter for all the claimed routes in the game
@@ -99,10 +102,11 @@ public class PublicGameState {
      */
     public List<Route> claimedRoutes(){
 
-        return new ArrayList<>(){{
-            addAll(playerState(PlayerId.PLAYER_1).routes());
-            addAll(playerState(PlayerId.PLAYER_2).routes());
-        }};
+        return playerStates.values()
+                .stream()
+                .flatMap((publicPlayerState -> publicPlayerState.routes().stream()))
+                .collect(Collectors.toList());
+
     }
 
     /**

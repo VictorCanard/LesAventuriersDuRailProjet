@@ -154,7 +154,6 @@ public final class PlayerState extends PublicPlayerState {
         Preconditions.checkArgument(correctAdditionalCardsCount && initialCardsNotNull && initialCardsNotTooManyTypes && rightNumberOfDrawnCards);
 
         SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards);
-        SortedBag.Builder<Card> usableCards = new SortedBag.Builder<>();
 
         Card initialCard = initialCards.get(0);
 
@@ -166,20 +165,20 @@ public final class PlayerState extends PublicPlayerState {
             numberOfLocomotiveCardsToAdd = playerCardsWithoutInitialCards.countOf(Card.LOCOMOTIVE);
         }
 
-        usableCards.add(numberOfLocomotiveCardsToAdd, Card.LOCOMOTIVE)
-                   .add(numberOfSameColorCardsToAdd, initialCard);
+        SortedBag<Card> cardSortedBag = new SortedBag.Builder<Card>()
+                .add(numberOfLocomotiveCardsToAdd, Card.LOCOMOTIVE)
+                .add(numberOfSameColorCardsToAdd, initialCard)
+                .build();
 
-        SortedBag<Card> cardSortedBag = usableCards.build();
-
-        if(cardSortedBag.size() < additionalCardsCount){
+        if(cardSortedBag.size() < additionalCardsCount){ //If the player can play less cards than the additional cards count then he can't play at all
             return Collections.emptyList();
         }
-        Set<SortedBag<Card>> sortedBagSet = cardSortedBag.subsetsOfSize(additionalCardsCount);
 
-        List<SortedBag<Card>> options = new ArrayList<>(sortedBagSet);
+        List<SortedBag<Card>> options = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount));
 
         options.sort(
-                Comparator.comparingInt(cs -> cs.countOf(Card.LOCOMOTIVE)));
+                Comparator.comparingInt(sortedBag -> sortedBag.countOf(Card.LOCOMOTIVE)));
+
         return options;
     }
 
@@ -195,7 +194,7 @@ public final class PlayerState extends PublicPlayerState {
 
         SortedBag<Card> finalSortedBag = this.cards.difference(claimCards);
 
-        return new PlayerState(this.tickets, finalSortedBag,  routeList );
+        return new PlayerState(this.tickets, finalSortedBag,  routeList);
     }
 
     /**
@@ -203,29 +202,21 @@ public final class PlayerState extends PublicPlayerState {
      * @return the number of points gained (or lost)
      */
     public int ticketPoints(){
-        int ticketPoints = 0;
-        int maxStationId = 0;
+        int maxStationId = routes //Finds the maximum id in all of the routes' stations' ids
+                .stream()
+                .map((route -> Math.max(route.station1().id(), route.station2().id())))
+                .max((Integer::compareTo))
+                .orElse(0);
 
-        //maxStationId = routes.stream().max((r1, r2) -> Integer.compare(Math.max(r2.station1().id(), r2.station2().id()), Math.max(r1.station1().id(), r1.station2().id()))).;
-        for (Route route:
-             this.routes) {
-            int maxIdOfStations = Math.max(route.station1().id(), route.station2().id());
-            maxStationId = Math.max(maxIdOfStations, maxStationId);
-        }
-        maxStationId ++;
+        maxStationId ++; //Adds 1 to it
+
         StationPartition.Builder builder = new StationPartition.Builder(maxStationId);
 
-        for (Route route: routes
-             ) {
-            builder.connect(route.station1(), route.station2());
-        }
+        routes.forEach((route -> builder.connect(route.station1(), route.station2()))); //For a given route connects the two stations of that route
 
         StationPartition stationPartition = builder.build();
 
-        for (Ticket ticket: tickets
-             ) {
-            ticketPoints += ticket.points(stationPartition);
-        }
+        int ticketPoints = tickets.stream().mapToInt((ticket -> ticket.points(stationPartition))).sum(); //Sums up all points gained or lost through the player's tickets
 
         return ticketPoints;
     }
