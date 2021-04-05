@@ -10,34 +10,41 @@ import java.util.*;
 
 public final class Game { //No constructor as the class is only functional; it shouldn't be instantiable
 
+    /**
+     * Plays a game of tCHu from beginning to end
+     * @param players : the 2 players in the game
+     * @param playerNames : their names
+     * @param tickets : the total bag of tickets available for this game
+     * @param rng : a random number generator for shuffling purposes
+     */
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
         Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
 
 //before the game starts
-        Deck<Ticket> ticketDeck = Deck.of(tickets, rng);
         Map<PlayerId, Info> infoGenerators = new EnumMap<>(PlayerId.class); //initialized in initializePlayers
         GameState gameState = GameState.initial(tickets, rng);
         Map<PlayerId, Integer> keptTicketNumber = new EnumMap<>(PlayerId.class);
         Map<PlayerId, String> namesOfPlayers = Map.copyOf(playerNames);
         Map<PlayerId, Player> playerMap = Map.copyOf(players);
 
-        setup(playerMap, infoGenerators, namesOfPlayers, ticketDeck, gameState, keptTicketNumber);
+        setup(playerMap, infoGenerators, namesOfPlayers, gameState, keptTicketNumber);
 
         //Plays one round first so as to make sure the condition lastTurnBegins() is tested at the right moment
-        gameState = nextTurn(playerMap, infoGenerators, gameState, ticketDeck, rng);
+        gameState = nextTurn(playerMap, infoGenerators, gameState, rng);
 
         //the actual game starts
-        while(!isLastTurn(gameState)){
-            gameState = gameState.forNextTurn();
-            gameState = nextTurn(playerMap, infoGenerators, gameState, ticketDeck, rng);
+        while(!gameState.lastTurnBegins()){ //Checks if last turn is beginning in the next turn
+
+            gameState = gameState.forNextTurn(); //Takes the GameState's next turn (swaps the current player and the other player)
+            gameState = nextTurn(playerMap, infoGenerators, gameState,  rng);
 
         }
 
         //Last turn begins returned true thus the end of game is activated
-        endOfGame(playerMap, namesOfPlayers, infoGenerators, gameState, ticketDeck, rng);
+        endOfGame(playerMap, namesOfPlayers, infoGenerators, gameState, rng);
 
     }
-    private static void setup(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, Map<PlayerId, String> playerNames, Deck<Ticket> ticketDeck, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
+    private static void setup(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, Map<PlayerId, String> playerNames, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
     //Initializing players
         players.forEach((playerId, player)->{
             infoGenerators.put(playerId, new Info(playerNames.get(playerId)));
@@ -51,12 +58,12 @@ public final class Game { //No constructor as the class is only functional; it s
             PlayerId playerId = entry.getKey();
             Player player = entry.getValue();
 
-            player.setInitialTicketChoice(ticketDeck.topCards(Constants.INITIAL_TICKETS_COUNT));
-            ticketDeck = ticketDeck.withoutTopCards(Constants.INITIAL_TICKETS_COUNT);
+            player.setInitialTicketChoice(gameState.topTickets(Constants.INITIAL_TICKETS_COUNT)); //Sets initial ticket choice
             gameState = gameState.withoutTopTickets(Constants.INITIAL_TICKETS_COUNT);
-            player.updateState(gameState, gameState.playerState(playerId)); //call actual method bc its in the middle of instructions in for each
 
-            SortedBag<Ticket> tickets = player.chooseInitialTickets();
+            player.updateState(gameState, gameState.playerState(playerId)); //So the player can see the tickets he can choose from
+
+            SortedBag<Ticket> tickets = player.chooseInitialTickets(); //Asks the player to choose tickets from the set of options determined in setInitialTicketChoice
             keptTicketNumber.put(playerId, tickets.size());
         }
 
@@ -82,7 +89,15 @@ public final class Game { //No constructor as the class is only functional; it s
     }
 
 
-    private static GameState nextTurn(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, GameState gameState, Deck<Ticket> ticketDeck, Random rng){
+    /**
+     * Plays one turn of tCHu (for one player)
+     * @param players : both players
+     * @param infoGenerators : their information generators
+     * @param gameState : the current state of the game
+     * @param rng : random number generator for recreating draw piles from discarded cards
+     * @return the next state of the game after one turn has been played
+     */
+    private static GameState nextTurn(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, GameState gameState, Random rng){
         updateAllStates(players, gameState);
 
         PlayerId currentPlayerId = gameState.currentPlayerId();
@@ -118,7 +133,7 @@ public final class Game { //No constructor as the class is only functional; it s
             case DRAW_TICKETS:
                 receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewTickets(Constants.IN_GAME_TICKETS_COUNT));
 
-                SortedBag<Ticket> ticketOptions = ticketDeck.topCards(Constants.IN_GAME_TICKETS_COUNT);
+                SortedBag<Ticket> ticketOptions = gameState.topTickets(Constants.IN_GAME_TICKETS_COUNT);
 
                 SortedBag<Ticket> keptTickets = currentPlayer.chooseTickets(ticketOptions);
 
@@ -151,7 +166,7 @@ public final class Game { //No constructor as the class is only functional; it s
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).drewAdditionalCards(drawnCards, additionalCost));
 
                     PlayerState playerState = gameState.playerState(currentPlayerId);
-                    List<SortedBag<Card>> possibleAdditionalCards = List.of();
+                    List<SortedBag<Card>> possibleAdditionalCards;
 
                     if(additionalCost > 0){ //Additional cost is between 1 and 3 (both included)
                         //Cards the player could play
@@ -175,7 +190,7 @@ public final class Game { //No constructor as the class is only functional; it s
                         receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
                     }
 
-                }else{
+                }else{ //Overground route
                     gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
                     gameState = putInDiscard(gameState, initialClaimCards);
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
@@ -184,32 +199,40 @@ public final class Game { //No constructor as the class is only functional; it s
                 break;
         }
 
-        //updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
-
         return gameState;
 
     }
 
+    /**
+     * Puts the discarded cards in the gameState's discard pile
+     * @param gameState : state of the game
+     * @param discardCards : cards to add to the game's discard
+     * @return a new game state with more discards
+     */
     private static GameState putInDiscard(GameState gameState, SortedBag<Card> discardCards){
         return gameState.withMoreDiscardedCards(discardCards);
     }
 
 
-    private static boolean isLastTurn(GameState gameState){
-        return gameState.lastTurnBegins();
-
-    }
-    private static void endOfGame(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId, Info> infoGenerators, GameState gameState, Deck<Ticket> ticketDeck, Random rng){
+    /**
+     * Plays the last two turns of tCHu, then calculates who gets the longest trail bonus and who won in the end or if there has been a draw
+     * @param players : the two players in the game
+     * @param playerNames : their names
+     * @param infoGenerators : their information displays
+     * @param gameState : the state of the game (before the last two turns)
+     * @param rng : random number generator for recreating decks
+     */
+    private static void endOfGame(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId, Info> infoGenerators, GameState gameState, Random rng){
         updateAllStates(players, gameState);
 
         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount())); //LastTurnBegins
 
         //One more turn
 
-        nextTurn(players, infoGenerators, gameState, ticketDeck, rng);
+        nextTurn(players, infoGenerators, gameState,rng);
         gameState = gameState.forNextTurn();
 
-        nextTurn(players, infoGenerators, gameState, ticketDeck, rng);
+        nextTurn(players, infoGenerators, gameState, rng);
         gameState = gameState.forNextTurn();
 
 
