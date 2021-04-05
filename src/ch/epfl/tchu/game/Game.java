@@ -78,7 +78,10 @@ public final class Game {
             player.updateState(gameState, gameState.playerState(playerId)); //So the player can see the tickets he can choose from
 
             SortedBag<Ticket> tickets = player.chooseInitialTickets(); //Asks the player to choose tickets from the set of options determined in setInitialTicketChoice
+// I believe this changes the players playerState as well but why doesnt it show up in console :(
+            gameState = gameState.withInitiallyChosenTickets(playerId, tickets);
             keptTicketNumber.put(playerId, tickets.size());
+            updateAllStates(players, gameState);
         }
 
         infoGenerators.forEach((playerId, info) -> receiveInfoForAll(players, info.keptTickets(keptTicketNumber.get(playerId))));
@@ -131,6 +134,8 @@ public final class Game {
                     if(drawSlot == Constants.DECK_SLOT){
                         //DeckCard
                         gameState = gameState.withBlindlyDrawnCard();
+  //new
+                        updateAllStates(players, gameState);
                         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewBlindCard());
 
                     }
@@ -138,10 +143,12 @@ public final class Game {
                         Card chosenVisibleCard = gameState.cardState().faceUpCard(drawSlot);
 
                         gameState = gameState.withDrawnFaceUpCard(drawSlot);
+ //new
+                        updateAllStates(players, gameState);
                         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewVisibleCard(chosenVisibleCard));
                     }
 
-                    updateAllStates(players, gameState);
+            //        updateAllStates(players, gameState); would it not be better to update the game state before you tell people what happened? or does it not matter
                 }
                 break;
             case DRAW_TICKETS:
@@ -150,6 +157,9 @@ public final class Game {
                 SortedBag<Ticket> ticketOptions = gameState.topTickets(Constants.IN_GAME_TICKETS_COUNT);
 
                 SortedBag<Ticket> keptTickets = currentPlayer.chooseTickets(ticketOptions);
+  //new
+                gameState = gameState.withChosenAdditionalTickets(ticketOptions, keptTickets);
+                updateAllStates(players, gameState);
 
                 receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).keptTickets(keptTickets.size()));
 

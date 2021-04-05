@@ -34,13 +34,13 @@ class GameTest {
     }
     @Test
     void playWorks100Times(){
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             Random realRandom = new Random(i);
 
             GameTest.routes = ChMap.routes().stream().filter(((route -> !route.id().endsWith("_2")))).collect(Collectors.toList());
 
             TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), true);
-            TestPlayer player2 = new TestPlayer(200000000L * i, routes, playerNames.get(PlayerId.PLAYER_2), true);
+            TestPlayer player2 = new TestPlayer(200000000L * i, routes, playerNames.get(PlayerId.PLAYER_2), false);
 
             Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
             Game.play(players, playerNames, initialTickets, realRandom);
@@ -88,7 +88,7 @@ class GameTest {
 
         }
         private static void displayPlayerInfo(String playerName, PlayerState playerState){
-            System.out.printf("%s:: Nombre de voitures: %s      Nombre de cartes: %s     Nombre de tickets: %s  \n", playerName, playerState.carCount(), playerState.cardCount(), playerState.ticketCount());
+            System.out.printf("%s:: Nombre de voitures: %s      Nombre de cartes: %s     Nombre de billets: %s  \n", playerName, playerState.carCount(), playerState.cardCount(), playerState.ticketCount());
         }
 
         private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
