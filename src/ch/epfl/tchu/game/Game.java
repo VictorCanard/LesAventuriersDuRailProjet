@@ -8,14 +8,19 @@ import ch.epfl.tchu.gui.Info;
 
 import java.util.*;
 
-public final class Game { //No constructor as the class is only functional; it shouldn't be instantiable
+/**
+ * Represents a game of tCHu
+ * @author Victor Jean Canard-Duchene (326913)
+ * @author Anne-Marie Rusu (296098)
+ */
 
+public final class Game {
     /**
-     * Plays a game of tCHu from beginning to end
-     * @param players : the 2 players in the game
-     * @param playerNames : their names
-     * @param tickets : the total bag of tickets available for this game
-     * @param rng : a random number generator for shuffling purposes
+     * Runs a game of tCHu
+     * @param players : the players playing the game
+     * @param playerNames : the names of the corresponding players
+     * @param tickets : the tickets to be used in the game
+     * @param rng : an instance of a random number generator
      */
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
         Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
@@ -45,6 +50,17 @@ public final class Game { //No constructor as the class is only functional; it s
 
     }
     private static void setup(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, Map<PlayerId, String> playerNames, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
+
+    /**
+     * Runs the setup of the game: chooses the first player and distributes the initial tickets and cards
+     * @param players : the players playing the game
+     * @param playerNames : the names of the corresponding players
+     * @param infoGenerators : the information to be communicated to the players
+     * @param gameState : the current state of the game
+     * @param ticketDeck : the tickets available in the ticket draw pile
+     * @param keptTicketNumber : the number of kept tickets the player has chosen
+     */
+    private static void setup(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames,Map<PlayerId, Info> infoGenerators, Deck<Ticket> ticketDeck, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
     //Initializing players
         players.forEach((playerId, player)->{
             infoGenerators.put(playerId, new Info(playerNames.get(playerId)));
@@ -88,15 +104,16 @@ public final class Game { //No constructor as the class is only functional; it s
         players.forEach((playerId, player)-> player.updateState(gameState,  gameState.playerState(playerId)));
     }
 
-
     /**
-     * Plays one turn of tCHu (for one player)
-     * @param players : both players
-     * @param infoGenerators : their information generators
+     * Runs the next turn of the game
+     * @param players : the players playing the game
+     * @param infoGenerators : the information to be communicated to the players
      * @param gameState : the current state of the game
-     * @param rng : random number generator for recreating draw piles from discarded cards
-     * @return the next state of the game after one turn has been played
+     * @param ticketDeck : the tickets available in the ticket draw pile
+     * @param rng : an instance of a random number
+     * @return the new gameState at the end of the turn
      */
+
     private static GameState nextTurn(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, GameState gameState, Random rng){
         updateAllStates(players, gameState);
 
@@ -199,6 +216,8 @@ public final class Game { //No constructor as the class is only functional; it s
                 break;
         }
 
+        //updateAllStates(players, gameState); //Todo Is this call to updateAllStates() needed ?
+
         return gameState;
 
     }
@@ -229,10 +248,10 @@ public final class Game { //No constructor as the class is only functional; it s
 
         //One more turn
 
-        nextTurn(players, infoGenerators, gameState,rng);
+        nextTurn(players, infoGenerators, gameState, ticketDeck, rng);
         gameState = gameState.forNextTurn();
 
-        nextTurn(players, infoGenerators, gameState, rng);
+        nextTurn(players, infoGenerators, gameState, ticketDeck, rng);
         gameState = gameState.forNextTurn();
 
 
@@ -304,9 +323,7 @@ public final class Game { //No constructor as the class is only functional; it s
             endOfGameMessage = Info.draw(new ArrayList<>(playerNames.values()), currentPlayerPoints);
 
         }
-
         receiveInfoForAll(players, endOfGameMessage);
-
 
     }
 
