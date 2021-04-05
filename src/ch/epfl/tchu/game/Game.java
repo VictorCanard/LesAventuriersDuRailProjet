@@ -32,7 +32,7 @@ public final class Game {
         Map<PlayerId, String> namesOfPlayers = Map.copyOf(playerNames);
         Map<PlayerId, Player> playerMap = Map.copyOf(players);
 
-        setup(playerMap, infoGenerators, namesOfPlayers, gameState, keptTicketNumber);
+        setup(playerMap, namesOfPlayers,infoGenerators,  gameState, keptTicketNumber);
 
         //Plays one round first so as to make sure the condition lastTurnBegins() is tested at the right moment
         gameState = nextTurn(playerMap, infoGenerators, gameState, rng);
@@ -49,7 +49,6 @@ public final class Game {
         endOfGame(playerMap, namesOfPlayers, infoGenerators, gameState, rng);
 
     }
-    private static void setup(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, Map<PlayerId, String> playerNames, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
 
     /**
      * Runs the setup of the game: chooses the first player and distributes the initial tickets and cards
@@ -57,10 +56,9 @@ public final class Game {
      * @param playerNames : the names of the corresponding players
      * @param infoGenerators : the information to be communicated to the players
      * @param gameState : the current state of the game
-     * @param ticketDeck : the tickets available in the ticket draw pile
      * @param keptTicketNumber : the number of kept tickets the player has chosen
      */
-    private static void setup(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames,Map<PlayerId, Info> infoGenerators, Deck<Ticket> ticketDeck, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
+    private static void setup(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames,Map<PlayerId, Info> infoGenerators, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
     //Initializing players
         players.forEach((playerId, player)->{
             infoGenerators.put(playerId, new Info(playerNames.get(playerId)));
@@ -109,7 +107,6 @@ public final class Game {
      * @param players : the players playing the game
      * @param infoGenerators : the information to be communicated to the players
      * @param gameState : the current state of the game
-     * @param ticketDeck : the tickets available in the ticket draw pile
      * @param rng : an instance of a random number
      * @return the new gameState at the end of the turn
      */
@@ -248,10 +245,10 @@ public final class Game {
 
         //One more turn
 
-        nextTurn(players, infoGenerators, gameState, ticketDeck, rng);
+        nextTurn(players, infoGenerators, gameState,rng);
         gameState = gameState.forNextTurn();
 
-        nextTurn(players, infoGenerators, gameState, ticketDeck, rng);
+        nextTurn(players, infoGenerators, gameState, rng);
         gameState = gameState.forNextTurn();
 
 
