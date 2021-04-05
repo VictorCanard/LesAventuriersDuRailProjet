@@ -102,7 +102,7 @@ class GameTest {
             else{
                 routeList.addAll(publicPlayerState.routes());
                 Set<Route> routeSet = new HashSet<>(routeList);
-                //assert routeSet.size() == routeList.size(); //To see if there any duplicates
+                assert routeSet.size() == routeList.size(); //To see if there any duplicates
             }
             isFirstEOF = ! isFirstEOF;
 
