@@ -7,12 +7,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Describes the player's situation at a point in the game
+ * Describes the player's state at a point in the game
  * @author Victor Canard-Duchêne (326913)
  */
 public final class PlayerState extends PublicPlayerState {
+    /**
+     * All tickets a player has
+     */
     private final SortedBag<Ticket> tickets;
+    /**
+     * Bag of cards the player plays with
+     */
     private final SortedBag<Card> cards;
+    /**
+     * Routes a player has captured currently
+     */
     private final List<Route> routes;
 
     /**
@@ -24,19 +33,19 @@ public final class PlayerState extends PublicPlayerState {
     public PlayerState(SortedBag<Ticket> tickets, SortedBag<Card> cards, List<Route> routes){
         super(tickets.size(), cards.size(), routes);
 
-        this.tickets = SortedBag.of(tickets);
-        this.cards = SortedBag.of(cards);
+        this.tickets = tickets;
+        this.cards = cards;
         this.routes = List.copyOf(routes);
     }
 
     /**
-     * The initial state of the player at the beginning of the game
+     * The initial state of the player at the beginning of the game (With no tickets and no captured routes)
      * @param initialCards : the initial cards
      * @return the initial PlayerState where the initial cards have been distributed
      * @throws IllegalArgumentException if the number of given cards is not exactly 4
      */
     public static PlayerState initial(SortedBag<Card> initialCards){
-        Preconditions.checkArgument(initialCards.size()==4);
+        Preconditions.checkArgument(initialCards.size() == Constants.INITIAL_CARDS_COUNT);
 
         return new PlayerState(SortedBag.of(), initialCards, Collections.emptyList());
     }
@@ -57,7 +66,7 @@ public final class PlayerState extends PublicPlayerState {
     public PlayerState withAddedTickets(SortedBag<Ticket> newTickets){
         SortedBag<Ticket> newBagOfTickets = this.tickets.union(newTickets);
 
-        return new PlayerState(newBagOfTickets ,this.cards, this.routes);
+        return new PlayerState(newBagOfTickets, this.cards, this.routes);
     }
 
     /**
@@ -71,7 +80,7 @@ public final class PlayerState extends PublicPlayerState {
     /**
      * The state of the player after they have drawn one additional card.
      * (The Builder was used here to create only one additional sorted bag,
-     * whereas the union method would have created two, one for the single card and one for the final result with the union method.
+     * whereas the union method would have created two, one for the single card and one for the final result with the union method).
      * @param card : the card to give to the player
      * @return a new PlayerState with one additional card in their possession
      */
@@ -85,7 +94,7 @@ public final class PlayerState extends PublicPlayerState {
     }
 
     /**
-     * The state of the player after they have drawn a number of additional card
+     * The state of the player after they have drawn a number of additional cards
      * @param additionalCards : the group of cards to be given to the player
      * @return a new PlayerState with the new cards added to the player's possession
      */
@@ -101,13 +110,12 @@ public final class PlayerState extends PublicPlayerState {
      * @return true if the player is able to, false otherwise
      */
     public boolean canClaimRoute(Route route){
-        boolean enoughWagonsLeft = hasEnoughWagonsLeft(route);
 
-        boolean playerHasNecessaryCards = route.possibleClaimCards()
-                                                .stream()
-                                                .anyMatch((sortedBag) -> this.cards.contains(sortedBag)); //Tests for each sorted bag of cards if the player has one of these combination of cards
+        if(!hasEnoughWagonsLeft(route)){ //If there are not enough wagons left it is futile to test if the player has the necessary cards to claim the route
+            return false;
+        }
 
-        return enoughWagonsLeft && playerHasNecessaryCards;
+        return !possibleClaimCards(route).isEmpty(); //Tests to see if there is at least one combination of cards the player can use
     }
 
     /**
@@ -122,18 +130,17 @@ public final class PlayerState extends PublicPlayerState {
     /**
      * Determines the lists of cards this player can use to claim a given route
      * @param route : the route to be claimed
-     * @return the lists of possible cards to be used to claim the route
      * @throws IllegalArgumentException if the player does not have enough wagons to claim the route
+     * @return the lists of possible cards to be used to claim the route
      */
     public List<SortedBag<Card>> possibleClaimCards(Route route){
         Preconditions.checkArgument(hasEnoughWagonsLeft(route));
 
-        List<SortedBag<Card>> sortedBagListToReturn = route.possibleClaimCards()
-                                                            .stream()
-                                                            .filter(sortedBag -> this.cards.contains(sortedBag))
-                                                            .collect(Collectors.toList());
-
-        return sortedBagListToReturn;
+        return route
+                .possibleClaimCards()
+                .stream()
+                .filter(this.cards::contains)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -146,14 +153,14 @@ public final class PlayerState extends PublicPlayerState {
      * of initial cards (excluding locomotives) or if there are not exactly 3 drawn cards.
      */
     public List<SortedBag<Card>> possibleAdditionalCards(int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards){
-        boolean correctAdditionalCardsCount = 1<= additionalCardsCount && additionalCardsCount <=3;
+        boolean correctAdditionalCardsCount = 1  <= additionalCardsCount && additionalCardsCount <= 3;
         boolean initialCardsNotNull = !(initialCards.isEmpty());
         boolean initialCardsNotTooManyTypes = initialCards.toSet().size() <= 2;
-        boolean rightNumberOfDrawnCards = drawnCards.size() == 3;
+        boolean rightNumberOfDrawnCards = drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS;
 
         Preconditions.checkArgument(correctAdditionalCardsCount && initialCardsNotNull && initialCardsNotTooManyTypes && rightNumberOfDrawnCards);
 
-        SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards);
+        SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards); //Player cards without the initially played cards
 
         Card initialCard = initialCards.get(0);
 
@@ -165,7 +172,7 @@ public final class PlayerState extends PublicPlayerState {
             numberOfLocomotiveCardsToAdd = playerCardsWithoutInitialCards.countOf(Card.LOCOMOTIVE);
         }
 
-        SortedBag<Card> cardSortedBag = new SortedBag.Builder<Card>()
+        SortedBag<Card> cardSortedBag = new SortedBag.Builder<Card>() //Adds a certain number of the same color of card and locomotive cards
                 .add(numberOfLocomotiveCardsToAdd, Card.LOCOMOTIVE)
                 .add(numberOfSameColorCardsToAdd, initialCard)
                 .build();
@@ -174,7 +181,7 @@ public final class PlayerState extends PublicPlayerState {
             return Collections.emptyList();
         }
 
-        List<SortedBag<Card>> options = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount));
+        List<SortedBag<Card>> options = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount)); //Makes subsets of the size of the acc
 
         options.sort(
                 Comparator.comparingInt(sortedBag -> sortedBag.countOf(Card.LOCOMOTIVE)));
@@ -186,7 +193,7 @@ public final class PlayerState extends PublicPlayerState {
      *The state of the player after they have claimed a route
      * @param route : the route to be claimed
      * @param claimCards : the cards the player has used to claim the route
-     * @return a new PlayerState including the additional route they have claimed
+     * @return a new PlayerState including the additional route they have claimed and without the cards they've used
      */
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards){
         List<Route> routeList = new ArrayList<>(this.routes);
@@ -216,9 +223,10 @@ public final class PlayerState extends PublicPlayerState {
 
         StationPartition stationPartition = builder.build();
 
-        int ticketPoints = tickets.stream().mapToInt((ticket -> ticket.points(stationPartition))).sum(); //Sums up all points gained or lost through the player's tickets
-
-        return ticketPoints;
+        return tickets
+                .stream()
+                .mapToInt((ticket -> ticket.points(stationPartition)))
+                .sum();
     }
 
     /**

@@ -19,6 +19,9 @@ public enum Card {
     WHITE(Color.WHITE),
     LOCOMOTIVE(null);
 
+    /**
+     * Color attribute, different for each card; null for the locomotive card
+     */
     private final Color color;
     /**
      * List of all the types of cards

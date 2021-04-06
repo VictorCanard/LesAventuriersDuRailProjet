@@ -9,8 +9,18 @@ import java.util.*;
  */
 public final class CardState extends PublicCardState{
 
-    private final Deck<Card> drawPile;
+    /**
+     * Bag of cards that represents the discards pile
+     */
     private final SortedBag<Card> discardPile;
+    /**
+     * Deck of cards for the draw pile
+     */
+    private final Deck<Card> drawPile;
+
+    /**
+     * Top card of the deck
+     */
     private final Card topCard;
 
     /**
@@ -23,10 +33,14 @@ public final class CardState extends PublicCardState{
     private CardState(List<Card> faceUpCards, Deck<Card> drawPile, SortedBag<Card> discardPile){
         super(faceUpCards, drawPile.size(), discardPile.size());
 
+        this.discardPile = discardPile;
         this.drawPile = drawPile;
+
+        /*
+            Determines the top card, null if the draw pile is empty.
+         */
         topCard = (this.drawPile.isEmpty()) ? null : this.drawPile.topCard();
 
-        this.discardPile = discardPile;
     }
 
 
@@ -38,18 +52,16 @@ public final class CardState extends PublicCardState{
      * @return a new card state with no discards, a certain number of face-up Cards and the rest of the deck as a draw pile
      */
     public static CardState of(Deck<Card> deck){
-        Preconditions.checkArgument(deck.size()>=Constants.FACE_UP_CARDS_COUNT);
+        Preconditions.checkArgument(deck.size() >= 5);
 
         List<Card> faceUpCards = new ArrayList<>();
-        Deck<Card> deckCopy = deck;
 
         for (int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
-            faceUpCards.add(deckCopy.topCard());
-            deckCopy = deckCopy.withoutTopCard();
+            faceUpCards.add(deck.topCard());
+            deck = deck.withoutTopCard();
         }
-        Deck<Card> newDrawPile = deckCopy;
 
-        return new CardState(faceUpCards,  newDrawPile, SortedBag.of());
+        return new CardState(faceUpCards,  deck, SortedBag.of());
     }
 
     /**
@@ -58,13 +70,13 @@ public final class CardState extends PublicCardState{
      * @param slot : index of the face up card to be replaced
      * @throws IllegalArgumentException if the draw pile isn't empty
      * @throws IndexOutOfBoundsException if the index slot isn't included in [0;5[
-     * @return a new set of cards with different faceUp and draw piles
+     * @return a new set of cards with different faceUp cards and draw piles
      */
     public CardState withDrawnFaceUpCard(int slot){
         Preconditions.checkArgument(!(drawPile.isEmpty()));
         Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);
 
-        List<Card> newFaceUpCards = new ArrayList<>(this.faceUpCards());
+        List<Card> newFaceUpCards = new ArrayList<>(super.faceUpCards());
         newFaceUpCards.set(slot, topCard);
 
         return new CardState(newFaceUpCards, drawPile.withoutTopCard(), discardPile);
@@ -77,6 +89,7 @@ public final class CardState extends PublicCardState{
      */
     public Card topDeckCard(){
         Preconditions.checkArgument(!(drawPile.isEmpty()));
+
         return drawPile.topCard();
     }
 
@@ -87,6 +100,7 @@ public final class CardState extends PublicCardState{
      */
     public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!(drawPile.isEmpty()));
+
         return new CardState(faceUpCards(),  drawPile.withoutTopCard(), discardPile);
     }
 
@@ -111,6 +125,7 @@ public final class CardState extends PublicCardState{
      */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
         SortedBag<Card> newDiscards = discardPile.union(additionalDiscards);
-        return new CardState(faceUpCards(), drawPile, newDiscards);
+
+        return new CardState(super.faceUpCards(), drawPile, newDiscards);
     }
 }

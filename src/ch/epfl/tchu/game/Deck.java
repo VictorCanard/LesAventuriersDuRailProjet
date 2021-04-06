@@ -10,13 +10,20 @@ import java.util.Random;
 /**
  * A deck of cards of a specified type
  * @author Victor Jean Canard-Duchene (326913)
- * @param <C> : the type of card. In this project: card/locomotive or tickets
+ * @param <C> : the type of card. In this project: cards or tickets
  */
 public final class Deck<C extends Comparable<C>> {
-    private final List<C> deckOfCards;
+    /**
+     * List of Cards of generic type <C>
+     */
+    private final List<C> listOfCards;
 
+    /**
+     * Private constructor to attribute the shuffled cards to this
+     * @param shuffledCards : cards that should be put in the deck's list of cards
+     */
     private Deck(List<C> shuffledCards){
-        deckOfCards = List.copyOf(shuffledCards);
+        listOfCards = List.copyOf(shuffledCards);
     }
 
     /**
@@ -28,7 +35,7 @@ public final class Deck<C extends Comparable<C>> {
      */
     public static <C extends Comparable<C>> Deck<C> of(SortedBag<C> cards, Random rng){
         List<C> listOfCards = cards.toList();
-        Collections.shuffle(cards.toList(), rng);
+        Collections.shuffle(listOfCards, rng);
 
         return new Deck<>(listOfCards);
     }
@@ -38,7 +45,7 @@ public final class Deck<C extends Comparable<C>> {
      * @return the size of the deck
      */
     public int size(){
-        return deckOfCards.size();
+        return listOfCards.size();
     }
 
     /**
@@ -46,7 +53,7 @@ public final class Deck<C extends Comparable<C>> {
      * @return true if the deck has no cards, false otherwise
      */
     public boolean isEmpty(){
-        return deckOfCards.isEmpty();
+        return listOfCards.isEmpty();
     }
 
     /**
@@ -57,7 +64,7 @@ public final class Deck<C extends Comparable<C>> {
     public C topCard(){
         Preconditions.checkArgument(!isEmpty());
 
-        return deckOfCards.get(0);
+        return listOfCards.get(0);
     }
 
     /**
@@ -68,31 +75,30 @@ public final class Deck<C extends Comparable<C>> {
     public Deck<C> withoutTopCard(){
         Preconditions.checkArgument(!isEmpty());
 
-        return new Deck<>(deckOfCards.subList(1, size()));
+        return new Deck<>(listOfCards.subList(1, size()));
     }
 
     /**
      *Determines the top cards of the given deck
      * @param count : the number of cards to be revealed
-     * @throws IllegalArgumentException if count is out of bounds of the size of the deck
+     * @throws IllegalArgumentException if count is out of bounds of the size of the deck or if it is strictly negative
      * @return a group of cards from the top of the deck
      */
     public SortedBag<C> topCards(int count){
         Preconditions.checkArgument(0<=count && count <=size());
 
-        SortedBag<C> topCards = SortedBag.of(deckOfCards.subList(0, count));
-        return topCards;
+        return SortedBag.of(listOfCards.subList(0, count));
     }
 
     /**
      *"Removes" a number of cards from the top of the deck
      * @param count : the number of cards to be "removed"
-     * @throws IllegalArgumentException if count is out of bounds of the size of the deck
+     * @throws IllegalArgumentException if count is out of bounds of the size of the deck or if it is strictly negative
      * @return a new deck with the specified number of cards removed from the top
      */
     public Deck<C> withoutTopCards(int count){
         Preconditions.checkArgument(0<=count && count <=size());
 
-        return new Deck<>(deckOfCards.subList(count,size()));
+        return new Deck<>(listOfCards.subList(count,size()));
     }
 }

@@ -21,14 +21,10 @@ public enum PlayerId {
     public final static int COUNT = ALL.size();
 
     /**
-     *Getter for the next player to have a turn
-     * @return the next player
+     *Getter for the next player's id, different from this
+     * @return the next player's id
      */
     public PlayerId next(){
-        if(this.equals(PLAYER_1)){
-            return PLAYER_2;
-        }else{
-            return PLAYER_1;
-        }
+        return (this.equals(PLAYER_1)) ? PLAYER_2 : PLAYER_1;
     }
 }

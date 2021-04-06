@@ -21,6 +21,7 @@ public class PublicCardState {
      */
     public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize){
         Preconditions.checkArgument(faceUpCards.size() == Constants.FACE_UP_CARDS_COUNT && deckSize >=0 && discardsSize >=0);
+
         this.faceUpCards = List.copyOf(faceUpCards);
         this.deckSize = deckSize;
         this.discardsSize = discardsSize;
@@ -28,7 +29,7 @@ public class PublicCardState {
 
     /**
      * Getter for the total size of the PublicCardState
-     * @return sum of the sizes of the deck pile, discard pile and the amount of faceup cards
+     * @return sum of the sizes of the deck pile, discard pile and the amount of FaceUp cards
      */
     public int totalSize(){
         return deckSize + discardsSize + faceUpCards.size();
@@ -39,7 +40,7 @@ public class PublicCardState {
      * @return a list of cards
      */
     public List<Card> faceUpCards(){
-        return faceUpCards;
+        return List.copyOf(faceUpCards);
     }
 
     /**
@@ -50,6 +51,7 @@ public class PublicCardState {
      */
     public Card faceUpCard(int slot){
         Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);
+
         return faceUpCards.get(slot);
     }
 
@@ -66,7 +68,7 @@ public class PublicCardState {
      * @return true if it is, false if it isn't
      */
     public boolean isDeckEmpty(){
-        return deckSize ==0;
+        return deckSize == 0;
     }
 
     /**
