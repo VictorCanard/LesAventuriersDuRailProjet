@@ -2,7 +2,6 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
-import ch.epfl.tchu.gui.StringsFr;
 
 
 import java.util.List;
@@ -15,14 +14,43 @@ import java.util.Objects;
  */
 
 public final class Route {
+    /**
+     * Unique identifier for this
+     */
     private final String id;
+
+    /**
+     * Beginning and end station of this
+     */
     private final Station station1;
     private final Station station2;
+
+    /**
+     * Length of the route
+     */
     private final int length;
+
+    /**
+     * Level, overground or underground
+     */
     private final Level level;
+
+    /**
+     * Color of the route, null means it's gray
+     */
     private final Color color;
 
-    /** Constructs a route based on specific given parameters as seen below
+    /**
+     * Enum type defining the two different levels of routes:
+     * overground and underground
+     */
+    public enum Level{
+        OVERGROUND,
+        UNDERGROUND
+    }
+
+    /**
+     * Constructs a route based on specific given parameters as seen below
      * @param id : Route's unique identifier
      * @param station1 : Route's first station
      * @param station2 : Route's second station
@@ -33,8 +61,10 @@ public final class Route {
      * @throws IllegalArgumentException if stations are the same or if the length isn't realistic according to the game's rules.
      */
     public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
+        boolean normalLength = length >= Constants.MIN_ROUTE_LENGTH && length <= Constants.MAX_ROUTE_LENGTH;
+        boolean noDuplicateStations = !station1.equals(station2);
 
-        Preconditions.checkArgument(!(station1.equals(station2)|| length<Constants.MIN_ROUTE_LENGTH || length > Constants.MAX_ROUTE_LENGTH));
+        Preconditions.checkArgument( normalLength && noDuplicateStations );
 
         this.id = Objects.requireNonNull(id);
         this.station1 = Objects.requireNonNull(station1);
@@ -44,14 +74,6 @@ public final class Route {
         this.length = length;
     }
 
-    /**
-     * Enum type defining the two different levels of routes:
-     * overground and underground
-     */
-    public enum Level{
-        OVERGROUND,
-        UNDERGROUND
-    }
 
     /**
      * Getter for the route's id
@@ -129,7 +151,7 @@ public final class Route {
      *          Creates a list of groups of cards of all colors (no locomotives)
      *  Else (overground and specific color):
      *          Creates a list of one element that is the group of cards of that specific color.
-     * @return : List of Sorted Bags of cards, each sorted bag is an accepted combination to claim this route
+     * @return : List of Sorted Bags of cards, each sorted bag is an possible combination to claim this route
      */
     public List<SortedBag<Card>> possibleClaimCards(){
         List<SortedBag<Card>> possibleCards = new ArrayList<>();

@@ -8,6 +8,9 @@ import java.util.stream.IntStream;
  * @author Anne-Marie Rusu (296098)
  */
 public final class StationPartition implements StationConnectivity {
+    /**
+     * Array of ints representing the partitions
+     */
     private final int[] partitions;
 
     /**
@@ -22,7 +25,7 @@ public final class StationPartition implements StationConnectivity {
      * Builder for the outer class StationPartition : builds the partitions of stations
      */
     public static final class Builder{
-        private int[] partitionsArray;
+        private final int[] partitionsArray;
 
         /**
          * Constructs an array ranging from 0 included to the station count excluded
@@ -80,11 +83,10 @@ public final class StationPartition implements StationConnectivity {
     public boolean connected(Station s1, Station s2) {
         int id1 = s1.id();
         int id2 = s2.id();
-        if(id1>= partitions.length || id2>= partitions.length) { // partitions.connected(zur, ZUR);
-            if (id1 == id2) { return true;}
-            return false;
+
+        if(id1 >= partitions.length || id2 >= partitions.length) {
+            return id1 == id2;
         }
-        if(partitions[id1] == partitions[id2]){ return true;}
-        return false;
+        return partitions[id1] == partitions[id2];
     }
 }

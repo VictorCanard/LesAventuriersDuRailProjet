@@ -9,11 +9,28 @@ import java.util.List;
  * @author Victor Canard-Duchêne (326913)
  */
 public class PublicPlayerState {
+    /**
+     * Number of tickets in the player's hand
+     */
     private final int ticketCount;
+    /**
+     * Player's number of cards
+     */
     private final int cardCount;
-    private final List<Route> routes;
+    /**
+     * Player's number of cars
+     */
     private final int carCount;
+    /**
+     * Player's number of points from capturing routes
+     */
     private final int claimPoints;
+
+    /**
+     * All routes the player currently has
+     */
+    private final List<Route> routes;
+
 
     /**
      * Constructor for the players public state at a point in the game
@@ -26,9 +43,10 @@ public class PublicPlayerState {
 
         this.ticketCount = ticketCount;
         this.cardCount = cardCount;
+        this.carCount = calculateCarCount(routes);
+        this.claimPoints = calculateClaimPoints(routes);
+
         this.routes = List.copyOf(routes);
-        this.carCount = calculateCarCount(this.routes);
-        this.claimPoints = calculateClaimPoints(this.routes);
     }
 
     /**
@@ -52,7 +70,7 @@ public class PublicPlayerState {
      * @return the list of routes
      */
     public List<Route> routes(){
-        return routes;
+        return List.copyOf(routes);
     }
 
     /**
@@ -74,6 +92,7 @@ public class PublicPlayerState {
      */
     private int calculateCarCount(List<Route> routes){
         int initialCarCount = Constants.INITIAL_CAR_COUNT;
+
         int usedCarCount = routes
                                 .stream()
                                 .mapToInt(Route::length)
@@ -88,12 +107,11 @@ public class PublicPlayerState {
      * @return the actual claim points
      */
     private int calculateClaimPoints(List<Route> routes){
-        int claimPoints = routes
-                                .stream()
-                                .mapToInt(Route::claimPoints)
-                                .sum();
 
-        return claimPoints;
+        return routes
+                    .stream()
+                    .mapToInt(Route::claimPoints)
+                    .sum();
     }
 
 }

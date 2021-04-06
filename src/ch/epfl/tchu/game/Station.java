@@ -9,7 +9,13 @@ import ch.epfl.tchu.Preconditions;
  */
 
 public final class Station {
+    /**
+     * Unique identifier (positive)
+     */
     private final int id;
+    /**
+     * Name of the station
+     */
     private final String name;
 
     /**
@@ -41,8 +47,12 @@ public final class Station {
         return name;
     }
 
+    /**
+     * Redefines the textual representation of a station to be its name
+     * @return the station's name
+     */
     @Override
     public String toString(){
-        return this.name;
+        return name();
     }
 }

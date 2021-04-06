@@ -3,6 +3,7 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A train ticket permitting the player to embark on certain paths in the game
@@ -12,12 +13,15 @@ import java.util.*;
 
 public final class Ticket  implements Comparable<Ticket>{
 
+    /**
+     * Text of the ticket describing its trips with a certain formatting depending on the number of trips
+     */
     private final String text;
-    private final String delimiter = ", ";
-    private String departure;
 
-    private List<Trip> trips;
-    private TreeSet<String> departureStationsNames = new TreeSet<>();
+    /**
+     * List of all trips of this ticket
+     */
+    private final List<Trip> trips;
 
 
     /**
@@ -30,19 +34,21 @@ public final class Ticket  implements Comparable<Ticket>{
     public Ticket(List<Trip> trips){
         this.trips = List.copyOf(trips);
 
-        for(Trip t : this.trips){
-            this.departureStationsNames.add(t.from().name());
-        }
+        TreeSet<String> departureStationsNames = trips
+                .stream()
+                .map(((trip -> trip.from().name())))
+                .collect(Collectors.toCollection(TreeSet::new));
 
-        Preconditions.checkArgument(departureStationsNames.size() == 1);
+        Preconditions.checkArgument(departureStationsNames.size() == 1); //Checks all departure stations are the same and that trips isn't empty
 
-        this.departure = this.trips.get(0).from().name();
+        String departure = departureStationsNames.first();
+        String computedText = Ticket.computeText(this.trips);
 
-        if(this.trips.size() <= 1){ //The first format where there's only one destination
-            this.text = String.format("%s - %s", departure,Ticket.computeText(delimiter, this.trips));
+        if(this.trips.size() == 1){ //The first format where there's only one destination
+            this.text = String.format("%s - %s", departure, computedText);
 
         }else { //Multiple Destinations
-            this.text = String.format("%s - {%s}", departure,Ticket.computeText(delimiter, this.trips));
+            this.text = String.format("%s - {%s}", departure, computedText);
         }
 
     }
@@ -54,6 +60,7 @@ public final class Ticket  implements Comparable<Ticket>{
      * @param points : number of points allocated for the corresponding trip
      */
     public Ticket(Station from, Station to, int points){
+
         this(List.of(new Trip(from, to, points)));
     }
 
@@ -67,19 +74,24 @@ public final class Ticket  implements Comparable<Ticket>{
 
     /**
      * Formats the ticket's text
-     * @param delimiter : separator for the display of arrival stations' names
-     * @param trip : list of trips for one departure station
+     * @param trips : list of trips for one departure station
      * @return arrival stations and points associated
      */
-    private static String computeText(String delimiter, List<Trip> trip){
+    private static String computeText(List<Trip> trips){
 
-        TreeSet<String> arrivalStationsNames = new TreeSet<>();
+        TreeSet<String> arrivalStationNames  = trips
+                .stream()
+                .map(trip -> {
+                    String name = trip.to().name();
+                    int points = trip.points();
 
-        for(Trip t : trip){
-            arrivalStationsNames.add(String.format("%s (%s)", t.to().name(), t.points()));
-        }
+                    return String.format("%s (%s)", name, points);
+                    }
+                )
+                .collect(Collectors.toCollection(TreeSet::new));
 
-        return String.join(delimiter, arrivalStationsNames);
+
+        return String.join(", ", arrivalStationNames);
     }
 
     /**
@@ -88,16 +100,16 @@ public final class Ticket  implements Comparable<Ticket>{
      * through a connection with a new station. This works as the max amount of points to be added
      * is always larger than the min amount of points to be removed (as that number is negative).
      * @param connectivity : the connectivity of the trip
-     * @return the max amount of points to be gained
-     * or min to be lost.
+     * @return the max amount of points to be gained or min to be lost.
      */
     public int points(StationConnectivity connectivity){
-        int pointsToBeReturned = Integer.MIN_VALUE;
 
-        for (Trip trip: trips) {
-            pointsToBeReturned = Math.max(pointsToBeReturned, trip.points(connectivity));
-        }
-        return pointsToBeReturned;
+        return trips
+                .stream()
+                .mapToInt(trip -> trip.points(connectivity))
+                .max()
+                .orElse(0);
+
     }
 
     /**

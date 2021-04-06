@@ -12,13 +12,31 @@ import java.util.stream.Collectors;
  * @author Victor Canard-Duchêne (326913)
  */
 public class PublicGameState {
-    private final int ticketListSize;
+    /**
+     * Size of the ticket Deck
+     */
+    private final int ticketDeckSize;
 
+    /**
+     * Public state of the cards
+     */
     private final PublicCardState publicCardState;
 
-    private final PlayerId currentPlayerId;
+    /**
+     * Map that associates each player id to their public player state
+     */
     private final Map<PlayerId, PublicPlayerState> playerStates;
+
+    /**
+     * Id of the current player
+     */
+    private final PlayerId currentPlayerId;
+    /**
+     * Id of the last player (null until last turn begins)
+     */
     private final PlayerId lastPlayer;
+
+
 
     /**
      * Constructs the "public" state of the game
@@ -34,7 +52,7 @@ public class PublicGameState {
 
         Preconditions.checkArgument(positiveTicketCount && exactlyTwoPairs);
 
-        this.ticketListSize = ticketsCount;
+        this.ticketDeckSize = ticketsCount;
         this.publicCardState = Objects.requireNonNull(cardState);
         this.currentPlayerId = Objects.requireNonNull(currentPlayerId);
         this.playerStates = Objects.requireNonNull(playerState);
@@ -46,7 +64,7 @@ public class PublicGameState {
      * @return the size of the ticket draw pile
      */
     public int ticketsCount(){
-        return ticketListSize;
+        return ticketDeckSize;
     }
 
     /**
@@ -54,7 +72,7 @@ public class PublicGameState {
      * @return true if the ticket draw pile isn't empty, false otherwise
      */
     public boolean canDrawTickets(){
-        return ticketListSize != 0;
+        return ticketDeckSize != 0;
     }
 
     /**
