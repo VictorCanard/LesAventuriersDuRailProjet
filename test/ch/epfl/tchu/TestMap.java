@@ -8,35 +8,35 @@ import java.util.List;
 public interface TestMap {
 
         // Stations - cities
-        public final Station BER = new Station(0, "Berne");
-        public final Station LAU = new Station(1, "Lausanne");
-        public final Station STG = new Station(2, "Saint-Gall");
+        Station BER = new Station(0, "Berne");
+        Station LAU = new Station(1, "Lausanne");
+        Station STG = new Station(2, "Saint-Gall");
 
         Station YVE = ChMap.stations().get(31);
         Station SCZ = ChMap.stations().get(24);
 
         // Stations - countries
-        public final Station DE1 = new Station(3, "Allemagne");
-        public final Station DE2 = new Station(4, "Allemagne");
-        public final Station DE3 = new Station(5, "Allemagne");
-        public final Station AT1 = new Station(6, "Autriche");
-        public final Station AT2 = new Station(7, "Autriche");
-        public final Station IT1 = new Station(8, "Italie");
-        public final Station IT2 = new Station(9, "Italie");
-        public final Station IT3 = new Station(10, "Italie");
-        public final Station FR1 = new Station(11, "France");
-        public final Station FR2 = new Station(12, "France");
+        Station DE1 = new Station(3, "Allemagne");
+        Station DE2 = new Station(4, "Allemagne");
+        Station DE3 = new Station(5, "Allemagne");
+        Station AT1 = new Station(6, "Autriche");
+        Station AT2 = new Station(7, "Autriche");
+        Station IT1 = new Station(8, "Italie");
+        Station IT2 = new Station(9, "Italie");
+        Station IT3 = new Station(10, "Italie");
+        Station FR1 = new Station(11, "France");
+        Station FR2 = new Station(12, "France");
 
         // Countries
-        public final List<Station> DE = List.of(DE1, DE2, DE3);
-        public final List<Station> AT = List.of(AT1, AT2);
-        public final List<Station> IT = List.of(IT1, IT2, IT3);
-        public final List<Station> FR = List.of(FR1, FR2);
+        List<Station> DE = List.of(DE1, DE2, DE3);
+        List<Station> AT = List.of(AT1, AT2);
+        List<Station> IT = List.of(IT1, IT2, IT3);
+        List<Station> FR = List.of(FR1, FR2);
 
-        public final Ticket LAU_STG = new Ticket(LAU, STG, 13);
-        public final Ticket LAU_BER = new Ticket(LAU, BER, 2);
-        public final Ticket BER_NEIGHBORS = ticketToNeighbors(List.of(BER), 6, 11, 8, 5);
-        public final Ticket FR_NEIGHBORS = ticketToNeighbors(FR, 5, 14, 11, 0);
+        Ticket LAU_STG = new Ticket(LAU, STG, 13);
+        Ticket LAU_BER = new Ticket(LAU, BER, 2);
+        Ticket BER_NEIGHBORS = ticketToNeighbors(List.of(BER), 6, 11, 8, 5);
+        Ticket FR_NEIGHBORS = ticketToNeighbors(FR, 5, 14, 11, 0);
 
         private static Ticket ticketToNeighbors(List<Station> from, int de, int at, int it, int fr) {
             var trips = new ArrayList<Trip>();

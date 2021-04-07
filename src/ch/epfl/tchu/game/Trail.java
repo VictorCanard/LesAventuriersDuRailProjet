@@ -175,10 +175,9 @@ public final class Trail {
             return "";
         }
 
-        StringBuilder text = new StringBuilder()
-                .append(station1)
-                .append(StringsFr.EN_DASH_SEPARATOR)
-                .append(station2);
+        String text = station1 +
+                StringsFr.EN_DASH_SEPARATOR +
+                station2;
 
         return String.format("%s (%s)", text, length());
         }

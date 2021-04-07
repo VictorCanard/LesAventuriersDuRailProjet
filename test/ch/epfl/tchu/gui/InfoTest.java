@@ -11,8 +11,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InfoTest {
-    private static String playerOneName = "Ethan";
-    private static Info playerOneInfo = new Info(playerOneName);
+    private static final String playerOneName = "Ethan";
+    private static final Info playerOneInfo = new Info(playerOneName);
     private final static List<String> listOfAllCards =
             List.of(StringsFr.BLACK_CARD,
                     StringsFr.BLUE_CARD,

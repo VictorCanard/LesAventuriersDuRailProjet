@@ -77,14 +77,13 @@ public final class Game {
 
             player.updateState(gameState, gameState.playerState(playerId)); //So the player can see the tickets he can choose from
 
-            
-            
+            updateAllStates(players, gameState);
             SortedBag<Ticket> chosenTickets = player.chooseInitialTickets(); //Asks the player to choose tickets from the set of options determined in setInitialTicketChoice
 
             gameState = gameState.withInitiallyChosenTickets(playerId, chosenTickets);
 
             keptTicketNumber.put(playerId, chosenTickets.size());
-            updateAllStates(players, gameState);
+
         }
 
         infoGenerators.forEach((playerId, info) -> receiveInfoForAll(players, info.keptTickets(keptTicketNumber.get(playerId))));
@@ -129,10 +128,27 @@ public final class Game {
         receiveInfoForAll(players, infoGenerators.get(currentPlayerId).canPlay());
 
         switch (playerChoice){
+            case DRAW_TICKETS:
+                receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewTickets(Constants.IN_GAME_TICKETS_COUNT));
+
+                SortedBag<Ticket> ticketOptions = gameState.topTickets(Constants.IN_GAME_TICKETS_COUNT);
+
+                SortedBag<Ticket> keptTickets = currentPlayer.chooseTickets(ticketOptions);
+                //new
+                gameState = gameState.withChosenAdditionalTickets(ticketOptions, keptTickets);
+
+                receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).keptTickets(keptTickets.size()));
+
+                break;
+
             case DRAW_CARDS:
 
                 for (int i = 0; i < 2; i++) {
                     gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
+
+                    if(i == 1){
+                        updateAllStates(players, gameState); //To update all states right before the player chooses a second card to draw
+                    }
 
                     int drawSlot = currentPlayer.drawSlot(); //-1, 0->4
 
@@ -140,7 +156,6 @@ public final class Game {
                         //DeckCard
                         gameState = gameState.withBlindlyDrawnCard();
   //new
-                        updateAllStates(players, gameState);
                         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewBlindCard());
 
                     }
@@ -149,26 +164,12 @@ public final class Game {
 
                         gameState = gameState.withDrawnFaceUpCard(drawSlot);
  //new
-                        updateAllStates(players, gameState);
                         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewVisibleCard(chosenVisibleCard));
                     }
 
-            //        updateAllStates(players, gameState); would it not be better to update the game state before you tell people what happened? or does it not matter
                 }
                 break;
-            case DRAW_TICKETS:
-                receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewTickets(Constants.IN_GAME_TICKETS_COUNT));
 
-                SortedBag<Ticket> ticketOptions = gameState.topTickets(Constants.IN_GAME_TICKETS_COUNT);
-
-                SortedBag<Ticket> keptTickets = currentPlayer.chooseTickets(ticketOptions);
-  //new
-                gameState = gameState.withChosenAdditionalTickets(ticketOptions, keptTickets);
-                updateAllStates(players, gameState);
-
-                receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).keptTickets(keptTickets.size()));
-
-                break;
             case CLAIM_ROUTE:
                 Player player = players.get(currentPlayerId);
                 Route claimedRoute = player.claimedRoute();
@@ -222,8 +223,6 @@ public final class Game {
                 //Overground route
                 gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
                 receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
-
-                break;
         }
         return gameState;
 
@@ -238,8 +237,6 @@ public final class Game {
      * @param rng : random number generator for recreating decks
      */
     private static void endOfGame(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId, Info> infoGenerators, GameState gameState, Random rng){
-        updateAllStates(players, gameState);
-
         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount())); //LastTurnBegins
 
         //One more turn
@@ -278,7 +275,6 @@ public final class Game {
 
         int bonusComparator = Integer.compare(trailCurrentPlayer.length(), trailNextPlayer.length());
 
-
         String longestTrailBonus;
 
         if(bonusComparator > 0){ //Current Player gets the bonus
@@ -292,7 +288,7 @@ public final class Game {
             associatedPlayerPoints.put(currentPlayerId.next(), associatedPlayerPoints.get(currentPlayerId.next()) + Constants.LONGEST_TRAIL_BONUS_POINTS);
 
         }else{ //Both Players get the bonus
-            longestTrailBonus = String.format("%s \n%s", infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer),
+            longestTrailBonus = String.format("%s%s", infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer),
                     infoGenerators.get(currentPlayerId.next()).getsLongestTrailBonus(trailNextPlayer));
 
             associatedPlayerPoints.put(currentPlayerId, associatedPlayerPoints.get(currentPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);

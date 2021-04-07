@@ -32,6 +32,7 @@ class GameTest {
 
 
     }
+
     @Test
     void playWorks100Times(){
         for (int i = 0; i < 100; i++) {
@@ -39,8 +40,8 @@ class GameTest {
 
             GameTest.routes = ChMap.routes().stream().filter(((route -> !route.id().endsWith("_2")))).collect(Collectors.toList());
 
-            TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), false);
-            TestPlayer player2 = new TestPlayer(200000000L * i, routes, playerNames.get(PlayerId.PLAYER_2), false);
+            TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), true);
+            TestPlayer player2 = new TestPlayer(200000000L * i, routes, playerNames.get(PlayerId.PLAYER_2), true);
 
             Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
             Game.play(players, playerNames, initialTickets, realRandom);
@@ -54,9 +55,9 @@ class GameTest {
         private static boolean isFirstTimePrinted = true;
         private static boolean isFirstEOF = true;
 
-        private static boolean gameInfo = false;
-        private static boolean playerInfo = false;
-        private static boolean cardInfo = false;
+        private static final boolean gameInfo = true;
+        private static final boolean playerInfo = true;
+        private static final boolean cardInfo = true;
 
         public static List<Route> routeList = new ArrayList<>();
 
@@ -82,9 +83,8 @@ class GameTest {
             System.out.printf("Taille du deck: %s     Taille de la défausse: %s\n", publicCardState.deckSize(), publicCardState.discardsSize());
         }
         private static void displayGameState(PublicGameState publicGameState) {
-            if (publicGameState.currentPlayerId() == PlayerId.PLAYER_1) {
-                System.out.printf("CanDrawCards : %s     CanDrawTickets : %s     Current Player Id : %s      LastPlayer : %s\n", publicGameState.canDrawCards(), publicGameState.canDrawTickets(), publicGameState.currentPlayerId(), publicGameState.lastPlayer());
-            }
+            System.out.printf("CanDrawCards : %s     CanDrawTickets : %s     Current Player Id : %s      LastPlayer : %s\n", publicGameState.canDrawCards(), publicGameState.canDrawTickets(), publicGameState.currentPlayerId(), publicGameState.lastPlayer());
+
 
         }
         private static void displayPlayerInfo(String playerName, PlayerState playerState){
@@ -92,7 +92,10 @@ class GameTest {
         }
 
         private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
-            System.out.print("Total Number of Cards = " + (publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount()));
+            int totalNumber = publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount();
+            System.out.print("Total Number of Cards = " + (totalNumber));
+            assert totalNumber == 110;
+
         }
         private static void displayEndOfGameMessage(PublicPlayerState publicPlayerState, String message){
             if (isFirstEOF){
@@ -123,7 +126,7 @@ class GameTest {
         private PlayerState ownState;
 
         private PublicGameState currentState;
-        private Info infoGenerator;
+        private final Info infoGenerator;
         private SortedBag<Ticket> distributedTickets;
         private PlayerId ownId;
 
@@ -133,6 +136,11 @@ class GameTest {
 
         private final boolean playerMessageDebug;
         private final String name;
+
+        private  int claimRoutesTurns = 0;
+        private  int drawCardsTurns = 0;
+        private  int drawTicketsTurns = 0;
+
 
 
         public TestPlayer(long randomSeed, List<Route> allRoutes, String playerName, boolean playerMessagesWanted) {
@@ -161,6 +169,7 @@ class GameTest {
 
             if(info.contains("remporte") || info.contains("ex æqo") ){
                 AssertAndInfo.displayEndOfGameMessage(ownState, info);
+                System.out.printf("%s:: %s ClaimRoutes\n  %s Draw Cards\n %s Draw tickets\n", name, claimRoutesTurns, drawCardsTurns, drawTicketsTurns);
             }
 
             if(playerMessageDebug){
@@ -233,12 +242,16 @@ class GameTest {
                 routeToClaim = route;
 
                 initialClaimCards = cards.get(0);
+
+                claimRoutesTurns++;
                 return TurnKind.CLAIM_ROUTE;
             }
-            else if(currentState.canDrawCards()){
+            else if(currentState.canDrawCards() && turnCounter % 20 != 0){
+                drawCardsTurns++;
                 return TurnKind.DRAW_CARDS;
             }
             else{
+                drawTicketsTurns++;
                 return TurnKind.DRAW_TICKETS;
             }
         }
