@@ -13,7 +13,7 @@ import java.util.*;
  * @author Victor Jean Canard-Duchene (326913)
  * @author Anne-Marie Rusu (296098)
  */
-
+//todo: reassigned local variable gameState.
 public final class Game {
     /**
      * Runs a game of tCHu
@@ -25,7 +25,7 @@ public final class Game {
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
         Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
 
-//before the game starts
+    //before the game starts
         Map<PlayerId, Info> infoGenerators = new EnumMap<>(PlayerId.class); //initialized in initializePlayers
         GameState gameState = GameState.initial(tickets, rng);
         Map<PlayerId, Integer> keptTicketNumber = new EnumMap<>(PlayerId.class);
@@ -34,20 +34,17 @@ public final class Game {
 
         gameState = setup(playerMap, namesOfPlayers,infoGenerators,  gameState, keptTicketNumber);
 
-        //Plays one round first so as to make sure the condition lastTurnBegins() is tested at the right moment
+    //plays one round first so as to make sure the condition lastTurnBegins() is tested at the right moment
         gameState = nextTurn(playerMap, infoGenerators, gameState, rng);
 
-        //the actual game starts
+    //the actual game starts
         while(!gameState.lastTurnBegins()){ //Checks if last turn is beginning in the next turn
 
             gameState = gameState.forNextTurn(); //Takes the GameState's next turn (swaps the current player and the other player)
             gameState = nextTurn(playerMap, infoGenerators, gameState,  rng);
-
         }
-
         //Last turn begins returned true thus the end of game is activated
         endOfGame(playerMap, namesOfPlayers, infoGenerators, gameState, rng);
-
     }
 
     /**
@@ -59,15 +56,14 @@ public final class Game {
      * @param keptTicketNumber : the number of kept tickets the player has chosen
      */
     private static GameState setup(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames,Map<PlayerId, Info> infoGenerators, GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
-    //Initializing players
+        //Initializing players
         players.forEach((playerId, player)->{
             infoGenerators.put(playerId, new Info(playerNames.get(playerId)));
             player.initPlayers(playerId, playerNames);
         });
-
         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).willPlayFirst());
-    //Distributing Tickets
 
+        //Distributing Tickets
         for (Map.Entry<PlayerId, Player> entry : players.entrySet()) {
             PlayerId playerId = entry.getKey();
             Player player = entry.getValue();
@@ -83,9 +79,7 @@ public final class Game {
             gameState = gameState.withInitiallyChosenTickets(playerId, chosenTickets);
 
             keptTicketNumber.put(playerId, chosenTickets.size());
-
         }
-
         infoGenerators.forEach((playerId, info) -> receiveInfoForAll(players, info.keptTickets(keptTicketNumber.get(playerId))));
 
         return gameState;
@@ -117,7 +111,6 @@ public final class Game {
      * @param rng : an instance of a random number
      * @return the new gameState at the end of the turn
      */
-
     private static GameState nextTurn(Map<PlayerId, Player> players, Map<PlayerId, Info> infoGenerators, GameState gameState, Random rng){
         updateAllStates(players, gameState);
 
@@ -132,31 +125,26 @@ public final class Game {
                 receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewTickets(Constants.IN_GAME_TICKETS_COUNT));
 
                 SortedBag<Ticket> ticketOptions = gameState.topTickets(Constants.IN_GAME_TICKETS_COUNT);
-
                 SortedBag<Ticket> keptTickets = currentPlayer.chooseTickets(ticketOptions);
-                //new
-                gameState = gameState.withChosenAdditionalTickets(ticketOptions, keptTickets);
 
+                gameState = gameState.withChosenAdditionalTickets(ticketOptions, keptTickets);
                 receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).keptTickets(keptTickets.size()));
 
                 break;
 
             case DRAW_CARDS:
-
                 for (int i = 0; i < 2; i++) {
                     gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
 
                     if(i == 1){
                         updateAllStates(players, gameState); //To update all states right before the player chooses a second card to draw
                     }
-
                     int drawSlot = currentPlayer.drawSlot(); //-1, 0->4
 
                     if(drawSlot == Constants.DECK_SLOT){
                         //DeckCard
                         gameState = gameState.withBlindlyDrawnCard();
                         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewBlindCard());
-
                     }
                     else{
                         Card chosenVisibleCard = gameState.cardState().faceUpCard(drawSlot);
@@ -164,7 +152,6 @@ public final class Game {
                         gameState = gameState.withDrawnFaceUpCard(drawSlot);
                         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewVisibleCard(chosenVisibleCard));
                     }
-
                 }
                 break;
 
@@ -197,7 +184,7 @@ public final class Game {
 
                     if(additionalCost > 0){ //Additional cost is between 1 and 3 (both included)
                         //Cards the player could play
-                       possibleAdditionalCards = playerState.possibleAdditionalCards(additionalCost, initialClaimCards, drawnCards);
+                        possibleAdditionalCards = playerState.possibleAdditionalCards(additionalCost, initialClaimCards, drawnCards);
 
                         if(possibleAdditionalCards.isEmpty()){ //Player can't play any additional cards
                             gameState = gameState.withMoreDiscardedCards(drawnCards);
@@ -210,21 +197,18 @@ public final class Game {
                             gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)); //Claimed route
 
                             receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
-
                         }
                         break;
                     }
                     else{ //No additional cost
                         gameState = gameState.withMoreDiscardedCards(drawnCards);
                     }
-
                 }
                 //Overground route
                 gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards);
                 receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards));
         }
         return gameState;
-
     }
 
     /**
@@ -239,16 +223,13 @@ public final class Game {
         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount())); //LastTurnBegins
 
         //One more turn
-
         nextTurn(players, infoGenerators, gameState,rng);
         gameState = gameState.forNextTurn();
 
         nextTurn(players, infoGenerators, gameState, rng);
         gameState = gameState.forNextTurn();
 
-
         //Calculate final points
-
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
 
@@ -261,8 +242,6 @@ public final class Game {
 
             //Put final Points (Without the longest trail bonus)
             associatedPlayerPoints.put(playerId, finalGameState.playerState(playerId).finalPoints());
-
-
         }));
 
         updateAllStates(players, gameState);
@@ -292,14 +271,12 @@ public final class Game {
 
             associatedPlayerPoints.put(currentPlayerId, associatedPlayerPoints.get(currentPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);
             associatedPlayerPoints.put(currentPlayerId.next(), associatedPlayerPoints.get(currentPlayerId.next()) + Constants.LONGEST_TRAIL_BONUS_POINTS);
-
         }
 
         receiveInfoForAll(players, longestTrailBonus);
 
         int currentPlayerPoints = associatedPlayerPoints.get(currentPlayerId);
         int nextPlayerPoints = associatedPlayerPoints.get(currentPlayerId.next());
-
         int whoWonComparator = Integer.compare(currentPlayerPoints, nextPlayerPoints);
 
         String endOfGameMessage;
@@ -315,10 +292,5 @@ public final class Game {
 
         }
         receiveInfoForAll(players, endOfGameMessage);
-
     }
-
-
-
-
 }
