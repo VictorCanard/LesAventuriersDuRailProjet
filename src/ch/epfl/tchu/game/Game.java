@@ -155,7 +155,6 @@ public final class Game {
                     if(drawSlot == Constants.DECK_SLOT){
                         //DeckCard
                         gameState = gameState.withBlindlyDrawnCard();
-  //new
                         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewBlindCard());
 
                     }
@@ -163,7 +162,6 @@ public final class Game {
                         Card chosenVisibleCard = gameState.cardState().faceUpCard(drawSlot);
 
                         gameState = gameState.withDrawnFaceUpCard(drawSlot);
- //new
                         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).drewVisibleCard(chosenVisibleCard));
                     }
 
@@ -207,7 +205,8 @@ public final class Game {
 
                         }else{ //The player can play additional cards. Asks the player which set of cards he want to play.
                             SortedBag<Card> tunnelCards = player.chooseAdditionalCards(possibleAdditionalCards);
-                            gameState = gameState.withMoreDiscardedCards(drawnCards);
+
+                            gameState = gameState.withMoreDiscardedCards(drawnCards); //Drawn cards are put in the discard
                             gameState = gameState.withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)); //Claimed route
 
                             receiveInfoForAll(players, infoGenerators.get(currentPlayerId).claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));

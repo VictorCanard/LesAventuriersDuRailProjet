@@ -160,6 +160,7 @@ public final class PlayerState extends PublicPlayerState {
 
         Preconditions.checkArgument(correctAdditionalCardsCount && initialCardsNotNull && initialCardsNotTooManyTypes && rightNumberOfDrawnCards);
 
+
         SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards); //Player cards without the initially played cards
 
         Card initialCard = initialCards.get(0);
@@ -184,7 +185,7 @@ public final class PlayerState extends PublicPlayerState {
         List<SortedBag<Card>> options = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount)); //Makes subsets of the size of the acc
 
         options.sort(
-                Comparator.comparingInt(sortedBag -> sortedBag.countOf(Card.LOCOMOTIVE)));
+                Comparator.comparingInt(sortedBag -> sortedBag.countOf(Card.LOCOMOTIVE))); //Sorts the player's options in terms of counts of locomotives
 
         return options;
     }
