@@ -43,6 +43,7 @@ public class PublicPlayerState {
 
         this.ticketCount = ticketCount;
         this.cardCount = cardCount;
+
         this.carCount = calculateCarCount(routes);
         this.claimPoints = calculateClaimPoints(routes);
 

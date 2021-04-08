@@ -19,10 +19,6 @@ public final class PlayerState extends PublicPlayerState {
      * Bag of cards the player plays with
      */
     private final SortedBag<Card> cards;
-    /**
-     * Routes a player has captured currently
-     */
-    private final List<Route> routes;
 
     /**
      * Constructor for the state of the player at a point in the game
@@ -35,7 +31,6 @@ public final class PlayerState extends PublicPlayerState {
 
         this.tickets = tickets;
         this.cards = cards;
-        this.routes = List.copyOf(routes);
     }
 
     /**
@@ -66,7 +61,7 @@ public final class PlayerState extends PublicPlayerState {
     public PlayerState withAddedTickets(SortedBag<Ticket> newTickets){
         SortedBag<Ticket> newBagOfTickets = this.tickets.union(newTickets);
 
-        return new PlayerState(newBagOfTickets, this.cards, this.routes);
+        return new PlayerState(newBagOfTickets, this.cards, super.routes());
     }
 
     /**
@@ -90,7 +85,7 @@ public final class PlayerState extends PublicPlayerState {
                 .add(this.cards)
                 .add(card);
 
-        return new PlayerState(this.tickets, builder.build(), this.routes);
+        return new PlayerState(this.tickets, builder.build(), super.routes());
     }
 
     /**
@@ -101,7 +96,7 @@ public final class PlayerState extends PublicPlayerState {
     public PlayerState withAddedCards(SortedBag<Card> additionalCards){
         SortedBag<Card> newBagOfCards = this.cards.union(additionalCards);
 
-        return new PlayerState(this.tickets, newBagOfCards, this.routes);
+        return new PlayerState(this.tickets, newBagOfCards, super.routes());
     }
 
     /**
@@ -163,31 +158,22 @@ public final class PlayerState extends PublicPlayerState {
 
         SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards); //Player cards without the initially played cards
 
-        Card initialCard = initialCards.get(0);
+        SortedBag<Card> cardSortedBag = SortedBag.of(
+                playerCardsWithoutInitialCards.stream()
+                        .filter(card -> card.equals(Card.LOCOMOTIVE) || card.equals(initialCards.get(0))) //Only keeps locomotive cards and the ones of the same color as the initial card
+                        .collect(Collectors.toList()));
 
-        int numberOfSameColorCardsToAdd = playerCardsWithoutInitialCards.countOf(initialCard);
-
-        int numberOfLocomotiveCardsToAdd = 0;
-
-        if(!initialCard.equals(Card.LOCOMOTIVE)){
-            numberOfLocomotiveCardsToAdd = playerCardsWithoutInitialCards.countOf(Card.LOCOMOTIVE);
-        }
-
-        SortedBag<Card> cardSortedBag = new SortedBag.Builder<Card>() //Adds a certain number of the same color of card and locomotive cards
-                .add(numberOfLocomotiveCardsToAdd, Card.LOCOMOTIVE)
-                .add(numberOfSameColorCardsToAdd, initialCard)
-                .build();
 
         if(cardSortedBag.size() < additionalCardsCount){ //If the player can play less cards than the additional cards count then he can't play at all
             return Collections.emptyList();
         }
 
-        List<SortedBag<Card>> options = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount)); //Makes subsets of the size of the acc
+        List<SortedBag<Card>> possibleAdditionalCards = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount)); //Makes subsets of the size of the acc
 
-        options.sort(
+        possibleAdditionalCards.sort(
                 Comparator.comparingInt(sortedBag -> sortedBag.countOf(Card.LOCOMOTIVE))); //Sorts the player's options in terms of counts of locomotives
 
-        return options;
+        return possibleAdditionalCards;
     }
 
     /**
@@ -197,7 +183,7 @@ public final class PlayerState extends PublicPlayerState {
      * @return a new PlayerState including the additional route they have claimed and without the cards they've used
      */
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards){
-        List<Route> routeList = new ArrayList<>(this.routes);
+        List<Route> routeList = new ArrayList<>(super.routes());
         routeList.add(route);
 
         SortedBag<Card> finalSortedBag = this.cards.difference(claimCards);
@@ -210,7 +196,8 @@ public final class PlayerState extends PublicPlayerState {
      * @return the number of points gained (or lost)
      */
     public int ticketPoints(){
-        int maxStationId = routes //Finds the maximum id in all of the routes' stations' ids
+        int maxStationId =
+                super.routes() //Finds the maximum id in all of the routes' stations' ids
                 .stream()
                 .map((route -> Math.max(route.station1().id(), route.station2().id())))
                 .max((Integer::compareTo))
@@ -220,7 +207,8 @@ public final class PlayerState extends PublicPlayerState {
 
         StationPartition.Builder builder = new StationPartition.Builder(maxStationId);
 
-        routes.forEach((route -> builder.connect(route.station1(), route.station2()))); //For a given route connects the two stations of that route
+        super.routes()
+                .forEach((route -> builder.connect(route.station1(), route.station2()))); //For a given route connects the two stations of that route
 
         StationPartition stationPartition = builder.build();
 

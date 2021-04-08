@@ -18,10 +18,7 @@ public final class CardState extends PublicCardState{
      */
     private final Deck<Card> drawPile;
 
-    /**
-     * Top card of the deck
-     */
-    private final Card topCard;
+
 
     /**
      * CardState constructor (private so the class has control on the arguments that are passed)
@@ -35,12 +32,6 @@ public final class CardState extends PublicCardState{
 
         this.discardPile = discardPile;
         this.drawPile = drawPile;
-
-        /*
-            Determines the top card, null if the draw pile is empty.
-         */
-        topCard = (this.drawPile.isEmpty()) ? null : this.drawPile.topCard();
-
     }
 
 
@@ -65,7 +56,8 @@ public final class CardState extends PublicCardState{
     }
 
     /**
-     *Returns a new set of cards nearly identical to this but where the visible card of index slot has been replaced by the one on top of the draw pile
+     *Returns a new set of cards nearly identical to this but where the visible card of index slot has been replaced
+     * by the one on top of the draw pile
      * (the one of top of the draw pile is thus removed from the draw pile)
      * @param slot : index of the face up card to be replaced
      * @throws IllegalArgumentException if the draw pile isn't empty
@@ -77,7 +69,7 @@ public final class CardState extends PublicCardState{
         Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT);
 
         List<Card> newFaceUpCards = new ArrayList<>(super.faceUpCards());
-        newFaceUpCards.set(slot, topCard);
+        newFaceUpCards.set(slot, drawPile.topCard());
 
         return new CardState(newFaceUpCards, drawPile.withoutTopCard(), discardPile);
     }

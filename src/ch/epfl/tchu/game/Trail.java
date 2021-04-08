@@ -43,17 +43,10 @@ public final class Trail {
      * @return the longest trail of these routes
      */
     public static Trail longest(List<Route> routes){
-        Trail longestTrail = new Trail(List.copyOf(routes), null, null);
-
-        if(routes.isEmpty()){
-            return longestTrail;
-        }
-
-        ArrayList<Route> routeArrayList = new ArrayList<>(routes);
-
         List<Trail> trails = listOfTrailsWithOneRoute(routes);
 
-        //Finds the longest trail composed of one route. This will ensure the method works for disconnected routes.
+        Trail longestTrail = new Trail(List.of(), null, null);
+
         longestTrail = trails
                 .stream()
                 .max(Comparator.comparingInt(Trail::length))
@@ -63,28 +56,28 @@ public final class Trail {
             ArrayList<Trail> newTrails = new ArrayList<>();
 
             for (Trail currentTrail: trails) {
-                List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routeArrayList);
+                List<Route> routesToProlong = findRoutesToProlongTrail(currentTrail, routes);
 
                 routesToProlong.forEach((routeToProlong) ->{
-                    List<Route> newListOfRoutes = new ArrayList<>(List.copyOf(currentTrail.routes));
+                    List<Route> newListOfRoutes = new ArrayList<>(currentTrail.routes);
                     newListOfRoutes.add(routeToProlong);
+
                     Trail newTrail = new Trail(newListOfRoutes, currentTrail.station1(), routeToProlong.stationOpposite(currentTrail.station2()));
 
                     newTrails.add(newTrail);
                 });
 
-
             }
 
-            ArrayList<Trail> allTrails = new ArrayList<>(newTrails);
-            allTrails.add(longestTrail);
+            trails = List.copyOf(newTrails);
 
-            longestTrail = allTrails
+            newTrails.add(longestTrail);
+
+            longestTrail = newTrails
                     .stream()
                     .max(Comparator.comparingInt(Trail::length))
                     .orElse(longestTrail);
 
-            trails = newTrails;
         }
         return longestTrail;
 
@@ -116,7 +109,7 @@ public final class Trail {
      * @param routes : that could be added to this trail
      * @return a new list of routes that can prolong the trail
      */
-    private static List<Route> findRoutesToProlongTrail(Trail trail, ArrayList<Route> routes){
+    private static List<Route> findRoutesToProlongTrail(Trail trail, List<Route> routes){
 
         Station trailEndStationToWhichRoutesCanBeAdded = trail.station2();
 
