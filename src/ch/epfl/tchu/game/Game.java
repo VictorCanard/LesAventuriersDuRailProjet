@@ -223,11 +223,12 @@ public final class Game {
         receiveInfoForAll(players, infoGenerators.get(gameState.currentPlayerId()).lastTurnBegins(gameState.currentPlayerState().carCount())); //LastTurnBegins
 
         //One more turn
+        gameState = gameState.forNextTurn();
         nextTurn(players, infoGenerators, gameState,rng);
-        gameState = gameState.forNextTurn();
 
-        nextTurn(players, infoGenerators, gameState, rng);
         gameState = gameState.forNextTurn();
+        nextTurn(players, infoGenerators, gameState, rng);
+
 
         //Calculate final points
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
