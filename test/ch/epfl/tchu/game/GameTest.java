@@ -28,21 +28,21 @@ class GameTest {
 
     @Test
     void playWorks10000times() {
-       /* for (int i = 0; i < 0; i++) {
+        for (int i = 0; i < 0; i++) {
             playWorks100Times();
-        }*/
+        }
 
     }
 
     @Test
     void playWorks100Times(){
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 100; i++) {
             Random realRandom = new Random(i);
 
             GameTest.routes = ChMap.routes().stream().filter(((route -> !route.id().endsWith("_2")))).collect(Collectors.toList());
 
             TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), false);
-            TestPlayer player2 = new TestPlayer(200000000L + i, routes, playerNames.get(PlayerId.PLAYER_2), false);
+            TestPlayer player2 = new TestPlayer(200000000L * i, routes, playerNames.get(PlayerId.PLAYER_2), false);
 
             Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
             Game.play(players, playerNames, initialTickets, realRandom);
@@ -57,15 +57,12 @@ class GameTest {
         private static boolean isFirstEOF = true;
 
         private static final boolean gameInfo = false;
-        private static final boolean playerInfo = true;
+        private static final boolean playerInfo = false;
         private static final boolean cardInfo = false;
 
         public static List<Route> routeList = new ArrayList<>();
 
         private static void displayInfo(int turnCounter, PublicGameState publicGameState, PublicCardState publicCardState, PlayerState playerState, String playerName){
-            if(gameInfo || playerInfo || cardInfo){
-                System.out.printf("\n---------------------------%s___TURN # %s----------------------------\n", playerName, turnCounter);
-            }
             if(gameInfo && isFirstTimePrinted){
                 displayGameState(publicGameState);
             }
@@ -76,7 +73,9 @@ class GameTest {
                 displayCardState(publicCardState);
                 displayTotalNumberOfCards(publicCardState, publicGameState);
             }
-
+            if(gameInfo || playerInfo || cardInfo){
+                System.out.printf("\n---------------------------%s___TURN # %s----------------------------\n", playerName, turnCounter);
+            }
             isFirstEOF = true;
             isFirstTimePrinted = ! isFirstTimePrinted;
         }
