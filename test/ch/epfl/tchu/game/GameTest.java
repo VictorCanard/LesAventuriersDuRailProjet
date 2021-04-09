@@ -36,7 +36,7 @@ class GameTest {
 
     @Test
     void playWorks100Times(){
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 100; i++) {
             Random realRandom = new Random(i);
 
             GameTest.routes = ChMap.routes().stream().filter(((route -> !route.id().endsWith("_2")))).collect(Collectors.toList());

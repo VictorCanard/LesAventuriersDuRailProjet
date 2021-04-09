@@ -3,7 +3,6 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
-import ch.epfl.tchu.game.Route.Level;
 import ch.epfl.tchu.gui.Info;
 
 import java.util.*;
@@ -43,6 +42,7 @@ public final class Game {
             gameState = gameState.forNextTurn(); //Takes the GameState's next turn (swaps the current player and the other player)
             gameState = nextTurn(playerMap, infoGenerators, gameState,  rng);
         }
+
         //Last turn begins returned true thus the end of game is activated
         endOfGame(playerMap, namesOfPlayers, infoGenerators, gameState, rng);
     }
@@ -160,14 +160,15 @@ public final class Game {
                 Route claimedRoute = player.claimedRoute();
                 SortedBag<Card>  initialClaimCards = player.initialClaimCards();
 
-                if(claimedRoute.level() == Level.UNDERGROUND) {
+                if(claimedRoute.level() == Route.Level.UNDERGROUND) {
                     receiveInfoForAll(players, infoGenerators.get(currentPlayerId).attemptsTunnelClaim(claimedRoute, initialClaimCards));
 
                     //Building the 3 cards drawn from the deck
                     SortedBag.Builder<Card> drawCardsBuild = new SortedBag.Builder<>();
 
-                    for(int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
+                    for(int i = 0; i < Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
                         gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
+
                         drawCardsBuild.add(gameState.topCard());
                         gameState = gameState.withoutTopCard();
                     }
@@ -224,8 +225,9 @@ public final class Game {
 
         //One more turn
         for (int i = 0; i < 2; i++) {
-            nextTurn(players, infoGenerators, gameState,rng);
             gameState = gameState.forNextTurn();
+            nextTurn(players, infoGenerators, gameState,rng);
+
         }
 
         //Calculate final points
@@ -268,8 +270,11 @@ public final class Game {
             longestTrailBonus = String.format("%s%s", infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer),
                     infoGenerators.get(currentPlayerId.next()).getsLongestTrailBonus(trailNextPlayer));
 
-            associatedPlayerPoints.put(currentPlayerId, associatedPlayerPoints.get(currentPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);
-            associatedPlayerPoints.put(currentPlayerId.next(), associatedPlayerPoints.get(currentPlayerId.next()) + Constants.LONGEST_TRAIL_BONUS_POINTS);
+
+            for (PlayerId playerId: PlayerId.values()
+                 ) {
+                associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);
+            }
         }
 
         receiveInfoForAll(players, longestTrailBonus);

@@ -101,6 +101,14 @@ public class PublicGameState {
     public PlayerId currentPlayerId(){return currentPlayerId;}
 
     /**
+     * Getter for the last player to play
+     * @return the id of the last player
+     */
+    public PlayerId lastPlayer(){
+        return lastPlayer;
+    }
+
+    /**
      * Getter for the given player's state
      * @param playerId the player which we want to know the state of
      * @return the given player's visible player state
@@ -126,11 +134,5 @@ public class PublicGameState {
 
     }
 
-    /**
-     * Getter for the last player to play
-     * @return the id of the last player
-     */
-    public PlayerId lastPlayer(){
-        return lastPlayer;
-    }
+
 }
