@@ -2,42 +2,22 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
-
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * The route between two stations on the map
+ * Represents a route between two stations on the map
  * @author Anne-Marie Rusu (296098)
  */
 
 public final class Route {
-    /**
-     * Unique identifier for this
-     */
-    private final String id;
 
-    /**
-     * Beginning and end station of this
-     */
+    private final String id;
     private final Station station1;
     private final Station station2;
-
-    /**
-     * Length of the route
-     */
     private final int length;
-
-    /**
-     * Level, overground or underground
-     */
     private final Level level;
-
-    /**
-     * Color of the route, null means it's gray
-     */
     private final Color color;
 
     /**
@@ -62,9 +42,9 @@ public final class Route {
      */
     public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
         boolean normalLength = length >= Constants.MIN_ROUTE_LENGTH && length <= Constants.MAX_ROUTE_LENGTH;
-        boolean noDuplicateStations = !station1.equals(station2);
+        boolean uniqueStations = !station1.equals(station2);
 
-        Preconditions.checkArgument( normalLength && noDuplicateStations );
+        Preconditions.checkArgument( normalLength && uniqueStations );
 
         this.id = Objects.requireNonNull(id);
         this.station1 = Objects.requireNonNull(station1);
@@ -141,52 +121,46 @@ public final class Route {
         return (station.equals(station1)) ? station2 : station1;
     }
 
-    /** Determines all the possible combinations of cards which can be played to capture this route using in particular the level, color and length of the route
-     *  If the route is underground (tunnel):
-     *      If the route has a specific color:
-     *          Creates a list of all possible combinations of that color card and locomotive cards to be played
-     *      Else: (route is neutral)
-     *          Creates a list of all possible combinations of each color card and locomotive cards
-     *  Else if the route is neutral (and thus overground):
-     *          Creates a list of groups of cards of all colors (no locomotives)
-     *  Else (overground and specific color):
-     *          Creates a list of one element that is the group of cards of that specific color.
-     * @return : List of Sorted Bags of cards, each sorted bag is an possible combination to claim this route
+    /** Determines all the possible combinations of cards which can be played to capture this route depending on the level, color and length of the route
+     * @return : List of Sorted Bags of cards, each sorted bag is an possible combination of cards that can be used to claim this route
      */
     public List<SortedBag<Card>> possibleClaimCards(){
         List<SortedBag<Card>> possibleCards = new ArrayList<>();
 
-        if(level == Level.UNDERGROUND) {
-            if (color != null) {  // Underground route with a specific non-neutral color
-                for (int i = 0; i <= length; i++) {
-                    possibleCards.add(SortedBag.of(length - i, Card.of(color), i, Card.LOCOMOTIVE));
-                }
-            } else {  //Underground route with neutral color
-
-                for (int i = 0; i < length; i++) {
-                    for (Card c : Card.CARS) {
-                        possibleCards.add(SortedBag.of(length - i, c, i, Card.LOCOMOTIVE));
+        switch(level){
+            case UNDERGROUND:
+                if(color == null){// Underground route with neutral color
+                    for (int i = 0; i < length; i++) {
+                        for (Card c : Card.CARS) {
+                            possibleCards.add(SortedBag.of(length - i, c, i, Card.LOCOMOTIVE));
+                        }
+                    }
+                    possibleCards.add(SortedBag.of(length, Card.LOCOMOTIVE));
+                }else{ //Underground route with a specific non-neutral color
+                    for (int i = 0; i <= length; i++) {
+                        possibleCards.add(SortedBag.of(length - i, Card.of(color), i, Card.LOCOMOTIVE));
                     }
                 }
-                possibleCards.add(SortedBag.of(length, Card.LOCOMOTIVE));
-            }
-        }else if(color == null){ // Overground route with neutral color
-            for(Card c : Card.CARS) {
-                possibleCards.add(SortedBag.of(length, c));
-            }
-        }else {  //Overground route with a specific non-neutral color
-            possibleCards.add(SortedBag.of(length, Card.of(color)));
+                break;
+
+            case OVERGROUND:
+                if(color == null){ // Overground route with neutral color
+                    for(Card c : Card.CARS) {
+                        possibleCards.add(SortedBag.of(length, c));
+                    }
+                }else {  //Overground route with a specific non-neutral color
+                    possibleCards.add(SortedBag.of(length, Card.of(color)));
+                }
+                break;
         }
         return possibleCards;
     }
 
-    /** Determines the number of additional cards the player must play to capture the tunnel route
-     * If the player is only playing locomotive cards then returns the number of locomotive cards in the drawnCards,
-     * else returns the number of locomotive cards plus the number of cards of the player's color in the drawnCards.
-     * @param claimCards : cards from the player's deck that were played to try capturing the route
-     * @param drawnCards : exactly 3 cards from the deck which will constrain the player to play 0, 1, 2 or 3 more cards, if he still wants to capture the route
+    /** Determines the number of additional cards the player must play to capture the tunnel route depending on the initial claim cards used and the additional cards drawn
+     * @param claimCards : cards from the player's deck that were played in attempt to claim the route
+     * @param drawnCards : exactly 3 cards from the draw pile, which will indicate the number of additional cards
      * @throws IllegalArgumentException if this method is used on a overground route or if there is not the right amount of drawn cards.
-     * @return an int from 0 to 3 (both extremities included)
+     * @return an int from 0 to 3 (both extremities included) indicating the number of additional cards the player must play
      */
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
         Preconditions.checkArgument(level == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
@@ -208,6 +182,4 @@ public final class Route {
     public int claimPoints(){
         return Constants.ROUTE_CLAIM_POINTS.get(length);
     }
-
-
 }
