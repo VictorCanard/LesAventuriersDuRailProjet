@@ -12,7 +12,7 @@ import java.util.*;
  * @author Victor Jean Canard-Duchene (326913)
  * @author Anne-Marie Rusu (296098)
  */
-//todo: reassigned local variable gameState.
+
 public final class Game {
     private final static int constantNumberOfPlayers = 2;
     /**
