@@ -165,14 +165,10 @@ public final class Route {
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards){
         Preconditions.checkArgument(level == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
 
-        int aCCC;
+        if(claimCards.equals(SortedBag.of(length, Card.LOCOMOTIVE)))
+            return drawnCards.countOf(Card.LOCOMOTIVE);
 
-        if(claimCards.equals(SortedBag.of(length, Card.LOCOMOTIVE))){
-            aCCC = drawnCards.countOf(Card.LOCOMOTIVE);
-        }else {
-            aCCC = drawnCards.countOf(claimCards.get(0)) + drawnCards.countOf(Card.LOCOMOTIVE);
-        }
-        return aCCC;
+        return drawnCards.countOf(claimCards.get(0)) + drawnCards.countOf(Card.LOCOMOTIVE);
     }
 
     /** Getter for the route's points.
