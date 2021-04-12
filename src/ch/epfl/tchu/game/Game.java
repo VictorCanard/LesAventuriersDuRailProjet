@@ -317,23 +317,28 @@ public final class Game {
         }
 
         //Calculate final points
+        PlayerId currentPlayerId = gameState.currentPlayerId();
+
+        Map<PlayerId, Integer> associatedPlayerPoints = calculateFinalPoints(gameState, players, currentPlayerId, infoGenerators);
+
+        //Calculates who won the game or if the two players came to a draw
+        determineWinnerOrDraw(players, associatedPlayerPoints, currentPlayerId, infoGenerators, playerNames);
+
+    }
+    private static Map<PlayerId, Integer> calculateFinalPoints(GameState gameState, Map<PlayerId, Player> players, PlayerId currentPlayerId, Map<PlayerId, Info> infoGenerators){
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
 
-        GameState finalGameState = gameState;
-
         players.forEach(((playerId, player) -> {
             //Calculate longest trails
-            Trail playerLongestTrail = Trail.longest(finalGameState.playerState(playerId).routes());
+            Trail playerLongestTrail = Trail.longest(gameState.playerState(playerId).routes());
             eachPlayerAssociatedTrails.put(playerId, playerLongestTrail);
 
             //Put final Points (Without the longest trail bonus)
-            associatedPlayerPoints.put(playerId, finalGameState.playerState(playerId).finalPoints());
+            associatedPlayerPoints.put(playerId, gameState.playerState(playerId).finalPoints());
         }));
 
         updateAllStates(players, gameState);
-
-        PlayerId currentPlayerId = gameState.currentPlayerId();
 
         Trail trailCurrentPlayer = eachPlayerAssociatedTrails.get(currentPlayerId);
         Trail trailNextPlayer = eachPlayerAssociatedTrails.get(currentPlayerId.next());
@@ -359,13 +364,17 @@ public final class Game {
 
             for (PlayerId playerId: PlayerId.values()
             ) {
-                associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);
+                associatedPlayerPoints
+                        .merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);  //Adds 10 points to each player's count
             }
         }
 
         receiveInfoForAll(players, longestTrailBonus);
 
-        //Calculates who won the game or if the two players came to a draw
+        return associatedPlayerPoints;
+    }
+
+    private static void determineWinnerOrDraw(Map<PlayerId, Player> players, Map<PlayerId, Integer> associatedPlayerPoints, PlayerId currentPlayerId, Map<PlayerId, Info> infoGenerators, Map<PlayerId, String> playerNames){
         int currentPlayerPoints = associatedPlayerPoints.get(currentPlayerId);
         int nextPlayerPoints = associatedPlayerPoints.get(currentPlayerId.next());
 
@@ -385,4 +394,5 @@ public final class Game {
 
         receiveInfoForAll(players, endOfGameMessage);
     }
+
 }
