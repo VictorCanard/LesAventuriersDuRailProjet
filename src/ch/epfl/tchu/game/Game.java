@@ -12,8 +12,44 @@ import java.util.*;
  * @author Victor Jean Canard-Duchene (326913)
  * @author Anne-Marie Rusu (296098)
  */
+
+
 //todo: reassigned local variable gameState.
 public final class Game {
+
+    private static class AllGameData{
+        private GameState gameState;
+        private Map<PlayerId, Player> players;
+        private Map<PlayerId, String> playerNames;
+
+
+        private Map<PlayerId, Info> infoGenerators;
+        private Random rng;
+
+
+        private AllGameData(GameState gameState, Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId, Info> infoGenerators, Random rng) {
+            this.gameState = gameState;
+            this.players = players;
+            this.playerNames = playerNames;
+            this.infoGenerators =infoGenerators;
+            this.rng = rng;
+        }
+
+        private void modifyGameState(GameState newGameState){
+            this.gameState = newGameState;
+        }
+        private void nextTurn(){
+            this.gameState = this.gameState.forNextTurn();
+        }
+
+        private boolean lastTurnBegins(){
+            return this.gameState.lastTurnBegins();
+        }
+
+
+
+
+    }
     private final static int constantNumberOfPlayers = 2;
     /**
      * Runs a game of tCHu
@@ -34,6 +70,7 @@ public final class Game {
         Map<PlayerId, Player> playerMap = Map.copyOf(players);
 
         Map<PlayerId, Info> infoGenerators = initializeInfoGenerators(players, playerNames);
+
 
         gameState = setup(playerMap, namesOfPlayers, infoGenerators,  gameState, keptTicketNumber);
 
@@ -162,8 +199,7 @@ public final class Game {
         Player currentPlayer = players.get(currentPlayerId);
         Info currentInfo = infoGenerators.get(currentPlayerId);
 
-        receiveInfoForAll(players, currentInfo
-                .canPlay());
+        receiveInfoForAll(players, currentInfo.canPlay());
 
         Player.TurnKind playerChoice = currentPlayer.nextTurn();
 
@@ -194,18 +230,13 @@ public final class Game {
     private static GameState drawTickets(GameState gameState, Map<PlayerId, Player> players, Player currentPlayer, Info currentInfo){
         receiveInfoForAll(players, currentInfo.drewTickets(Constants.IN_GAME_TICKETS_COUNT));
 
-        SortedBag<Ticket> ticketOptions = gameState
-                .topTickets(Constants.IN_GAME_TICKETS_COUNT);
+        SortedBag<Ticket> ticketOptions = gameState.topTickets(Constants.IN_GAME_TICKETS_COUNT);
 
-        SortedBag<Ticket> keptTickets = currentPlayer
-                .chooseTickets(ticketOptions);
+        SortedBag<Ticket> keptTickets = currentPlayer.chooseTickets(ticketOptions);
 
-        receiveInfoForAll(players,
-                currentInfo
-                        .keptTickets(keptTickets.size()));
+        receiveInfoForAll(players, currentInfo.keptTickets(keptTickets.size()));
 
-        return gameState
-                .withChosenAdditionalTickets(ticketOptions, keptTickets);
+        return gameState.withChosenAdditionalTickets(ticketOptions, keptTickets);
     }
 
     /**
@@ -228,20 +259,16 @@ public final class Game {
 
             if(drawSlot == Constants.DECK_SLOT){
                 //DeckCard
-                gameState = gameState
-                        .withBlindlyDrawnCard();
+                gameState = gameState.withBlindlyDrawnCard();
 
                 receiveInfoForAll(players, currentInfo.drewBlindCard());
             }
             else{
                 Card chosenVisibleCard = gameState.cardState().faceUpCard(drawSlot);
 
-                gameState = gameState
-                        .withDrawnFaceUpCard(drawSlot);
+                gameState = gameState.withDrawnFaceUpCard(drawSlot);
 
-                receiveInfoForAll(players,
-                        currentInfo
-                        .drewVisibleCard(chosenVisibleCard));
+                receiveInfoForAll(players, currentInfo.drewVisibleCard(chosenVisibleCard));
             }
         }
         return gameState;
@@ -282,9 +309,7 @@ public final class Game {
      * @return
      */
     private static GameState claimUnderground(GameState gameState, Map<PlayerId, Player> players, Player currentPlayer, Info currentInfo, Random rng, Route claimedRoute, SortedBag<Card> initialClaimCards){
-        receiveInfoForAll(players,
-                currentInfo
-                .attemptsTunnelClaim(claimedRoute, initialClaimCards));
+        receiveInfoForAll(players, currentInfo.attemptsTunnelClaim(claimedRoute, initialClaimCards));
 
         //Building the 3 cards drawn from the deck
         SortedBag.Builder<Card> drawCardsBuild = new SortedBag.Builder<>();
@@ -301,30 +326,25 @@ public final class Game {
         int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
 
         //Displaying that cost for all players and the drawn cards
-        receiveInfoForAll(players,
-                currentInfo
-                .drewAdditionalCards(drawnCards, additionalCost));
+        receiveInfoForAll(players, currentInfo.drewAdditionalCards(drawnCards, additionalCost));
 
         PlayerState playerState = gameState.currentPlayerState();
 
-        if(additionalCost > 0){ //Additional cost is between 1 and 3 (both included)
+        if(additionalCost > 0){
+            //Additional cost is between 1 and 3 (both included)
+
             //Cards the player could play
             List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(additionalCost, initialClaimCards, drawnCards);
 
             if(possibleAdditionalCards.isEmpty()){ //Player can't play any additional cards
-                receiveInfoForAll(players,
-                        currentInfo
-                        .didNotClaimRoute(claimedRoute));
+                receiveInfoForAll(players, currentInfo.didNotClaimRoute(claimedRoute));
 
-                return gameState
-                        .withMoreDiscardedCards(drawnCards);
+                return gameState.withMoreDiscardedCards(drawnCards);
 
             }else{ //The player can play additional cards. Asks the player which set of cards he want to play.
                 SortedBag<Card> tunnelCards = currentPlayer.chooseAdditionalCards(possibleAdditionalCards);
 
-                receiveInfoForAll(players,
-                        currentInfo
-                        .claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
+                receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
 
                 return gameState
                         .withMoreDiscardedCards(drawnCards)               //Drawn cards are put in the discard
@@ -351,12 +371,9 @@ public final class Game {
      * @return
      */
     private static GameState claimOverground(GameState gameState, Map<PlayerId, Player> players,  Info currentInfo,  Route claimedRoute, SortedBag<Card> initialClaimCards){
-        receiveInfoForAll(players,
-                currentInfo
-                .claimedRoute(claimedRoute, initialClaimCards));
+        receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards));
 
-        return gameState
-                .withClaimedRoute(claimedRoute, initialClaimCards);
+        return gameState.withClaimedRoute(claimedRoute, initialClaimCards);
     }
     /**
      * Plays the last two turns of tCHu, then calculates who gets the longest trail bonus and who won in the end or if there has been a draw
@@ -375,7 +392,7 @@ public final class Game {
                         .currentPlayerState()
                         .carCount())); //LastTurnBegins
 
-        //One more turn
+        //One more turn for each player
         for (int i = 0; i < 2; i++) {
             gameState = gameState.forNextTurn();
             nextTurn(players, infoGenerators, gameState,rng);
