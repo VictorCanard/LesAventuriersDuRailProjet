@@ -12,28 +12,17 @@ import java.util.stream.Collectors;
  * @author Victor Canard-Duchêne (326913)
  */
 public class PublicGameState {
-    /**
-     * Size of the ticket Deck
-     */
+
     private final int ticketDeckSize;
 
-    /**
-     * Public state of the cards
-     */
+
     private final PublicCardState publicCardState;
 
-    /**
-     * Map that associates each player id to their public player state
-     */
     private final Map<PlayerId, PublicPlayerState> playerStates;
 
-    /**
-     * Id of the current player
-     */
+
     private final PlayerId currentPlayerId;
-    /**
-     * Id of the last player (null until last turn begins)
-     */
+
     private final PlayerId lastPlayer;
 
 

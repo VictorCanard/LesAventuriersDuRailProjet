@@ -9,26 +9,15 @@ import java.util.List;
  * @author Victor Canard-Duchêne (326913)
  */
 public class PublicPlayerState {
-    /**
-     * Number of tickets in the player's hand
-     */
+
     private final int ticketCount;
-    /**
-     * Player's number of cards
-     */
+
     private final int cardCount;
-    /**
-     * Player's number of cars
-     */
+
     private final int carCount;
-    /**
-     * Player's number of points from capturing routes
-     */
+
     private final int claimPoints;
 
-    /**
-     * All routes the player currently has
-     */
     private final List<Route> routes;
 
 

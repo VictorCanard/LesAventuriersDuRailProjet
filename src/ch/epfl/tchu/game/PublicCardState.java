@@ -7,19 +7,12 @@ import java.util.Objects;
 
 public class PublicCardState {
 
-    /**
-     * The 5 face-up cards at any point in the game (face-up thus public and seen by all)
-     */
     private final List<Card> faceUpCards;
 
-    /**
-     * Size of the deck
-     */
+
     private final int deckSize;
 
-    /**
-     * Size of the discard pile
-     */
+
     private final int discardsSize;
 
     /**

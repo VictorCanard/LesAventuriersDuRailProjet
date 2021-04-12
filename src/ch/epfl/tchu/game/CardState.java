@@ -9,13 +9,8 @@ import java.util.*;
  */
 public final class CardState extends PublicCardState{
 
-    /**
-     * Bag of cards that represents the discards pile
-     */
     private final SortedBag<Card> discardPile;
-    /**
-     * Deck of cards for the draw pile
-     */
+
     private final Deck<Card> drawPile;
 
 

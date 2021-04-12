@@ -11,23 +11,18 @@ import java.util.*;
  * @author Anne-Marie Rusu (296098)
  */
 public final class GameState extends PublicGameState{
-    /**
-     * Map that associates each player id to their own state
-     */
+
     private final Map<PlayerId, PlayerState> playerStateMap;
+
     /**
      * Temporary map for modifications of the current player's state
      */
     private final Map<PlayerId, PlayerState> temporaryMapToModifyPlayerState;
     
 
-    /**
-     * Deck of tickets used for the game
-     */
+
     private final Deck<Ticket> ticketDeck;
-    /**
-     * Private state of the cards
-     */
+
     private final CardState cardState;
 
 

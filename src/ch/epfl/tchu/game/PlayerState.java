@@ -11,13 +11,9 @@ import java.util.stream.Collectors;
  * @author Victor Canard-Duchêne (326913)
  */
 public final class PlayerState extends PublicPlayerState {
-    /**
-     * All tickets a player has
-     */
+
     private final SortedBag<Ticket> tickets;
-    /**
-     * Bag of cards the player plays with
-     */
+
     private final SortedBag<Card> cards;
 
     /**

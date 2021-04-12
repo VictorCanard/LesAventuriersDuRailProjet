@@ -13,9 +13,6 @@ import java.util.Random;
  * @param <C> : the type of card. In this project: cards or tickets
  */
 public final class Deck<C extends Comparable<C>> {
-    /**
-     * List of Cards of generic type <C>
-     */
     private final List<C> listOfCards;
 
     /**
