@@ -36,12 +36,12 @@ class GameTest {
 
     @Test
     void playWorks100Times(){
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1; i++) {
             Random realRandom = new Random(i);
 
             GameTest.routes = ChMap.routes().stream().filter(((route -> !route.id().endsWith("_2")))).collect(Collectors.toList());
 
-            TestPlayer player1 = new TestPlayer(i, routes, playerNames.get(PlayerId.PLAYER_1), true);
+            TestPlayer player1 = new TestPlayer(50+i, routes, playerNames.get(PlayerId.PLAYER_1), true);
             TestPlayer player2 = new TestPlayer(200000000L + i, routes, playerNames.get(PlayerId.PLAYER_2), true);
 
             Map<PlayerId, Player> players = Map.of(PlayerId.PLAYER_1, player1, PlayerId.PLAYER_2, player2);
