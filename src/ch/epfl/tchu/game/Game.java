@@ -71,6 +71,13 @@ public final class Game {
 
         return gameState;
     }
+
+    /**
+     * Initializes the player's information generators
+     * @param players : the two players in the game
+     * @param playerNames : their names
+     * @return a map associating each player id to their information generator
+     */
     private static Map<PlayerId, Info> initializeInfoGenerators(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames){
         Map<PlayerId, Info> infoGenerators = new EnumMap<>(PlayerId.class);
 
@@ -80,11 +87,23 @@ public final class Game {
         return infoGenerators;
     }
 
+    /**
+     *
+     * @param players
+     * @param playerNames
+     */
     private static void initializePlayers(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames){
         players.forEach(((playerId, player) ->
                 player.initPlayers(playerId, playerNames)));
     }
 
+    /**
+     *
+     * @param players
+     * @param gameState
+     * @param keptTicketNumber
+     * @return
+     */
     private static GameState distributeTickets(Map<PlayerId, Player> players,  GameState gameState, Map<PlayerId, Integer> keptTicketNumber){
 
         for (Player player : players.values()) {
@@ -164,6 +183,14 @@ public final class Game {
         return gameState;
     }
 
+    /**
+     *
+     * @param gameState
+     * @param players
+     * @param currentPlayer
+     * @param currentInfo
+     * @return
+     */
     private static GameState drawTickets(GameState gameState, Map<PlayerId, Player> players, Player currentPlayer, Info currentInfo){
         receiveInfoForAll(players, currentInfo.drewTickets(Constants.IN_GAME_TICKETS_COUNT));
 
@@ -181,6 +208,15 @@ public final class Game {
                 .withChosenAdditionalTickets(ticketOptions, keptTickets);
     }
 
+    /**
+     *
+     * @param gameState
+     * @param players
+     * @param currentPlayer
+     * @param currentInfo
+     * @param rng
+     * @return
+     */
     private static GameState drawCards(GameState gameState, Map<PlayerId, Player> players, Player currentPlayer, Info currentInfo, Random rng){
         for (int i = 0; i < 2; i++) {
             gameState = gameState.withCardsDeckRecreatedIfNeeded(rng);
@@ -212,6 +248,15 @@ public final class Game {
 
     }
 
+    /**
+     *
+     * @param gameState
+     * @param players
+     * @param currentPlayer
+     * @param currentInfo
+     * @param rng
+     * @return
+     */
     private static GameState claimRoute(GameState gameState, Map<PlayerId, Player> players, Player currentPlayer, Info currentInfo, Random rng){
 
         Route claimedRoute = currentPlayer.claimedRoute();
@@ -225,6 +270,17 @@ public final class Game {
 
     }
 
+    /**
+     *
+     * @param gameState
+     * @param players
+     * @param currentPlayer
+     * @param currentInfo
+     * @param rng
+     * @param claimedRoute
+     * @param initialClaimCards
+     * @return
+     */
     private static GameState claimUnderground(GameState gameState, Map<PlayerId, Player> players, Player currentPlayer, Info currentInfo, Random rng, Route claimedRoute, SortedBag<Card> initialClaimCards){
         receiveInfoForAll(players,
                 currentInfo
@@ -284,6 +340,16 @@ public final class Game {
         }
 
     }
+
+    /**
+     *
+     * @param gameState
+     * @param players
+     * @param currentInfo
+     * @param claimedRoute
+     * @param initialClaimCards
+     * @return
+     */
     private static GameState claimOverground(GameState gameState, Map<PlayerId, Player> players,  Info currentInfo,  Route claimedRoute, SortedBag<Card> initialClaimCards){
         receiveInfoForAll(players,
                 currentInfo
@@ -325,6 +391,15 @@ public final class Game {
         determineWinnerOrDraw(players, associatedPlayerPoints, currentPlayerId, infoGenerators, playerNames);
 
     }
+
+    /**
+     *
+     * @param gameState
+     * @param players
+     * @param currentPlayerId
+     * @param infoGenerators
+     * @return
+     */
     private static Map<PlayerId, Integer> calculateFinalPoints(GameState gameState, Map<PlayerId, Player> players, PlayerId currentPlayerId, Map<PlayerId, Info> infoGenerators){
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
@@ -374,6 +449,14 @@ public final class Game {
         return associatedPlayerPoints;
     }
 
+    /**
+     *
+     * @param players
+     * @param associatedPlayerPoints
+     * @param currentPlayerId
+     * @param infoGenerators
+     * @param playerNames
+     */
     private static void determineWinnerOrDraw(Map<PlayerId, Player> players, Map<PlayerId, Integer> associatedPlayerPoints, PlayerId currentPlayerId, Map<PlayerId, Info> infoGenerators, Map<PlayerId, String> playerNames){
         int currentPlayerPoints = associatedPlayerPoints.get(currentPlayerId);
         int nextPlayerPoints = associatedPlayerPoints.get(currentPlayerId.next());
@@ -383,13 +466,16 @@ public final class Game {
         String endOfGameMessage;
 
         if(whoWonComparator > 0){ //Current Player won
-            endOfGameMessage = infoGenerators.get(currentPlayerId).won(currentPlayerPoints, nextPlayerPoints);
+            endOfGameMessage = infoGenerators.get(currentPlayerId)
+                    .won(currentPlayerPoints, nextPlayerPoints);
 
         }else if(whoWonComparator < 0){ //Next Player won
-            endOfGameMessage = infoGenerators.get(currentPlayerId).won(nextPlayerPoints, currentPlayerPoints);
+            endOfGameMessage = infoGenerators.get(currentPlayerId)
+                    .won(nextPlayerPoints, currentPlayerPoints);
 
         }else{ //Both players came to a draw
-            endOfGameMessage = Info.draw(new ArrayList<>(playerNames.values()), currentPlayerPoints);
+            endOfGameMessage = Info
+                    .draw(new ArrayList<>(playerNames.values()), currentPlayerPoints);
         }
 
         receiveInfoForAll(players, endOfGameMessage);
