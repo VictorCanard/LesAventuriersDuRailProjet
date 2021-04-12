@@ -230,14 +230,10 @@ public final class Info {
         List<String> stringList = new ArrayList<>();
 
         for (Card currentCard: originalBag.toSet()) {
+            //Number of cards
             int multiplicity = originalBag.countOf(currentCard);
 
-            String stringToAdd = new StringBuilder()
-                    .append(multiplicity) //Number of cards
-                    .append(" ")
-                    .append(cardName(currentCard, multiplicity)) //Name of the card in French, plural or singular
-                    .toString();
-
+            String stringToAdd = multiplicity + " " + cardName(currentCard, multiplicity);
             stringList.add(stringToAdd);
         }
         return stringList;

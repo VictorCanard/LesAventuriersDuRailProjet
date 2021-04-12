@@ -129,14 +129,16 @@ public final class Route {
 
         switch(level){
             case UNDERGROUND:
-                if(color == null){// Underground route with neutral color
+                if(color == null){
+                    // Underground route with neutral color
                     for (int i = 0; i < length; i++) {
                         for (Card c : Card.CARS) {
                             possibleCards.add(SortedBag.of(length - i, c, i, Card.LOCOMOTIVE));
                         }
                     }
                     possibleCards.add(SortedBag.of(length, Card.LOCOMOTIVE));
-                }else{ //Underground route with a specific non-neutral color
+                }else{
+                    //Underground route with a specific non-neutral color
                     for (int i = 0; i <= length; i++) {
                         possibleCards.add(SortedBag.of(length - i, Card.of(color), i, Card.LOCOMOTIVE));
                     }
@@ -144,11 +146,13 @@ public final class Route {
                 break;
 
             case OVERGROUND:
-                if(color == null){ // Overground route with neutral color
+                if(color == null){
+                    // Overground route with neutral color
                     for(Card c : Card.CARS) {
                         possibleCards.add(SortedBag.of(length, c));
                     }
-                }else {  //Overground route with a specific non-neutral color
+                }else {
+                    //Overground route with a specific non-neutral color
                     possibleCards.add(SortedBag.of(length, Card.of(color)));
                 }
                 break;
