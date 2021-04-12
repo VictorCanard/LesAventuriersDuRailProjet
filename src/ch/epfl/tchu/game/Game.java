@@ -23,7 +23,7 @@ public final class Game {
         private GameState gameState;
         private final Map<PlayerId, Player> players;
         private final Map<PlayerId, String> playerNames;
-        private Map<PlayerId, Info> infoGenerators;
+        private final Map<PlayerId, Info> infoGenerators;
         private final Random rng;
 
         private GameData(GameState gameState, Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, Map<PlayerId, Info> infoGenerators, Random rng) {
@@ -381,6 +381,7 @@ public final class Game {
         PlayerId nextPlayerId = currentPlayerId.next();
 
         Map<PlayerId, Player> players = gameData.players;
+        Map<PlayerId, Info> infoGenerators = gameData.infoGenerators;
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
 
@@ -403,18 +404,18 @@ public final class Game {
         String longestTrailBonus;
 
         if(bonusComparator > 0){ //Current Player gets the bonus
-            longestTrailBonus = gameData.infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer);
+            longestTrailBonus = infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer);
 
             associatedPlayerPoints.put(currentPlayerId, associatedPlayerPoints.get(currentPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);
 
         }else if(bonusComparator < 0){ //Next Player gets the bonus
-            longestTrailBonus = gameData.infoGenerators.get(nextPlayerId).getsLongestTrailBonus(trailCurrentPlayer);
+            longestTrailBonus = infoGenerators.get(nextPlayerId).getsLongestTrailBonus(trailCurrentPlayer);
 
             associatedPlayerPoints.put(nextPlayerId, associatedPlayerPoints.get(nextPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);
 
         }else{ //Both Players get the bonus
-            longestTrailBonus = String.format("%s%s", gameData.infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer),
-                    gameData.infoGenerators.get(nextPlayerId).getsLongestTrailBonus(trailNextPlayer));
+            longestTrailBonus = String.format("%s%s", infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer),
+                    infoGenerators.get(nextPlayerId).getsLongestTrailBonus(trailNextPlayer));
 
             for (PlayerId playerId: PlayerId.values()) {
                 associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);  //Adds 10 points to each player's count
@@ -432,6 +433,8 @@ public final class Game {
      */
     private static void determineWinnerOrDraw(Map<PlayerId, Integer> associatedPlayerPoints, GameData gameData){
        PlayerId currentPlayerId = gameData.gameState.currentPlayerId();
+        Map<PlayerId, Info> infoGenerators = gameData.infoGenerators;
+
         int currentPlayerPoints = associatedPlayerPoints.get(currentPlayerId);
         int nextPlayerPoints = associatedPlayerPoints.get(currentPlayerId.next());
 
@@ -440,11 +443,11 @@ public final class Game {
         String endOfGameMessage;
 
         if(whoWonComparator > 0){ //Current Player won
-            endOfGameMessage = gameData.infoGenerators.get(currentPlayerId)
+            endOfGameMessage = infoGenerators.get(currentPlayerId)
                     .won(currentPlayerPoints, nextPlayerPoints);
 
         }else if(whoWonComparator < 0){ //Next Player won
-            endOfGameMessage = gameData.infoGenerators.get(currentPlayerId)
+            endOfGameMessage = infoGenerators.get(currentPlayerId)
                     .won(nextPlayerPoints, currentPlayerPoints);
 
         }else{ //Both players came to a draw
