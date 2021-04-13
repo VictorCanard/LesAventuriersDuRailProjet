@@ -52,15 +52,16 @@ public final class Game {
      * @param playerNames : the names of the corresponding players
      * @param tickets : the tickets to be used in the game
      * @param rng : an instance of a random number generator
+     * @throws IllegalArgumentException if one of the maps (playerNames or players) doesn't have exactly two pairs as there as two players in the game.
      */
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng){
-        Preconditions.checkArgument(players.size() == NUMBER_OF_PLAYERS && playerNames.size() == NUMBER_OF_PLAYERS);
+        Preconditions.checkArgument(players.size() == NUMBER_OF_PLAYERS 
+                && playerNames.size() == NUMBER_OF_PLAYERS);
 
         //before the game starts
 
         Map<PlayerId, Info> infoGenerators = initializeInfoGenerators(players, playerNames);
         GameState gameState = GameState.initial(tickets, rng);
-
 
         GameData gameData = new GameData(gameState, players, playerNames, infoGenerators, rng);
 
@@ -94,7 +95,7 @@ public final class Game {
 
     /**
      * Runs the setup of the game: chooses the first player and distributes the initial tickets and cards
-     * @param gameData :
+     * @param gameData : all of the game's information : all of the game's information
      * returns :
      */
     private static GameState setup(GameData gameData){
@@ -114,7 +115,7 @@ public final class Game {
 
     /**
      *
-     * @param gameData :
+     * @param gameData : all of the game's information : all of the game's information all of the game's information
      * @return :
      */
     private static GameState distributeTickets(GameData gameData){
@@ -164,7 +165,7 @@ public final class Game {
 
     /**
      * Runs the next turn of the game
-     * @param gameData:
+     * @param gameData : all of the game's information:
      * @return the new gameState at the end of the turn
      */
     private static GameState nextTurn(GameData gameData){
@@ -196,11 +197,11 @@ public final class Game {
     }
 
     /**
-     *
-     * @param gameData
-     * @param currentPlayer
-     * @param currentInfo
-     * @return
+     * Makes the current player draw tickets from the ticket deck's top tickets
+     * @param gameData : all of the game's information
+     * @param currentPlayer : player whose turn it is currently
+     * @param currentInfo : information generator of the current player
+     * @return a gameState where the current player has drawn 1 to 3 tickets
      */
     private static GameState drawTickets(GameData gameData, Player currentPlayer, Info currentInfo){
         Map<PlayerId, Player> players = gameData.players;
@@ -216,11 +217,11 @@ public final class Game {
     }
 
     /**
-     *
-     * @param gameData
-     * @param currentPlayer
-     * @param currentInfo
-     * @return
+     * Makes the current player draw two cards (each of which can be from the deck or the face-up cards)
+     * @param gameData : all of the game's information
+     * @param currentPlayer : player whose turn it is currently
+     * @param currentInfo : information generator of the current player
+     * @return a gameState where the player has drawn two additional cards that have been removed from the deck or the face-up cards
      */
     private static GameState drawCards(GameData gameData, Player currentPlayer, Info currentInfo){
         Map<PlayerId, Player> players = gameData.players;
@@ -229,9 +230,11 @@ public final class Game {
             gameData.modifyGameState(gameData.gameState.withCardsDeckRecreatedIfNeeded(gameData.rng));
 
             if(i == 1){
-                updateAllStates(players, gameData.gameState); //To update all states right before the player chooses a second card to draw
+                updateAllStates(players, gameData.gameState);
+                //To update all states right before the player chooses a second card to draw
             }
-            int drawSlot = currentPlayer.drawSlot(); //-1, 0->4
+            int drawSlot = currentPlayer.drawSlot();
+            //-1 or from 0 to 4
 
             if(drawSlot == Constants.DECK_SLOT){
                 //DeckCard
@@ -240,6 +243,7 @@ public final class Game {
                 receiveInfoForAll(players, currentInfo.drewBlindCard());
             }
             else{
+                //Face-up card
                 Card chosenVisibleCard = gameData.gameState.cardState().faceUpCard(drawSlot);
 
                 gameData.modifyGameState(gameData.gameState.withDrawnFaceUpCard(drawSlot));
@@ -252,10 +256,12 @@ public final class Game {
     }
 
     /**
-     * @param gameData :
-     * @param currentPlayer
-     * @param currentInfo
-     * @return
+     * Has the player attempt to claim a certain route. The route's level (UNDERGROUND or OVERGROUND)
+     * determines how it will be captured (or attempted to be captured).
+     * @param gameData : all of the game's information : all of the game's information
+     * @param currentPlayer : player whose turn it is currently
+     * @param currentInfo : information generator of the current player
+     * @return a gameState where the current player has or hasn't claimed a new route with his initial cards.
      */
     private static GameState claimRoute(GameData gameData, Player currentPlayer, Info currentInfo){
         Route claimedRoute = currentPlayer.claimedRoute();
@@ -270,11 +276,12 @@ public final class Game {
     }
 
     /**
-     * @param gameData
-     * @param currentInfo
-     * @param claimedRoute
-     * @param initialClaimCards
-     * @return
+     * Procedure to verify if the player has the additional cards necessary to claim this route.
+     * @param gameData : all of the game's information
+     * @param currentInfo : information generator of the current player
+     * @param claimedRoute : route that the player has decided to claim
+     * @param initialClaimCards : initial cards the player has chosen to attempt capturing this route
+     * @return a gameState where the player has claimed the route if he had the necessary cards, or where he couldn't/ didn't want to claim it.
      */
     private static GameState claimUnderground(GameData gameData, Player currentPlayer, Info currentInfo, Route claimedRoute, SortedBag<Card> initialClaimCards){
         Map<PlayerId, Player> players = gameData.players;
@@ -311,31 +318,35 @@ public final class Game {
 
                 return gameData.gameState.withMoreDiscardedCards(drawnCards);
 
-            }else{ //The player can play additional cards. Asks the player which set of cards he want to play.
+            }else{
+                //The player can play additional cards. Asks the player which set of cards he want to play.
                 SortedBag<Card> tunnelCards = currentPlayer.chooseAdditionalCards(possibleAdditionalCards);
 
                 receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
 
                 return gameData.gameState
-                        .withMoreDiscardedCards(drawnCards)               //Drawn cards are put in the discard
-                        .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)); //Claimed route
+                        .withMoreDiscardedCards(drawnCards)
+                        //Drawn cards are put in the discard
+                        .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards));
             }
         }
-        else{ //No additional cost
+        else{
+            //No additional cost
             gameData.modifyGameState(gameData.gameState.withMoreDiscardedCards(drawnCards));
 
-            return claimOverground(gameData, currentInfo, claimedRoute, initialClaimCards); //In this case the procedure is the same as when claiming an overground route
+            return claimOverground(gameData, currentInfo, claimedRoute, initialClaimCards);
+            //In this case the procedure is the same as when claiming an overground route
         }
 
     }
 
     /**
-     *
-     * @param gameData
-     * @param currentInfo
-     * @param claimedRoute
-     * @param initialClaimCards
-     * @return
+     * Has the player automatically claim the overground route
+     * @param gameData : all of the game's information
+     * @param currentInfo : information generator of the current player
+     * @param claimedRoute : route that the player has decided to claim
+     * @param initialClaimCards : initial cards the player has chosen to attempt capturing this route
+     * @return a gameState where the current player has claimed the route with his initial claim cards.
      */
     private static GameState claimOverground(GameData gameData,  Info currentInfo,  Route claimedRoute, SortedBag<Card> initialClaimCards){
         Map<PlayerId, Player> players = gameData.players;
@@ -346,7 +357,7 @@ public final class Game {
     }
     /**
      * Plays the last two turns of tCHu, then calculates who gets the longest trail bonus and who won in the end or if there has been a draw
-     * @param gameData
+     * @param gameData : all of the game's information
      */
     private static void endOfGame(GameData gameData){
         Map<PlayerId, Player> players = gameData.players;
@@ -359,7 +370,7 @@ public final class Game {
                                                     .carCount())); //LastTurnBegins
 
         //One more turn for each player
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
             gameData.modifyGameState(gameData.gameState.forNextTurn());
             nextTurn(gameData);
         }
@@ -372,9 +383,9 @@ public final class Game {
     }
 
     /**
-     *
-     * @param gameData
-     * @return
+     *Calculates both players' final points (their personal points and then whether or not they obtained the LongestTrailBonus)
+     * @param gameData : all of the game's information
+     * @return a map with both player's final points
      */
     private static Map<PlayerId, Integer> calculateFinalPoints(GameData gameData){
         PlayerId currentPlayerId = gameData.gameState.currentPlayerId();
@@ -428,8 +439,8 @@ public final class Game {
     }
 
     /**
-     *
-     * @param gameData:
+     * Determines who won the game or if there has been a draw, according to each player's point total.
+     * @param gameData : all of the game's information:
      */
     private static void determineWinnerOrDraw(Map<PlayerId, Integer> associatedPlayerPoints, GameData gameData){
        PlayerId currentPlayerId = gameData.gameState.currentPlayerId();
@@ -442,15 +453,18 @@ public final class Game {
 
         String endOfGameMessage;
 
-        if(whoWonComparator > 0){ //Current Player won
+        if(whoWonComparator > 0){
+            //Current Player won
             endOfGameMessage = infoGenerators.get(currentPlayerId)
                     .won(currentPlayerPoints, nextPlayerPoints);
 
-        }else if(whoWonComparator < 0){ //Next Player won
+        }else if(whoWonComparator < 0){
+            //Next Player won
             endOfGameMessage = infoGenerators.get(currentPlayerId)
                     .won(nextPlayerPoints, currentPlayerPoints);
 
-        }else{ //Both players came to a draw
+        }else{
+            //Both players came to a draw
             endOfGameMessage = Info
                     .draw(new ArrayList<>(gameData.playerNames.values()), currentPlayerPoints);
         }
