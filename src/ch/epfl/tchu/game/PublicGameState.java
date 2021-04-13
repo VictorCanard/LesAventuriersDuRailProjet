@@ -26,7 +26,6 @@ public class PublicGameState {
     private final PlayerId lastPlayer;
 
 
-
     /**
      * Constructs the "public" state of the game
      * @param ticketsCount : the number of tickets in the ticket draw pile
@@ -34,6 +33,7 @@ public class PublicGameState {
      * @param currentPlayerId : the player who's turn it is
      * @param playerState : the "public" state of the players at the corresponding point of the game
      * @param lastPlayer : when it is known, the last player to have a turn at the end of the game
+     * @throws IllegalArgumentException if the ticket count is negative or if there are not exactly two players
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer){
         boolean positiveTicketCount = ticketsCount >= 0;

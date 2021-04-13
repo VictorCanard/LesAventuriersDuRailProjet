@@ -14,14 +14,10 @@ import java.util.stream.Collectors;
 
 public final class Trail {
 
-    /**
-     * Routes of this trail
-     */
+
     private final List<Route> routes;
 
-    /**
-     * Departure and arrival stations of the trail
-     */
+
     private final Station station1;
     private final Station station2;
 

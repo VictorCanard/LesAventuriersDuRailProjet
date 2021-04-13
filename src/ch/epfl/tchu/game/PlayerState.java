@@ -102,11 +102,13 @@ public final class PlayerState extends PublicPlayerState {
      */
     public boolean canClaimRoute(Route route){
 
-        if(!hasEnoughWagonsLeft(route)){ //If there are not enough wagons left it is futile to test if the player has the necessary cards to claim the route
+        if(!hasEnoughWagonsLeft(route)){
+            //If there are not enough wagons left it is futile to test if the player has the necessary cards to claim the route
             return false;
         }
 
-        return !possibleClaimCards(route).isEmpty(); //Tests to see if there is at least one combination of cards the player can use
+        //Tests to see if there is at least one combination of cards the player can use to capture the route
+        return !possibleClaimCards(route).isEmpty();
     }
 
     /**
@@ -152,22 +154,27 @@ public final class PlayerState extends PublicPlayerState {
         Preconditions.checkArgument(correctAdditionalCardsCount && initialCardsNotNull && initialCardsNotTooManyTypes && rightNumberOfDrawnCards);
 
 
-        SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards); //Player cards without the initially played cards
+        SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards);
+        //Player cards without the initially played cards
 
         SortedBag<Card> cardSortedBag = SortedBag.of(
                 playerCardsWithoutInitialCards.stream()
-                        .filter(card -> card.equals(Card.LOCOMOTIVE) || card.equals(initialCards.get(0))) //Only keeps locomotive cards and the ones of the same color as the initial card
+                        .filter(card -> card.equals(Card.LOCOMOTIVE) || card.equals(initialCards.get(0)))
+                        //Only keeps locomotive cards and the ones of the same color as the initial card
                         .collect(Collectors.toList()));
 
 
-        if(cardSortedBag.size() < additionalCardsCount){ //If the player can play less cards than the additional cards count then he can't play at all
+        if(cardSortedBag.size() < additionalCardsCount){
+            //If the player can play less cards than the additional cards count then he can't play at all
             return Collections.emptyList();
         }
 
-        List<SortedBag<Card>> possibleAdditionalCards = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount)); //Makes subsets of the size of the acc
+        List<SortedBag<Card>> possibleAdditionalCards = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount));
+        //Makes subsets of the size of the additional cards count
 
         possibleAdditionalCards.sort(
-                Comparator.comparingInt(sortedBag -> sortedBag.countOf(Card.LOCOMOTIVE))); //Sorts the player's options in terms of counts of locomotives
+                Comparator.comparingInt(sortedBag -> sortedBag.countOf(Card.LOCOMOTIVE)));
+        //Sorts the player's options in terms of counts of locomotives
 
         return possibleAdditionalCards;
     }
@@ -192,19 +199,22 @@ public final class PlayerState extends PublicPlayerState {
      * @return the number of points gained (or lost)
      */
     public int ticketPoints(){
-        int maxStationId =
-                super.routes() //Finds the maximum id in all of the routes' stations' ids
+        //Finds the maximum id in all of the routes' stations' ids
+        int maxStationId = super.routes()
                 .stream()
                 .map((route -> Math.max(route.station1().id(), route.station2().id())))
                 .max((Integer::compareTo))
                 .orElse(0);
 
-        maxStationId ++; //Adds 1 to it
+        //Adds 1 to it
+        maxStationId ++;
+
 
         StationPartition.Builder builder = new StationPartition.Builder(maxStationId);
 
+        //For a given route connects the two stations of that route
         super.routes()
-                .forEach((route -> builder.connect(route.station1(), route.station2()))); //For a given route connects the two stations of that route
+                .forEach((route -> builder.connect(route.station1(), route.station2())));
 
         StationPartition stationPartition = builder.build();
 

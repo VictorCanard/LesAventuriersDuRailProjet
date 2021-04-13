@@ -8,9 +8,7 @@ import java.util.stream.IntStream;
  * @author Anne-Marie Rusu (296098)
  */
 public final class StationPartition implements StationConnectivity {
-    /**
-     * Array of ints representing the partitions
-     */
+
     private final int[] partitions;
 
     /**
@@ -30,9 +28,11 @@ public final class StationPartition implements StationConnectivity {
         /**
          * Constructs an array ranging from 0 included to the station count excluded
          * @param stationCount : the maximum id plus one of the group of stations
+         * @throws IllegalArgumentException if the station count is negative
          */
         public Builder(int stationCount){
             Preconditions.checkArgument(stationCount>=0);
+
             partitionsArray = IntStream.range(0, stationCount).toArray();
         }
 
@@ -62,10 +62,12 @@ public final class StationPartition implements StationConnectivity {
          * Finds the representative associated to this station id.
          * Either it finds it directly or it employs a recursive algorithm to follow the links up to the main representative
          * @param stationId : the id of which we want to know the (in)direct representative
+         * @throws IllegalArgumentException if the station id is negative
          * @return the id of the station's representative or calls itself again until it finds it
          */
         private int representative(int stationId){
             Preconditions.checkArgument(stationId>=0);
+
             if(partitionsArray[stationId] == stationId){
                 return partitionsArray[stationId];
             }

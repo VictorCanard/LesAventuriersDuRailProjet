@@ -82,7 +82,7 @@ public final class Deck<C extends Comparable<C>> {
      * @return a group of cards from the top of the deck
      */
     public SortedBag<C> topCards(int count){
-        Preconditions.checkArgument(0<=count && count <=size());
+        Preconditions.checkArgument(0 <= count && count <= size());
 
         return SortedBag.of(listOfCards.subList(0, count));
     }
@@ -94,7 +94,7 @@ public final class Deck<C extends Comparable<C>> {
      * @return a new deck with the specified number of cards removed from the top
      */
     public Deck<C> withoutTopCards(int count){
-        Preconditions.checkArgument(0<=count && count <=size());
+        Preconditions.checkArgument(0 <= count && count <= size());
 
         return new Deck<>(listOfCards.subList(count,size()));
     }

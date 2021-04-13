@@ -18,9 +18,8 @@ public final class CardState extends PublicCardState{
     /**
      * CardState constructor (private so the class has control on the arguments that are passed)
      * @param faceUpCards : cards in the faceUp Pile
-     * @param drawPile : cards of the Draw Pile
      * @param discardPile : cards in the Discard Pile
-     * @throws IllegalArgumentException if the size of the discard pile is negative
+     * @param drawPile : cards of the Draw Pile
      */
     private CardState(List<Card> faceUpCards, Deck<Card> drawPile, SortedBag<Card> discardPile){
         super(faceUpCards, drawPile.size(), discardPile.size());
@@ -83,7 +82,7 @@ public final class CardState extends PublicCardState{
     /**
      * Getter for a new deck identical but without the top card
      * @throws IllegalArgumentException if draw pile is empty
-     * @return a deck without top card
+     * @return a deck without its top card
      */
     public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!(drawPile.isEmpty()));
@@ -96,7 +95,7 @@ public final class CardState extends PublicCardState{
      * (the drawPile is shuffled by the method of() from the class Deck)
      * @param rng : the random number generator to shuffle the draw pile
      * @throws IllegalArgumentException if the draw pile is not empty
-     * @return a new CardState with the new draw pile
+     * @return a new CardState where the draw pile is a shuffled discard pile and the discard pile is thus empty
      */
     public CardState withDeckRecreatedFromDiscards(Random rng){
         Preconditions.checkArgument(drawPile.isEmpty());

@@ -208,13 +208,19 @@ public final class Info {
         List<String> cardList = getListOfCards(bagOfCards);
 
         for (int i = 0; i < cardList.size(); i++) {
-            String commaSeparator = (i < cardList.size() -2) ? ", " : ""; //Only adds commas for n-2 objects
-            String andSeparator = (i == cardList.size() -2 ) ? StringsFr.AND_SEPARATOR : ""; //Only adds an And Separator after the second to last object
+            //Only adds commas for n-2 objects
+            String commaSeparator = (i < cardList.size() -2) ? ", " : "";
+
+            //Only adds an And Separator after the second to last object
+            String andSeparator = (i == cardList.size() -2 ) ? StringsFr.AND_SEPARATOR : "";
 
             stringOfAllCardNamesToReturn
-                    .append(cardList.get(i)) //Name of the card in French
-                    .append(commaSeparator)  //Comma if it is needed
-                    .append(andSeparator);   //And separator before the last item
+                    //Name of the card in French
+                    .append(cardList.get(i))
+                    //Comma if it is needed
+                    .append(commaSeparator)
+                    //And separator before the last item
+                    .append(andSeparator);
 
         }
         return stringOfAllCardNamesToReturn.toString();

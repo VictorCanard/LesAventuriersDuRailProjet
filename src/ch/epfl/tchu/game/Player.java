@@ -92,7 +92,7 @@ public interface Player {
     /**
      * Determines what cards a player will use to claim a tunnel
      * @param options : the possible cards the player can use
-     * @return the cards the player will use to claim a route
+     * @return the cards the player will use to claim a tunnel
      */
     SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options);
 }

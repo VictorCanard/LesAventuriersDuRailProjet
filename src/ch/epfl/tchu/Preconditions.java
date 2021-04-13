@@ -8,7 +8,7 @@ public final class Preconditions {
 
     /**
      * Throws an IllegalArgumentException if the argument isn't true
-     * @param shouldBeTrue
+     * @param shouldBeTrue : boolean that should be true
      */
     public static void checkArgument(boolean shouldBeTrue){
         if(!shouldBeTrue){

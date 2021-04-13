@@ -9,20 +9,16 @@ import ch.epfl.tchu.Preconditions;
  */
 
 public final class Station {
-    /**
-     * Unique identifier (positive)
-     */
+
     private final int id;
-    /**
-     * Name of the station
-     */
+
     private final String name;
 
     /**
      * A train station, defined by its id and name
      * @param id between 0 and 50
      * @param name Station's name
-     * @throws IllegalArgumentException if id is strictly negative
+     * @throws IllegalArgumentException if the id is strictly negative
      */
     public Station(int id, String name){
         Preconditions.checkArgument(id>=0);

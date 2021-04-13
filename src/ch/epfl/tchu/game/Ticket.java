@@ -13,14 +13,9 @@ import java.util.stream.Collectors;
 
 public final class Ticket  implements Comparable<Ticket>{
 
-    /**
-     * Text of the ticket describing its trips with a certain formatting depending on the number of trips
-     */
+
     private final String text;
 
-    /**
-     * List of all trips of this ticket
-     */
     private final List<Trip> trips;
 
 

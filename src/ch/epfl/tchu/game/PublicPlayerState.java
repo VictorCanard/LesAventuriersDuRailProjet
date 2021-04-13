@@ -26,6 +26,7 @@ public class PublicPlayerState {
      * @param ticketCount : the number of tickets the player possesses
      * @param cardCount : the number of cards the player possesses
      * @param routes : the list of routes the player has claimed so far
+     * @throws IllegalArgumentException if the ticket count or card count is negative
      */
     public PublicPlayerState(int ticketCount, int cardCount, List<Route> routes){
         Preconditions.checkArgument(ticketCount>= 0 && cardCount >= 0);

@@ -19,21 +19,18 @@ public final class GameState extends PublicGameState{
      */
     private final Map<PlayerId, PlayerState> temporaryMapToModifyPlayerState;
     
-
-
     private final Deck<Ticket> ticketDeck;
 
     private final CardState cardState;
 
 
     /**
-     * Private constructor for this
+     * Private constructor for GameState
      * @param playerStates : map with player ids associated to their player states
      * @param ticketDeck : deck of tickets to be drawn throughout the game
      * @param cardState : state of the cards (includes state of the draw & discards pile as well as the face-up cards)
      * @param currentPlayer : id of the player whose turn it is
-     * @param lastPlayer : last player
-
+     * @param lastPlayer : last player to play (unknown until last turn begins)
      */
     private GameState(Map<PlayerId, PlayerState> playerStates,
                       Deck<Ticket> ticketDeck,
@@ -53,7 +50,7 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Makes the player state map public, ie transforms a map with Player State values into a map with Public Player State values
+     * Makes the player state map public, ie transforms a map with PlayerState values into a map with PublicPlayerState values
      * @param playerStateMap : map to change the values of
      * @return a new map with player ids associated to public player states
      */
@@ -81,18 +78,23 @@ public final class GameState extends PublicGameState{
         //Initial deck
         Deck<Card> initialDeck = Deck.of(Constants.ALL_CARDS, rng);
 
-        for (PlayerId playerId : PlayerId.values()){ //Initializes each player's deck to the top 4 cards of the deck (and then the 4 next)
+        //Initializes each player's deck to the top 4 cards of the deck (and then the 4 next)
+        for (PlayerId playerId : PlayerId.values()){
             SortedBag<Card> top4Cards = initialDeck.topCards(Constants.INITIAL_CARDS_COUNT);
             initialDeck = initialDeck.withoutTopCards(Constants.INITIAL_CARDS_COUNT);
 
-            PlayerState playerState = PlayerState.initial(top4Cards); //Initializes a new PlayerState with these cards and places it in the map
+            PlayerState playerState = PlayerState.initial(top4Cards);
+            //Initializes a new PlayerState with these cards and places it in the map
             playerStateMap.put(playerId, playerState);
         }
 
-        Deck<Card> cardDeck = initialDeck; //Deck without the top 8 cards
-        CardState cardState = CardState.of(cardDeck); //Makes a CardState of that initial deck (5 face-up cards, a draw-pile and an empty discard pile)
+        Deck<Card> cardDeck = initialDeck;
+        //Deck without the top 8 cards
+        CardState cardState = CardState.of(cardDeck);
+        //Makes a CardState of that initial deck (5 face-up cards, a draw-pile and an empty discard pile)
 
-        int firstPlayerIndex = rng.nextInt(PlayerId.COUNT); //Picks a player at random
+        int firstPlayerIndex = rng.nextInt(PlayerId.COUNT);
+        //Picks a player at random
         PlayerId firstPlayerId = PlayerId.ALL.get(firstPlayerIndex);
 
         return new GameState(playerStateMap, ticketDeck, cardState, firstPlayerId, null);
@@ -116,7 +118,7 @@ public final class GameState extends PublicGameState{
     //Group 1
 
     /**
-     * Return the count number of tickets from the top of the pile
+     * Returns the count number of tickets from the top of the pile
      * @param count : number of tickets
      * @throws IllegalArgumentException if the count is negative or strictly superior to the player's number of tickets
      * @return the count number of top tickets
@@ -276,7 +278,7 @@ public final class GameState extends PublicGameState{
 
     /**
      *The state of the game where it's the next player's turn to play.
-     * Fins the last player's id if the last turn begins.
+     * Changes the last player's id if the last turn begins.
      * @return a new GameState where it's the next player's turn
      */
     public GameState forNextTurn(){

@@ -10,14 +10,9 @@ import java.util.List;
 public enum PlayerId {
     PLAYER_1, PLAYER_2;
 
-    /**
-     * List of all the players
-     */
+
     public final static List<PlayerId> ALL = List.of(PlayerId.values());
 
-    /**
-     * Number of players
-     */
     public final static int COUNT = ALL.size();
 
     /**
