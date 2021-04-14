@@ -1,6 +1,6 @@
 package ch.epfl.tchu.net;
 
-import org.junit.platform.commons.util.StringUtils;
+import ch.epfl.tchu.SortedBag;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,57 +9,89 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public interface Serde<T> {
-    String serialize(T objectToSerialize);
+public interface Serde<U> {
+    String serialize(U objectUoSerialize);
 
-    Object deserialize(String stringToDeserialize);
+    U deserialize(String stringUoDeserialize);
 
-    default Serde<T> of(Function<T, String> serializingFunction, Function<String, T> deserializingFunction){
+    default Serde<U> of(Function<U, String> serializingFunction, Function<String, U> deserializingFunction){
 
         return new Serde<>() {
             @Override
-            public String serialize(T objectToSerialize) {
-                return serializingFunction.apply(objectToSerialize);
+            public String serialize(U objectUoSerialize) {
+                return serializingFunction.apply(objectUoSerialize);
             }
 
             @Override
-            public Object deserialize(String stringToDeserialize) {
-                return deserializingFunction.apply(stringToDeserialize);
+            public U deserialize(String stringUoDeserialize) {
+                return deserializingFunction.apply(stringUoDeserialize);
             }
         };
     }
-    default Serde<T> oneOf(List<T> listOfValuesOfEnumType){
-        Function<T, String> serializingFunction = (t) -> String.valueOf(listOfValuesOfEnumType.indexOf(t));
+    default Serde<U> oneOf(List<U> listOfValuesOfEnumType){
+        Function<U, String> serializingFunction = (t) -> String.valueOf(listOfValuesOfEnumType.indexOf(t));
 
-        Function<String, T> deserializingFunction = (string) -> listOfValuesOfEnumType.get(Integer.parseInt(string));
+        Function<String, U> deserializingFunction = (string) -> listOfValuesOfEnumType.get(Integer.parseInt(string));
 
         return of(serializingFunction, deserializingFunction);
 
 
     }
-    default Serde<T> listOf(Serde<T> usedSerde, String delimiter){
-        Function<T, String> serializingFunction = (t) -> new StringJoiner(delimiter)
-                .add(usedSerde.serialize(t))
-                .toString();
+    default <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter){
+        Function<List<T>, String> serializingFunction = (list) -> new StringJoiner(delimiter)
+                .add(
+                        list.stream()
+                                .map(usedSerde::serialize)
+                                .collect(Collectors.toList()).toString())
+                                .toString();
 
-        Function<String, T> deserializingFunction = (string) -> Arrays.stream(string.split(Pattern.quote(delimiter), -1))
+
+        Function<String, List<T>> deserializingFunction = (string) ->
+                Arrays.stream(string
+                .split(Pattern.quote(delimiter), -1))
+                .map(usedSerde::deserialize)
                 .collect(Collectors.toList());
 
-        return of(serializingFunction, deserializingFunction);
-
-
-    }
-    default <T>Serde bagOf(Serde<T> usedSerde, String delimiter){
-        return new Serde<T>() {
+        return new Serde<>() {
             @Override
-            public String serialize(T objectToSerialize) {
-
-                return new StringJoiner(delimiter).add(usedSerde.serialize(objectToSerialize)).toString();
+            public String serialize(List<T> objectUoSerialize) {
+                return serializingFunction.apply(objectUoSerialize);
             }
 
             @Override
-            public Object deserialize(String stringToDeserialize) {
-                return stringToDeserialize.split(Pattern.quote(delimiter), -1);
+            public List<T> deserialize(String stringUoDeserialize) {
+                return deserializingFunction.apply(stringUoDeserialize);
+            }
+        };
+
+
+    }
+    default <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> usedSerde, String delimiter){
+        Function<SortedBag<T>, String> serializingFunction = (sortedBag) ->
+                new StringJoiner(delimiter)
+                .add(
+                        sortedBag.stream()
+                                .map(usedSerde::serialize)
+                                .collect(Collectors.toList()).toString())
+                .toString();
+
+
+        Function<String, SortedBag<T>> deserializingFunction = (string) ->
+                SortedBag.of(Arrays
+                        .stream(string
+                        .split(Pattern.quote(delimiter), -1))
+                .map(usedSerde::deserialize)
+                        .collect(Collectors.toList()));
+
+        return new Serde<>() {
+            @Override
+            public String serialize(SortedBag<T> objectUoSerialize) {
+                return serializingFunction.apply(objectUoSerialize);
+            }
+
+            @Override
+            public SortedBag<T> deserialize(String stringUoDeserialize) {
+                return deserializingFunction.apply(stringUoDeserialize);
             }
         };
 
