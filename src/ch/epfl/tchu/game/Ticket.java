@@ -34,15 +34,19 @@ public final class Ticket  implements Comparable<Ticket>{
                 .map(((trip -> trip.from().name())))
                 .collect(Collectors.toCollection(TreeSet::new));
 
-        Preconditions.checkArgument(departureStationsNames.size() == 1); //Checks all departure stations are the same and that trips isn't empty
+        //Checks all departure stations are the same and that trips isn't empty
+        Preconditions.checkArgument(departureStationsNames.size() == 1);
 
         String departure = departureStationsNames.first();
         String computedText = Ticket.computeText(this.trips);
 
-        if(this.trips.size() == 1){ //The first format where there's only one destination
+        //The first format where there's only one destination
+        if(this.trips.size() == 1){
             this.text = String.format("%s - %s", departure, computedText);
 
-        }else { //Multiple Destinations
+
+        }else {
+            //Multiple Destinations
             this.text = String.format("%s - {%s}", departure, computedText);
         }
 

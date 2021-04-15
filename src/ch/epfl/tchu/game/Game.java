@@ -156,8 +156,8 @@ public final class Game {
             PlayerId playerId = entry.getKey();
             Player player = entry.getValue();
 
-            SortedBag<Ticket> chosenTickets = player.chooseInitialTickets(); //Asks the player to choose tickets from the set of options determined in setInitialTicketChoice
-
+            //Asks the player to choose tickets from the set of options determined in setInitialTicketChoice
+            SortedBag<Ticket> chosenTickets = player.chooseInitialTickets();
             allGameData.modifyGameState(allGameData.gameState.withInitiallyChosenTickets(playerId, chosenTickets));
 
             keptTicketNumber.put(playerId, chosenTickets.size());
@@ -389,7 +389,8 @@ public final class Game {
                                     .get(allGameData.gameState.currentPlayerId())
                                     .lastTurnBegins(allGameData.gameState
                                                     .currentPlayerState()
-                                                    .carCount())); //LastTurnBegins
+                                                    .carCount()));
+        //LastTurnBegins
 
         //One more turn for each player
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
@@ -436,17 +437,20 @@ public final class Game {
 
         String longestTrailBonus;
 
-        if(bonusComparator > 0){ //Current Player gets the bonus
+        if(bonusComparator > 0){
+            //Current Player gets the bonus
             longestTrailBonus = infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer);
 
             associatedPlayerPoints.put(currentPlayerId, associatedPlayerPoints.get(currentPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);
 
-        }else if(bonusComparator < 0){ //Next Player gets the bonus
+        }else if(bonusComparator < 0){
+            //Next Player gets the bonus
             longestTrailBonus = infoGenerators.get(nextPlayerId).getsLongestTrailBonus(trailCurrentPlayer);
 
             associatedPlayerPoints.put(nextPlayerId, associatedPlayerPoints.get(nextPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);
 
-        }else{ //Both Players get the bonus
+        }else{
+            //Both Players get the bonus
             longestTrailBonus = String.format("%s%s", infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer),
                     infoGenerators.get(nextPlayerId).getsLongestTrailBonus(trailNextPlayer));
 

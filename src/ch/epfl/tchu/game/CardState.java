@@ -14,7 +14,6 @@ public final class CardState extends PublicCardState{
     private final Deck<Card> drawPile;
 
 
-
     /**
      * CardState constructor (private so the class has control on the arguments that are passed)
      * @param faceUpCards : cards in the faceUp Pile
@@ -37,7 +36,7 @@ public final class CardState extends PublicCardState{
      * @return a new card state with no discards, a certain number of face-up Cards and the rest of the deck as a draw pile
      */
     public static CardState of(Deck<Card> deck){
-        Preconditions.checkArgument(deck.size() >= 5);
+        Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT);
 
         List<Card> faceUpCards = new ArrayList<>();
 
@@ -50,7 +49,7 @@ public final class CardState extends PublicCardState{
     }
 
     /**
-     *Returns a new set of cards nearly identical to this but where the visible card of index slot has been replaced
+     * Returns a new set of cards nearly identical to this but where the visible card of index slot has been replaced
      * by the one on top of the draw pile
      * (the one of top of the draw pile is thus removed from the draw pile)
      * @param slot : index of the face up card to be replaced

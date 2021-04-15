@@ -25,6 +25,8 @@ public class PublicGameState {
 
     private final PlayerId lastPlayer;
 
+    private final static int NUMBER_OF_PLAYERS = 2;
+
 
     /**
      * Constructs the "public" state of the game
@@ -37,9 +39,10 @@ public class PublicGameState {
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer){
         boolean positiveTicketCount = ticketsCount >= 0;
-        boolean exactlyTwoPairs = playerState.size() == 2;
+        boolean exactlyTwoPairs = playerState.size() == NUMBER_OF_PLAYERS;
 
-        Preconditions.checkArgument(positiveTicketCount && exactlyTwoPairs);
+        Preconditions.checkArgument(positiveTicketCount
+                                            && exactlyTwoPairs);
 
         this.ticketDeckSize = ticketsCount;
         this.publicCardState = Objects.requireNonNull(cardState);
