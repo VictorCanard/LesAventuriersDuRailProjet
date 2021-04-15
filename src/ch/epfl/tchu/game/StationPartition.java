@@ -44,6 +44,7 @@ public final class StationPartition implements StationConnectivity {
          */
         public Builder connect(Station s1, Station s2){
             partitionsArray[representative(s2.id())] = representative(s1.id());
+
             return this;
         }
 

@@ -11,7 +11,9 @@ import java.util.*;
 public final class CardState extends PublicCardState{
 
     private final SortedBag<Card> discardPile;
+
     private final Deck<Card> drawPile;
+
 
     /**
      * Constructs the card state with the given arguments (private so the class has control on the arguments that are passed)
@@ -34,7 +36,7 @@ public final class CardState extends PublicCardState{
      * @return a new card state with no discards, 5 face-up cards and the rest of the deck as the draw pile
      */
     public static CardState of(Deck<Card> deck){
-        Preconditions.checkArgument(deck.size() >= 5);
+        Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT);
 
         List<Card> faceUpCards = new ArrayList<>();
 
@@ -42,14 +44,16 @@ public final class CardState extends PublicCardState{
             faceUpCards.add(deck.topCard());
             deck = deck.withoutTopCard();
         }
+
         return new CardState(faceUpCards,  deck, SortedBag.of());
     }
 
     /**
-     * "Removes" a card from the face up cards in the specified position, and replaces it with one from
-     * the draw pile
-     * @param slot : index of the group of face up cards to be replaced
-     * @throws IllegalArgumentException if the draw pile is empty
+     *Returns a new set of cards nearly identical to this but where the visible card of index slot has been replaced
+     * by the one on top of the draw pile
+     * (the one of top of the draw pile is thus removed from the draw pile)
+     * @param slot : index of the face up card to be replaced
+     * @throws IllegalArgumentException if the draw pile isn't empty
      * @throws IndexOutOfBoundsException if the index slot isn't included in [0;5[
      * @return a new card state with different faceUp cards and draw piles
      */

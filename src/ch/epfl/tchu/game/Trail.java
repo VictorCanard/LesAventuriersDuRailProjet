@@ -84,7 +84,8 @@ public final class Trail {
 
         List<Trail> trailsToReturn = new ArrayList<>();
 
-        routes.forEach((route) -> {   //Initializes two trails one with the route in the right order and one where the stations are inverted
+        routes.forEach((route) -> {
+            //Initializes two trails one with the route in the right order and one where the stations are inverted
             trailsToReturn.add(new Trail(List.of(route), route.station1(), route.station2()));
             trailsToReturn.add(new Trail(List.of(route), route.station2(), route.station1()));
         });
@@ -105,9 +106,10 @@ public final class Trail {
 
         return routes
                     .stream()
-                    .filter(route -> checkIfNewRouteCanBeAdded(route, trailEndStationToWhichRoutesCanBeAdded))
-                    .filter(route -> !(trail.routes.contains(route)))
+                    .filter(route -> checkIfNewRouteCanBeAdded(route, trailEndStationToWhichRoutesCanBeAdded)
+                                && !(trail.routes.contains(route)))
                     .collect(Collectors.toList());
+
     }
 
     /**
@@ -156,9 +158,8 @@ public final class Trail {
         if(routes.isEmpty()){
             return "";
         }
-        String text = station1 +
-                StringsFr.EN_DASH_SEPARATOR +
-                station2;
+
+        String text = station1 + StringsFr.EN_DASH_SEPARATOR + station2;
 
         return String.format("%s (%s)", text, length());
         }
