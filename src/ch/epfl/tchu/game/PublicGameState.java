@@ -107,7 +107,6 @@ public class PublicGameState {
      * @return a list of all the routes claimed by both the players
      */
     public List<Route> claimedRoutes(){
-
         return playerStates.values()
                 .stream()
                 .flatMap((publicPlayerState -> publicPlayerState.routes().stream()))
