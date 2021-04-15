@@ -110,7 +110,8 @@ public final class Route {
         return List.of(station1, station2);
     }
 
-    /**- Gets the opposite station to the one given as an argument
+    /**
+     * Gets the opposite station to the one given as an argument
      * @param station : one of the possible stations of the given route
      * @throws IllegalArgumentException if the station doesn't belong to the route
      * @return oppositeStation
@@ -121,7 +122,8 @@ public final class Route {
         return (station.equals(station1)) ? station2 : station1;
     }
 
-    /** Determines all the possible combinations of cards which can be played to capture this route depending on the level, color and length of the route
+    /**
+     * Determines all the possible combinations of cards which can be played to capture this route depending on the level, color and length of the route
      * @return : List of Sorted Bags of cards, each sorted bag is an possible combination of cards that can be used to claim this route
      */
     public List<SortedBag<Card>> possibleClaimCards(){
@@ -160,7 +162,8 @@ public final class Route {
         return possibleCards;
     }
 
-    /** Determines the number of additional cards the player must play to capture the tunnel route depending on the initial claim cards used and the additional cards drawn
+    /**
+     * Determines the number of additional cards the player must play to capture the tunnel route depending on the initial claim cards used and the additional cards drawn
      * @param claimCards : cards from the player's deck that were played in attempt to claim the route
      * @param drawnCards : exactly 3 cards from the draw pile, which will indicate the number of additional cards
      * @throws IllegalArgumentException if this method is used on a overground route or if there is not the right amount of drawn cards.
@@ -175,7 +178,8 @@ public final class Route {
         return drawnCards.countOf(claimCards.get(0)) + drawnCards.countOf(Card.LOCOMOTIVE);
     }
 
-    /** Getter for the route's points.
+    /**
+     * Getter for the route's points.
      * @return number of points gained from taking this route
      * (depends on the route's length)
      */

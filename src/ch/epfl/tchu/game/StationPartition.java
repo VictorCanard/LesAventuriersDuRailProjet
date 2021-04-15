@@ -4,7 +4,7 @@ import ch.epfl.tchu.Preconditions;
 import java.util.stream.IntStream;
 
 /**
- * Describes the player's network of claimed routes as partitions of connected stations
+ * Represents the player's network of claimed routes as partitions of connected stations
  * @author Anne-Marie Rusu (296098)
  */
 public final class StationPartition implements StationConnectivity {
@@ -12,7 +12,7 @@ public final class StationPartition implements StationConnectivity {
     private final int[] partitions;
 
     /**
-     * Private Builder
+     * Constructs the partitions of stations from the given array
      * @param repLinks : links (numbers) pointing to each station's representative
      */
     private StationPartition(int[] repLinks) {
@@ -55,6 +55,7 @@ public final class StationPartition implements StationConnectivity {
             for(int i = 0; i< partitionsArray.length; i++){
                 partitionsArray[i] = representative(i);
              }
+
             return new StationPartition(partitionsArray);
         }
 

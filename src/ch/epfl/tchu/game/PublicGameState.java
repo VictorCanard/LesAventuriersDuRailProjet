@@ -1,30 +1,22 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Describes the state of the game at a point in time, visible to everyone
+ * Represents the state of the game at a point in time, visible to everyone
  * @author Victor Canard-Duchêne (326913)
  */
 public class PublicGameState {
 
     private final int ticketDeckSize;
-
-
     private final PublicCardState publicCardState;
-
     private final Map<PlayerId, PublicPlayerState> playerStates;
-
-
     private final PlayerId currentPlayerId;
-
     private final PlayerId lastPlayer;
-
 
     /**
      * Constructs the "public" state of the game
@@ -120,8 +112,5 @@ public class PublicGameState {
                 .stream()
                 .flatMap((publicPlayerState -> publicPlayerState.routes().stream()))
                 .collect(Collectors.toList());
-
     }
-
-
 }

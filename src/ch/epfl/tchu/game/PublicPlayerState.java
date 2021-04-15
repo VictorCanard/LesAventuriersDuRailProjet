@@ -5,21 +5,16 @@ import ch.epfl.tchu.Preconditions;
 import java.util.List;
 
 /**
- * Describes the players situation at a point in the game, visible to everyone in the game
+ * Represents the players situation at a point in the game, visible to everyone in the game
  * @author Victor Canard-Duchêne (326913)
  */
 public class PublicPlayerState {
 
     private final int ticketCount;
-
     private final int cardCount;
-
     private final int carCount;
-
     private final int claimPoints;
-
     private final List<Route> routes;
-
 
     /**
      * Constructor for the players public state at a point in the game
@@ -33,10 +28,8 @@ public class PublicPlayerState {
 
         this.ticketCount = ticketCount;
         this.cardCount = cardCount;
-
         this.carCount = calculateCarCount(routes);
         this.claimPoints = calculateClaimPoints(routes);
-
         this.routes = List.copyOf(routes);
     }
 

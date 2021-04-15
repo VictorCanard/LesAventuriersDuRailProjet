@@ -4,19 +4,18 @@ import ch.epfl.tchu.Preconditions;
 import java.util.List;
 import java.util.Objects;
 
-
+/**
+ * Represents the state of the playing cards at a point in the game, viewable by everyone in the game
+ * @author Anne-Marie Rusu (296098)
+ */
 public class PublicCardState {
 
     private final List<Card> faceUpCards;
-
-
     private final int deckSize;
-
-
     private final int discardsSize;
 
     /**
-     * PublicCardState constructor
+     * Constructs the public card state from the given arguments
      * @param faceUpCards : cards that are shown as visible
      * @param deckSize : size of the deck
      * @param discardsSize : size of the discard pile

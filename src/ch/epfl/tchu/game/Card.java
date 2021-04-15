@@ -3,11 +3,10 @@ package ch.epfl.tchu.game;
 import java.util.List;
 
 /**
- * Types of cards that can be played
+ * Represents the types of cards that can be played
  * @author Victor Jean Canard-Duchene (326913)
  * @author Anne-Marie Rusu (296098)
  */
-
 public enum Card {
     BLACK(Color.BLACK),
     VIOLET(Color.VIOLET),
@@ -36,7 +35,7 @@ public enum Card {
     public final static List<Card> CARS = ALL.subList(0,8);
 
     /**
-     * Constructor for Card
+     * Constructs the card from the given color
      * @param color : the color of the corresponding card
      */
     Card(Color color){
@@ -53,11 +52,10 @@ public enum Card {
     }
 
     /**
-     * Determines the color of the card from its type. Null if its a locomotive card
+     * Determines the color of the card from its type. Null if its a locomotive card.
      * @return : the color of the given card
      */
     public Color color(){
         return this.color;
-
     }
 }

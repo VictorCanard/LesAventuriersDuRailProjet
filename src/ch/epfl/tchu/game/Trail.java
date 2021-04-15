@@ -8,16 +8,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *A trail formed from a list of routes between two given stations
+ * Represents a trail formed from a list of routes between two given stations
  * @author Victor Canard-Duchêne (326913)
  */
 
 public final class Trail {
 
-
     private final List<Route> routes;
-
-
     private final Station station1;
     private final Station station2;
 
@@ -34,7 +31,7 @@ public final class Trail {
     }
 
     /**
-     *Determines the longest trail formed from a given list of routes
+     * Determines the longest trail formed from a given list of routes
      * @param routes : a list of routes
      * @return the longest trail of these routes
      */
@@ -62,7 +59,6 @@ public final class Trail {
 
                     newTrails.add(newTrail);
                 });
-
             }
 
             trails = List.copyOf(newTrails);
@@ -76,9 +72,7 @@ public final class Trail {
 
         }
         return longestTrail;
-
     }
-
 
     /**
      * Creates a new list of trails where each trail is composed of one route
@@ -114,7 +108,6 @@ public final class Trail {
                     .filter(route -> checkIfNewRouteCanBeAdded(route, trailEndStationToWhichRoutesCanBeAdded))
                     .filter(route -> !(trail.routes.contains(route)))
                     .collect(Collectors.toList());
-
     }
 
     /**
@@ -128,7 +121,7 @@ public final class Trail {
     }
 
     /**
-     *Getter for the length of a trail as the sum of the lengths of its routes
+     * Getter for the length of a trail as the sum of the lengths of its routes
      * @return length of the trail
      */
     public int length(){
@@ -139,7 +132,7 @@ public final class Trail {
     }
 
     /**
-     *Getter for the first station of the trail
+     * Getter for the first station of the trail
      * @return the first station of the trail
      */
     public Station station1(){
@@ -147,7 +140,7 @@ public final class Trail {
     }
 
     /**
-     *Getter for the second station of the trail
+     * Getter for the second station of the trail
      * @return the second station of the trail
      */
     public Station station2(){
@@ -163,7 +156,6 @@ public final class Trail {
         if(routes.isEmpty()){
             return "";
         }
-
         String text = station1 +
                 StringsFr.EN_DASH_SEPARATOR +
                 station2;

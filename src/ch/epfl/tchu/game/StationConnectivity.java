@@ -1,7 +1,7 @@
 package ch.epfl.tchu.game;
 
 /**
- * Interface StationConnectivity
+ * Represents the connectivity of two stations on the map
  * @author Anne-Marie Rusu (296098)
  */
 public interface StationConnectivity {

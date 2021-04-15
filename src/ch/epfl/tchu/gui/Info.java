@@ -8,7 +8,7 @@ import ch.epfl.tchu.game.Trail;
 import java.util.*;
 
 /**
- * Text describing the progression of the game
+ * Represents the text describing the progression of the game
  * @author Victor Jean Canard-Duchene (326913)
  */
 public final class Info {
@@ -33,7 +33,7 @@ public final class Info {
     }
 
     /**
-     *Gives the french name of the given card
+     * Gives the french name of the given card
      * @param card : the specified card to get the name from
      * @param count : the number of cards there are
      * @return message including the french name of the given card, in plural if there is more than one
@@ -45,7 +45,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message that the two players have tied at the end of the game
+     * Gives the message that the two players have tied at the end of the game
      * @param playerNames : the list of names of the two players
      * @param points : number of points they have earned at the end of the game
      * @return the message that the players have tied and how many points they earned
@@ -57,7 +57,7 @@ public final class Info {
     }
 
     /**
-     *Assigns which player will play first
+     * Assigns which player will play first
      * @return message including the name of the player that will take the first turn
      */
     public String willPlayFirst(){
@@ -65,7 +65,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message of the number of tickets that the given player has kept
+     * Gives the message of the number of tickets that the given player has kept
      * @param count : the number of tickets to keep
      * @return message including the number of tickets the player has kept
      */
@@ -82,7 +82,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message of the number of tickets the player has drawn
+     * Gives the message of the number of tickets the player has drawn
      * @param count : number of tickets to draw
      * @return message including how many tickets the player has drawn
      */
@@ -91,7 +91,7 @@ public final class Info {
     }
 
     /**
-     *Gives message that the player drew a card from the draw pile
+     * Gives message that the player drew a card from the draw pile
      * @return message declaring the player drew a card from the draw pile
      */
     public String drewBlindCard(){
@@ -99,7 +99,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message that the player drew a card from the 5 face up cards
+     * Gives the message that the player drew a card from the 5 face up cards
      * @param card : the card that was drawn
      * @return message including the card name that was drawn from the face-up cards
      */
@@ -108,7 +108,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message that a route was claimed by the player
+     * Gives the message that a route was claimed by the player
      * @param route : route claimed by player
      * @param cards : cards used to claim route
      * @return message including the route that was claimed by the player and the cards used to claim it
@@ -118,7 +118,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message announcing that the player wants to take a tunnel route
+     * Gives the message announcing that the player wants to take a tunnel route
      * @param route : the tunnel route to be claimed
      * @param initialCards : the cards the player has put down initially to claim the tunnel route
      * @return message including the tunnel to be attempted and the initial cards played by the player
@@ -128,7 +128,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message that the player has drawn 3 additional cards from the draw pile
+     * Gives the message that the player has drawn 3 additional cards from the draw pile
      * @param drawnCards : the three drawn cards
      * @param additionalCost : the additional cost from the three cards
      * @return message including the names of the additional cards and the additional cost
@@ -146,11 +146,10 @@ public final class Info {
         }
 
         return String.format("%s%s", additionalCards, additionalCostMessage);
-
     }
 
     /**
-     *Gives the message that the player failed, or did not want to claim the route
+     * Gives the message that the player failed, or did not want to claim the route
      * @param route : the route that was abandoned
      * @return message including the route that was not claimed by the player
      */
@@ -159,7 +158,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message that the last turn of the game is beginning
+     * Gives the message that the last turn of the game is beginning
      * @param carCount : the number of car cards less or equal to 2, signaling the final round
      * @return message including how many cars the player has, and the last turn of the game is beginning
      */
@@ -168,7 +167,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message of the player who received the bonus points from claiming the longest trail
+     * Gives the message of the player who received the bonus points from claiming the longest trail
      * @param longestTrail : the longest trail in the game
      * @return message including the player who won the bonus and on what trail, and the number of points they get
      */
@@ -179,7 +178,7 @@ public final class Info {
     }
 
     /**
-     *Gives the message that the player has won
+     * Gives the message that the player has won
      * @param points : number of points the player has won with
      * @param loserPoints : number of points the losing opponent has gained
      * @return message including the number of points of the winning and losing player
@@ -221,11 +220,9 @@ public final class Info {
                     .append(commaSeparator)
                     //And separator before the last item
                     .append(andSeparator);
-
         }
         return stringOfAllCardNamesToReturn.toString();
     }
-
 
     /**
      * Returns a bag of cards as a list of card names in French
@@ -244,7 +241,4 @@ public final class Info {
         }
         return stringList;
     }
-
-
-
 }

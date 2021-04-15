@@ -2,13 +2,12 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 /**
- * A deck of cards of a specified type
+ * Represents a deck of cards of a specified type
  * @author Victor Jean Canard-Duchene (326913)
  * @param <C> : the type of card. In this project: cards or tickets
  */
@@ -24,7 +23,7 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     /**
-     *Construction method for creating a deck of cards
+     * Construction method for creating a deck of cards
      * @param cards : the group of cards to be used to form the deck
      * @param rng : an instance of a random number generator
      * @param <C> : the specified type of cards
@@ -38,7 +37,7 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     /**
-     *Getter for the size of a deck
+     * Getter for the size of a deck
      * @return the size of the deck
      */
     public int size(){
@@ -46,7 +45,7 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     /**
-     *Determines if a given deck of cards is empty
+     * Determines if a given deck of cards is empty
      * @return true if the deck has no cards, false otherwise
      */
     public boolean isEmpty(){
@@ -65,7 +64,7 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     /**
-     *"Removes" the top card from a given deck
+     * "Removes" the top card from a given deck
      * @throws IllegalArgumentException if the deck is empty
      * @return a new deck without the top card (giving the illusion of removing the top card)
      */
@@ -76,7 +75,7 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     /**
-     *Determines the top cards of the given deck
+     * Determines the top cards of the given deck
      * @param count : the number of cards to be revealed
      * @throws IllegalArgumentException if count is out of bounds of the size of the deck or if it is strictly negative
      * @return a group of cards from the top of the deck
@@ -88,7 +87,7 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     /**
-     *"Removes" a number of cards from the top of the deck
+     * "Removes" a number of cards from the top of the deck
      * @param count : the number of cards to be "removed"
      * @throws IllegalArgumentException if count is out of bounds of the size of the deck or if it is strictly negative
      * @return a new deck with the specified number of cards removed from the top
