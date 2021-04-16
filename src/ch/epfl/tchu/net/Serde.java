@@ -9,35 +9,36 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public interface Serde<U> {
-    String serialize(U objectUoSerialize);
+public interface Serde<T> {
+    String serialize(T objectToSerialize);
 
-    U deserialize(String stringUoDeserialize);
+    T deserialize(String stringToDeserialize);
 
-    default Serde<U> of(Function<U, String> serializingFunction, Function<String, U> deserializingFunction){
+    static <T>Serde<T> of(Function<T, String> serializingFunction, Function<String, T> deserializingFunction){
 
         return new Serde<>() {
             @Override
-            public String serialize(U objectUoSerialize) {
-                return serializingFunction.apply(objectUoSerialize);
+            public String serialize(T objectToSerialize) {
+                return serializingFunction.apply(objectToSerialize);
             }
 
             @Override
-            public U deserialize(String stringUoDeserialize) {
-                return deserializingFunction.apply(stringUoDeserialize);
+            public T deserialize(String stringToDeserialize) {
+                return deserializingFunction.apply(stringToDeserialize);
             }
         };
     }
-    default Serde<U> oneOf(List<U> listOfValuesOfEnumType){
-        Function<U, String> serializingFunction = (t) -> String.valueOf(listOfValuesOfEnumType.indexOf(t));
+    static <T>Serde<T> oneOf(List<T> listOfValuesOfEnumType){
+        Function<T, String> serializingFunction = (t) -> String.valueOf(listOfValuesOfEnumType.indexOf(t));
 
-        Function<String, U> deserializingFunction = (string) -> listOfValuesOfEnumType.get(Integer.parseInt(string));
+        Function<String, T> deserializingFunction = (string) -> listOfValuesOfEnumType.get(Integer.parseInt(string));
 
         return of(serializingFunction, deserializingFunction);
 
 
     }
-    default <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter){
+    static  <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter){
+
         Function<List<T>, String> serializingFunction = (list) -> new StringJoiner(delimiter)
                 .add(
                         list.stream()
@@ -54,19 +55,19 @@ public interface Serde<U> {
 
         return new Serde<>() {
             @Override
-            public String serialize(List<T> objectUoSerialize) {
-                return serializingFunction.apply(objectUoSerialize);
+            public String serialize(List<T> objectToSerialize) {
+                return serializingFunction.apply(objectToSerialize);
             }
 
             @Override
-            public List<T> deserialize(String stringUoDeserialize) {
-                return deserializingFunction.apply(stringUoDeserialize);
+            public List<T> deserialize(String stringToDeserialize) {
+                return deserializingFunction.apply(stringToDeserialize);
             }
         };
 
 
     }
-    default <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> usedSerde, String delimiter){
+    static  <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> usedSerde, String delimiter){
         Function<SortedBag<T>, String> serializingFunction = (sortedBag) ->
                 new StringJoiner(delimiter)
                 .add(
@@ -85,13 +86,13 @@ public interface Serde<U> {
 
         return new Serde<>() {
             @Override
-            public String serialize(SortedBag<T> objectUoSerialize) {
-                return serializingFunction.apply(objectUoSerialize);
+            public String serialize(SortedBag<T> objectToSerialize) {
+                return serializingFunction.apply(objectToSerialize);
             }
 
             @Override
-            public SortedBag<T> deserialize(String stringUoDeserialize) {
-                return deserializingFunction.apply(stringUoDeserialize);
+            public SortedBag<T> deserialize(String stringToDeserialize) {
+                return deserializingFunction.apply(stringToDeserialize);
             }
         };
 
