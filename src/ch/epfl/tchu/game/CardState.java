@@ -5,6 +5,7 @@ import ch.epfl.tchu.SortedBag;
 import java.util.*;
 
 /**
+ * Represents the state of the playing cards at a point in the game
  * @author Anne-Marie Rusu (296098)
  */
 public final class CardState extends PublicCardState{
@@ -15,7 +16,7 @@ public final class CardState extends PublicCardState{
 
 
     /**
-     * CardState constructor (private so the class has control on the arguments that are passed)
+     * Constructs the card state with the given arguments (private so the class has control on the arguments that are passed)
      * @param faceUpCards : cards in the faceUp Pile
      * @param discardPile : cards in the Discard Pile
      * @param drawPile : cards of the Draw Pile
@@ -29,11 +30,10 @@ public final class CardState extends PublicCardState{
 
 
     /**
-     * Static method to initialize a card state
+     * Initializes the card state from a given deck of cards to a specific starting arrangement
      * @param deck : Deck of cards to make a new card state
-     * Makes a list of cards to be face-up from the deck and creates a draw pile
      * @throws IllegalArgumentException if the size of the deck given as an argument is strictly inferior to 5 cards
-     * @return a new card state with no discards, a certain number of face-up Cards and the rest of the deck as a draw pile
+     * @return a new card state with no discards, 5 face-up cards and the rest of the deck as the draw pile
      */
     public static CardState of(Deck<Card> deck){
         Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT);
@@ -49,13 +49,13 @@ public final class CardState extends PublicCardState{
     }
 
     /**
-     * Returns a new set of cards nearly identical to this but where the visible card of index slot has been replaced
+     *Returns a new set of cards nearly identical to this but where the visible card of index slot has been replaced
      * by the one on top of the draw pile
      * (the one of top of the draw pile is thus removed from the draw pile)
      * @param slot : index of the face up card to be replaced
      * @throws IllegalArgumentException if the draw pile isn't empty
      * @throws IndexOutOfBoundsException if the index slot isn't included in [0;5[
-     * @return a new set of cards with different faceUp cards and draw piles
+     * @return a new card state with different faceUp cards and draw piles
      */
     public CardState withDrawnFaceUpCard(int slot){
         Preconditions.checkArgument(!(drawPile.isEmpty()));
@@ -68,9 +68,9 @@ public final class CardState extends PublicCardState{
     }
 
     /**
-     * Getter for the deck's top card
+     * Getter for the draw pile's top card
      * @throws IllegalArgumentException if draw pile is empty
-     * @return the card at the top of the deck
+     * @return the card at the top of the draw pile
      */
     public Card topDeckCard(){
         Preconditions.checkArgument(!(drawPile.isEmpty()));
@@ -79,9 +79,9 @@ public final class CardState extends PublicCardState{
     }
 
     /**
-     * Getter for a new deck identical but without the top card
+     * "Removes" a card from the top of the draw pile
      * @throws IllegalArgumentException if draw pile is empty
-     * @return a deck without its top card
+     * @return a new card state with the top draw pile card removed
      */
     public CardState withoutTopDeckCard(){
         Preconditions.checkArgument(!(drawPile.isEmpty()));
@@ -90,11 +90,10 @@ public final class CardState extends PublicCardState{
     }
 
     /**
-     * Getter for a new draw pile recreated from the discard pile
-     * (the drawPile is shuffled by the method of() from the class Deck)
+     * "Recreates" a draw pile using the cards from the discard pile
      * @param rng : the random number generator to shuffle the draw pile
      * @throws IllegalArgumentException if the draw pile is not empty
-     * @return a new CardState where the draw pile is a shuffled discard pile and the discard pile is thus empty
+     * @return a new CardState where the draw pile is a shuffled discard pile and the discard pile is empty
      */
     public CardState withDeckRecreatedFromDiscards(Random rng){
         Preconditions.checkArgument(drawPile.isEmpty());
@@ -104,13 +103,13 @@ public final class CardState extends PublicCardState{
     }
 
     /**
-     * Getter for a new CardState with additional cards added to the discard pile
+     * "Adds" cards to the discard pile
      * @param additionalDiscards : cards to add to this CardState's discard pile
-     * @return a new CardState with the updated discard pile
+     * @return a new card state with more cards in the discard pile
      */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards){
         SortedBag<Card> newDiscards = discardPile.union(additionalDiscards);
 
-        return new CardState(super.faceUpCards(), drawPile, newDiscards);
+        return new CardState(faceUpCards(), drawPile, newDiscards);
     }
 }

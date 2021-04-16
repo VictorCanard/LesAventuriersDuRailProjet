@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A trip between two stations
+ * Represents a trip between two stations
  * @author Anne-Marie Rusu (296098)
  * @author Victor Jean Canard-Duchene (326913)
  */
@@ -42,7 +42,7 @@ public final class Trip {
      * @param points : number of points attributed to the trip
      * @throws IllegalArgumentException if the departure station or arrival stations are null
      * or if the number of points is negative
-     * @return : all possible trips.
+     * @return : a list of all possible trips
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points){
         Preconditions.checkArgument(from != null && to != null && points > 0);

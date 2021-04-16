@@ -7,13 +7,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Describes the player's state at a point in the game
+ * Represents the player's state at a point in the game
  * @author Victor Canard-Duchêne (326913)
  */
 public final class PlayerState extends PublicPlayerState {
 
     private final SortedBag<Ticket> tickets;
-
     private final SortedBag<Card> cards;
 
     /**

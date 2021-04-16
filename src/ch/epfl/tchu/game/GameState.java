@@ -2,11 +2,10 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
-
 import java.util.*;
 
 /**
- *Describes the state of the game at a point in time
+ * Represents the state of the game at a point in time
  * @author Victor Canard-Duchêne (326913)
  * @author Anne-Marie Rusu (296098)
  */
@@ -25,7 +24,7 @@ public final class GameState extends PublicGameState{
 
 
     /**
-     * Private constructor for GameState
+     * Constructs a GameState with the following attributes
      * @param playerStates : map with player ids associated to their player states
      * @param ticketDeck : deck of tickets to be drawn throughout the game
      * @param cardState : state of the cards (includes state of the draw & discards pile as well as the face-up cards)
@@ -36,17 +35,13 @@ public final class GameState extends PublicGameState{
                       Deck<Ticket> ticketDeck,
                       CardState cardState,
                       PlayerId currentPlayer,
-                      PlayerId lastPlayer
-                      ) {
+                      PlayerId lastPlayer) {
         super(ticketDeck.size(), cardState, currentPlayer, makePublic(playerStates), lastPlayer);
 
         this.playerStateMap = Map.copyOf(playerStates);
-
         this.ticketDeck = ticketDeck;
         this.cardState = cardState;
-
         this.temporaryMapToModifyPlayerState = new EnumMap<>(playerStateMap);
-
     }
 
     /**
@@ -115,10 +110,8 @@ public final class GameState extends PublicGameState{
     @Override
     public PlayerState currentPlayerState(){return playerStateMap.get(super.currentPlayerId());}
 
-    //Group 1
-
     /**
-     * Returns the count number of tickets from the top of the pile
+     * Returns the specified number of tickets from the top of the pile
      * @param count : number of tickets
      * @throws IllegalArgumentException if the count is negative or strictly superior to the player's number of tickets
      * @return the count number of top tickets
@@ -130,8 +123,8 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Return a new game state without the count number of tickets
-      * @param count : number of tickets we don't want in this new GameState
+     * "Removes" the specified number of tickets from the top of the ticket draw pile
+     * @param count : number of tickets we don't want in this new GameState
      * @throws IllegalFormatCodePointException if the count is negative or strictly superior to the player's number of tickets
      * @return a new game state with count tickets removed
      */
@@ -153,18 +146,18 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a GameState without the top card
+     * "Removes" the top card from the draw pile
      * @throws IllegalArgumentException if the deck is empty
-     * @return a new GameState without the top card
+     * @return a new GameState without the top card in the draw pile
      */
     public GameState withoutTopCard(){
         Preconditions.checkArgument(!cardState.isDeckEmpty());
 
-        return new GameState(playerStateMap, ticketDeck, cardState.withoutTopDeckCard(),super.currentPlayerId(), super.lastPlayer());
+        return new GameState(playerStateMap, ticketDeck, cardState.withoutTopDeckCard(), super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
-     * Makes a new GameState with more cards included in the discard pile
+     * "Adds" cards to the discard pile
      * @param discardedCards : cards to add to card's state discard pile
      * @return a new game state with more discarded cards
      */
@@ -173,7 +166,7 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns an identical GameState except if the draw pile is empty in which case it creates a new from the discards pile and shuffles it
+     * "Recreates" the draw pile with the discarded cards, if the draw pile becomes empty
      * @param rng : Random Number Generator to shuffle the new deck created from the discard pile
      * @return identical game state or with a new draw pile made from the discards pile.
      */
@@ -183,10 +176,9 @@ public final class GameState extends PublicGameState{
         }
         return this;
     }
-//Group 2
 
     /**
-     * Returns an identical GameState but with the player's initially chosen tickets added
+     * "Adds" the specified tickets to the player, chosen from the 5 initially distributed ones
      * @param playerId : Player 1 or 2, the player that has chosen these tickets
      * @param chosenTickets : tickets chosen at the start of the game
      * @throws IllegalArgumentException if the player has at least one ticket already
@@ -202,11 +194,11 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a new GameState with less tickets in the ticket pile as these are now in the player's state
+     * "Adds" the specified tickets to the player, from the one's drawn throughout the game
      * @param drawnTickets : all tickets drawn by the player initially
      * @param chosenTickets : tickets kept by the player
      * @throws IllegalArgumentException if drawn tickets does not contain the chosen tickets
-     * @return new GameState with the current player's chosen additional tickets
+     * @return new GameState with the current player's chosen additional tickets, and less tickets in the ticket draw pile
      */
     public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets, SortedBag<Ticket> chosenTickets){
         Preconditions.checkArgument(drawnTickets.contains(chosenTickets));
@@ -217,11 +209,11 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a new GameState where the chosen card at index slot was taken from the face-up cards and put into the player's hand
-     * And the chosen card in the face up cards was replaced with the one at the top of the deck
-     * @param slot : the index of the drawn face-up
+     * Draws a card from the chosen card at index slot from the face-up cards and put into the player's hand and replaces
+     * it with one from the draw pile
+     * @param slot : the index of the drawn face-up card
      * @throws IllegalArgumentException if it's not possible to draw cards
-     * @return a new GameState with a drawn face up card at a given slot
+     * @return a new GameState with the drawn card removed from the face up cards, and a card added in that slot from the draw pile
      */
     public GameState withDrawnFaceUpCard(int slot){
         Preconditions.checkArgument(canDrawCards());
@@ -233,9 +225,9 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a new GameState where the deck's top card has been placed in the current player's hand
+     * Draws the top card from the draw pile and place it in the player's hand
      * @throws IllegalArgumentException if it's not possible to draw cards
-     * @return a new modified GameState with a blindly drawn card
+     * @return a new GameState with a blindly drawn card
      */
     public GameState withBlindlyDrawnCard(){
         Preconditions.checkArgument(canDrawCards());
@@ -248,11 +240,11 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     * Returns a new GameState where the current player has claimed a given route with a given set cards
+     * Claims a route with a given set of cards
      * (thus adds the route to the player's collection and removes the cards he used)
      * @param route : the claimed route
      * @param cards : the claim cards
-     * @return a new GameState with a new route and less cards for the current player
+     * @return a new GameState with a new route added and less cards for the current player
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards){
         temporaryMapToModifyPlayerState.put(super.currentPlayerId(), currentPlayerState().withClaimedRoute(route, cards));
@@ -260,8 +252,6 @@ public final class GameState extends PublicGameState{
 
         return new GameState(temporaryMapToModifyPlayerState, ticketDeck, newState, super.currentPlayerId(), super.lastPlayer());
     }
-
-    //Group 3
 
     /**
      * Determines when the last turn of the game begins
@@ -277,7 +267,7 @@ public final class GameState extends PublicGameState{
     }
 
     /**
-     *The state of the game where it's the next player's turn to play.
+     * The state of the game where it's the next player's turn to play.
      * Changes the last player's id if the last turn begins.
      * @return a new GameState where it's the next player's turn
      */
@@ -287,5 +277,4 @@ public final class GameState extends PublicGameState{
 
         return new GameState(playerStateMap, ticketDeck, cardState, otherPlayer, lastPlayer);
     }
-
 }

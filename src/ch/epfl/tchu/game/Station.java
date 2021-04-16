@@ -4,18 +4,17 @@ import ch.epfl.tchu.Preconditions;
 
 
 /**
- * Train stations used in the game
+ * Represents a train station used in the game
  * @author Victor Jean Canard-Duchene (326913)
  */
 
 public final class Station {
 
     private final int id;
-
     private final String name;
 
     /**
-     * A train station, defined by its id and name
+     * Constructs a train station, defined by its id and name
      * @param id between 0 and 50
      * @param name Station's name
      * @throws IllegalArgumentException if the id is strictly negative

@@ -1,32 +1,22 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Describes the state of the game at a point in time, visible to everyone
+ * Represents the state of the game at a point in time, visible to everyone
  * @author Victor Canard-Duchêne (326913)
  */
 public class PublicGameState {
 
     private final int ticketDeckSize;
-
-
     private final PublicCardState publicCardState;
-
     private final Map<PlayerId, PublicPlayerState> playerStates;
-
-
     private final PlayerId currentPlayerId;
-
     private final PlayerId lastPlayer;
-
-    private final static int NUMBER_OF_PLAYERS = 2;
-
 
     /**
      * Constructs the "public" state of the game
@@ -39,10 +29,9 @@ public class PublicGameState {
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer){
         boolean positiveTicketCount = ticketsCount >= 0;
-        boolean exactlyTwoPairs = playerState.size() == NUMBER_OF_PLAYERS;
+        boolean exactlyTwoPairs = playerState.size() == 2;
 
-        Preconditions.checkArgument(positiveTicketCount
-                                            && exactlyTwoPairs);
+        Preconditions.checkArgument(positiveTicketCount && exactlyTwoPairs);
 
         this.ticketDeckSize = ticketsCount;
         this.publicCardState = Objects.requireNonNull(cardState);
@@ -118,13 +107,9 @@ public class PublicGameState {
      * @return a list of all the routes claimed by both the players
      */
     public List<Route> claimedRoutes(){
-
         return playerStates.values()
                 .stream()
                 .flatMap((publicPlayerState -> publicPlayerState.routes().stream()))
                 .collect(Collectors.toList());
-
     }
-
-
 }

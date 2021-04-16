@@ -59,7 +59,7 @@ public interface Player {
 
     /**
      * Determines which action the player would like to take during their turn
-     * @return : the action they will take in the player's turn
+     * @return the action they will take in the player's turn
      */
     TurnKind nextTurn();
 

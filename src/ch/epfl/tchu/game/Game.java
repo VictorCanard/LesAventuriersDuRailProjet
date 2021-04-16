@@ -2,9 +2,7 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
-
 import ch.epfl.tchu.gui.Info;
-
 import java.util.*;
 
 /**
@@ -19,7 +17,7 @@ public final class Game {
     /**
      * Represents the information contained in the game, and provides utility methods to go to the game's next turn or check if the last turn begins.
      * This class was created to avoid having >5 arguments in each method that is called by play().
-     * Mutable class as the function modifyGameState directly changes AllGameData's gameState attribute
+     * Mutable class as the function modifyGameState directly changes AllGameData's gameState attributes.
      * (this avoids the allGameData = allGameData.modifyGameState() assignment which quickly takes up space and makes the program lose in clarity).
      */
     private static class AllGameData {
@@ -30,7 +28,7 @@ public final class Game {
         private final Random rng;
 
         /**
-         * AllGameData's constructor
+         * Constructs the group of information contained in the game
          * @param gameState : state of the game at the start
          * @param players : the players playing the game
          * @param playerNames : the names of the corresponding players
@@ -100,6 +98,25 @@ public final class Game {
         //Last turn begins returned true thus the end of game is activated
         endOfGame(allGameData);
     }
+
+    /**
+     * Communicates the given information to all the players in the game
+     * @param players : the players in the game, associated with their playerIds
+     * @param infoToReceive : the information to be communicated to the players
+     */
+    private static void receiveInfoForAll(Map<PlayerId, Player> players, String infoToReceive){
+        players.forEach((playerId, player) -> player.receiveInfo(infoToReceive));
+    }
+
+    /**
+     * Informs all the players of the updated state of the game and the state of the players
+     * @param players : the players in the game, associated with their playerIds
+     * @param gameState : the new state of the game
+     */
+    private static void updateAllStates(Map<PlayerId, Player> players, GameState gameState){
+        players.forEach((playerId, player)-> player.updateState(gameState,  gameState.playerState(playerId)));
+    }
+
     /**
      * Initializes the player's information generators
      * @param players : the two players in the game
@@ -117,8 +134,8 @@ public final class Game {
 
     /**
      * Runs the setup of the game: chooses the first player and distributes the initial tickets and cards
-     * @param allGameData : all of the game's information : all of the game's information
-     * returns :
+     * @param allGameData : all of the game's information
+     * returns : a game state with the game now set up for playing
      */
     private static GameState setup(AllGameData allGameData){
         Map<PlayerId, Player> players = allGameData.players;
@@ -136,9 +153,9 @@ public final class Game {
     }
 
     /**
-     *
-     * @param allGameData : all of the game's information : all of the game's information all of the game's information
-     * @return :
+     * Distributes the initial tickets to the players
+     * @param allGameData : all of the game's information
+     * @return : a game state with the distributed and chosen tickets
      */
     private static GameState distributeTickets(AllGameData allGameData){
         Map<PlayerId, Integer> keptTicketNumber = new EnumMap<>(PlayerId.class);
@@ -168,27 +185,9 @@ public final class Game {
     }
 
     /**
-     * Communicated the given information to all the players in the game
-     * @param players : the players in the game, associated with their playerIds
-     * @param infoToReceive : the information to be communicated to the players
-     */
-    private static void receiveInfoForAll(Map<PlayerId, Player> players, String infoToReceive){
-        players.forEach((playerId, player) -> player.receiveInfo(infoToReceive));
-    }
-
-    /**
-     * Informs all the players of the updated state of the game and the state of the players
-     * @param players : the players in the game, associated with their playerIds
-     * @param gameState : the new state of the game
-     */
-    private static void updateAllStates(Map<PlayerId, Player> players, GameState gameState){
-        players.forEach((playerId, player)-> player.updateState(gameState,  gameState.playerState(playerId)));
-    }
-
-    /**
      * Runs the next turn of the game
-     * @param allGameData : all of the game's information:
-     * @return the new gameState at the end of the turn
+     * @param allGameData : all of the game's information
+     * @return a game state representing the state at the end of the turn
      */
     private static GameState nextTurn(AllGameData allGameData){
         Map<PlayerId, Player> players = allGameData.players;
@@ -274,16 +273,15 @@ public final class Game {
             }
         }
         return allGameData.gameState;
-
     }
 
     /**
      * Has the player attempt to claim a certain route. The route's level (UNDERGROUND or OVERGROUND)
      * determines how it will be captured (or attempted to be captured).
-     * @param allGameData : all of the game's information : all of the game's information
+     * @param allGameData : all of the game's information
      * @param currentPlayer : player whose turn it is currently
      * @param currentInfo : information generator of the current player
-     * @return a gameState where the current player has or hasn't claimed a new route with his initial cards.
+     * @return a game state where the current player has or hasn't claimed a new route with his initial cards.
      */
     private static GameState claimRoute(AllGameData allGameData, Player currentPlayer, Info currentInfo){
         Route claimedRoute = currentPlayer.claimedRoute();
@@ -292,9 +290,7 @@ public final class Game {
         if(claimedRoute.level() == Route.Level.UNDERGROUND) {
             return claimUnderground(allGameData, currentPlayer, currentInfo, claimedRoute, initialClaimCards);
         }
-        //Overground route
         return claimOverground(allGameData, currentInfo, claimedRoute, initialClaimCards);
-
     }
 
     /**
@@ -303,7 +299,7 @@ public final class Game {
      * @param currentInfo : information generator of the current player
      * @param claimedRoute : route that the player has decided to claim
      * @param initialClaimCards : initial cards the player has chosen to attempt capturing this route
-     * @return a gameState where the player has claimed the route if he had the necessary cards, or where he couldn't/ didn't want to claim it.
+     * @return a game state where the player has claimed the route if he had the necessary cards, or where he couldn't/ didn't want to claim it.
      */
     private static GameState claimUnderground(AllGameData allGameData, Player currentPlayer, Info currentInfo, Route claimedRoute, SortedBag<Card> initialClaimCards){
         Map<PlayerId, Player> players = allGameData.players;
@@ -347,8 +343,8 @@ public final class Game {
                 receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
 
                 return allGameData.gameState
-                        .withMoreDiscardedCards(drawnCards)
                         //Drawn cards are put in the discard
+                        .withMoreDiscardedCards(drawnCards)
                         .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards));
             }
         }
@@ -359,16 +355,15 @@ public final class Game {
             return claimOverground(allGameData, currentInfo, claimedRoute, initialClaimCards);
             //In this case the procedure is the same as when claiming an overground route
         }
-
     }
 
     /**
-     * Has the player automatically claim the overground route
+     * Has the player claim the overground route
      * @param allGameData : all of the game's information
      * @param currentInfo : information generator of the current player
      * @param claimedRoute : route that the player has decided to claim
      * @param initialClaimCards : initial cards the player has chosen to attempt capturing this route
-     * @return a gameState where the current player has claimed the route with his initial claim cards.
+     * @return a game state where the current player has claimed the route with his initial claim cards.
      */
     private static GameState claimOverground(AllGameData allGameData, Info currentInfo, Route claimedRoute, SortedBag<Card> initialClaimCards){
         Map<PlayerId, Player> players = allGameData.players;
@@ -378,7 +373,9 @@ public final class Game {
         return allGameData.gameState.withClaimedRoute(claimedRoute, initialClaimCards);
     }
     /**
-     * Plays the last two turns of tCHu, then calculates who gets the longest trail bonus and who won in the end or if there has been a draw
+     * Runs the end of the game:
+     * Plays the last two turns of tCHu, then calculates who gets the longest trail bonus and who won
+     * in the end or if there has been a draw
      * @param allGameData : all of the game's information
      */
     private static void endOfGame(AllGameData allGameData){
@@ -406,7 +403,7 @@ public final class Game {
     }
 
     /**
-     *Calculates both players' final points (their personal points and then whether or not they obtained the LongestTrailBonus)
+     * Calculates both players' final points (their personal points and then whether or not they obtained the LongestTrailBonus)
      * @param allGameData : all of the game's information
      * @return a map with both player's final points
      */
@@ -458,7 +455,6 @@ public final class Game {
                 associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);  //Adds 10 points to each player's count
             }
         }
-
         receiveInfoForAll(players, longestTrailBonus);
 
         return associatedPlayerPoints;
@@ -494,8 +490,6 @@ public final class Game {
             endOfGameMessage = Info
                     .draw(new ArrayList<>(allGameData.playerNames.values()), currentPlayerPoints);
         }
-
         receiveInfoForAll(allGameData.players, endOfGameMessage);
     }
-
 }

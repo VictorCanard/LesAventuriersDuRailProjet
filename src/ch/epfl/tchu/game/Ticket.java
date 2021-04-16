@@ -6,18 +6,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * A train ticket permitting the player to embark on certain paths in the game
+ * Represents a train ticket permitting the player to embark on certain paths in the game
  * @author Anne-Marie Rusu (296098)
  * @author Victor Canard-Duchêne (326913)
  */
 
 public final class Ticket  implements Comparable<Ticket>{
 
-
     private final String text;
-
     private final List<Trip> trips;
-
 
     /**
      * Primary Ticket constructor defined by a list of trips
@@ -89,7 +86,6 @@ public final class Ticket  implements Comparable<Ticket>{
                 )
                 .collect(Collectors.toCollection(TreeSet::new));
 
-
         return String.join(", ", arrivalStationNames);
     }
 
@@ -108,7 +104,6 @@ public final class Ticket  implements Comparable<Ticket>{
                 .mapToInt(trip -> trip.points(connectivity))
                 .max()
                 .orElse(0);
-
     }
 
     /**
