@@ -14,6 +14,7 @@ import java.util.*;
 
 public final class Game {
     private final static int NUMBER_OF_PLAYERS = 2;
+    private Game(){}
     /**
      * Represents the information contained in the game, and provides utility methods to go to the game's next turn or check if the last turn begins.
      * This class was created to avoid having >5 arguments in each method that is called by play().
