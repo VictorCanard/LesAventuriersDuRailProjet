@@ -5,7 +5,6 @@ import ch.epfl.tchu.game.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class Serdes {
     private Serdes(){}
@@ -37,17 +36,18 @@ public class Serdes {
 
     public static final Serde<List<String>> LIST_STRING_SERDE = Serde.listOf(STRING_SERDE, COMMA);
 
-    public static final Serde<List<Card>> LIST_CARD_SERDE = Serde.listOf(CARD_SERDE, COMMA;
+    public static final Serde<List<Card>> LIST_CARD_SERDE = Serde.listOf(CARD_SERDE, COMMA);
 
-    public static final Serde<List<Route>> LIST_ROUTE_SERDE = Serde.listOf(ROUTE_SERDE, COMMA;
+    public static final Serde<List<Route>> LIST_ROUTE_SERDE = Serde.listOf(ROUTE_SERDE, COMMA);
 
     public static final Serde<SortedBag<Card>> SB_CARD_SERDE = Serde.bagOf(CARD_SERDE, COMMA);
 
     public static final Serde<SortedBag<Ticket>> SB_TICKET_SERDE = Serde.bagOf(TICKET_SERDE, COMMA);
 
-    public static final Serde<List<SortedBag<Card>>> LIST_SB_CARD_SERDE = Serde.listOf(SB_CARD_SERDE, SEMI_COLON;
+    public static final Serde<List<SortedBag<Card>>> LIST_SB_CARD_SERDE = Serde.listOf(SB_CARD_SERDE, SEMI_COLON);
 
     //--------------------------------------------
+
     public static final Serde<PublicCardState> PUBLIC_CARD_STATE_SERDE = Serde.of(
 
             (publicCardState) -> new StringJoiner(SEMI_COLON).add(LIST_CARD_SERDE.serialize(publicCardState.faceUpCards())
@@ -84,9 +84,23 @@ public class Serdes {
                                         LIST_ROUTE_SERDE.deserialize(string.split(SEMI_COLON, -1)[2]))
            );
 
-   public static final Serde<PublicGameState> GAME_STATE_SERDE;
-
-
+   public static final Serde<PublicGameState> GAME_STATE_SERDE = Serde.of(
+           (publicGameState) -> new StringJoiner(COLON).add(INTEGER_SERDE.serialize(publicGameState.ticketsCount())
+                                                            +PUBLIC_CARD_STATE_SERDE.serialize(publicGameState.cardState())
+                                                            +PLAYER_ID_SERDE.serialize(publicGameState.currentPlayerId())
+                                                            +PLAYER_ID_SERDE.serialize(publicGameState.currentPlayerId().next())
+                                                            +PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.currentPlayerState())
+                                                            +PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(publicGameState.currentPlayerId().next()))
+                                                            +PLAYER_ID_SERDE.serialize(publicGameState.lastPlayer()))
+                                                        .toString(),
+//todo: i have doubts about the map
+           (string) -> new PublicGameState(INTEGER_SERDE.deserialize(string.split(COLON, -1)[0]),
+                                            PUBLIC_CARD_STATE_SERDE.deserialize(string.split(COLON, -1)[1]),
+                                            PLAYER_ID_SERDE.deserialize(string.split(COLON, -1)[2]),
+                                            Map.of(PLAYER_ID_SERDE.deserialize(string.split(COLON, -1)[2]), PUBLIC_PLAYER_STATE_SERDE.deserialize(string.split(COLON, -1)[4]),
+                                                    PLAYER_ID_SERDE.deserialize(string.split(COLON, -1)[3]), PUBLIC_PLAYER_STATE_SERDE.deserialize(string.split(COLON, -1)[5])),
+                                            PLAYER_ID_SERDE.deserialize(string.split(COLON, -1)[5]))
+           );
 
 //    Serde<Color> color = Serde.oneOf(Color.ALL);
 //    Serde<List<Color>> listOfColor = Serde.listOf(color, "+");
