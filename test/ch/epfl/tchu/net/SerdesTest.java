@@ -89,6 +89,8 @@ class SerdesTest {
 
         String serialized = Serdes.PUBLIC_GAME_STATE_SERDE.serialize(gs);
 
+
+        //Todo problem here as the list of routes of player 2 is turned into an empty list of size 1
         PublicGameState deserialized = Serdes.PUBLIC_GAME_STATE_SERDE.deserialize(serialized);
 
         assertEquals("40:6,7,2,0,6;30;31:1:10;11;0,1:20;21;:", serialized);
