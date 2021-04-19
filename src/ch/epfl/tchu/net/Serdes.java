@@ -14,11 +14,11 @@ public class Serdes {
 
     private static final String SEMI_COLON = ";";
     private static final String COMMA = ",";
-    private static final String COLON = Pattern.quote(":");
+    private static final String COLON = ":";
 
-    private static final String SEMI_COLON_PATTERN = Pattern.quote(";");
-    private static final String COMMA_PATTERN = Pattern.quote(",");
-    private static final String COLON_PATTERN = Pattern.quote(":");
+    private static final String SEMI_COLON_PATTERN = Pattern.quote(SEMI_COLON);
+    private static final String COLON_PATTERN = Pattern.quote(COLON);
+
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     public static final Serde<Integer> INTEGER_SERDE = Serde.of(i -> Integer.toString(i), Integer::parseInt);
@@ -58,7 +58,7 @@ public class Serdes {
 
     public static final Serde<PublicCardState> PUBLIC_CARD_STATE_SERDE = Serde.of(
 
-            (publicCardState) -> new StringJoiner(";")
+            (publicCardState) -> new StringJoiner(SEMI_COLON)
                     .add(LIST_CARD_SERDE.serialize(publicCardState.faceUpCards()))
                     .add(INTEGER_SERDE.serialize(publicCardState.deckSize()))
                     .add(INTEGER_SERDE.serialize(publicCardState.discardsSize()))
@@ -67,7 +67,7 @@ public class Serdes {
     //Im assuming we need to create the object??
     //todo: if i understood correctly abcd;efgh;ijk; -> [0] = abcd, [1] = efgh, [2] = ijk  using split
             (string) -> {
-                String[] splitString  = string.split(SEMI_COLON, -1);
+                String[] splitString  = string.split(SEMI_COLON_PATTERN, -1);
                 return new PublicCardState(
                         LIST_CARD_SERDE.deserialize(splitString[0]),
                         INTEGER_SERDE.deserialize(splitString[1]),
@@ -75,14 +75,14 @@ public class Serdes {
             });
 
    public static final Serde<PublicPlayerState> PUBLIC_PLAYER_STATE_SERDE = Serde.of(
-           (publicPlayerState) -> new StringJoiner(";")
+           (publicPlayerState) -> new StringJoiner(SEMI_COLON)
                    .add(INTEGER_SERDE.serialize(publicPlayerState.ticketCount()))
                    .add(INTEGER_SERDE.serialize(publicPlayerState.cardCount()))
                    .add(LIST_ROUTE_SERDE.serialize(publicPlayerState.routes()))
                    .toString(),
 
            (string) -> {
-               String[] splitString  = string.split(SEMI_COLON, -1);
+               String[] splitString  = string.split(SEMI_COLON_PATTERN, -1);
                return new PublicPlayerState(
                        INTEGER_SERDE.deserialize(splitString[0]),
                        INTEGER_SERDE.deserialize(splitString[1]),
@@ -92,14 +92,14 @@ public class Serdes {
 
    public static final Serde<PlayerState> PLAYER_STATE_SERDE = Serde.of(
 
-           (playerState) -> new StringJoiner(";")
+           (playerState) -> new StringJoiner(SEMI_COLON)
                    .add(SORTED_BAG_TICKET_SERDE.serialize(playerState.tickets()))
                    .add(SORTED_BAG_CARD_SERDE.serialize((playerState.cards())))
                    .add(LIST_ROUTE_SERDE.serialize(playerState.routes()))
                    .toString(),
 
            (string) -> {
-               String[] splitString  = string.split(SEMI_COLON, -1);
+               String[] splitString  = string.split(SEMI_COLON_PATTERN, -1);
                return new PlayerState(
                        SORTED_BAG_TICKET_SERDE.deserialize(splitString[0]),
                        SORTED_BAG_CARD_SERDE.deserialize(splitString[1]),
@@ -107,18 +107,18 @@ public class Serdes {
            });
 
    public static final Serde<PublicGameState> GAME_STATE_SERDE = Serde.of(
-           (publicGameState) -> new StringJoiner(":")
+           (publicGameState) -> new StringJoiner(COLON)
                    .add(INTEGER_SERDE.serialize(publicGameState.ticketsCount()))
                    .add(PUBLIC_CARD_STATE_SERDE.serialize(publicGameState.cardState()))
                    .add(PLAYER_ID_SERDE.serialize(publicGameState.currentPlayerId()))
-                   .add(PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.currentPlayerState()))
-                   .add(PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(publicGameState.currentPlayerId().next())))
+                   .add(PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(PlayerId.PLAYER_1)))
+                   .add(PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(PlayerId.PLAYER_2)))
                    .add(PLAYER_ID_SERDE.serialize(publicGameState.lastPlayer()))
                    .toString(),
 
 //todo: i have doubts about the map
            (string) -> {
-               String[] splitString  = string.split(SEMI_COLON, -1);
+               String[] splitString  = string.split(COLON_PATTERN, -1);
 
                PlayerId currentPlayer = PLAYER_ID_SERDE.deserialize(splitString[2]);
                PlayerId nextPlayer = PLAYER_ID_SERDE.deserialize(splitString[3]);

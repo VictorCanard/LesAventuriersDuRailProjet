@@ -71,12 +71,11 @@ public interface Serde<T> {
     }
     static  <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter){
 
-        Function<List<T>, String> serializingFunction = (list) -> new StringJoiner(delimiter)
-                .add(
-                        list.stream()
-                                .map(usedSerde::serialize)
-                                .collect(Collectors.toList()).toString())
-                                .toString();
+        Function<List<T>, String> serializingFunction = (list) ->
+                list
+                        .stream()
+                        .map(usedSerde::serialize)
+                        .collect(Collectors.joining(delimiter));
 
 
         Function<String, List<T>> deserializingFunction = (string) ->
