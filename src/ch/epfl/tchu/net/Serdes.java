@@ -3,23 +3,26 @@ package ch.epfl.tchu.net;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Serdes {
-    private Serdes(){} //TODO: Do we need a constructor, we didn't use one in Game.java?
+    private Serdes(){} //TODO: Do we need a constructor, as we didn't use one in Game.java?
 
-    private static final String SEMI_COLON = ";";
-    private static final String COMMA = ",";
-    private static final String COLON = ":";
+    private static final String SEMI_COLON = Pattern.quote(";");
+    private static final String COMMA = Pattern.quote(",");
+    private static final String COLON = Pattern.quote(":");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     public static final Serde<Integer> INTEGER_SERDE = Serde.of(i -> Integer.toString(i), Integer::parseInt);
 
     public static final Serde<String> STRING_SERDE = Serde.of(
-            (string) -> Base64.getEncoder().encodeToString(string.getBytes(StandardCharsets.UTF_8)),
+            (string) -> Base64.getEncoder().encodeToString(string.getBytes(UTF_8)),
             (serializedString) -> new String(
-                    Arrays.toString(Base64.getDecoder().decode(serializedString)).getBytes(StandardCharsets.UTF_8),
-                    StandardCharsets.UTF_8)
+                    Arrays.toString(Base64.getDecoder().decode(serializedString)).getBytes(UTF_8),
+                    UTF_8)
     );
 
     public static final Serde<PlayerId> PLAYER_ID_SERDE = Serde.oneOf(PlayerId.ALL);
@@ -40,11 +43,11 @@ public class Serdes {
 
     public static final Serde<List<Route>> LIST_ROUTE_SERDE = Serde.listOf(ROUTE_SERDE, COMMA);
 
-    public static final Serde<SortedBag<Card>> SB_CARD_SERDE = Serde.bagOf(CARD_SERDE, COMMA);
+    public static final Serde<SortedBag<Card>> SORTED_BAG_CARD_SERDE = Serde.bagOf(CARD_SERDE, COMMA);
 
-    public static final Serde<SortedBag<Ticket>> SB_TICKET_SERDE = Serde.bagOf(TICKET_SERDE, COMMA);
+    public static final Serde<SortedBag<Ticket>> SORTED_BAG_TICKET_SERDE = Serde.bagOf(TICKET_SERDE, COMMA);
 
-    public static final Serde<List<SortedBag<Card>>> LIST_SB_CARD_SERDE = Serde.listOf(SB_CARD_SERDE, SEMI_COLON);
+    public static final Serde<List<SortedBag<Card>>> LIST_SORTED_BAG_CARD_SERDE = Serde.listOf(SORTED_BAG_CARD_SERDE, SEMI_COLON);
 
     //--------------------------------------------
 
@@ -56,10 +59,13 @@ public class Serdes {
                                                             .toString(),
     //Im assuming we need to create the object??
     //todo: if i understood correctly abcd;efgh;ijk; -> [0] = abcd, [1] = efgh, [2] = ijk  using split
-            (string) -> new PublicCardState(LIST_CARD_SERDE.deserialize(string.split(SEMI_COLON, -1)[0]),
-                                            INTEGER_SERDE.deserialize(string.split(SEMI_COLON, -1)[1]),
-                                            INTEGER_SERDE.deserialize(string.split(SEMI_COLON, -1)[2]))
-    );
+            (string) -> {
+                String[] splitString  = string.split(SEMI_COLON, -1);
+                return new PublicCardState(
+                        LIST_CARD_SERDE.deserialize(splitString[0]),
+                        INTEGER_SERDE.deserialize(splitString[1]),
+                        INTEGER_SERDE.deserialize(splitString[2]));
+            });
 
    public static final Serde<PublicPlayerState> PUBLIC_PLAYER_STATE_SERDE = Serde.of(
            (publicPlayerState) -> new StringJoiner(SEMI_COLON).add(INTEGER_SERDE.serialize(publicPlayerState.ticketCount())
@@ -67,44 +73,54 @@ public class Serdes {
                                                                    +LIST_ROUTE_SERDE.serialize(publicPlayerState.routes()))
                                                               .toString(),
 
-           (string) -> new PublicPlayerState(INTEGER_SERDE.deserialize(string.split(SEMI_COLON, -1)[0]),
-                                           INTEGER_SERDE.deserialize(string.split(SEMI_COLON, -1)[1]),
-                                           LIST_ROUTE_SERDE.deserialize(string.split(SEMI_COLON, -1)[2]))
+           (string) -> {
+               String[] splitString  = string.split(SEMI_COLON, -1);
+               return new PublicPlayerState(
+                       INTEGER_SERDE.deserialize(splitString[0]),
+                       INTEGER_SERDE.deserialize(splitString[1]),
+                       LIST_ROUTE_SERDE.deserialize(splitString[2]));
+           }
    );
 
    public static final Serde<PlayerState> PLAYER_STATE_SERDE = Serde.of(
 
-           (playerState) -> new StringJoiner(SEMI_COLON).add(SB_TICKET_SERDE.serialize(playerState.tickets())
-                                                            +SB_CARD_SERDE.serialize((playerState.cards()))
+           (playerState) -> new StringJoiner(SEMI_COLON).add(SORTED_BAG_TICKET_SERDE.serialize(playerState.tickets())
+                                                            + SORTED_BAG_CARD_SERDE.serialize((playerState.cards()))
                                                             +LIST_ROUTE_SERDE.serialize(playerState.routes()))
                                                         .toString(),
 
-           (string) -> new PlayerState(SB_TICKET_SERDE.deserialize(string.split(SEMI_COLON, -1)[0]),
-                                        SB_CARD_SERDE.deserialize(string.split(SEMI_COLON, -1)[1]),
-                                        LIST_ROUTE_SERDE.deserialize(string.split(SEMI_COLON, -1)[2]))
-           );
+           (string) -> {
+               String[] splitString  = string.split(SEMI_COLON, -1);
+               return new PlayerState(
+                       SORTED_BAG_TICKET_SERDE.deserialize(splitString[0]),
+                       SORTED_BAG_CARD_SERDE.deserialize(splitString[1]),
+                       LIST_ROUTE_SERDE.deserialize(splitString[2]));
+           });
 
    public static final Serde<PublicGameState> GAME_STATE_SERDE = Serde.of(
            (publicGameState) -> new StringJoiner(COLON).add(INTEGER_SERDE.serialize(publicGameState.ticketsCount())
                                                             +PUBLIC_CARD_STATE_SERDE.serialize(publicGameState.cardState())
                                                             +PLAYER_ID_SERDE.serialize(publicGameState.currentPlayerId())
-                                                            +PLAYER_ID_SERDE.serialize(publicGameState.currentPlayerId().next())
                                                             +PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.currentPlayerState())
                                                             +PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(publicGameState.currentPlayerId().next()))
                                                             +PLAYER_ID_SERDE.serialize(publicGameState.lastPlayer()))
                                                         .toString(),
 //todo: i have doubts about the map
-           (string) -> new PublicGameState(INTEGER_SERDE.deserialize(string.split(COLON, -1)[0]),
-                                            PUBLIC_CARD_STATE_SERDE.deserialize(string.split(COLON, -1)[1]),
-                                            PLAYER_ID_SERDE.deserialize(string.split(COLON, -1)[2]),
-                                            Map.of(PLAYER_ID_SERDE.deserialize(string.split(COLON, -1)[2]), PUBLIC_PLAYER_STATE_SERDE.deserialize(string.split(COLON, -1)[4]),
-                                                    PLAYER_ID_SERDE.deserialize(string.split(COLON, -1)[3]), PUBLIC_PLAYER_STATE_SERDE.deserialize(string.split(COLON, -1)[5])),
-                                            PLAYER_ID_SERDE.deserialize(string.split(COLON, -1)[5]))
-           );
+           (string) -> {
+               String[] splitString  = string.split(SEMI_COLON, -1);
 
-//    Serde<Color> color = Serde.oneOf(Color.ALL);
-//    Serde<List<Color>> listOfColor = Serde.listOf(color, "+");
-//    Serde<SortedBag<Color>> bagOfColor = Serde.bagOf(color, "+");
+               PlayerId currentPlayer = PLAYER_ID_SERDE.deserialize(splitString[2]);
+               PlayerId nextPlayer = PLAYER_ID_SERDE.deserialize(splitString[3]);
+
+               return new PublicGameState(
+                       INTEGER_SERDE.deserialize(splitString[0]),
+                       PUBLIC_CARD_STATE_SERDE.deserialize(splitString[1]),
+                       currentPlayer,
+                       Map.of(currentPlayer, PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[4]),
+                               nextPlayer, PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[5])),
+                       PLAYER_ID_SERDE.deserialize(splitString[5]));
+           }
+           );
 
 
 }
