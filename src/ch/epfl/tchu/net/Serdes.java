@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Serdes {
-    private Serdes(){}
+    private Serdes(){} //TODO: Do we need a constructor, we didn't use one in Game.java?
 
     private static final String SEMI_COLON = ";";
     private static final String COMMA = ",";
