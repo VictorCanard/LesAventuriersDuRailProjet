@@ -63,7 +63,14 @@ public interface Serde<T> {
             return String.valueOf(listOfValuesOfEnumType.indexOf(t));
         };
 
-        Function<String, T> deserializingFunction = (string) -> listOfValuesOfEnumType.get(Integer.parseInt(string));
+        Function<String, T> deserializingFunction = (string) -> {
+
+
+                if(string.equals("")){
+                    return null;
+                }
+                return listOfValuesOfEnumType.get(Integer.parseInt(string));
+                };
 
         return of(serializingFunction, deserializingFunction);
 
@@ -78,11 +85,13 @@ public interface Serde<T> {
                         .collect(Collectors.joining(delimiter));
 
 
-        Function<String, List<T>> deserializingFunction = (string) ->
-                Arrays.stream(string
-                .split(Pattern.quote(delimiter), -1))
-                .map(usedSerde::deserialize)
-                .collect(Collectors.toList());
+        Function<String, List<T>> deserializingFunction = (string) ->{
+            String[] splitString = string.split(Pattern.quote(delimiter), -1);
+
+            return Arrays.stream(splitString)
+                    .map(usedSerde::deserialize)
+                    .collect(Collectors.toList());
+        };
 
         return new Serde<>() {
             @Override
@@ -100,13 +109,9 @@ public interface Serde<T> {
     }
     static  <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> usedSerde, String delimiter){
         Function<SortedBag<T>, String> serializingFunction = (sortedBag) ->
-                new StringJoiner(delimiter)
-                .add(
-                        sortedBag.stream()
-                                .map(usedSerde::serialize)
-                                .collect(Collectors.toList()).toString())
-                .toString();
-
+                sortedBag.stream()
+                .map(usedSerde::serialize)
+                .collect(Collectors.joining(delimiter));
 
         Function<String, SortedBag<T>> deserializingFunction = (string) ->
                 SortedBag.of(Arrays
