@@ -6,11 +6,9 @@ import ch.epfl.tchu.game.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class Serdes {
-    private Serdes(){} //TODO: Do we need a constructor, as we didn't use one in Game.java?
-
+    private Serdes(){}
 
     private static final String SEMI_COLON = ";";
     private static final String COMMA = ",";

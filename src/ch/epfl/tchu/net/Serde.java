@@ -78,14 +78,23 @@ public interface Serde<T> {
     }
     static  <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter){
 
-        Function<List<T>, String> serializingFunction = (list) ->
-                list
-                        .stream()
-                        .map(usedSerde::serialize)
-                        .collect(Collectors.joining(delimiter));
+        Function<List<T>, String> serializingFunction = (list) -> {
+            if (list.isEmpty()) {
+                return "";
+            }
+            return
+
+                    list
+                            .stream()
+                            .map(usedSerde::serialize)
+                            .collect(Collectors.joining(delimiter));
+        };
 
 
         Function<String, List<T>> deserializingFunction = (string) ->{
+            if(string.equals("")){
+                return List.of();
+            }
             String[] splitString = string.split(Pattern.quote(delimiter), -1);
 
             return Arrays.stream(splitString)

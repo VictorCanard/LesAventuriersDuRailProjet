@@ -95,6 +95,7 @@ class SerdesTest {
 
         assertEquals("40:6,7,2,0,6;30;31:1:10;11;0,1:20;21;:", serialized);
 
+
         boolean isTheSame = Arrays.stream(gs.getClass().getDeclaredFields()).allMatch(field -> Arrays.asList(GameState.class.getDeclaredFields()).contains(field));
         assertTrue(isTheSame);
 
