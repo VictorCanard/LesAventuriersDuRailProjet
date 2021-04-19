@@ -56,7 +56,12 @@ public interface Serde<T> {
      * @return a new Serde capable of serializing and deserializing a value T, contained in a specific list of values, of an enumerated type.
      */
     static <T>Serde<T> oneOf(List<T> listOfValuesOfEnumType){
-        Function<T, String> serializingFunction = (t) -> String.valueOf(listOfValuesOfEnumType.indexOf(t));
+        Function<T, String> serializingFunction = (t) -> {
+            if(t == null){
+                return "";
+            }
+            return String.valueOf(listOfValuesOfEnumType.indexOf(t));
+        };
 
         Function<String, T> deserializingFunction = (string) -> listOfValuesOfEnumType.get(Integer.parseInt(string));
 
