@@ -75,6 +75,14 @@ public interface Serde<T> {
 
 
     }
+
+    /**
+     * Creates a serde capable of (de)serializing the lists of values de(serialized) by the given serde
+     * @param usedSerde : a given serde
+     * @param delimiter : delimiter separating the components of the string
+     * @param <T> : the type to be contained in the serde
+     * @return a Serde of a list of a specified type
+     */
     static  <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter){
 
         Function<List<T>, String> serializingFunction = (list) -> {
@@ -115,6 +123,14 @@ public interface Serde<T> {
 
 
     }
+
+    /**
+     * Creates a serde capable of (de)serializing the sorted bag of values de(serialized) by the given serde
+     * @param usedSerde : a given serde
+     * @param delimiter : the delimiter separating the components of the string
+     * @param <T> : the type to be contained in the serde
+     * @return a Serde of a sorted bag of a specified type
+     */
     static  <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> usedSerde, String delimiter){
         Function<SortedBag<T>, String> serializingFunction = (sortedBag) ->
                 sortedBag.stream()

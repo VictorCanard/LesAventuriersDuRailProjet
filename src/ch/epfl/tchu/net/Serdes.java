@@ -18,12 +18,16 @@ public class Serdes {
     private static final String SEMI_COLON_PATTERN = Pattern.quote(";");
     private static final String COLON_PATTERN = Pattern.quote(":");
 
-
-
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
+    /**
+     * Serde of an integer
+     */
     public static final Serde<Integer> INTEGER_SERDE = Serde.of(i -> Integer.toString(i), Integer::parseInt);
 
+    /**
+     * Serde of a string
+     */
     public static final Serde<String> STRING_SERDE = Serde.of(
             (string) -> Base64.getEncoder().encodeToString(string.getBytes(UTF_8)),
 
@@ -31,33 +35,59 @@ public class Serdes {
                     Base64.getDecoder().decode(serializedString),
                     UTF_8)
     );
-
+    /**
+     * Serde of a player id
+     */
     public static final Serde<PlayerId> PLAYER_ID_SERDE = Serde.oneOf(PlayerId.ALL);
 
+    /**
+     * Serde of the kind of action a player can take on their turn
+     */
     public static final Serde<Player.TurnKind> TURN_KIND_SERDE = Serde.oneOf(Player.TurnKind.ALL);
-
+    /**
+     * Serde of a card
+     */
     public static final Serde<Card> CARD_SERDE = Serde.oneOf(Card.ALL);
-
+    /**
+     * Serde of a route
+     */
     public static final Serde<Route> ROUTE_SERDE = Serde.oneOf(ChMap.routes());
-
+    /**
+     * Serde of a ticket
+     */
     public static final Serde<Ticket> TICKET_SERDE = Serde.oneOf(ChMap.tickets());
 
     //-------------------------------------------
 
+    /**
+     * Serde of a list of strings
+     */
     public static final Serde<List<String>> LIST_STRING_SERDE = Serde.listOf(STRING_SERDE, COMMA);
-
+    /**
+     * Serde of a list of cards
+     */
     public static final Serde<List<Card>> LIST_CARD_SERDE = Serde.listOf(CARD_SERDE, COMMA);
-
+    /**
+     * Serde of a list of routes
+     */
     public static final Serde<List<Route>> LIST_ROUTE_SERDE = Serde.listOf(ROUTE_SERDE, COMMA);
-
+    /**
+     * Serde of a sorted bag of cards
+     */
     public static final Serde<SortedBag<Card>> SORTED_BAG_CARD_SERDE = Serde.bagOf(CARD_SERDE, COMMA);
-
+    /**
+     * Serde of a sorted bag of tickets
+     */
     public static final Serde<SortedBag<Ticket>> SORTED_BAG_TICKET_SERDE = Serde.bagOf(TICKET_SERDE, COMMA);
-
+    /**
+     * Serde of a list of sorted bags of cards
+     */
     public static final Serde<List<SortedBag<Card>>> LIST_SORTED_BAG_CARD_SERDE = Serde.listOf(SORTED_BAG_CARD_SERDE, SEMI_COLON);
 
     //--------------------------------------------
-
+    /**
+     * Serde of a public card state
+     */
     public static final Serde<PublicCardState> PUBLIC_CARD_STATE_SERDE = Serde.of(
 
             (publicCardState) -> new StringJoiner(SEMI_COLON)
@@ -89,7 +119,9 @@ public class Serdes {
                        LIST_ROUTE_SERDE.deserialize(splitString[2]));
            }
    );
-
+    /**
+     * Serde of a player state
+     */
    public static final Serde<PlayerState> PLAYER_STATE_SERDE = Serde.of(
 
            (playerState) -> new StringJoiner(SEMI_COLON)
@@ -105,7 +137,9 @@ public class Serdes {
                        SORTED_BAG_CARD_SERDE.deserialize(splitString[1]),
                        LIST_ROUTE_SERDE.deserialize(splitString[2]));
            });
-
+    /**
+     * Serde of a public game state
+     */
    public static final Serde<PublicGameState> PUBLIC_GAME_STATE_SERDE = Serde.of(
            (publicGameState) -> new StringJoiner(COLON)
                    .add(INTEGER_SERDE.serialize(publicGameState.ticketsCount()))
@@ -130,6 +164,4 @@ public class Serdes {
                        PLAYER_ID_SERDE.deserialize(splitString[5]));
            }
            );
-
-
 }
