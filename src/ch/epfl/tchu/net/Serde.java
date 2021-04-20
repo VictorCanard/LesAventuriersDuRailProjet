@@ -4,7 +4,6 @@ import ch.epfl.tchu.SortedBag;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -122,13 +121,19 @@ public interface Serde<T> {
                 .map(usedSerde::serialize)
                 .collect(Collectors.joining(delimiter));
 
-        Function<String, SortedBag<T>> deserializingFunction = (string) ->
-                SortedBag.of(Arrays
-                        .stream(string
-                        .split(Pattern.quote(delimiter), -1))
-                .map(usedSerde::deserialize)
-                        .collect(Collectors.toList()));
+        Function<String, SortedBag<T>> deserializingFunction = (string) -> {
 
+
+            if (string.equals("")) {
+                return SortedBag.of();
+            }
+            String[] splitString = string.split(Pattern.quote(delimiter), -1);
+
+            return SortedBag.of(Arrays.stream(splitString)
+                    .map(usedSerde::deserialize)
+                    .collect(Collectors.toList()));
+
+        };
         return new Serde<>() {
             @Override
             public String serialize(SortedBag<T> objectToSerialize) {

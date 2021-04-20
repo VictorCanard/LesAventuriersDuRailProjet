@@ -6,6 +6,7 @@ import ch.epfl.tchu.game.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Serdes {
     private Serdes(){}
@@ -13,6 +14,11 @@ public class Serdes {
     private static final String SEMI_COLON = ";";
     private static final String COMMA = ",";
     private static final String COLON = ":";
+
+    private static final String SEMI_COLON_PATTERN = Pattern.quote(";");
+    private static final String COLON_PATTERN = Pattern.quote(":");
+
+
 
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
@@ -60,10 +66,8 @@ public class Serdes {
                     .add(INTEGER_SERDE.serialize(publicCardState.discardsSize()))
                     .toString(),
 
-    //Im assuming we need to create the object??
-    //todo: if i understood correctly abcd;efgh;ijk; -> [0] = abcd, [1] = efgh, [2] = ijk  using split
             (string) -> {
-                String[] splitString  = string.split(SEMI_COLON, -1);
+                String[] splitString  = string.split(SEMI_COLON_PATTERN, -1);
                 return new PublicCardState(
                         LIST_CARD_SERDE.deserialize(splitString[0]),
                         INTEGER_SERDE.deserialize(splitString[1]),
@@ -78,7 +82,7 @@ public class Serdes {
                    .toString(),
 
            (string) -> {
-               String[] splitString  = string.split(SEMI_COLON, -1);
+               String[] splitString  = string.split(SEMI_COLON_PATTERN, -1);
                return new PublicPlayerState(
                        INTEGER_SERDE.deserialize(splitString[0]),
                        INTEGER_SERDE.deserialize(splitString[1]),
@@ -95,7 +99,7 @@ public class Serdes {
                    .toString(),
 
            (string) -> {
-               String[] splitString  = string.split(SEMI_COLON, -1);
+               String[] splitString  = string.split(SEMI_COLON_PATTERN, -1);
                return new PlayerState(
                        SORTED_BAG_TICKET_SERDE.deserialize(splitString[0]),
                        SORTED_BAG_CARD_SERDE.deserialize(splitString[1]),
@@ -112,9 +116,8 @@ public class Serdes {
                    .add(PLAYER_ID_SERDE.serialize(publicGameState.lastPlayer()))
                    .toString(),
 
-//todo: i have doubts about the map
-           (string) -> {
-               String[] splitString  = string.split(COLON, -1);
+           (serializedString) -> {
+               String[] splitString  = serializedString.split(COLON_PATTERN, -1);
 
                PlayerId currentPlayer = PLAYER_ID_SERDE.deserialize(splitString[2]);
 
