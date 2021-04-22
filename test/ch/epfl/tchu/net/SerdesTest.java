@@ -123,30 +123,6 @@ class SerdesTest {
 
     @Test
     void ticketSerdeWorks(){
-        Serde<Ticket> ticketSerde = Serdes.TICKET_SERDE;
-
-        for (Ticket ticket : ChMap.tickets()
-        ) {
-            String serialized = ticketSerde.serialize(ticket);
-
-            Ticket deserialized = ticketSerde.deserialize(serialized);
-
-            assertEquals(serialized, String.valueOf(ChMap.tickets().indexOf(ticket)));
-            assertEquals(deserialized, ticket);
-        }
-
-    }
-
-    @Test
-    void routeSerdeWorks(){
-        Route original = ChMap.routes().get(0);
-        String serialized = Serdes.ROUTE_SERDE.serialize(original);
-        Route deserialized = Serdes.ROUTE_SERDE.deserialize(serialized);
-        assertEquals(original, deserialized);
-
-    }
-    @Test
-    void ticketSerdeWorks(){
         Ticket original = ChMap.tickets().get(41); //index (38,39) -> 38, (40,41) -> 40 etc up to 45 (country tickets where there are 2 of each kind)
         String ser = "40";
         String serialized = Serdes.TICKET_SERDE.serialize(original);
