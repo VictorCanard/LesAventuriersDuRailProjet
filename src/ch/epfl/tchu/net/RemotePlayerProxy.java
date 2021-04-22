@@ -55,18 +55,14 @@ public class RemotePlayerProxy implements Player {
     public SortedBag<Ticket> chooseInitialTickets() {
         sendMessage(MessageId.CHOOSE_INITIAL_TICKETS);
 
-        String receivedMessage = receiveMessage();
-
-        return SORTED_BAG_TICKET_SERDE.deserialize(receivedMessage);
+        return SORTED_BAG_TICKET_SERDE.deserialize(receiveMessage());
     }
 
     @Override
     public TurnKind nextTurn() {
         sendMessage(MessageId.NEXT_TURN);
 
-        String received = receiveMessage();
-
-        return TURN_KIND_SERDE.deserialize(received);
+        return TURN_KIND_SERDE.deserialize(receiveMessage());
     }
 
     @Override
@@ -75,36 +71,28 @@ public class RemotePlayerProxy implements Player {
 
         sendMessage(MessageId.CHOOSE_TICKETS, List.of(ticketOptions));
 
-        String receiveMessage = receiveMessage();
-
-        return SORTED_BAG_TICKET_SERDE.deserialize(receiveMessage);
+        return SORTED_BAG_TICKET_SERDE.deserialize(receiveMessage());
     }
 
     @Override
     public int drawSlot() {
         sendMessage(MessageId.DRAW_SLOT);
 
-        String received = receiveMessage();
-
-        return INTEGER_SERDE.deserialize(received);
+        return INTEGER_SERDE.deserialize(receiveMessage());
     }
 
     @Override
     public Route claimedRoute() {
         sendMessage(MessageId.ROUTE);
 
-        String received = receiveMessage();
-
-        return ROUTE_SERDE.deserialize(received);
+        return ROUTE_SERDE.deserialize(receiveMessage());
     }
 
     @Override
     public SortedBag<Card> initialClaimCards() {
         sendMessage(MessageId.CARDS);
 
-        String received = receiveMessage();
-
-        return SORTED_BAG_CARD_SERDE.deserialize(received);
+        return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
     }
 
     @Override
@@ -113,9 +101,7 @@ public class RemotePlayerProxy implements Player {
 
         sendMessage(MessageId.CHOOSE_ADDITIONAL_CARDS, List.of(optionsString));
 
-        String receivedMessage = receiveMessage();
-
-        return SORTED_BAG_CARD_SERDE.deserialize(receivedMessage);
+        return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
     }
 
     private void sendMessage(MessageId messageId){
