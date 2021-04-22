@@ -194,6 +194,17 @@ class SerdesTest {
     }
 
     @Test
+    void ticketSortedBagSerdeWorks(){
+        SortedBag<Ticket> tickets = SortedBag.of(List.of(ChMap.tickets().get(0), ChMap.tickets().get(1), ChMap.tickets().get(5)));
+
+        String serialized = Serdes.SORTED_BAG_TICKET_SERDE.serialize(tickets);
+        SortedBag<Ticket> deserialized = Serdes.SORTED_BAG_TICKET_SERDE.deserialize(serialized);
+//todo: why serialized as 5,0,1 and not 0,1,5 ?
+        assertEquals(tickets, deserialized);
+
+    }
+
+    @Test
     void listSortedBagCardsWorks(){
         SortedBag<Card> sortedBag1 = SortedBag.of(List.of(RED, WHITE, BLUE, BLACK, RED));
         SortedBag<Card> sortedBag2 = SortedBag.of(List.of(YELLOW, BLUE, BLUE, BLACK, RED));
@@ -306,5 +317,23 @@ class SerdesTest {
                 && samePlayerState(one.playerState(PLAYER_2), two.playerState(PLAYER_2))
                 && one.lastPlayer() == two.lastPlayer();
     }
+
+    @Test
+    void playerStateSerdeWorks(){
+        SortedBag<Ticket> tickets = SortedBag.of(List.of(ChMap.tickets().get(0), ChMap.tickets().get(1), ChMap.tickets().get(5)));
+        SortedBag<Card> cards = SortedBag.of(List.of(RED, WHITE, BLUE, BLACK, RED));
+        List<Route> routes = List.of(ChMap.routes().get(0));
+
+        PlayerState original = new PlayerState(tickets, cards, routes);
+        String ser = "5,0,1;0,2,6,6,7;0";
+//todo: see ticketSortedBagSerdeWorks
+        String serialized = Serdes.PLAYER_STATE_SERDE.serialize(original);
+        PlayerState deserialized = Serdes.PLAYER_STATE_SERDE.deserialize(serialized);
+
+        assertEquals(ser, serialized);
+        assertEquals(original.tickets(), deserialized.tickets());
+        assertEquals(original.cards(), deserialized.cards());
+        assertEquals(original.routes(), deserialized.routes());
+}
 
 }
