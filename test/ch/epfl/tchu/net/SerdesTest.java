@@ -18,7 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class SerdesTest {
 
     //Todo test Empty possibilities
-
+    @Test
+    void integerSerdeWorks(){
+    int initial = 12345;
+    String ser = "12345";
+    String serialized = Serdes.INTEGER_SERDE.serialize(initial);
+    int deserialized = Serdes.INTEGER_SERDE.deserialize(serialized);
+    assertEquals(initial, deserialized);
+    assertEquals(serialized, ser);
+    }
 
     @Test
     void stringSerdeWorks(){
@@ -43,8 +51,25 @@ class SerdesTest {
 
         assertEquals(expectedSerial, serialized);
         assertEquals(originalString, deserialized);
+    }
 
-
+    @Test
+    void playerIdSerdeWorks(){
+        PlayerId original = PLAYER_1;
+        String ser = "0" ;
+        String serialized = Serdes.PLAYER_ID_SERDE.serialize(original);
+        PlayerId deserialized = Serdes.PLAYER_ID_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(serialized, ser);
+    }
+    @Test
+    void nullPlayerIdSerdeWorks(){
+        PlayerId original = null;
+        String ser = "" ;
+        String serialized = Serdes.PLAYER_ID_SERDE.serialize(original);
+        PlayerId deserialized = Serdes.PLAYER_ID_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(serialized, ser);
     }
 
     @Test
@@ -59,6 +84,87 @@ class SerdesTest {
             Player.TurnKind deserialized = turnKindSerde.deserialize(serialized);
             assertEquals(turnKind, deserialized);
         }
+    }
+
+    @Test
+    void cardSerdeWorks(){
+        Card original = Card.LOCOMOTIVE;
+        String serialized = Serdes.CARD_SERDE.serialize(original);
+        Card deserialized = Serdes.CARD_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+    }
+    @Test
+    void routeSerdeWorks(){
+        Route original = ChMap.routes().get(0);
+        String serialized = Serdes.ROUTE_SERDE.serialize(original);
+        Route deserialized = Serdes.ROUTE_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+
+    }
+    @Test
+    void ticketSerdeWorks(){
+        Ticket original = ChMap.tickets().get(41); //index (38,39) -> 38, (40,41) -> 40 etc up to 45 (country tickets where there are 2 of each kind)
+        String ser = "40";
+        String serialized = Serdes.TICKET_SERDE.serialize(original);
+        Ticket deserialized = Serdes.TICKET_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(ser, serialized);
+
+    }
+    @Test
+    void listStringSerdeWorks(){
+        List<String> original = List.of("Charles", "Charles", "Charles");
+        String ser = "Q2hhcmxlcw==,Q2hhcmxlcw==,Q2hhcmxlcw==";
+        String serialized = Serdes.LIST_STRING_SERDE.serialize(original);
+        List<String> deserialized = Serdes.LIST_STRING_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(ser, serialized);
+    }
+    @Test
+    void emptyListStringSerdeWorks(){
+        List<String> original = List.of();
+        String ser = "";
+        String serialized = Serdes.LIST_STRING_SERDE.serialize(original);
+        List<String> deserialized = Serdes.LIST_STRING_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(ser, serialized);
+    }
+
+    @Test
+    void listCardSerdeWorks(){
+        List<Card> original = List.of(RED, WHITE, BLUE, BLACK, RED);
+        String ser = "6,7,2,0,6";
+        String serialized = Serdes.LIST_CARD_SERDE.serialize(original);
+        List<Card> deserialized = Serdes.LIST_CARD_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(ser, serialized);
+    }
+    @Test
+    void emptyListCardSerdeWorks(){
+        List<Card> original = List.of();
+        String ser = "";
+        String serialized = Serdes.LIST_CARD_SERDE.serialize(original);
+        List<Card> deserialized = Serdes.LIST_CARD_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(ser, serialized);
+    }
+    @Test
+    void listRouteSerdeWorks(){
+        List<Route> original = List.of(ChMap.routes().get(0), ChMap.routes().get(1), ChMap.routes().get(5));
+        String ser = "0,1,5";
+        String serialized = Serdes.LIST_ROUTE_SERDE.serialize(original);
+        List<Route> deserialized = Serdes.LIST_ROUTE_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(ser, serialized);
+    }
+    @Test
+    void emptyListRouteSerdeWorks(){
+        List<Route> original = List.of();
+        String ser = "";
+        String serialized = Serdes.LIST_ROUTE_SERDE.serialize(original);
+        List<Route> deserialized = Serdes.LIST_ROUTE_SERDE.deserialize(serialized);
+        assertEquals(original, deserialized);
+        assertEquals(ser, serialized);
     }
 
     @Test
@@ -122,7 +228,6 @@ class SerdesTest {
     @Test
     void gameStateSerdeWorks20Times(){
 
-
         for (int i = 0; i < 20; i++) {
             List<Card> fu = randomFUCards();
             PublicCardState cs = new PublicCardState(fu, ((int) Math.round(Math.random()*50)), ((int) Math.round(Math.random()*30)));
@@ -142,9 +247,6 @@ class SerdesTest {
 
             assertTrue(sameGameState(gs, deserialized));
         }
-
-
-
 
     }
     private List<Card> randomFUCards(){
