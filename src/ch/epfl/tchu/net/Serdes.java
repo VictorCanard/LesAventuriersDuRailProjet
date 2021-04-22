@@ -104,6 +104,9 @@ public class Serdes {
                         INTEGER_SERDE.deserialize(splitString[2]));
             });
 
+    /**
+     * Serde of a public player state
+     */
    public static final Serde<PublicPlayerState> PUBLIC_PLAYER_STATE_SERDE = Serde.of(
            (publicPlayerState) -> new StringJoiner(SEMI_COLON)
                    .add(INTEGER_SERDE.serialize(publicPlayerState.ticketCount()))
