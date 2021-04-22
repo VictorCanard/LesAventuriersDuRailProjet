@@ -2,6 +2,7 @@ package ch.epfl.tchu.net;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SerdesTest {
 
-    //Todo test Empty possibilities
 
 
     @Test
@@ -48,6 +48,17 @@ class SerdesTest {
     }
 
     @Test
+    void playerIdSerdeWorks(){
+        for (PlayerId playerId: PlayerId.values()) {
+            String serialized = Serdes.PLAYER_ID_SERDE.serialize(playerId);
+
+            PlayerId deserialized = Serdes.PLAYER_ID_SERDE.deserialize(serialized);
+
+            assertEquals(serialized, String.valueOf(playerId.ordinal()));
+            assertEquals(playerId, deserialized);
+        }
+    }
+    @Test
     void turnKindSerdeWorks(){
         Serde<Player.TurnKind> turnKindSerde = Serdes.TURN_KIND_SERDE;
 
@@ -59,6 +70,55 @@ class SerdesTest {
             Player.TurnKind deserialized = turnKindSerde.deserialize(serialized);
             assertEquals(turnKind, deserialized);
         }
+    }
+
+    @Test
+    void cardSerdeWorks(){
+        Serde<Card> cardSerde = Serdes.CARD_SERDE;
+
+        for (Card card: Card.values()
+             ) {
+            String serialized = cardSerde.serialize(card);
+
+            Card deserialized = cardSerde.deserialize(serialized);
+
+            assertEquals(serialized, String.valueOf(card.ordinal()));
+            assertEquals(deserialized, card);
+        }
+
+
+    }
+
+    @Test
+    void routeSerdeWorks(){
+        Serde<Route> routeSerde = Serdes.ROUTE_SERDE;
+
+        for (Route route: ChMap.routes()
+        ) {
+            String serialized = routeSerde.serialize(route);
+
+            Route deserialized = routeSerde.deserialize(serialized);
+
+            assertEquals(serialized, String.valueOf(ChMap.routes().indexOf(route)));
+            assertEquals(deserialized, route);
+        }
+
+    }
+
+    @Test
+    void ticketSerdeWorks(){
+        Serde<Ticket> ticketSerde = Serdes.TICKET_SERDE;
+
+        for (Ticket ticket : ChMap.tickets()
+        ) {
+            String serialized = ticketSerde.serialize(ticket);
+
+            Ticket deserialized = ticketSerde.deserialize(serialized);
+
+            assertEquals(serialized, String.valueOf(ChMap.tickets().indexOf(ticket)));
+            assertEquals(deserialized, ticket);
+        }
+
     }
 
     @Test
@@ -173,13 +233,6 @@ class SerdesTest {
         PublicGameState deserialized = Serdes.PUBLIC_GAME_STATE_SERDE.deserialize(serialized);
 
         assertEquals("0:6,7,2,0,6;0;0:1:0;0;:0;0;:", serialized);
-
-        assertEquals(gs.ticketsCount(), deserialized.ticketsCount());
-        assertTrue(sameCardState(gs.cardState(), deserialized.cardState()));
-        assertEquals(gs.currentPlayerId(), deserialized.currentPlayerId());
-
-        Map<PlayerId, PublicPlayerState> deserializedPs = Map.of(PLAYER_1, deserialized.playerState(PLAYER_1),
-                PLAYER_2, deserialized.playerState(PLAYER_2));
 
 
         assertTrue(sameGameState(gs, deserialized));

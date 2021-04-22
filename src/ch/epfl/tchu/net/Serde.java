@@ -64,12 +64,11 @@ public interface Serde<T> {
 
         Function<String, T> deserializingFunction = (string) -> {
 
-
-                if(string.equals("")){
-                    return null;
-                }
-                return listOfValuesOfEnumType.get(Integer.parseInt(string));
-                };
+            if(string.equals("")){
+                return null;
+            }
+            return listOfValuesOfEnumType.get(Integer.parseInt(string));
+            };
 
         return of(serializingFunction, deserializingFunction);
 
@@ -89,12 +88,10 @@ public interface Serde<T> {
             if (list.isEmpty()) {
                 return "";
             }
-            return
-
-                    list
-                            .stream()
-                            .map(usedSerde::serialize)
-                            .collect(Collectors.joining(delimiter));
+            return list
+                    .stream()
+                    .map(usedSerde::serialize)
+                    .collect(Collectors.joining(delimiter));
         };
 
 
