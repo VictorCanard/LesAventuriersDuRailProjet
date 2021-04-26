@@ -14,17 +14,30 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public class RemotePlayerProxy implements Player {
     private final Socket playerSocket;
+    private BufferedWriter w;
+    private BufferedReader bufferedReader;
 
-    public RemotePlayerProxy(Socket socket){
+    public RemotePlayerProxy(Socket socket) {
         this.playerSocket = socket;
+        try {
+            this.w = new BufferedWriter(
+                    new OutputStreamWriter(playerSocket.getOutputStream(),
+                            US_ASCII));
+            this.bufferedReader = new BufferedReader(
+                    new InputStreamReader(playerSocket.getInputStream(),
+                            US_ASCII));
+
+        } catch (IOException ioException) {
+            throw new UncheckedIOException(ioException);
+        }
     }
+
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
         String playerId = PLAYER_ID_SERDE.serialize(ownID);
 
-        String namesOfPlayers = playerNames.values()
-                .stream()
-                .map(STRING_SERDE::serialize)
+        String namesOfPlayers = PlayerId.ALL.stream()
+                .map((playerid -> STRING_SERDE.serialize(playerNames.get(playerid))))
                 .collect(Collectors.joining(","));
 
         sendMessage(MessageId.INIT_PLAYERS, List.of(playerId, namesOfPlayers));
@@ -104,17 +117,12 @@ public class RemotePlayerProxy implements Player {
         return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
     }
 
-    private void sendMessage(MessageId messageId){
+    private void sendMessage(MessageId messageId) {
         sendMessage(messageId, List.of());
     }
 
     private void sendMessage(MessageId messageId, List<String> allParametersOfTheMessage) {
-        try(playerSocket) {
-
-            BufferedWriter w =
-                    new BufferedWriter(
-                            new OutputStreamWriter(playerSocket.getOutputStream(),
-                                    US_ASCII));
+        try {
 
             String message = messageId.name() + " " + String.join(" ", allParametersOfTheMessage)
                     + '\n';
@@ -126,14 +134,11 @@ public class RemotePlayerProxy implements Player {
             ioException.printStackTrace();
         }
     }
-    private String receiveMessage(){
-        try(playerSocket){
-            BufferedReader r =
-                    new BufferedReader(
-                            new InputStreamReader(playerSocket.getInputStream(),
-                                    US_ASCII));
 
-            return r.readLine();
+    private String receiveMessage() {
+        try {
+
+            return bufferedReader.readLine();
         } catch (IOException ioException) {
             throw new UncheckedIOException(ioException);
         }

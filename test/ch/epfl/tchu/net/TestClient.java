@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 import static ch.epfl.tchu.net.TestClient.PlayerMethod.*;
 
 public final class TestClient {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         System.out.println("Starting client!");
         RemotePlayerClient playerClient =
-                new RemotePlayerClient(new TestPlayer((long)(Math.random() * 10000L), ChMap.ALL_ROUTES),
+                new RemotePlayerClient(new TestPlayer((long) (Math.random() * 10000L), ChMap.ALL_ROUTES),
                         "localhost",
                         5108);
         playerClient.run();
@@ -33,7 +33,6 @@ public final class TestClient {
         INITIAL_CLAIM_CARDS,
         CHOOSE_ADDITIONAL_CARDS
     }
-
 
 
     private static final class TooManyCallsError extends Error {
@@ -94,7 +93,7 @@ public final class TestClient {
             System.out.printf("ownId: %s\n", ownId);
 
             playerNames.forEach((playerId, name) -> {
-                System.out.println(playerId + " " +name);
+                System.out.println(playerId + " " + name);
             });
 
             registerCall(TestClient.PlayerMethod.INIT_PLAYERS);

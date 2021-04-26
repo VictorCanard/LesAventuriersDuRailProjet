@@ -1,24 +1,24 @@
 package ch.epfl.tchu.net;
 
-import ch.epfl.tchu.SortedBag;
-import ch.epfl.tchu.game.*;
+import ch.epfl.tchu.game.Player;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
-import java.util.Random;
 
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public final class TestServer {
 
-    @Test //Todo: Make it so multiple methods can be called as RemotePlayerClient always stops after 1 method call (Don't know if this is intended behavior or not)
-    void multipleCallsSucceed(){
+    @Test
+        //Todo: Make it so multiple methods can be called as RemotePlayerClient always stops after 1 method call (Don't know if this is intended behavior or not)
+    void multipleCallsSucceed() {
 
     }
+
     public static void main(String[] args) throws IOException {
         System.out.println("Starting server!");
         try (ServerSocket serverSocket = new ServerSocket(5108);
@@ -26,7 +26,11 @@ public final class TestServer {
 
             Player playerProxy1 = new RemotePlayerProxy(socket);
 
-            initPlayersWorksProperly(playerProxy1);
+
+            var playerNames = Map.of(PLAYER_1, "Ada",
+                    PLAYER_2, "Charles");
+            playerProxy1.initPlayers(PLAYER_1, playerNames);
+
             playerProxy1.receiveInfo("This is working correctly as it should !");
 
             //Player playerProxy2 = new RemotePlayerProxy(socket);
@@ -38,7 +42,6 @@ public final class TestServer {
             //playerProxy1.setInitialTicketChoice(initialTickets);
 
 
-
             //playerProxy2.initPlayers(PLAYER_2, playerNames);
 
             //Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random((long) (Math.random()* 1000000L)));
@@ -47,10 +50,7 @@ public final class TestServer {
     }
 
     @Test
-    static void initPlayersWorksProperly(Player playerProxy){
-        var playerNames = Map.of(PLAYER_1, "Ada",
-            PLAYER_2, "Charles");
-        playerProxy.initPlayers(PLAYER_1, playerNames);
+    static void initPlayersWorksProperly(Player playerProxy) {
 
 
     }
