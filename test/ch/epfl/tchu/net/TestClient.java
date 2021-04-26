@@ -92,9 +92,7 @@ public final class TestClient {
         public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
             System.out.printf("ownId: %s\n", ownId);
 
-            playerNames.forEach((playerId, name) -> {
-                System.out.println(playerId + " " + name);
-            });
+            System.out.println("Player Names: " + playerNames);
 
             registerCall(TestClient.PlayerMethod.INIT_PLAYERS);
             this.ownId = ownId;
