@@ -33,7 +33,7 @@ public class RemotePlayerProxy implements Player {
 
     @Override
     public void receiveInfo(String info) {
-        sendMessage(MessageId.RECEIVE_INFO, List.of(info));
+        sendMessage(MessageId.RECEIVE_INFO, List.of(STRING_SERDE.serialize(info)));
     }
 
     @Override
@@ -107,8 +107,9 @@ public class RemotePlayerProxy implements Player {
     private void sendMessage(MessageId messageId){
         sendMessage(messageId, List.of());
     }
+
     private void sendMessage(MessageId messageId, List<String> allParametersOfTheMessage) {
-        try {
+        try(playerSocket) {
 
             BufferedWriter w =
                     new BufferedWriter(
@@ -118,18 +119,15 @@ public class RemotePlayerProxy implements Player {
             String message = messageId.name() + " " + String.join(" ", allParametersOfTheMessage)
                     + '\n';
 
-
             w.write(message);
 
             w.flush();
-
-
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
     }
     private String receiveMessage(){
-        try{
+        try(playerSocket){
             BufferedReader r =
                     new BufferedReader(
                             new InputStreamReader(playerSocket.getInputStream(),
