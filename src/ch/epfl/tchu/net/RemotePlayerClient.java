@@ -17,6 +17,7 @@ public class RemotePlayerClient {
     private final Player player;
     private final String name;
     private final int port;
+    private final Socket s;
     private final String spacePattern = Pattern.quote(" ");
     private final String commaPattern = Pattern.quote(",");
 
@@ -26,10 +27,17 @@ public class RemotePlayerClient {
      * @param name : the host name
      * @param port : the port number
      */
-    public RemotePlayerClient(Player player, String name, int port){
+    public RemotePlayerClient(Player player, String name, int port) {
         this.player = player;
         this.name = name;
         this.port = port;
+
+        try{
+            this.s = new Socket(name, port);
+        }catch (IOException ioException){
+            throw  new UncheckedIOException(ioException);
+        }
+
     }
 
 
@@ -39,7 +47,7 @@ public class RemotePlayerClient {
      * it keeps intercepting the messages and then running the appropriate player methods.
      */
     public void run(){
-        try(Socket s = new Socket(name, port);
+        try(s;
             BufferedReader r =
                     new BufferedReader(
                             new InputStreamReader(s.getInputStream(),
@@ -60,7 +68,7 @@ public class RemotePlayerClient {
                switch (MessageId.valueOf(type)) {
                    case INIT_PLAYERS:
                        PlayerId ownId = PLAYER_ID_SERDE.deserialize(incoming[1]);
-                       String[] players12 = incoming[2].split(commaPattern, -1);
+                       String[] players12 = incoming[2].split(commaPattern, -1); //QWRh,Q2hhcmxlcw==
 
                        Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, STRING_SERDE.deserialize(players12[0]),
                                                                   PlayerId.PLAYER_2, STRING_SERDE.deserialize(players12[1]));

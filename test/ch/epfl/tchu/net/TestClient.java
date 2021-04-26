@@ -3,9 +3,7 @@ package ch.epfl.tchu.net;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
-import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -94,7 +92,10 @@ public final class TestClient {
         @Override
         public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
             System.out.printf("ownId: %s\n", ownId);
-            System.out.printf("playerNames: %s\n", playerNames);
+
+            playerNames.forEach((playerId, name) -> {
+                System.out.println(playerId + " " +name);
+            });
 
             registerCall(TestClient.PlayerMethod.INIT_PLAYERS);
             this.ownId = ownId;

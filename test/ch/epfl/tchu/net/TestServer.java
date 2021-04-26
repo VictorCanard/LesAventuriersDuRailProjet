@@ -26,8 +26,8 @@ public final class TestServer {
 
             Player playerProxy1 = new RemotePlayerProxy(socket);
 
-            initPlayersWorksProperly(socket, playerProxy1);
-
+            initPlayersWorksProperly(playerProxy1);
+            playerProxy1.receiveInfo("This is working correctly as it should !");
 
             //Player playerProxy2 = new RemotePlayerProxy(socket);
 
@@ -37,7 +37,7 @@ public final class TestServer {
             //SortedBag<Ticket> initialTickets = SortedBag.of(ChMap.tickets().subList(0, 6));
             //playerProxy1.setInitialTicketChoice(initialTickets);
 
-            playerProxy1.receiveInfo("This is working correctly as it should !");
+
 
             //playerProxy2.initPlayers(PLAYER_2, playerNames);
 
@@ -47,9 +47,11 @@ public final class TestServer {
     }
 
     @Test
-    static void initPlayersWorksProperly(Socket socket, Player playerProxy){
+    static void initPlayersWorksProperly(Player playerProxy){
         var playerNames = Map.of(PLAYER_1, "Ada",
             PLAYER_2, "Charles");
         playerProxy.initPlayers(PLAYER_1, playerNames);
+
+
     }
 }
