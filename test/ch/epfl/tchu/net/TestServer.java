@@ -20,7 +20,14 @@ public final class TestServer {
             var playerNames = Map.of(PLAYER_1, "Ada",
                     PLAYER_2, "Charles");
             playerProxy.initPlayers(PLAYER_1, playerNames);
+            //playerProxy.nextTurn();
         }
         System.out.println("Server done!");
     }
 }
+//todo: problems:
+
+/* the message construction is sometimes good, sometimes switched for the playernames...
+issue with r.readLine() in RemotePlayerClient being null :(
+i made the try catch in proxy normal bc it was causing problems
+ */

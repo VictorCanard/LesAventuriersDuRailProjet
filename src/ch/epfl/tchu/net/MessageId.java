@@ -9,8 +9,8 @@ public enum MessageId {
     NEXT_TURN,
     CHOOSE_TICKETS,
     DRAW_SLOT,
-    ROUTE,
-    CARDS,
+    ROUTE, //is for claimedRoute()
+    CARDS, //is for initialClaimCards()
     CHOOSE_ADDITIONAL_CARDS;
 
 

@@ -20,7 +20,7 @@ public class RemotePlayerProxy implements Player {
     }
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
-        String playerId = STRING_SERDE.serialize(ownID.name());
+        String playerId = PLAYER_ID_SERDE.serialize(ownID);
 
         String namesOfPlayers = playerNames.values()
                 .stream()
@@ -108,16 +108,16 @@ public class RemotePlayerProxy implements Player {
         sendMessage(messageId, List.of());
     }
     private void sendMessage(MessageId messageId, List<String> allParametersOfTheMessage) {
-        try (playerSocket) {
+        try {
 
             BufferedWriter w =
                     new BufferedWriter(
                             new OutputStreamWriter(playerSocket.getOutputStream(),
                                     US_ASCII));
 
-            String message = String.join(messageId.name()
-                    + String.join(" ", allParametersOfTheMessage)
-                    + '\n', " ");
+            String message = messageId.name() + " " + String.join(" ", allParametersOfTheMessage)
+                    + '\n';
+
 
             w.write(message);
 
@@ -129,7 +129,7 @@ public class RemotePlayerProxy implements Player {
         }
     }
     private String receiveMessage(){
-        try(playerSocket){
+        try{
             BufferedReader r =
                     new BufferedReader(
                             new InputStreamReader(playerSocket.getInputStream(),
