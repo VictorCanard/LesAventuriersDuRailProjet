@@ -55,15 +55,13 @@ public class RemotePlayerClient {
             String read;
 
             while ((read = r.readLine()) != null) {
-                System.out.println("Read line: " + read);
-
                 String[] incoming = read.split(spacePattern, -1);
                 String type = incoming[0];
 
                 switch (MessageId.valueOf(type)) {
                     case INIT_PLAYERS:
                         PlayerId ownId = PLAYER_ID_SERDE.deserialize(incoming[1]);
-                        String[] players12 = incoming[2].split(commaPattern, -1); //QWRh,Q2hhcmxlcw==
+                        String[] players12 = incoming[2].split(commaPattern, -1);
 
                         Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, STRING_SERDE.deserialize(players12[0]),
                                 PlayerId.PLAYER_2, STRING_SERDE.deserialize(players12[1]));
@@ -92,45 +90,47 @@ public class RemotePlayerClient {
 
                     case CHOOSE_INITIAL_TICKETS:
                         SortedBag<Ticket> chosen = player.chooseInitialTickets();
-                        w.write(SORTED_BAG_TICKET_SERDE.serialize(chosen));
+                        w.write(SORTED_BAG_TICKET_SERDE.serialize(chosen) + '\n');
                         w.flush();
                         break;
 
                     case NEXT_TURN:
                         Player.TurnKind turn = player.nextTurn();
-                        w.write(TURN_KIND_SERDE.serialize(turn));
+                        w.write(TURN_KIND_SERDE.serialize(turn) + '\n');
                         w.flush();
                         break;
 
                     case CHOOSE_TICKETS:
                         SortedBag<Ticket> ticketOptions = SORTED_BAG_TICKET_SERDE.deserialize(incoming[1]);
                         String chosenTickets = SORTED_BAG_TICKET_SERDE.serialize(player.chooseTickets(ticketOptions));
-                        w.write(chosenTickets);
+                        w.write(chosenTickets + '\n');
                         w.flush();
                         break;
 
                     case DRAW_SLOT:
                         int drawSlot = player.drawSlot();
-                        w.write(INTEGER_SERDE.serialize(drawSlot));
+                        w.write(INTEGER_SERDE.serialize(drawSlot) + '\n');
                         w.flush();
                         break;
 
                     case ROUTE:
                         Route claimedRoute = player.claimedRoute();
-                        w.write(ROUTE_SERDE.serialize(claimedRoute));
+                        String string = ROUTE_SERDE.serialize(claimedRoute) + '\n';
+                        w.write(string);
                         w.flush();
                         break;
 
                     case CARDS:
                         SortedBag<Card> initialClaimCards = player.initialClaimCards();
-                        w.write(SORTED_BAG_CARD_SERDE.serialize(initialClaimCards));
+                        w.write(SORTED_BAG_CARD_SERDE.serialize(initialClaimCards) + '\n');
                         w.flush();
                         break;
 
                     case CHOOSE_ADDITIONAL_CARDS:
                         List<SortedBag<Card>> cardOptions = LIST_SORTED_BAG_CARD_SERDE.deserialize(incoming[1]);
                         SortedBag<Card> addCards = player.chooseAdditionalCards(cardOptions);
-                        w.write(SORTED_BAG_CARD_SERDE.serialize(addCards));
+
+                        w.write(SORTED_BAG_CARD_SERDE.serialize(addCards) + '\n');
                         w.flush();
                         break;
                 }
@@ -139,4 +139,6 @@ public class RemotePlayerClient {
             throw new UncheckedIOException(e);
         }
     }
+
+
 }

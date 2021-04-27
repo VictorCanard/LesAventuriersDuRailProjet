@@ -44,8 +44,8 @@ public final class TestServer {
 
             //playerProxy2.initPlayers(PLAYER_2, playerNames);
 
-            
-            play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random((long) (Math.random() * 1000000L)));
+
+            play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random((long) (Math.random() * 2000000000L)));
         }
         System.out.println("Server done!");
     }
