@@ -17,25 +17,21 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public final class TestServer {
 
-    @Test
-        //Todo: Make it so multiple methods can be called as RemotePlayerClient always stops after 1 method call (Don't know if this is intended behavior or not)
-    void multipleCallsSucceed() {
-
-    }
 
     public static void main(String[] args) throws IOException {
         System.out.println("Starting server!");
         try (ServerSocket serverSocket = new ServerSocket(5108);
-             Socket socket = serverSocket.accept()) {
+             Socket socket = serverSocket.accept()
+        ) {
 
             Player playerProxy1 = new RemotePlayerProxy(socket);
-            Player playerProxy2 = new RemotePlayerProxy(socket);
+            //Player playerProxy2 = new RemotePlayerProxy(socket);
 
             var playerNames = Map.of(PLAYER_1, "Ada",
                     PLAYER_2, "Charles");
 
 
-            var players = Map.of(PLAYER_1, playerProxy1, PLAYER_2, playerProxy2);
+            var players = Map.of(PLAYER_1, playerProxy1, PLAYER_2, playerProxy1);
 
 
             //SortedBag<Ticket> initialTickets = SortedBag.of(ChMap.tickets().subList(0, 6));

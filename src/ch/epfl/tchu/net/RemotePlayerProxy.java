@@ -116,7 +116,8 @@ public class RemotePlayerProxy implements Player {
     private void sendMessage(MessageId messageId, String... allParametersOfTheMessage) {
         try {
 
-            String message = messageId.name() + " " + String.join(" ", allParametersOfTheMessage)
+
+            String message = String.join(" ", List.of(messageId.name(), String.join(" ", allParametersOfTheMessage)))
                     + '\n';
 
             bufferedWriter.write(message);
@@ -124,7 +125,7 @@ public class RemotePlayerProxy implements Player {
             bufferedWriter.flush();
 
         } catch (IOException ioException) {
-            ioException.printStackTrace();
+            throw new UncheckedIOException(ioException);
         }
     }
 
