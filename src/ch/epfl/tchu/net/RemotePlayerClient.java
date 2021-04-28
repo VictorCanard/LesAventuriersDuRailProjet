@@ -39,23 +39,26 @@ public class RemotePlayerClient {
      * Method that runs until the end of the game.
      * It tries to connect to the socket and then until it reads an empty line,
      * it keeps intercepting the messages and then running the appropriate player methods.
+     * If these player methods return a value, the run() method will then serialize that value
+     * and send it back onto the Socket (it will write it with the buffered writer).
      */
     public void run() {
-        try (Socket s = new Socket(name, port);
-             BufferedReader r =
+        try (Socket socket = new Socket(name, port);
+             BufferedReader bufferedReader =
                      new BufferedReader(
-                             new InputStreamReader(s.getInputStream(),
+                             new InputStreamReader(socket.getInputStream(),
                                      US_ASCII));
-             BufferedWriter w =
+             BufferedWriter bufferedWriter =
                      new BufferedWriter(
-                             new OutputStreamWriter(s.getOutputStream(),
+                             new OutputStreamWriter(socket.getOutputStream(),
                                      US_ASCII))) {
 
 
-            String read;
+            String readLine;
 
-            while ((read = r.readLine()) != null) {
-                String[] incoming = read.split(spacePattern, -1);
+            while ((readLine = bufferedReader.readLine()) != null) {
+
+                String[] incoming = readLine.split(spacePattern, -1);
                 String type = incoming[0];
 
                 switch (MessageId.valueOf(type)) {
@@ -90,48 +93,54 @@ public class RemotePlayerClient {
 
                     case CHOOSE_INITIAL_TICKETS:
                         SortedBag<Ticket> chosen = player.chooseInitialTickets();
-                        w.write(SORTED_BAG_TICKET_SERDE.serialize(chosen) + '\n');
-                        w.flush();
+
+                        bufferedWriter.write(SORTED_BAG_TICKET_SERDE.serialize(chosen) + '\n');
+                        bufferedWriter.flush();
                         break;
 
                     case NEXT_TURN:
                         Player.TurnKind turn = player.nextTurn();
-                        w.write(TURN_KIND_SERDE.serialize(turn) + '\n');
-                        w.flush();
+
+                        bufferedWriter.write(TURN_KIND_SERDE.serialize(turn) + '\n');
+                        bufferedWriter.flush();
                         break;
 
                     case CHOOSE_TICKETS:
                         SortedBag<Ticket> ticketOptions = SORTED_BAG_TICKET_SERDE.deserialize(incoming[1]);
                         String chosenTickets = SORTED_BAG_TICKET_SERDE.serialize(player.chooseTickets(ticketOptions));
-                        w.write(chosenTickets + '\n');
-                        w.flush();
+
+                        bufferedWriter.write(chosenTickets + '\n');
+                        bufferedWriter.flush();
                         break;
 
                     case DRAW_SLOT:
                         int drawSlot = player.drawSlot();
-                        w.write(INTEGER_SERDE.serialize(drawSlot) + '\n');
-                        w.flush();
+
+                        bufferedWriter.write(INTEGER_SERDE.serialize(drawSlot) + '\n');
+                        bufferedWriter.flush();
                         break;
 
                     case ROUTE:
                         Route claimedRoute = player.claimedRoute();
+
                         String string = ROUTE_SERDE.serialize(claimedRoute) + '\n';
-                        w.write(string);
-                        w.flush();
+                        bufferedWriter.write(string);
+                        bufferedWriter.flush();
                         break;
 
                     case CARDS:
                         SortedBag<Card> initialClaimCards = player.initialClaimCards();
-                        w.write(SORTED_BAG_CARD_SERDE.serialize(initialClaimCards) + '\n');
-                        w.flush();
+
+                        bufferedWriter.write(SORTED_BAG_CARD_SERDE.serialize(initialClaimCards) + '\n');
+                        bufferedWriter.flush();
                         break;
 
                     case CHOOSE_ADDITIONAL_CARDS:
                         List<SortedBag<Card>> cardOptions = LIST_SORTED_BAG_CARD_SERDE.deserialize(incoming[1]);
                         SortedBag<Card> addCards = player.chooseAdditionalCards(cardOptions);
 
-                        w.write(SORTED_BAG_CARD_SERDE.serialize(addCards) + '\n');
-                        w.flush();
+                        bufferedWriter.write(SORTED_BAG_CARD_SERDE.serialize(addCards) + '\n');
+                        bufferedWriter.flush();
                         break;
                 }
             }

@@ -2,6 +2,7 @@ package ch.epfl.tchu;
 
 import ch.epfl.tchu.game.*;
 
+import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,9 +80,19 @@ public final class TestPlayer implements Player {
 
     @Override
     public void updateState(PublicGameState newState, PlayerState ownState) {
+        System.out.printf("Public Game State %s", toStringGs(newState));
+
         registerCall(UPDATE_STATE);
         allGameStates.addLast(newState);
         allOwnStates.addLast(ownState);
+    }
+
+    private PrintStream toStringGs(PublicGameState publicGameState) {
+        return System.out.printf("Ticket count %s\nCard State: %s\nCurrentPlayerId %s\nLast Player Id %s\nCurrent Player State %s\n", publicGameState.ticketsCount(), publicGameState.cardState(), publicGameState.currentPlayerId(), publicGameState.lastPlayer(), publicGameState.currentPlayerState());
+    }
+
+    private PrintStream toStringPs(PublicPlayerState publicPlayerState) {
+        return System.out.printf("");
     }
 
     @Override

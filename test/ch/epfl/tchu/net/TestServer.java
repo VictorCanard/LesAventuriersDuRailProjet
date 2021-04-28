@@ -3,6 +3,7 @@ package ch.epfl.tchu.net;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Player;
+import ch.epfl.tchu.game.PlayerId;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public final class TestServer {
             var playerNames = Map.of(PLAYER_1, "Ada",
                     PLAYER_2, "Charles");
 
+            initPlayersWorksProperly(playerProxy1, playerNames);
 
             var players = Map.of(PLAYER_1, playerProxy1, PLAYER_2, playerProxy1);
 
@@ -47,8 +49,9 @@ public final class TestServer {
     }
 
     @Test
-    static void initPlayersWorksProperly(Player playerProxy) {
-
+    static void initPlayersWorksProperly(Player playerProxy, Map<PlayerId, String> playerNames) {
+        playerProxy.initPlayers(PLAYER_1, playerNames);
+        
 
     }
 }
