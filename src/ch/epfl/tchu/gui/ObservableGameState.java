@@ -3,121 +3,117 @@ package ch.epfl.tchu.gui;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 
-import java.util.List;
+import java.util.*;
 
 public final class ObservableGameState {
-    //Group 1
+    private final PlayerId playerId;
+
+    //Group 1 : PublicGameState
     private final ObjectProperty<Integer> ticketsPercentageLeft = new SimpleObjectProperty<>(0);
     private final ObjectProperty<Integer> cardsPercentageLeft = new SimpleObjectProperty<>(0);
-    private final List<ObjectProperty<Card>> faceUpCards;
-    private final List<ObjectProperty<Route>> allRoutes;
+    private final List<ObjectProperty<Card>> faceUpCards = new ArrayList<>();
+    private final Map<ObjectProperty<Route>, ObjectProperty<PlayerId>> allRoutesContainedByWhom = new HashMap<>();
 
-    //Group 2
+    //Group 2 : Both Player's Public Player States
 
-    private final ObjectProperty<Integer> ticketCount = new SimpleObjectProperty<>(0);
-    private final ObjectProperty<Integer> cardCount = new SimpleObjectProperty<>(0);
-    private final ObjectProperty<Integer> carCount = new SimpleObjectProperty<>(0);
-    private final ObjectProperty<Integer> constructionPoints = new SimpleObjectProperty<>(0);
-    //Group 3
-    private final List<ObjectProperty<Ticket>> allPlayerTickets = new SimpleObjectProperty<>(0);
-    private final List<ObjectProperty<Integer>> numberOfEachCard = new SimpleObjectProperty<>(0);
+    private final Map<ObjectProperty<PlayerId>, ObjectProperty<Integer>> ticketCount = createEmptyPlayerIdIntegerHashMap();
+    private final Map<ObjectProperty<PlayerId>, ObjectProperty<Integer>> cardCount = createEmptyPlayerIdIntegerHashMap();
+    private final Map<ObjectProperty<PlayerId>, ObjectProperty<Integer>> carCount = createEmptyPlayerIdIntegerHashMap();
+    private final Map<ObjectProperty<PlayerId>, ObjectProperty<Integer>> constructionPoints = createEmptyPlayerIdIntegerHashMap();
+
+    //Group 3 : Complete Player State of this Player
+    private final List<ObjectProperty<Ticket>> allPlayerTickets = FXCollections.observableArrayList();
+    private final Map<ObjectProperty<Card>, ObjectProperty<Integer>> numberOfEachCard = setNumberOfEachCard();
+    private final Map<ObjectProperty<Route>, ObjectProperty<Boolean>> routeCanBeClaimedByThisPlayerOrNot = setRoutesClaimedOrNot();
 
     public ObservableGameState(PlayerId playerId) {
-        this.faceUpCards = new observableArrayList();
-        this.allRoutes =;
+        createFaceUpCards();
+        createRoutes();
+
+        this.playerId = playerId;
     }
 
-    public Integer getTicketsPercentageLeft() {
-        return ticketsPercentageLeft.get();
+    private static Map<ObjectProperty<PlayerId>, ObjectProperty<Integer>> createEmptyPlayerIdIntegerHashMap() {
+        Map<ObjectProperty<PlayerId>, ObjectProperty<Integer>> mapToReturn = new HashMap<>();
+
+        for (PlayerId playerId : PlayerId.values()
+        ) {
+            mapToReturn.put(new SimpleObjectProperty<>(playerId), new SimpleObjectProperty<>(0));
+        }
+        return mapToReturn;
     }
 
-    public void setTicketsPercentageLeft(Integer ticketsPercentageLeft) {
-        this.ticketsPercentageLeft.set(ticketsPercentageLeft);
+    private static Map<ObjectProperty<Card>, ObjectProperty<Integer>> setNumberOfEachCard() {
+        Map<ObjectProperty<Card>, ObjectProperty<Integer>> mapToReturn = new TreeMap<>(Comparator.comparingInt(op -> op.get().ordinal()));
+
+        for (Card card : Card.values()
+        ) {
+            mapToReturn.put(new SimpleObjectProperty<>(card), new SimpleObjectProperty<>(0));
+        }
+        return mapToReturn;
     }
 
-    public ObjectProperty<Integer> ticketsPercentageLeftProperty() {
-        return ticketsPercentageLeft;
+    private static Map<ObjectProperty<Route>, ObjectProperty<Boolean>> setRoutesClaimedOrNot() {
+        Map<ObjectProperty<Route>, ObjectProperty<Boolean>> mapToReturn = new HashMap<>();
+
+        for (Route route : ChMap.routes()
+        ) {
+            mapToReturn.put(new SimpleObjectProperty<>(route), new SimpleObjectProperty<>(false));
+        }
+        return mapToReturn;
     }
 
-    public Integer getCardsPercentageLeft() {
-        return cardsPercentageLeft.get();
+    private void createRoutes() {
+
+        for (int i = 0; i < ChMap.routes().size(); i++) {
+            allRoutesContainedByWhom.put(new SimpleObjectProperty<>(null), new SimpleObjectProperty<>(null));
+        }
     }
 
-    public void setCardsPercentageLeft(Integer cardsPercentageLeft) {
-        this.cardsPercentageLeft.set(cardsPercentageLeft);
+    private void setRoutesPlayerId(PublicGameState newPublicGameState) {
+
+        for (Route route : ChMap.routes()
+        ) {
+            PlayerId whoHasCurrentRoute;
+
+            if (newPublicGameState.playerState(newPublicGameState.currentPlayerId()).routes().contains(route)) {
+                whoHasCurrentRoute = newPublicGameState.currentPlayerId();
+            } else if (newPublicGameState.playerState(newPublicGameState.currentPlayerId().next()).routes().contains(route)) {
+                whoHasCurrentRoute = newPublicGameState.currentPlayerId().next();
+            } else {
+                whoHasCurrentRoute = null;
+            }
+            allRoutesContainedByWhom.get(route).set(whoHasCurrentRoute);
+        }
+
     }
 
-    public ObjectProperty<Integer> cardsPercentageLeftProperty() {
-        return cardsPercentageLeft;
+    private void createFaceUpCards() {
+        for (int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
+            faceUpCards.add(new SimpleObjectProperty<>(null));
+        }
     }
 
-    public List<ObjectProperty<Card>> getFaceUpCards() {
-        return faceUpCards;
-    }
-
-    public List<ObjectProperty<Route>> getAllRoutes() {
-        return allRoutes;
-    }
-
-    public Integer getTicketCount() {
-        return ticketCount.get();
-    }
-
-    public void setTicketCount(Integer ticketCount) {
-        this.ticketCount.set(ticketCount);
-    }
-
-    public ObjectProperty<Integer> ticketCountProperty() {
-        return ticketCount;
-    }
-
-    public Integer getCardCount() {
-        return cardCount.get();
-    }
-
-    public void setCardCount(Integer cardCount) {
-        this.cardCount.set(cardCount);
-    }
-
-    public ObjectProperty<Integer> cardCountProperty() {
-        return cardCount;
-    }
-
-    public Integer getCarCount() {
-        return carCount.get();
-    }
-
-    public void setCarCount(Integer carCount) {
-        this.carCount.set(carCount);
-    }
-
-    public ObjectProperty<Integer> carCountProperty() {
-        return carCount;
-    }
-
-    public Integer getConstructionPoints() {
-        return constructionPoints.get();
-    }
-
-    public void setConstructionPoints(Integer constructionPoints) {
-        this.constructionPoints.set(constructionPoints);
-    }
-
-    public ObjectProperty<Integer> constructionPointsProperty() {
-        return constructionPoints;
-    }
-
-    public List<ObjectProperty<Ticket>> getAllPlayerTickets() {
-        return allPlayerTickets;
-    }
-
-    public List<ObjectProperty<Integer>> getNumberOfEachCard() {
-        return numberOfEachCard;
+    private void setFaceUpCards(List<Card> newFaceUpCards) {
+        for (int slot : Constants.FACE_UP_CARD_SLOTS) {
+            faceUpCards.get(slot).set(newFaceUpCards.get(slot));
+        }
     }
 
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
+        //
+        ticketsPercentageLeft.set(publicGameState.ticketsCount() / ChMap.tickets().size());
+        cardsPercentageLeft.set(publicGameState.cardState().deckSize() / Constants.ALL_CARDS.size());
+        setFaceUpCards(publicGameState.cardState().faceUpCards());
+        setRoutesPlayerId(publicGameState);
+        //
+
+        //
     }
 
 
@@ -130,7 +126,10 @@ public final class ObservableGameState {
     }
 
     public List<SortedBag<Card>> possibleClaimCards() {
-        return;
+        return null;
     }
 
+    public ReadOnlyBooleanProperty claimable(Route route) {
+        return new SimpleBooleanProperty(false);
+    }
 }

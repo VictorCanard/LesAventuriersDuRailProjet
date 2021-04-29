@@ -4,6 +4,8 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Route;
+import ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
+import ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -19,7 +21,7 @@ class MapViewCreator {
     private MapViewCreator() {
     }
 
-    public static Node createMapView(ObservableGameState gameState, ObjectProperty<ActionHandlers.ClaimRouteHandler> claimRoute, CardChooser chooseCards) {
+    public static Node createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser chooseCards) {
         Pane map = new Pane();
         map.getStylesheets().addAll("map.css", "colors.css");
 
@@ -30,13 +32,13 @@ class MapViewCreator {
 
         //
 
-        setAllRoutes(map);
+        setAllRoutes(map, gameState, claimRouteHP);
 
 
         return map;
     }
 
-    private static void setAllRoutes(Pane map) {
+    private static void setAllRoutes(Pane map, ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP) {
         for (Route route : ChMap.routes()
         ) {
             Group routeGroup = new Group();
@@ -45,6 +47,10 @@ class MapViewCreator {
 
             String routeColor = (route.color() == null) ? "NEUTRAL" : route.color().name().toUpperCase(Locale.ROOT);
             routeGroup.getStyleClass().addAll("route", route.level().name(), routeColor);
+
+
+            routeGroup.disableProperty().bind(
+                    claimRouteHP.isNull().or(gameState.claimable(route).not()));
 
             map.getChildren().add(routeGroup);
 
@@ -84,6 +90,6 @@ class MapViewCreator {
     @FunctionalInterface
     interface CardChooser {
         void chooseCards(List<SortedBag<Card>> options,
-                         ActionHandlers.ChooseCardsHandler handler);
+                         ChooseCardsHandler handler);
     }
 }
