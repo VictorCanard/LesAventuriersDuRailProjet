@@ -1,5 +1,6 @@
 package ch.epfl.tchu.gui;
 //Bonjour
+//hi
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.application.Application;
@@ -44,9 +45,9 @@ public final class Stage9Test extends Application {
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.show();
 
-        setState(gameState);
+       // setState(gameState);
     }
-
+/*
     private void setState(ObservableGameState gameState) {
         PlayerState p1State =
                 new PlayerState(SortedBag.of(ChMap.tickets().subList(0, 3)),
@@ -63,7 +64,7 @@ public final class Stage9Test extends Application {
         PublicGameState publicGameState =
                 new PublicGameState(36, cardState, PLAYER_1, pubPlayerStates, null);
         gameState.setState(publicGameState, p1State);
-    }
+    }*/
 
     private static void claimRoute(Route route, SortedBag<Card> cards) {
         System.out.printf("Prise de possession d'une route : %s - %s %s%n",
