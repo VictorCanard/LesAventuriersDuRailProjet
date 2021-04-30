@@ -57,7 +57,7 @@ public class RemotePlayerClient {
             String readLine;
 
             while ((readLine = bufferedReader.readLine()) != null) {
-
+                System.out.println("RECEIVED MESSAGE : " + readLine);
                 String[] incoming = readLine.split(spacePattern, -1);
                 String type = incoming[0];
 

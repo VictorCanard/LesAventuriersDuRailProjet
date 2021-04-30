@@ -113,6 +113,8 @@ public final class TestPlayer implements Player {
 
         var turn = doNextTurn();
         allTurns.addLast(turn);
+        System.out.println("Next turn : " + turn);
+
         return turn;
     }
 
@@ -161,7 +163,9 @@ public final class TestPlayer implements Player {
     @Override
     public int drawSlot() {
         registerCall(PlayerMethod.DRAW_SLOT);
-        return rng.nextInt(6) - 1;
+      int slot =  rng.nextInt(6) - 1;
+        System.out.println("Drawn slot : " + slot);
+        return slot;
     }
 
     @Override

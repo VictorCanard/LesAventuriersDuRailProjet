@@ -121,6 +121,7 @@ public class RemotePlayerProxy implements Player {
                     + '\n';
 
             bufferedWriter.write(message);
+            System.out.println("SENT MESSAGE : " + message);
 
             bufferedWriter.flush();
 
