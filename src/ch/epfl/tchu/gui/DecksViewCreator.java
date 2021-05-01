@@ -1,17 +1,16 @@
 package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.game.ChMap;
-import ch.epfl.tchu.game.Color;
 import ch.epfl.tchu.game.Ticket;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.layout.*;
-import javafx.scene.control.*;
-import javafx.scene.shape.*;
-
-import javax.swing.text.html.ListView;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 //package private - no access mods
 
 class DecksViewCreator {
@@ -21,7 +20,7 @@ class DecksViewCreator {
         HBox handPane = new HBox();
 
         ObservableList<Ticket> ticketList = FXCollections.observableArrayList(ChMap.tickets());
-        javafx.scene.control.ListView<Ticket> tickets = new javafx.scene.control.ListView<Ticket>(ticketList);
+        javafx.scene.control.ListView<Ticket> tickets = new javafx.scene.control.ListView<>(ticketList);
 
         StackPane pane = new StackPane();
         pane.getChildren().addAll(new Rectangle(100,100), new Label("Go!"));

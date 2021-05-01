@@ -30,6 +30,7 @@ public class RemotePlayerProxy implements Player {
         }
     }
 
+
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
         String playerId = PLAYER_ID_SERDE.serialize(ownID);

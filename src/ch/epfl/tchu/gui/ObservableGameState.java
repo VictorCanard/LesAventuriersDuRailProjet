@@ -74,6 +74,8 @@ public final class ObservableGameState {
         return Collections.unmodifiableMap(allRoutesContainedByWhom);
     }
 
+
+    //Getters à modifier/ finir
     public Map<PlayerId, ObjectProperty<Integer>> getTicketCount() {
         return ticketCount;
     }
@@ -101,6 +103,7 @@ public final class ObservableGameState {
     public Map<Route, ObjectProperty<Boolean>> getRouteCanBeClaimedByThisPlayerOrNot() {
         return routeCanBeClaimedByThisPlayerOrNot;
     }
+    //End of getters
 
     private void setNumberOfEachCard() {
 
@@ -189,8 +192,8 @@ public final class ObservableGameState {
     private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
         routeCanBeClaimedByThisPlayerOrNot.forEach((route, booleanObjectProperty) -> {
             if (publicGameState.currentPlayerId().equals(playerId)
-                    && !booleanObjectProperty.get()
-                    && !allPairsOfStations.contains(route.stations())
+                    && allRoutesContainedByWhom.get(route).get() == null
+                    && !allPairsOfStations.contains(route.stations()) //Todo repair this instruction to allow parallel routes to be both unclaimable or claimable
                     && playerState.canClaimRoute(route)) {
 
                 allPairsOfStations.add(route.stations());

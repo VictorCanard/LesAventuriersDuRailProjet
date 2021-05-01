@@ -1,6 +1,7 @@
 package ch.epfl.tchu.gui;
-//Bonjour
+
 //hi
+
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.application.Application;
@@ -18,10 +19,20 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public final class Stage9Test extends Application {
+
+    private final SortedBag<Card> allCards = makeAllCards();
     public static void main(String[] args) {
         launch(args);
     }
 
+    private final SortedBag<Card> makeAllCards(){
+        SortedBag.Builder<Card> cards = new SortedBag.Builder<>();
+
+        for (int i = 0; i < 10; i++) {
+            cards.add(SortedBag.of(Card.ALL));
+        }
+        return cards.build();
+    }
     @Override
     public void start(Stage primaryStage) {
         ObservableGameState gameState = new ObservableGameState(PLAYER_1);
@@ -45,13 +56,13 @@ public final class Stage9Test extends Application {
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.show();
 
-       // setState(gameState);
+       setState(gameState);
     }
-/*
+
     private void setState(ObservableGameState gameState) {
         PlayerState p1State =
                 new PlayerState(SortedBag.of(ChMap.tickets().subList(0, 3)),
-                        SortedBag.of(1, Card.WHITE, 3, Card.RED),
+                        SortedBag.of(allCards),
                         ChMap.routes().subList(0, 3));
 
         PublicPlayerState p2State =
@@ -64,7 +75,7 @@ public final class Stage9Test extends Application {
         PublicGameState publicGameState =
                 new PublicGameState(36, cardState, PLAYER_1, pubPlayerStates, null);
         gameState.setState(publicGameState, p1State);
-    }*/
+    }
 
     private static void claimRoute(Route route, SortedBag<Card> cards) {
         System.out.printf("Prise de possession d'une route : %s - %s %s%n",

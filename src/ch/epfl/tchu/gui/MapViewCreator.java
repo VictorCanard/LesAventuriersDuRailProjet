@@ -23,6 +23,7 @@ class MapViewCreator {
 
     public static Node createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         Pane map = new Pane();
+        //map.setPrefHeight();
         map.getStylesheets().addAll("map.css", "colors.css");
 
         //
@@ -88,7 +89,7 @@ class MapViewCreator {
         }
     }
 
-    private static void setAllBlocksOfARoute(Route route, Group routeGroup){
+    private static void setAllBlocksOfARoute(Route route, Group routeGroup) {
         for (int currentRouteCase = 1; currentRouteCase <= route.length(); currentRouteCase++) {
             Group caseGroup = new Group();
             caseGroup.setId(route.id() + "_" + currentRouteCase);
@@ -112,10 +113,10 @@ class MapViewCreator {
             double centerX = wagonRectangle.widthProperty().get() / 2;
             double centerY = wagonRectangle.heightProperty().get() / 2;
 
-            Circle circle1 = new Circle(centerX - 6, centerY, 3);
-            Circle circle2 = new Circle(centerX + 6, centerY, 3);
+            Circle wheel1 = new Circle(centerX - 6, centerY, 3);
+            Circle wheel2 = new Circle(centerX + 6, centerY, 3);
 
-            wagonGroup.getChildren().addAll(wagonRectangle, circle1, circle2);
+            wagonGroup.getChildren().addAll(wagonRectangle, wheel1, wheel2);
         }
     }
 

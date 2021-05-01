@@ -41,6 +41,8 @@ public class RemotePlayerClient {
      * it keeps intercepting the messages and then running the appropriate player methods.
      * If these player methods return a value, the run() method will then serialize that value
      * and send it back onto the Socket (it will write it with the buffered writer).
+     *
+     *
      */
     public void run() {
         try (Socket socket = new Socket(name, port);
@@ -112,6 +114,7 @@ public class RemotePlayerClient {
                         bufferedWriter.write(chosenTickets + '\n');
                         bufferedWriter.flush();
                         break;
+
 
                     case DRAW_SLOT:
                         int drawSlot = player.drawSlot();
