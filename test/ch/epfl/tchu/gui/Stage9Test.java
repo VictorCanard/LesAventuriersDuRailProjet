@@ -6,6 +6,7 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -19,6 +20,7 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public final class Stage9Test extends Application {
+
 
     private final SortedBag<Card> allCards = makeAllCards();
     public static void main(String[] args) {
@@ -56,13 +58,13 @@ public final class Stage9Test extends Application {
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.show();
 
-       setState(gameState);
+        setState(gameState);
     }
 
     private void setState(ObservableGameState gameState) {
         PlayerState p1State =
                 new PlayerState(SortedBag.of(ChMap.tickets().subList(0, 3)),
-                        SortedBag.of(allCards),
+                        SortedBag.of(3, Card.YELLOW, 5, Card.BLUE),
                         ChMap.routes().subList(0, 3));
 
         PublicPlayerState p2State =

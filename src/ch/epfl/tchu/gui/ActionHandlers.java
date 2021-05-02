@@ -13,7 +13,7 @@ public interface ActionHandlers {
 
     @FunctionalInterface
     interface DrawCardHandler {
-        void onDrawCard(int slot);
+        void onDrawCards(int slot);
     }
 
     @FunctionalInterface

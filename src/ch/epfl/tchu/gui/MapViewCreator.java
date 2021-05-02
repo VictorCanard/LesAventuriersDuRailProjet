@@ -21,7 +21,7 @@ class MapViewCreator {
     private MapViewCreator() {
     }
 
-    public static Node createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
+    public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         Pane map = new Pane();
         //map.setPrefHeight();
         map.getStylesheets().addAll("map.css", "colors.css");
