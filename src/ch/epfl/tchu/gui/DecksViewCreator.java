@@ -17,43 +17,55 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.util.Locale;
+
 
 class DecksViewCreator {
     private DecksViewCreator() {
     }
 
+    /**
+     * Creates the Hand View of tickets
+     * @param gameState
+     * @return
+     */
     public static HBox createHandView(ObservableGameState gameState) {
 
         HBox handView = new HBox();
         handView.getStylesheets().addAll("decks.css", "colors.css");
-        handView.setId("hand-pane");
+
+        //
+        ObservableList<String> ticketList = FXCollections.observableArrayList();
+        ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
+        listOfTickets.forEach(ticket -> ticketList.add(ticket.toString()));
+
+        ListView<String> listView = new ListView<>(ticketList);
+        listView.setId("tickets");
+
+        handView.getChildren().add(listView);
+
+        //
+        HBox handPane = new HBox();
+        handPane.setId("hand-pane");
+
+        handView.getChildren().add(handPane);
 
         //tickets : issue with showing them. In ObservableGameState, method getAllPlayerTickets is updated, but doesnt carry here, even with ticketList
 
-        ObservableList<String> tlString = FXCollections.observableArrayList();
-        ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
-        listOfTickets.forEach(ticket -> tlString.add(ticket.toString()));
-
-        ListView<String> tl = new ListView<>(tlString);
-        tl.setId("tickets");
-
-        handView.getChildren().add(tl);
-
         //cards
-        for (Card c : Card.ALL) {
-            ReadOnlyIntegerProperty count = gameState.getNumberOfEachCard().get(c); //map in ObsvGameState is always null. But if you use the count of an individual card it works
+        for (Card card : Card.ALL) {
+            ReadOnlyIntegerProperty count = gameState.getNumberOfEachCard().get(card);
 
-            StackPane cardPane = cardPane(c);
+            StackPane cardPane = cardPane(card);
 
-            if (count != null) {
-                Text text = new Text(count.getValue().toString());
-                text.getStyleClass().addAll("count");
-                text.textProperty().bind(Bindings.convert(count));
-                text.visibleProperty().bind(Bindings.greaterThan(count, 0));
+            Text text = new Text(count.getValue().toString());
+            text.getStyleClass().add("count");
 
-                cardPane.getChildren().add(text);
-                cardPane.visibleProperty().bind(Bindings.greaterThan(count, 0));
-            }
+            text.textProperty().bind(Bindings.convert(count));
+            text.visibleProperty().bind(Bindings.greaterThan(count, 1));
+
+            cardPane.getChildren().add(text);
+            cardPane.visibleProperty().bind(Bindings.greaterThan(count, 0));
 
             handView.getChildren().addAll(cardPane);
 
@@ -71,82 +83,102 @@ class DecksViewCreator {
 
         //tickets button
         Button ticketButton = new Button("Billets");
-        ticketButton.getStyleClass().add("gauged");
-        Group ticketGauge = new Group();
+        //
+
         ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPercentageLeftProperty();
+        cardsView.getChildren().add(deckButtons(ticketButton, ticketsPctProperty));
+
+        //
         ticketButton.disableProperty().bind(drawTickets.isNull());
 
-        ticketButton.setOnMouseClicked(event -> drawTickets.getValue().onDrawTickets());
+        //
+        ticketButton.setOnMouseClicked(event -> drawTickets.get().onDrawTickets());
 
-        cardsView.getChildren().add(deckButtons(ticketButton, ticketsPctProperty, ticketGauge));
-
-        //face up cards
-        for (int slot : Constants.FACE_UP_CARD_SLOTS) {
-            StackPane card = new StackPane();
-            card.getStyleClass().addAll("card");
-
-            //changes the graphics of the card according to what card is stored in the slot
-            gameState.getFaceUpCards().get(slot).addListener((property, oldValue, newValue) -> {
-                card.getStyleClass().add(newValue.name());
-            });
-            card.disableProperty().bind(drawCards.isNull());
-
-            card.setOnMouseClicked(event -> drawCards.getValue().onDrawCards(slot));
-
-            cardsView.getChildren().add(cardRectangles(card));
-        }
 
         //cards button
         Button cardButton = new Button("Cartes");
-        cardButton.getStyleClass().add("gauged");
-        Group cardGauge = new Group();
+
         ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPercentageLeftProperty();
 
+        cardsView.getChildren().add(deckButtons(cardButton, cardsPctProperty));
+
+        //
         cardButton.disableProperty().bind(drawCards.isNull());
 
-        cardButton.setOnMouseClicked(event -> drawCards.getValue().onDrawCards(Constants.DECK_SLOT));
+        //
+        cardButton.setOnMouseClicked(event -> drawCards.get().onDrawCards(Constants.DECK_SLOT));
 
-        cardsView.getChildren().add(deckButtons(cardButton, cardsPctProperty, cardGauge));
+
+        //face up cards
+        for (int slot : Constants.FACE_UP_CARD_SLOTS) {
+            StackPane stackPane = new StackPane();
+            stackPane.getStyleClass().add("card");
+
+            //changes the graphics of the card according to what card is stored in the slot
+            gameState.getFaceUpCards().get(slot).addListener((property, oldValue, newValue) -> {
+
+                stackPane.getStyleClass().add(getCardName(newValue));
+                if(oldValue != null){
+                    stackPane.getStyleClass().remove(getCardName(oldValue));
+                }
+
+            });
+            stackPane.disableProperty().bind(drawCards.isNull());
+
+            //
+            stackPane.setOnMouseClicked(event -> drawCards.getValue().onDrawCards(slot));
+
+            cardsView.getChildren().add(cardRectangles(stackPane));
+        }
+
+
         return cardsView;
     }
 
-    private static Button deckButtons(Button button, ReadOnlyIntegerProperty percentage, Group gauge) {
+    private static String getCardName(Card card) {
+        return (card == Card.LOCOMOTIVE) ? "NEUTRAL" : card.name().toUpperCase(Locale.ROOT);
+    }
+
+    private static Button deckButtons(Button button, ReadOnlyIntegerProperty percentage) {
+        Group gauge = new Group();
+
         Rectangle gaugeBackground = new Rectangle(50, 5);
         gaugeBackground.getStyleClass().add("background");
 
         Rectangle gaugeForeground = new Rectangle(50, 5);
         gaugeForeground.getStyleClass().add("foreground");
-        gaugeForeground.widthProperty().bind(percentage.multiply(50).divide(100));
+        gaugeForeground.widthProperty().bind(percentage.multiply(0.5));
 
         gauge.getChildren().addAll(gaugeBackground, gaugeForeground);
+
         button.setGraphic(gauge);
+        button.getStyleClass().add("gauged");
+
         return button;
     }
 
 
-    private static StackPane cardPane(Card c) {
-        String cardName;
-        if (c == Card.LOCOMOTIVE) {
-            cardName = "NEUTRAL";
-        } else {
-            cardName = c.name();
-        }
-        StackPane card = new StackPane();
-        card.getStyleClass().addAll(cardName, "card");
+    private static StackPane cardPane(Card card) {
+        String cardName = getCardName(card);
 
-        return cardRectangles(card);
+        StackPane stackPane = new StackPane();
+        stackPane.getStyleClass().addAll(cardName, "card");
+
+        return cardRectangles(stackPane);
     }
 
-    private static StackPane cardRectangles(StackPane card) {
+    private static StackPane cardRectangles(StackPane stackPane) {
         Rectangle outside = new Rectangle(60, 90);
         outside.getStyleClass().add("outside");
+
         Rectangle inside = new Rectangle(40, 70);
         inside.getStyleClass().addAll("filled", "inside");
+
         Rectangle train = new Rectangle(40, 70);
         train.getStyleClass().add("train-image");
 
-        card.getChildren().addAll(outside, inside, train);
-        return card;
+        stackPane.getChildren().addAll(outside, inside, train);
+        return stackPane;
 
     }
 }
