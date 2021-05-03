@@ -7,6 +7,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,11 +28,11 @@ public final class ObservableGameState {
     private final Map<PlayerId, ObjectProperty<Integer>> constructionPoints = new HashMap<>();
 
     //Group 3 : Complete Player State of this Player
-    private final List<Ticket> allPlayerTickets = FXCollections.observableArrayList();
+    private final ObservableList<Ticket> allPlayerTickets = FXCollections.observableArrayList();
     private final Map<Card, ObjectProperty<Integer>> numberOfEachCard = new HashMap<>();
     private final Map<Route, ObjectProperty<Boolean>> routeCanBeClaimedByThisPlayerOrNot = new HashMap<>();
     //
-    private final Set<List<Station>> allPairsOfStations = new HashSet<>();
+    private final Set<List<Station>> allPairsOfStationsClaimed = new HashSet<>();
     private PublicGameState publicGameState;
     private PlayerState playerState;
 
@@ -92,13 +93,16 @@ public final class ObservableGameState {
         return constructionPoints;
     }
 
-    public List<Ticket> getAllPlayerTickets() {
-        return allPlayerTickets;
+    public ObservableList<Ticket> getAllPlayerTickets() {
+        return FXCollections.unmodifiableObservableList(allPlayerTickets);
     }
 
-    /*public Map<Card, ObjectProperty<ReadOnlyIntegerProperty>> getNumberOfEachCard() {
-        return numberOfEachCard;
-    }*/
+    public Map<Card, ReadOnlyIntegerProperty> getNumberOfEachCard() {
+        Map<Card, ReadOnlyIntegerProperty> newMap = new HashMap<>();
+
+        numberOfEachCard.forEach((card, integerObjectProperty) -> newMap.put(card, ReadOnlyIntegerProperty.readOnlyIntegerProperty(integerObjectProperty)));
+        return newMap;
+    }
 
     public Map<Route, ObjectProperty<Boolean>> getRouteCanBeClaimedByThisPlayerOrNot() {
         return routeCanBeClaimedByThisPlayerOrNot;
@@ -133,12 +137,15 @@ public final class ObservableGameState {
 
             if (newPublicGameState.playerState(newPublicGameState.currentPlayerId()).routes().contains(route)) {
                 whoHasCurrentRoute = newPublicGameState.currentPlayerId();
+                allPairsOfStationsClaimed.add(route.stations());
             } else if (newPublicGameState.playerState(newPublicGameState.currentPlayerId().next()).routes().contains(route)) {
                 whoHasCurrentRoute = newPublicGameState.currentPlayerId().next();
+                allPairsOfStationsClaimed.add(route.stations());
             } else {
                 whoHasCurrentRoute = null;
             }
             allRoutesContainedByWhom.get(route).set(whoHasCurrentRoute);
+
         });
 
     }
@@ -191,13 +198,14 @@ public final class ObservableGameState {
 
     private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
         routeCanBeClaimedByThisPlayerOrNot.forEach((route, booleanObjectProperty) -> {
-            if (publicGameState.currentPlayerId().equals(playerId)
-                    && allRoutesContainedByWhom.get(route).get() == null
-                    && !allPairsOfStations.contains(route.stations()) //Todo repair this instruction to allow parallel routes to be both unclaimable or claimable
-                    && playerState.canClaimRoute(route)) {
 
-                allPairsOfStations.add(route.stations());
+
+            if (publicGameState.currentPlayerId().equals(playerId)
+                    && playerState.canClaimRoute(route)
+                    && !allPairsOfStationsClaimed.contains(route.stations())) {
+
                 booleanObjectProperty.set(true);
+
             }
         });
     }
