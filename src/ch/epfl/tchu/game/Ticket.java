@@ -116,4 +116,9 @@ public final class Ticket  implements Comparable<Ticket>{
     public int compareTo(Ticket that) {
         return this.text().compareTo(that.text());
     }
+
+    @Override
+    public String toString(){
+        return text();
+    }
 }

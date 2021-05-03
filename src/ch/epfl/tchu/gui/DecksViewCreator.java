@@ -11,15 +11,16 @@ import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.*;
-import javafx.scene.shape.*;
-import javafx.scene.text.*;
-
-import java.util.List;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 
 class DecksViewCreator {
-    private DecksViewCreator() {}
+    private DecksViewCreator() {
+    }
 
     public static HBox createHandView(ObservableGameState gameState) {
 
@@ -30,9 +31,8 @@ class DecksViewCreator {
         //tickets : issue with showing them. In ObservableGameState, method getAllPlayerTickets is updated, but doesnt carry here, even with ticketList
 
         ObservableList<String> tlString = FXCollections.observableArrayList();
-        List<Ticket> listOfTickets = gameState.getAllPlayerTickets();
-        ObservableList<Ticket> ticketList = FXCollections.observableArrayList(listOfTickets);
-        ticketList.forEach(ticket -> tlString.add(ticket.text()));
+        ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
+        listOfTickets.forEach(ticket -> tlString.add(ticket.toString()));
 
         ListView<String> tl = new ListView<>(tlString);
         tl.setId("tickets");
@@ -40,12 +40,12 @@ class DecksViewCreator {
         handView.getChildren().add(tl);
 
         //cards
-        for(Card c : Card.ALL){
-            ReadOnlyIntegerProperty count =gameState.getNumberOfEachCard().get(c); //map in ObsvGameState is always null. But if you use the count of an individual card it works
+        for (Card c : Card.ALL) {
+            ReadOnlyIntegerProperty count = gameState.getNumberOfEachCard().get(c); //map in ObsvGameState is always null. But if you use the count of an individual card it works
 
             StackPane cardPane = cardPane(c);
 
-            if(count != null) {
+            if (count != null) {
                 Text text = new Text(count.getValue().toString());
                 text.getStyleClass().addAll("count");
                 text.textProperty().bind(Bindings.convert(count));
@@ -81,12 +81,12 @@ class DecksViewCreator {
         cardsView.getChildren().add(deckButtons(ticketButton, ticketsPctProperty, ticketGauge));
 
         //face up cards
-        for(int slot : Constants.FACE_UP_CARD_SLOTS){
+        for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             StackPane card = new StackPane();
             card.getStyleClass().addAll("card");
 
             //changes the graphics of the card according to what card is stored in the slot
-            gameState.getFaceUpCards().get(slot).addListener((property, oldValue, newValue) ->{
+            gameState.getFaceUpCards().get(slot).addListener((property, oldValue, newValue) -> {
                 card.getStyleClass().add(newValue.name());
             });
             card.disableProperty().bind(drawCards.isNull());
@@ -110,11 +110,11 @@ class DecksViewCreator {
         return cardsView;
     }
 
-    private static Button deckButtons(Button button, ReadOnlyIntegerProperty percentage, Group gauge){
+    private static Button deckButtons(Button button, ReadOnlyIntegerProperty percentage, Group gauge) {
         Rectangle gaugeBackground = new Rectangle(50, 5);
         gaugeBackground.getStyleClass().add("background");
 
-        Rectangle gaugeForeground = new Rectangle(50,5);
+        Rectangle gaugeForeground = new Rectangle(50, 5);
         gaugeForeground.getStyleClass().add("foreground");
         gaugeForeground.widthProperty().bind(percentage.multiply(50).divide(100));
 
@@ -124,26 +124,25 @@ class DecksViewCreator {
     }
 
 
-
-    private static StackPane cardPane(Card c){
+    private static StackPane cardPane(Card c) {
         String cardName;
-        if(c == Card.LOCOMOTIVE){
+        if (c == Card.LOCOMOTIVE) {
             cardName = "NEUTRAL";
-        }else{
+        } else {
             cardName = c.name();
         }
         StackPane card = new StackPane();
-        card.getStyleClass().addAll( cardName,"card");
+        card.getStyleClass().addAll(cardName, "card");
 
         return cardRectangles(card);
     }
 
-    private static StackPane cardRectangles(StackPane card){
+    private static StackPane cardRectangles(StackPane card) {
         Rectangle outside = new Rectangle(60, 90);
         outside.getStyleClass().add("outside");
         Rectangle inside = new Rectangle(40, 70);
         inside.getStyleClass().addAll("filled", "inside");
-        Rectangle train = new Rectangle(40,70);
+        Rectangle train = new Rectangle(40, 70);
         train.getStyleClass().add("train-image");
 
         card.getChildren().addAll(outside, inside, train);

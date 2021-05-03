@@ -6,13 +6,13 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,11 +23,30 @@ public final class Stage9Test extends Application {
 
 
     private final SortedBag<Card> allCards = makeAllCards();
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    private final SortedBag<Card> makeAllCards(){
+    private static void claimRoute(Route route, SortedBag<Card> cards) {
+        System.out.printf("Prise de possession d'une route : %s - %s %s%n",
+                route.station1(), route.station2(), cards);
+    }
+
+    private static void chooseCards(List<SortedBag<Card>> options,
+                                    ActionHandlers.ChooseCardsHandler chooser) {
+        chooser.onChooseCards(options.get(0));
+    }
+
+    private static void drawTickets() {
+        System.out.println("Tirage de billets !");
+    }
+
+    private static void drawCard(int slot) {
+        System.out.printf("Tirage de cartes (emplacement %s)!\n", slot);
+    }
+
+    private SortedBag<Card> makeAllCards() {
         SortedBag.Builder<Card> cards = new SortedBag.Builder<>();
 
         for (int i = 0; i < 10; i++) {
@@ -35,6 +54,7 @@ public final class Stage9Test extends Application {
         }
         return cards.build();
     }
+
     @Override
     public void start(Stage primaryStage) {
         ObservableGameState gameState = new ObservableGameState(PLAYER_1);
@@ -62,10 +82,12 @@ public final class Stage9Test extends Application {
     }
 
     private void setState(ObservableGameState gameState) {
+        List<Route> playerOneRoutes = new ArrayList<>(ChMap.routes().subList(0, 3));
+        playerOneRoutes.add(ChMap.routes().get(16));
         PlayerState p1State =
                 new PlayerState(SortedBag.of(ChMap.tickets().subList(0, 3)),
-                        SortedBag.of(3, Card.YELLOW, 5, Card.BLUE),
-                        ChMap.routes().subList(0, 3));
+                        makeAllCards(), playerOneRoutes
+                );
 
         PublicPlayerState p2State =
                 new PublicPlayerState(0, 0, ChMap.routes().subList(3, 6));
@@ -77,23 +99,5 @@ public final class Stage9Test extends Application {
         PublicGameState publicGameState =
                 new PublicGameState(36, cardState, PLAYER_1, pubPlayerStates, null);
         gameState.setState(publicGameState, p1State);
-    }
-
-    private static void claimRoute(Route route, SortedBag<Card> cards) {
-        System.out.printf("Prise de possession d'une route : %s - %s %s%n",
-                route.station1(), route.station2(), cards);
-    }
-
-    private static void chooseCards(List<SortedBag<Card>> options,
-                                    ActionHandlers.ChooseCardsHandler chooser) {
-        chooser.onChooseCards(options.get(0));
-    }
-
-    private static void drawTickets() {
-        System.out.println("Tirage de billets !");
-    }
-
-    private static void drawCard(int slot) {
-        System.out.printf("Tirage de cartes (emplacement %s)!\n", slot);
     }
 }
