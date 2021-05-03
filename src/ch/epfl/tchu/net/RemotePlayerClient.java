@@ -12,6 +12,10 @@ import java.util.regex.Pattern;
 import static ch.epfl.tchu.net.Serdes.*;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
+/**
+ * Represents a remote player client
+ * @author Anne-Marie Rusu (296098)
+ */
 
 public class RemotePlayerClient {
     private final Player player;
@@ -21,8 +25,7 @@ public class RemotePlayerClient {
     private final String commaPattern = Pattern.quote(",");
 
     /**
-     * Constructor for the Client of a Player (not necessarily playing on the same machine)
-     *
+     * Constructor for the Client of a Player (who is not necessarily playing on the same machine)
      * @param player : the player to take their turn
      * @param name   : the host name
      * @param port   : the port number
@@ -41,8 +44,6 @@ public class RemotePlayerClient {
      * it keeps intercepting the messages and then running the appropriate player methods.
      * If these player methods return a value, the run() method will then serialize that value
      * and send it back onto the Socket (it will write it with the buffered writer).
-     *
-     *
      */
     public void run() {
         try (Socket socket = new Socket(name, port);
@@ -151,6 +152,4 @@ public class RemotePlayerClient {
             throw new UncheckedIOException(e);
         }
     }
-
-
 }

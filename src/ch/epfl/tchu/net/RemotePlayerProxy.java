@@ -12,10 +12,18 @@ import java.util.stream.Collectors;
 import static ch.epfl.tchu.net.Serdes.*;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
+/**
+ * Represents a remote player proxy and plays the role of a Player
+ * @author Victor Canard-Duchêne (326913)
+ */
 public class RemotePlayerProxy implements Player {
     private final BufferedWriter bufferedWriter;
     private final BufferedReader bufferedReader;
 
+    /**
+     * Constructs the proxy using the given socket
+     * @param socket : the socket the proxy will use to communicate with the client
+     */
     public RemotePlayerProxy(Socket socket) {
         try {
             this.bufferedWriter = new BufferedWriter(
@@ -114,6 +122,11 @@ public class RemotePlayerProxy implements Player {
         return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
     }
 
+    /**
+     * Sends a message to the client
+     * @param messageId : the id corresponding to the type of action taking place as described in the MessageId enum
+     * @param allParametersOfTheMessage : the parameters corresponding to the arguments of the method used for the specified action
+     */
     private void sendMessage(MessageId messageId, String... allParametersOfTheMessage) {
         try {
 
@@ -131,6 +144,10 @@ public class RemotePlayerProxy implements Player {
         }
     }
 
+    /**
+     * Receives a message from the client
+     * @return the message String
+     */
     private String receiveMessage() {
         try {
             return bufferedReader.readLine();
