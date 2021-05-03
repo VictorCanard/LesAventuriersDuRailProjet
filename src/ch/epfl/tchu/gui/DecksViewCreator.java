@@ -31,8 +31,9 @@ class DecksViewCreator {
      */
     public static HBox createHandView(ObservableGameState gameState) {
 
-        HBox handView = new HBox();
-        handView.getStylesheets().addAll("decks.css", "colors.css");
+        HBox handPane = new HBox();
+        handPane.getStylesheets().addAll("decks.css", "colors.css");
+        handPane.setId("hand-pane");
 
         //tickets : issue with showing them. In ObservableGameState, list returned in getAllPlayerTickets
         // is null even though setTickets does set the tickets
@@ -44,15 +45,7 @@ class DecksViewCreator {
         ListView<String> listView = new ListView<>(ticketList);
         listView.setId("tickets");
 
-        handView.getChildren().add(listView);
-
-        //
-        HBox handPane = new HBox();
-        handPane.setId("hand-pane");
-
-        handView.getChildren().add(handPane);
-
-
+        handPane.getChildren().add(listView);
 
         //cards
         for (Card card : Card.ALL) {
@@ -69,26 +62,26 @@ class DecksViewCreator {
             cardPane.getChildren().add(text);
             cardPane.visibleProperty().bind(Bindings.greaterThan(count, 0));
 
-            handView.getChildren().addAll(cardPane);
+            handPane.getChildren().addAll(cardPane);
 
         }
 
 
-        return handView;
+        return handPane;
     }
 
 
     public static VBox createCardsView(ObservableGameState gameState, ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTickets, ObjectProperty<ActionHandlers.DrawCardHandler> drawCards) {
-        VBox cardsView = new VBox();
-        cardsView.getStylesheets().addAll("decks.css", "colors.css");
-        cardsView.setId("card-pane");
+        VBox cardPane = new VBox();
+        cardPane.getStylesheets().addAll("decks.css", "colors.css");
+        cardPane.setId("card-pane");
 
         //tickets button
         Button ticketButton = new Button("Billets");
         //
 
         ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPercentageLeftProperty();
-        cardsView.getChildren().add(deckButtons(ticketButton, ticketsPctProperty));
+        cardPane.getChildren().add(deckButtons(ticketButton, ticketsPctProperty));
 
         //
         ticketButton.disableProperty().bind(drawTickets.isNull());
@@ -116,7 +109,7 @@ class DecksViewCreator {
             //
             stackPane.setOnMouseClicked(event -> drawCards.getValue().onDrawCards(slot));
 
-            cardsView.getChildren().add(cardRectangles(stackPane));
+            cardPane.getChildren().add(cardRectangles(stackPane));
         }
 
         //cards button
@@ -124,7 +117,7 @@ class DecksViewCreator {
 
         ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPercentageLeftProperty();
 
-        cardsView.getChildren().add(deckButtons(cardButton, cardsPctProperty));
+        cardPane.getChildren().add(deckButtons(cardButton, cardsPctProperty));
 
         //
         cardButton.disableProperty().bind(drawCards.isNull());
@@ -133,7 +126,7 @@ class DecksViewCreator {
         cardButton.setOnMouseClicked(event -> drawCards.get().onDrawCards(Constants.DECK_SLOT));
 
 
-        return cardsView;
+        return cardPane;
     }
 
     private static String getCardName(Card card) {
