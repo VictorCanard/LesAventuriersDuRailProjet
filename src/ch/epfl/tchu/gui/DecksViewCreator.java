@@ -34,6 +34,8 @@ class DecksViewCreator {
         HBox handView = new HBox();
         handView.getStylesheets().addAll("decks.css", "colors.css");
 
+        //tickets : issue with showing them. In ObservableGameState, list returned in getAllPlayerTickets
+        // is null even though setTickets does set the tickets
         //
         ObservableList<String> ticketList = FXCollections.observableArrayList();
         ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
@@ -50,7 +52,7 @@ class DecksViewCreator {
 
         handView.getChildren().add(handPane);
 
-        //tickets : issue with showing them. In ObservableGameState, method getAllPlayerTickets is updated, but doesnt carry here, even with ticketList
+
 
         //cards
         for (Card card : Card.ALL) {
@@ -95,20 +97,6 @@ class DecksViewCreator {
         ticketButton.setOnMouseClicked(event -> drawTickets.get().onDrawTickets());
 
 
-        //cards button
-        Button cardButton = new Button("Cartes");
-
-        ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPercentageLeftProperty();
-
-        cardsView.getChildren().add(deckButtons(cardButton, cardsPctProperty));
-
-        //
-        cardButton.disableProperty().bind(drawCards.isNull());
-
-        //
-        cardButton.setOnMouseClicked(event -> drawCards.get().onDrawCards(Constants.DECK_SLOT));
-
-
         //face up cards
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             StackPane stackPane = new StackPane();
@@ -130,6 +118,19 @@ class DecksViewCreator {
 
             cardsView.getChildren().add(cardRectangles(stackPane));
         }
+
+        //cards button
+        Button cardButton = new Button("Cartes");
+
+        ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPercentageLeftProperty();
+
+        cardsView.getChildren().add(deckButtons(cardButton, cardsPctProperty));
+
+        //
+        cardButton.disableProperty().bind(drawCards.isNull());
+
+        //
+        cardButton.setOnMouseClicked(event -> drawCards.get().onDrawCards(Constants.DECK_SLOT));
 
 
         return cardsView;

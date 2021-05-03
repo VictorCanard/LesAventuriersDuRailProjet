@@ -110,7 +110,6 @@ public final class ObservableGameState {
     //End of getters
 
     private void setNumberOfEachCard() {
-
         Arrays.stream(Card.values()).forEach(card -> numberOfEachCard.put(card, new SimpleObjectProperty<>(0)));
     }
 
@@ -181,7 +180,6 @@ public final class ObservableGameState {
                 .stream()
                 .filter(ticket -> !allPlayerTickets.contains(ticket))
                 .collect(Collectors.toList()));
-
     }
 
     private void setPlayerCards(PlayerState playerState) {
