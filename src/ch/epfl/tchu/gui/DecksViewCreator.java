@@ -6,7 +6,6 @@ import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -38,11 +37,8 @@ class DecksViewCreator {
         //tickets : issue with showing them. In ObservableGameState, list returned in getAllPlayerTickets
         // is null even though setTickets does set the tickets
         //
-        ObservableList<String> ticketList = FXCollections.observableArrayList();
         ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
-        listOfTickets.forEach(ticket -> ticketList.add(ticket.toString()));
-
-        ListView<String> listView = new ListView<>(ticketList);
+        ListView<Ticket> listView = new ListView<>(listOfTickets);
         listView.setId("tickets");
 
         handPane.getChildren().add(listView);
@@ -99,6 +95,7 @@ class DecksViewCreator {
             gameState.getFaceUpCards().get(slot).addListener((property, oldValue, newValue) -> {
 
                 stackPane.getStyleClass().add(getCardName(newValue));
+
                 if(oldValue != null){
                     stackPane.getStyleClass().remove(getCardName(oldValue));
                 }

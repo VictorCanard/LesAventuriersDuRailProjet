@@ -2,10 +2,7 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -16,21 +13,22 @@ public final class ObservableGameState {
     private final PlayerId playerId;
 
     //Group 1 : PublicGameState
-    private final ObjectProperty<Integer> ticketsPercentageLeft = new SimpleObjectProperty<>(0);
+    private final IntegerProperty ticketsPercentageLeft = new SimpleIntegerProperty(0);
     private final ObjectProperty<Integer> cardsPercentageLeft = new SimpleObjectProperty<>(0);
     private final List<ObjectProperty<Card>> faceUpCards = new ArrayList<>();
 
     //Group 2 : Both Player's Public Player States
     private final Map<Route, ObjectProperty<PlayerId>> allRoutesContainedByWhom = new HashMap<>();
-    private final Map<PlayerId, ObjectProperty<Integer>> ticketCount = new HashMap<>();
-    private final Map<PlayerId, ObjectProperty<Integer>> cardCount = new HashMap<>();
-    private final Map<PlayerId, ObjectProperty<Integer>> carCount = new HashMap<>();
-    private final Map<PlayerId, ObjectProperty<Integer>> constructionPoints = new HashMap<>();
+    private final Map<PlayerId, IntegerProperty> ticketCount = new HashMap<>();
+    private final Map<PlayerId, IntegerProperty> cardCount = new HashMap<>();
+    private final Map<PlayerId, IntegerProperty> carCount = new HashMap<>();
+    private final Map<PlayerId, IntegerProperty> constructionPoints = new HashMap<>();
 
     //Group 3 : Complete Player State of this Player
     private final ObservableList<Ticket> allPlayerTickets = FXCollections.observableArrayList();
-    private final Map<Card, ObjectProperty<Integer>> numberOfEachCard = new HashMap<>();
-    private final Map<Route, ObjectProperty<Boolean>> routeCanBeClaimedByThisPlayerOrNot = new HashMap<>();
+    private final Map<Card, IntegerProperty> numberOfEachCard = new HashMap<>();
+
+    private final Map<Route, BooleanProperty> routeCanBeClaimedByThisPlayerOrNot = new HashMap<>();
     //
     private final Set<List<Station>> allPairsOfStationsClaimed = new HashSet<>();
     private PublicGameState publicGameState;
@@ -76,22 +74,22 @@ public final class ObservableGameState {
     }
 
 
-    //Getters à modifier/ finir
-    public Map<PlayerId, ObjectProperty<Integer>> getTicketCount() {
-        return ticketCount;
-    }
-
-    public Map<PlayerId, ObjectProperty<Integer>> getCardCount() {
-        return cardCount;
-    }
-
-    public Map<PlayerId, ObjectProperty<Integer>> getCarCount() {
-        return carCount;
-    }
-
-    public Map<PlayerId, ObjectProperty<Integer>> getConstructionPoints() {
-        return constructionPoints;
-    }
+    //Todo: Getters à modifier/ finir
+//    public Map<PlayerId, ObjectProperty<Integer>> getTicketCount() {
+//        return Collections.unmodifiableMap(ticketCount);
+//    }
+//
+//    public Map<PlayerId, ObjectProperty<Integer>> getCardCount() {
+//        return cardCount;
+//    }
+//
+//    public Map<PlayerId, ObjectProperty<Integer>> getCarCount() {
+//        return carCount;
+//    }
+//
+//    public Map<PlayerId, ObjectProperty<Integer>> getConstructionPoints() {
+//        return constructionPoints;
+//    }
 
     public ObservableList<Ticket> getAllPlayerTickets() {
         return FXCollections.unmodifiableObservableList(allPlayerTickets);
@@ -100,27 +98,27 @@ public final class ObservableGameState {
     public Map<Card, ReadOnlyIntegerProperty> getNumberOfEachCard() {
         Map<Card, ReadOnlyIntegerProperty> newMap = new HashMap<>();
 
-        numberOfEachCard.forEach((card, integerObjectProperty) -> newMap.put(card, ReadOnlyIntegerProperty.readOnlyIntegerProperty(integerObjectProperty)));
+        numberOfEachCard.forEach(newMap::put);
         return newMap;
     }
 
-    public Map<Route, ObjectProperty<Boolean>> getRouteCanBeClaimedByThisPlayerOrNot() {
-        return routeCanBeClaimedByThisPlayerOrNot;
-    }
+//    public Map<Route, ObjectProperty<Boolean>> getRouteCanBeClaimedByThisPlayerOrNot() {
+//        return routeCanBeClaimedByThisPlayerOrNot;
+//    }
     //End of getters
 
     private void setNumberOfEachCard() {
-        Arrays.stream(Card.values()).forEach(card -> numberOfEachCard.put(card, new SimpleObjectProperty<>(0)));
+        Arrays.stream(Card.values()).forEach(card -> numberOfEachCard.put(card, new SimpleIntegerProperty(0)));
     }
 
     private void createRoutesClaimedOrNot() {
 
-        ChMap.routes().forEach(route -> routeCanBeClaimedByThisPlayerOrNot.put(route, new SimpleObjectProperty<>(false)));
+        ChMap.routes().forEach(route -> routeCanBeClaimedByThisPlayerOrNot.put(route, new SimpleBooleanProperty(false)));
     }
 
-    private void createEmptyPlayerIdIntegerHashMap(Map<PlayerId, ObjectProperty<Integer>> currentMap) {
+    private void createEmptyPlayerIdIntegerHashMap(Map<PlayerId, IntegerProperty> currentMap) {
 
-        Arrays.stream(PlayerId.values()).forEach(playerId -> currentMap.put(playerId, new SimpleObjectProperty<>(0)));
+        Arrays.stream(PlayerId.values()).forEach(playerId -> currentMap.put(playerId, new SimpleIntegerProperty(0)));
     }
 
     private void createRoutes() {
@@ -185,7 +183,7 @@ public final class ObservableGameState {
     private void setPlayerCards(PlayerState playerState) {
 
 
-        playerState.cards().forEach(card -> numberOfEachCard.merge(card, new SimpleObjectProperty<>(1), (integerObjectProperty, one) -> {
+        playerState.cards().forEach(card -> numberOfEachCard.merge(card, new SimpleIntegerProperty(1), (integerObjectProperty, one) -> {
             int sum = integerObjectProperty.get() + one.get();
             integerObjectProperty.set(sum);
             return integerObjectProperty;
