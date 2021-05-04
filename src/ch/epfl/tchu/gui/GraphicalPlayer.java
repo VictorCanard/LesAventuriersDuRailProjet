@@ -32,15 +32,15 @@ public final class GraphicalPlayer {
         this.playerNames = playerNames;
         this.observableGameState = new ObservableGameState(thisPlayer);
 
-        setSceneGraph(observableGameState);
+       // setSceneGraph(observableGameState);
 
 
     }
     private void createWindowChoice(String windowTitle){
         Stage stage = new Stage();
 
-        S
-        Scene scene = new Scene();
+
+        //Scene scene = new Scene();
     }
 
     private void setSceneGraph(ObservableGameState observableGameState) {
@@ -54,7 +54,7 @@ public final class GraphicalPlayer {
         Node handView = DecksViewCreator
                 .createHandView(gameState);
 
-        Node infoView = new InfoViewCreator();
+        Node infoView = InfoViewCreator.createInfoView(thisPlayer, playerNames, observableGameState, /*observablelist*/);
 
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
