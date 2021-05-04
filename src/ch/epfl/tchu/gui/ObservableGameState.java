@@ -14,7 +14,7 @@ public final class ObservableGameState {
 
     //Group 1 : PublicGameState
     private final IntegerProperty ticketsPercentageLeft = new SimpleIntegerProperty(0);
-    private final ObjectProperty<Integer> cardsPercentageLeft = new SimpleObjectProperty<>(0);
+    private final IntegerProperty cardsPercentageLeft = new SimpleIntegerProperty(0);
     private final List<ObjectProperty<Card>> faceUpCards = new ArrayList<>();
 
     //Group 2 : Both Player's Public Player States
@@ -27,7 +27,6 @@ public final class ObservableGameState {
     //Group 3 : Complete Player State of this Player
     private final ObservableList<Ticket> allPlayerTickets = FXCollections.observableArrayList();
     private final Map<Card, IntegerProperty> numberOfEachCard = new HashMap<>();
-
     private final Map<Route, BooleanProperty> routeCanBeClaimedByThisPlayerOrNot = new HashMap<>();
     //
     private final Set<List<Station>> allPairsOfStationsClaimed = new HashSet<>();
@@ -36,8 +35,8 @@ public final class ObservableGameState {
 
     public ObservableGameState(PlayerId playerId) {
         createFaceUpCards();
-        createRoutes();
         //
+        createRoutes();
         createEmptyPlayerIdIntegerHashMap(ticketCount);
         createEmptyPlayerIdIntegerHashMap(cardCount);
         createEmptyPlayerIdIntegerHashMap(carCount);
@@ -49,23 +48,31 @@ public final class ObservableGameState {
         this.playerId = playerId;
     }
 
+    private void createFaceUpCards() {
+        for (int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
+            this.faceUpCards.add(new SimpleObjectProperty<>(null));
+        }
+    }
+
 
     public ReadOnlyIntegerProperty ticketsPercentageLeftProperty() {
-        return ReadOnlyIntegerProperty.readOnlyIntegerProperty(ticketsPercentageLeft);
+        return ticketsPercentageLeft;
     }
 
 
     public ReadOnlyIntegerProperty cardsPercentageLeftProperty() {
-        return ReadOnlyIntegerProperty.readOnlyIntegerProperty(cardsPercentageLeft);
+        return cardsPercentageLeft;
     }
 
     public List<ObjectProperty<Card>> getFaceUpCards() {
-        return Collections.unmodifiableList(faceUpCards);
+        return faceUpCards;
     }
 
     private void setFaceUpCards(List<Card> newFaceUpCards) {
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
-            faceUpCards.get(slot).set(newFaceUpCards.get(slot));
+            ObjectProperty<Card> cardObjectProperty = faceUpCards.get(slot);
+            Card newCard = newFaceUpCards.get(slot);
+            cardObjectProperty.set(newCard);
         }
     }
 
@@ -73,39 +80,40 @@ public final class ObservableGameState {
         return Collections.unmodifiableMap(allRoutesContainedByWhom);
     }
 
+    private <E> Map<E, ReadOnlyIntegerProperty> turnMapIntoReadOnly(Map<E, IntegerProperty> map) {
 
-    //Todo: Getters à modifier/ finir
-//    public Map<PlayerId, ObjectProperty<Integer>> getTicketCount() {
-//        return Collections.unmodifiableMap(ticketCount);
-//    }
-//
-//    public Map<PlayerId, ObjectProperty<Integer>> getCardCount() {
-//        return cardCount;
-//    }
-//
-//    public Map<PlayerId, ObjectProperty<Integer>> getCarCount() {
-//        return carCount;
-//    }
-//
-//    public Map<PlayerId, ObjectProperty<Integer>> getConstructionPoints() {
-//        return constructionPoints;
-//    }
+        return new HashMap<>(map);
+    }
+
+    public Map<PlayerId, ReadOnlyIntegerProperty> getTicketCount() {
+
+        return turnMapIntoReadOnly(ticketCount);
+    }
+
+    public Map<PlayerId, ReadOnlyIntegerProperty> getCardCount() {
+        return turnMapIntoReadOnly(cardCount);
+    }
+
+    public Map<PlayerId, ReadOnlyIntegerProperty> getCarCount() {
+        return turnMapIntoReadOnly(carCount);
+    }
+
+    public Map<PlayerId, ReadOnlyIntegerProperty> getConstructionPoints() {
+        return turnMapIntoReadOnly(constructionPoints);
+    }
 
     public ObservableList<Ticket> getAllPlayerTickets() {
         return FXCollections.unmodifiableObservableList(allPlayerTickets);
     }
 
     public Map<Card, ReadOnlyIntegerProperty> getNumberOfEachCard() {
-        Map<Card, ReadOnlyIntegerProperty> newMap = new HashMap<>();
-
-        numberOfEachCard.forEach(newMap::put);
-        return newMap;
+        return turnMapIntoReadOnly(numberOfEachCard);
     }
 
-//    public Map<Route, ObjectProperty<Boolean>> getRouteCanBeClaimedByThisPlayerOrNot() {
-//        return routeCanBeClaimedByThisPlayerOrNot;
-//    }
-    //End of getters
+    public Map<Route, ReadOnlyBooleanProperty> getRouteCanBeClaimedByThisPlayerOrNot() {
+
+        return new HashMap<>(routeCanBeClaimedByThisPlayerOrNot);
+    }
 
     private void setNumberOfEachCard() {
         Arrays.stream(Card.values()).forEach(card -> numberOfEachCard.put(card, new SimpleIntegerProperty(0)));
@@ -130,7 +138,7 @@ public final class ObservableGameState {
     private void setRoutesPlayerId(PublicGameState newPublicGameState) {
 
         ChMap.routes().forEach(route -> {
-            PlayerId whoHasCurrentRoute;
+            PlayerId whoHasCurrentRoute = null;
 
             if (newPublicGameState.playerState(newPublicGameState.currentPlayerId()).routes().contains(route)) {
                 whoHasCurrentRoute = newPublicGameState.currentPlayerId();
@@ -138,19 +146,11 @@ public final class ObservableGameState {
             } else if (newPublicGameState.playerState(newPublicGameState.currentPlayerId().next()).routes().contains(route)) {
                 whoHasCurrentRoute = newPublicGameState.currentPlayerId().next();
                 allPairsOfStationsClaimed.add(route.stations());
-            } else {
-                whoHasCurrentRoute = null;
             }
             allRoutesContainedByWhom.get(route).set(whoHasCurrentRoute);
 
         });
 
-    }
-
-    private void createFaceUpCards() {
-        for (int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
-            faceUpCards.add(new SimpleObjectProperty<>(null));
-        }
     }
 
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
@@ -194,7 +194,6 @@ public final class ObservableGameState {
 
     private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
         routeCanBeClaimedByThisPlayerOrNot.forEach((route, booleanObjectProperty) -> {
-
 
             if (publicGameState.currentPlayerId().equals(playerId)
                     && playerState.canClaimRoute(route)

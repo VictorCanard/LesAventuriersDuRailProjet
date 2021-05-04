@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -68,10 +69,15 @@ public final class Stage9Test extends Application {
 
         Node mapView = MapViewCreator
                 .createMapView(gameState, claimRoute, Stage9Test::chooseCards);
+
+
         Node cardsView = DecksViewCreator
                 .createCardsView(gameState, drawTickets, drawCard);
+
+
         Node handView = DecksViewCreator
                 .createHandView(gameState);
+
 
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, null);
@@ -81,12 +87,29 @@ public final class Stage9Test extends Application {
         setState(gameState);
     }
 
+    public static void dumpTree(Node root) {
+        dumpTree(0, root);
+    }
+
+    public static void dumpTree(int indent, Node root) {
+        System.out.printf("%s%s (id: %s, classes: [%s])%n",
+                " ".repeat(indent),
+                root.getTypeSelector(),
+                root.getId(),
+                String.join(", ", root.getStyleClass()));
+        if (root instanceof Parent) {
+            Parent parent = ((Parent) root);
+            for (Node child : parent.getChildrenUnmodifiable())
+                dumpTree(indent + 2, child);
+        }
+    }
+
     private void setState(ObservableGameState gameState) {
         List<Route> playerOneRoutes = new ArrayList<>(ChMap.routes().subList(0, 3));
         playerOneRoutes.add(ChMap.routes().get(16));
         PlayerState p1State =
                 new PlayerState(SortedBag.of(ChMap.tickets().subList(0, 3)),
-                        makeAllCards(), playerOneRoutes
+                        SortedBag.of(3, Card.RED,1, Card.WHITE), playerOneRoutes
                 );
 
         PublicPlayerState p2State =

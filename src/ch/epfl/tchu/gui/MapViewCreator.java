@@ -8,7 +8,6 @@ import ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
 import ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -39,7 +38,7 @@ class MapViewCreator {
         return map;
     }
 
-    private static void setAllRoutes(Pane map, ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
+    private static void setAllRoutes(Pane map, ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHandlerProperty, CardChooser cardChooser) {
         for (Route route : ChMap.routes()
         ) {
             Group routeGroup = new Group();
@@ -57,10 +56,10 @@ class MapViewCreator {
                 List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
 
                 if (possibleClaimCards.size() == 1) {
-                    claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
+                    claimRouteHandlerProperty.get().onClaimRoute(route, possibleClaimCards.get(0));
                 } else if (possibleClaimCards.size() > 1) {
                     ChooseCardsHandler chooseCardsH =
-                            chosenCards -> claimRouteHP.get().onClaimRoute(route, chosenCards);
+                            chosenCards -> claimRouteHandlerProperty.get().onClaimRoute(route, chosenCards);
 
                     cardChooser.chooseCards(possibleClaimCards, chooseCardsH);
                 }
@@ -77,7 +76,7 @@ class MapViewCreator {
 
             //If the route isn't claimable or if the handler is null, deactivates the routeGroup
             routeGroup.disableProperty().bind(
-                    claimRouteHP.isNull().or(gameState.claimable(route).not()));
+                    claimRouteHandlerProperty.isNull().or(gameState.claimable(route).not()));
 
 
             map.getChildren().add(routeGroup);
