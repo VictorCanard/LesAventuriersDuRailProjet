@@ -375,14 +375,13 @@ public final class Game {
      */
     private static Map<PlayerId, Integer> calculateFinalPoints(AllGameData allGameData) {
         PlayerId currentPlayerId = allGameData.gameState.currentPlayerId();
-        PlayerId nextPlayerId = currentPlayerId.next();
 
         Map<PlayerId, Player> players = allGameData.players;
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
 
-        players.forEach(((playerId, player) -> {
+        PlayerId.ALL.forEach((playerId -> {
             //Calculate longest trails
             Trail playerLongestTrail = Trail.longest(allGameData.gameState.playerState(playerId).routes());
             eachPlayerAssociatedTrails.put(playerId, playerLongestTrail);
@@ -393,35 +392,19 @@ public final class Game {
 
         updateAllStates(players, allGameData.gameState);
 
-        Trail trailCurrentPlayer = eachPlayerAssociatedTrails.get(currentPlayerId);
-        Trail trailNextPlayer = eachPlayerAssociatedTrails.get(currentPlayerId.next());
+        int maxLengthTrail = PlayerId.ALL
+                .stream()
+                .mapToInt(playerId -> eachPlayerAssociatedTrails.get(playerId).length())
+                .max()
+                .orElse(0);
 
-        int bonusComparator = Integer.compare(trailCurrentPlayer.length(), trailNextPlayer.length());
+        PlayerId.ALL.forEach(playerId -> {
+            if (eachPlayerAssociatedTrails.get(playerId).length() == maxLengthTrail) {
 
-        String longestTrailBonus;
-
-        if (bonusComparator > 0) {
-            //Current Player gets the bonus
-            longestTrailBonus = infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer);
-
-            associatedPlayerPoints.put(currentPlayerId, associatedPlayerPoints.get(currentPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);
-
-        } else if (bonusComparator < 0) {
-            //Next Player gets the bonus
-            longestTrailBonus = infoGenerators.get(nextPlayerId).getsLongestTrailBonus(trailCurrentPlayer);
-
-            associatedPlayerPoints.put(nextPlayerId, associatedPlayerPoints.get(nextPlayerId) + Constants.LONGEST_TRAIL_BONUS_POINTS);
-
-        } else {
-            //Both Players get the bonus
-            longestTrailBonus = String.format("%s%s", infoGenerators.get(currentPlayerId).getsLongestTrailBonus(trailCurrentPlayer),
-                    infoGenerators.get(nextPlayerId).getsLongestTrailBonus(trailNextPlayer));
-
-            for (PlayerId playerId : PlayerId.values()) {
-                associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);  //Adds 10 points to each player's count
+                associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);
+                receiveInfoForAll(players, infoGenerators.get(playerId).getsLongestTrailBonus(eachPlayerAssociatedTrails.get(playerId)));
             }
-        }
-        receiveInfoForAll(players, longestTrailBonus);
+        });
 
         return associatedPlayerPoints;
     }
@@ -435,27 +418,30 @@ public final class Game {
         PlayerId currentPlayerId = allGameData.gameState.currentPlayerId();
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
 
+        int maxPoints = PlayerId.ALL.stream().mapToInt(associatedPlayerPoints::get).max().orElse(0);
+
         int currentPlayerPoints = associatedPlayerPoints.get(currentPlayerId);
         int nextPlayerPoints = associatedPlayerPoints.get(currentPlayerId.next());
 
-        int whoWonComparator = Integer.compare(currentPlayerPoints, nextPlayerPoints);
-
         String endOfGameMessage;
 
-        if (whoWonComparator > 0) {
+        if (currentPlayerPoints == maxPoints
+                && nextPlayerPoints == maxPoints) {
+            //Both players came to a draw
+            endOfGameMessage = Info
+                    .draw(new ArrayList<>(allGameData.playerNames.values()), currentPlayerPoints);
+
+
+        } else if (currentPlayerPoints == maxPoints) {
             //Current Player won
             endOfGameMessage = infoGenerators.get(currentPlayerId)
                     .won(currentPlayerPoints, nextPlayerPoints);
 
-        } else if (whoWonComparator < 0) {
+
+        } else {
             //Next Player won
             endOfGameMessage = infoGenerators.get(currentPlayerId)
                     .won(nextPlayerPoints, currentPlayerPoints);
-
-        } else {
-            //Both players came to a draw
-            endOfGameMessage = Info
-                    .draw(new ArrayList<>(allGameData.playerNames.values()), currentPlayerPoints);
         }
         receiveInfoForAll(allGameData.players, endOfGameMessage);
     }

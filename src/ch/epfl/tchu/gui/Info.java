@@ -201,7 +201,7 @@ public final class Info {
      * @param bagOfCards : cards in a sortedBag that we want the textual representation of (in French, with commas and an AND_SEPARATOR)
      * @return string of all card names formatted
      */
-    private String cardNames(SortedBag<Card> bagOfCards){
+    public static String cardNames(SortedBag<Card> bagOfCards){
         StringBuilder stringOfAllCardNamesToReturn = new StringBuilder();
 
         List<String> cardList = getListOfCards(bagOfCards);
@@ -229,7 +229,7 @@ public final class Info {
      * @param originalBag : bag of cards we want to transform in a list of cards
      * @return a sorted bag's associated list of cards
      */
-    private List<String> getListOfCards(SortedBag<Card> originalBag){
+    private static List<String> getListOfCards(SortedBag<Card> originalBag){
         List<String> stringList = new ArrayList<>();
 
         for (Card currentCard: originalBag.toSet()) {

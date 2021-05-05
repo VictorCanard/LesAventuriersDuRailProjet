@@ -20,9 +20,9 @@ public class InfoViewCreator {
         VBox infoPane = new VBox();
         infoPane.getStylesheets().addAll("info.css", "colors.css");
 
-        VBox player1Stats = playerStats(PlayerId.PLAYER_1, playerNames, gameState);
+        VBox player1Stats = playerStats(playerId, playerNames, gameState);
 
-        VBox player2Stats = playerStats(PlayerId.PLAYER_2, playerNames, gameState);
+        VBox player2Stats = playerStats(playerId.next(), playerNames, gameState);
 
         Separator separator = new Separator();
 
@@ -51,7 +51,7 @@ public class InfoViewCreator {
         Text text = new Text(playerName);
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,
-                "",
+                playerName,
                 gameState.getTicketCount().get(playerId).getValue(),
                 gameState.getCardCount().get(playerId).getValue(),
                 gameState.getCarCount().get(playerId).getValue(),

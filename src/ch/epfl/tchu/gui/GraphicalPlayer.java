@@ -4,10 +4,21 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +29,8 @@ public final class GraphicalPlayer {
     private final PlayerId thisPlayer;
     private final Map<PlayerId, String> playerNames;
     private final ObservableGameState observableGameState;
+    private final ObservableList<Text> messages = FXCollections.observableArrayList();
+    private final Stage primaryStage;
 
     private final ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTicketsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.DrawCardHandler> drawCardsHP = new SimpleObjectProperty<>(null);
@@ -26,42 +39,86 @@ public final class GraphicalPlayer {
     private final ObjectProperty<ActionHandlers.ChooseCardsHandler> chooseCardsHP = new SimpleObjectProperty<>(null);
 
 
-    public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames, ObservableGameState observableGameState) {
+    public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
 
         this.thisPlayer = thisPlayer;
         this.playerNames = playerNames;
         this.observableGameState = new ObservableGameState(thisPlayer);
 
-       // setSceneGraph(observableGameState);
+        this.primaryStage = new Stage();
+        setSceneGraph();
 
 
     }
-    private void createWindowChoice(String windowTitle){
-        Stage stage = new Stage();
 
+    private <E> void createWindowChoice(String choiceOfWhat, ListView<E> listView) {
+        Stage stage = new Stage(StageStyle.UTILITY);
+        stage.initOwner(primaryStage);
+        stage.initModality(Modality.WINDOW_MODAL);
 
-        //Scene scene = new Scene();
+        //
+        VBox verticalBox = new VBox();
+        //
+        Scene scene = new Scene(verticalBox);
+        scene.getStylesheets().add("chooser.css");
+        stage.setScene(scene);
+        //
+        TextFlow textFlow = new TextFlow();
+        //
+        Text text = new Text();
+        textFlow.getChildren().add(text);
+        //
+        Button button = new Button(StringsFr.CHOOSE);
+        //
+
+        switch (choiceOfWhat){
+            case StringsFr.CHOOSE_TICKETS:
+
+                break;
+            case StringsFr.CHOOSE_CARDS:
+
+            case StringsFr.CHOOSE_ADDITIONAL_CARDS:
+
+                makeSpecialListView(observableList);
+
+                break;
+            default:
+        }
+
+        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        //
+        verticalBox.getChildren().addAll(textFlow, listView, button);
+        //
+        stage.setTitle(choiceOfWhat);
+        stage.show();
+    }
+    private ListView<SortedBag<Card>> makeSpecialListView(ObservableList<SortedBag<Card>> observableList){
+        ListView<SortedBag<Card>> listView = new ListView<>(observableList);
+        listView.setCellFactory(v -> new TextFieldListCell<>(new CardBagStringConverter()));
+        return listView;
     }
 
-    private void setSceneGraph(ObservableGameState observableGameState) {
-        Stage primaryStage = new Stage();
+    private void setSceneGraph() {
         Node mapView = MapViewCreator
-                .createMapView(observableGameState, claimRouteHP, cardChooser);
+                .createMapView(observableGameState, claimRouteHP, this::chooseClaimCards);
 
         Node cardsView = DecksViewCreator
                 .createCardsView(observableGameState, drawTicketsHP, drawCardsHP);
 
         Node handView = DecksViewCreator
-                .createHandView(gameState);
+                .createHandView(observableGameState);
 
-        Node infoView = InfoViewCreator.createInfoView(thisPlayer, playerNames, observableGameState, /*observablelist*/);
+        Node infoView = InfoViewCreator.createInfoView(thisPlayer, playerNames, observableGameState, messages);
 
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
+
         Scene scene = new Scene(mainPane);
 
         primaryStage.setTitle("tCHu" + " \u2014 " + playerNames.get(thisPlayer));
         primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
@@ -71,6 +128,8 @@ public final class GraphicalPlayer {
 
     public void receiveInfo(String messageToAdd) {
         assert isFxApplicationThread();
+        messages.add(new Text(messageToAdd));
+
     }
 
     public void startTurn(ActionHandlers.DrawTicketsHandler drawTicketsHandler, ActionHandlers.DrawCardHandler drawCardHandler, ActionHandlers.ClaimRouteHandler claimRouteHandler) {
@@ -93,12 +152,19 @@ public final class GraphicalPlayer {
 
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
+
+        ListView<SortedBag<Ticket>> listView = new ListView<>(FXCollections.observableArrayList(ticketsToChooseFrom));
+        createWindowChoice(String.format(StringsFr.CHOOSE_TICKETS, ticketsToChooseFrom),listView);
+
     }
 
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
 
         drawCardsHP.set(drawCardHandler);
+
+
+        //drawCardHandler.onDrawCards();
 
         drawTicketsHP.set(null);
         claimRouteHP.set(null);
@@ -108,9 +174,15 @@ public final class GraphicalPlayer {
 
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
+
+        createWindowChoice(StringsFr.CHOOSE_CARDS, makeSpecialListView(possibleClaimCards));
+        //chooseCardsHandler.onChooseCards();
     }
 
-    public void chooseAdditionalCards() {
+    public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
+
+        createWindowChoice(StringsFr.CHOOSE_ADDITIONAL_CARDS, makeSpecialListView(possibleAdditionalCards));
+        //chooseCardsHandler.onChooseCards();
     }
 }
