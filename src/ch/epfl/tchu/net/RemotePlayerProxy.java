@@ -37,7 +37,11 @@ public class RemotePlayerProxy implements Player {
             throw new UncheckedIOException(ioException);
         }
     }
-
+/**
+ * The following eleven overridden methods from the interface Player allow the proxy to manage
+ * each interaction between the proxy and the client, corresponding to the concerned action/event
+ * taking place in the game.
+ */
 
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
@@ -129,7 +133,6 @@ public class RemotePlayerProxy implements Player {
      */
     private void sendMessage(MessageId messageId, String... allParametersOfTheMessage) {
         try {
-
 
             String message = String.join(" ", List.of(messageId.name(), String.join(" ", allParametersOfTheMessage)))
                     + '\n';

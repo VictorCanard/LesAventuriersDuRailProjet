@@ -16,13 +16,24 @@ import javafx.scene.shape.Rectangle;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Represents the view of the game map
+ * @author Victor Canard-Duchêne (326913)
+ */
 class MapViewCreator {
     private MapViewCreator() {
     }
 
+    /**
+     * Creates the map view used by both players
+     * @param gameState : observable game state which allows the graphics to change according to the game's actual state
+     * @param claimRouteHP : property containing the event handler when a player wants to claim a route
+     * @param cardChooser : an instance of the functional interface CardChooser used to choose some cards
+     * @return A pane containing the map background and claimed/unclaimed routes
+     */
     public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         Pane map = new Pane();
-        //map.setPrefHeight();
+        //
         map.getStylesheets().addAll("map.css", "colors.css");
 
         //
@@ -31,16 +42,20 @@ class MapViewCreator {
         map.getChildren().add(mapBackground);
 
         //
-
         setAllRoutes(map, gameState, claimRouteHP, cardChooser);
-
 
         return map;
     }
 
-    private static void setAllRoutes(Pane map, ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHandlerProperty, CardChooser cardChooser) {
-        for (Route route : ChMap.routes()
-        ) {
+    /**
+     * Sets the graphics and interactive properties for all the routes in the game, claimed and unclaimed
+     * @param map : the map pane
+     * @param gameState : observable game state which allows the graphics to change according to the game's actual state
+     * @param claimRouteHP : property containing the event handler when a player wants to claim a route
+     * @param cardChooser : an instance of the functional interface CardChooser used to choose some cards
+     */
+    private static void setAllRoutes(Pane map, ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
+        for (Route route : ChMap.routes()) {
             Group routeGroup = new Group();
 
             //Set Id, color and level to a route's group style class
@@ -56,10 +71,10 @@ class MapViewCreator {
                 List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
 
                 if (possibleClaimCards.size() == 1) {
-                    claimRouteHandlerProperty.get().onClaimRoute(route, possibleClaimCards.get(0));
+                    claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
                 } else if (possibleClaimCards.size() > 1) {
                     ChooseCardsHandler chooseCardsH =
-                            chosenCards -> claimRouteHandlerProperty.get().onClaimRoute(route, chosenCards);
+                            chosenCards -> claimRouteHP.get().onClaimRoute(route, chosenCards);
 
                     cardChooser.chooseCards(possibleClaimCards, chooseCardsH);
                 }
@@ -67,7 +82,7 @@ class MapViewCreator {
             }));
 
             //When a route is claimed, adds the Id of the player who claimed it to the routeGroup's style class
-            gameState.getAllRoutesContainedByWhom().get(route).addListener((property, oldValue, newValue) -> {
+            gameState.getPlayerIdClaimingRoute(route).addListener((property, oldValue, newValue) -> {
                 if (newValue != null) {
                     routeGroup.getStyleClass().add(newValue.name());
                 }
@@ -76,18 +91,21 @@ class MapViewCreator {
 
             //If the route isn't claimable or if the handler is null, deactivates the routeGroup
             routeGroup.disableProperty().bind(
-                    claimRouteHandlerProperty.isNull().or(gameState.claimable(route).not()));
+                    claimRouteHP.isNull().or(gameState.claimable(route).not()));
 
 
             map.getChildren().add(routeGroup);
 
             //
             setAllBlocksOfARoute(route, routeGroup);
-
-
         }
     }
 
+    /**
+     * Sets the graphics of a given route
+     * @param route : the route to set the graphics of
+     * @param routeGroup : group of all the routes, their characteristics (id, level, color) and style class
+     */
     private static void setAllBlocksOfARoute(Route route, Group routeGroup) {
         for (int currentRouteCase = 1; currentRouteCase <= route.length(); currentRouteCase++) {
             Group caseGroup = new Group();
@@ -99,7 +117,6 @@ class MapViewCreator {
             trackRectangle.getStyleClass().addAll("track", "filled");
 
             caseGroup.getChildren().add(trackRectangle);
-
             //
             Group wagonGroup = new Group();
             wagonGroup.getStyleClass().add("car");
@@ -119,6 +136,9 @@ class MapViewCreator {
         }
     }
 
+    /**
+     * The functional interface describing a card chooser
+     */
     @FunctionalInterface
     interface CardChooser {
         void chooseCards(List<SortedBag<Card>> options,

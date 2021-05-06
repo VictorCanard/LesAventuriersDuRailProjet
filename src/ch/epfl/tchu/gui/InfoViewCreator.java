@@ -45,16 +45,15 @@ public class InfoViewCreator {
         Circle circle = new Circle(5);
         circle.getStyleClass().add("filled");
 
-        Text text = new Text(playerName);
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,
                 playerName,
-                gameState.getTicketCount().get(playerId).getValue(),
-                gameState.getCardCount().get(playerId).getValue(),
-                gameState.getCarCount().get(playerId).getValue(),
-                gameState.getConstructionPoints().get(playerId).getValue()));
+                gameState.getTicketCount(playerId).getValue(),
+                gameState.getCardCount(playerId).getValue(),
+                gameState.getCarCount(playerId).getValue(),
+                gameState.getConstructionPoints(playerId).getValue()));
 
-        TextFlow textFlow = new TextFlow(circle, text, stats);
+        TextFlow textFlow = new TextFlow(circle, stats);
         playerStats.getChildren().addAll(textFlow);
 
         return playerStats;

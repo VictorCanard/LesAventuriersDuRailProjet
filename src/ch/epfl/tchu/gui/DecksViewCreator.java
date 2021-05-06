@@ -8,7 +8,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
@@ -19,37 +18,37 @@ import javafx.scene.text.Text;
 
 import java.util.Locale;
 
+/**
+ * Represents the view of the ticket and card draw piles, and face up cards, as well as the tickets and cards the player possesses.
+ * @author Anne-Marie Rusu (296098)
+ */
 
 class DecksViewCreator {
     private DecksViewCreator() {
     }
 
     /**
-     * Creates the Hand View of the player whose graphical interface this is; ie creates the tickets and cards the player possesses.
-     *
+     * Creates the Hand View of the player whose graphical interface this is; ie creates the tickets and cards the player possesses
      * @param gameState : Observable Game State which allows the hand view to change according to the game's state
      * @return a Horizontal Box with a specific scene graph (set of children and attached nodes)
      */
-    public static Node createHandView(ObservableGameState gameState) {
+    public static HBox createHandView(ObservableGameState gameState) {
 
         HBox mainHBox = new HBox();
         mainHBox.getStylesheets().addAll("decks.css", "colors.css");
-
         //
         HBox handPane = new HBox();
         handPane.setId("hand-pane");
-
         //
         ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
         ListView<Ticket> listView = new ListView<>(listOfTickets);
         listView.setId("tickets");
         //
-
         mainHBox.getChildren().addAll(listView, handPane);
 
         //Cards
         for (Card card : Card.ALL) {
-            ReadOnlyIntegerProperty count = gameState.getNumberOfEachCard().get(card);
+            ReadOnlyIntegerProperty count = gameState.getNumberOfCard(card);
 
             StackPane cardPane = cardPane(card);
 
@@ -65,21 +64,17 @@ class DecksViewCreator {
             handPane.getChildren().add(cardPane);
 
         }
-
-
         return mainHBox;
     }
 
-
     /**
-     * Creates the cards view at the right of the screen; ie the tickets deck, the cards deck, and the 5 face-up cards.
-     *
-     * @param gameState   : observable game state that stores the information about the tickets and cards.
-     * @param drawTickets : an action handler for drawing tickets.
-     * @param drawCards   : an action handler for drawing cards.
+     * Creates the cards view at the right of the screen; ie the tickets deck, the cards deck, and the 5 face-up cards
+     * @param gameState   : observable game state that stores the information about the tickets and cards
+     * @param drawTickets : an action handler for drawing tickets
+     * @param drawCards   : an action handler for drawing cards
      * @return a vertical box with a specific scene graph
      */
-    public static Node createCardsView(ObservableGameState gameState, ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTickets, ObjectProperty<ActionHandlers.DrawCardHandler> drawCards) {
+    public static VBox createCardsView(ObservableGameState gameState, ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTickets, ObjectProperty<ActionHandlers.DrawCardHandler> drawCards) {
         VBox cardPane = new VBox();
         cardPane.getStylesheets().addAll("decks.css", "colors.css");
         cardPane.setId("card-pane");
@@ -87,16 +82,12 @@ class DecksViewCreator {
         //tickets button
         Button ticketButton = new Button("Billets");
         //
-
-        ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPercentageLeftProperty();
+        ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPctLeftProperty();
         cardPane.getChildren().add(deckButtons(ticketButton, ticketsPctProperty));
-
         //
         ticketButton.disableProperty().bind(drawTickets.isNull());
-
         //
         ticketButton.setOnMouseClicked(event -> drawTickets.get().onDrawTickets());
-
 
         //face up cards
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
@@ -104,14 +95,13 @@ class DecksViewCreator {
             stackPane.getStyleClass().add("card");
 
             //changes the graphics of the card according to what card is stored in the slot
-            gameState.getFaceUpCards().get(slot).addListener((property, oldValue, newValue) -> {
+            gameState.getFaceUpCard(slot).addListener((property, oldValue, newValue) -> {
 
                 stackPane.getStyleClass().add(getCardName(newValue));
 
                 if (oldValue != null) {
                     stackPane.getStyleClass().remove(getCardName(oldValue));
                 }
-
             });
             stackPane.disableProperty().bind(drawCards.isNull());
 
@@ -124,24 +114,20 @@ class DecksViewCreator {
         //cards button
         Button cardButton = new Button("Cartes");
 
-        ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPercentageLeftProperty();
+        ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPctLeftProperty();
 
         cardPane.getChildren().add(deckButtons(cardButton, cardsPctProperty));
-
         //
         cardButton.disableProperty().bind(drawCards.isNull());
-
         //
         cardButton.setOnMouseClicked(event -> drawCards.get().onDrawCards(Constants.DECK_SLOT));
-
 
         return cardPane;
     }
 
     /**
-     * Finds the String to associate to a specific card. Neutral is the card is a locomotive, its name in uppercase otherwise.
-     *
-     * @param card : the card which we want to know the name of.
+     * Finds the String to associate to a specific card. Neutral is the card is a locomotive, its name in uppercase otherwise
+     * @param card : the card which we want to know the name of
      * @return the name of the cards (in upper case)
      */
     private static String getCardName(Card card) {
@@ -149,8 +135,7 @@ class DecksViewCreator {
     }
 
     /**
-     * Creates a gauged button with a certain percentage and a specific button.
-     *
+     * Creates a gauged button with a certain percentage and a specific button
      * @param button     : button we want to add a gauge to
      * @param percentage : represents the actual value which is displayed onto the gauge
      * @return a button with a percentage bar
@@ -173,12 +158,10 @@ class DecksViewCreator {
         return button;
     }
 
-
     /**
-     * Makes the card pane of a specific card and returns it.
-     *
+     * Makes the card pane of a specific card and returns it
      * @param card : card we want to make into a stack pane
-     * @return a new Stack Pane for a specific card.
+     * @return a new Stack Pane for a specific card
      */
     private static StackPane cardPane(Card card) {
         String cardName = getCardName(card);
@@ -190,10 +173,9 @@ class DecksViewCreator {
     }
 
     /**
-     * Makes the three card rectangles for a given stackPane.
-     *
-     * @param stackPane : to which we add an outside, inside and train rectangle.
-     * @return the stack pane given as an argument with three new rectangles as children of its scene graph.
+     * Makes the three card rectangles for a given stackPane
+     * @param stackPane : to which we add an outside, inside and train rectangle
+     * @return the stack pane given as an argument with three new rectangles as children of its scene graph
      */
     private static StackPane cardRectangles(StackPane stackPane) {
         Rectangle outside = new Rectangle(60, 90);
