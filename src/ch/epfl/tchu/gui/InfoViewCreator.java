@@ -11,8 +11,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 import java.util.Map;
-//todo: idk if the player stats is always player 1 on top, player 2 on bottom, or if it's the player who the infoview belongs to who is on top... i did the first
-//which is weird because then i dont use the playerId argument
+
 public class InfoViewCreator {
     private InfoViewCreator(){}
 
@@ -28,13 +27,11 @@ public class InfoViewCreator {
 
         infoPane.getChildren().addAll(player1Stats, player2Stats, separator);
 
-        for (Text t : infos){
-            TextFlow gameInfo = new TextFlow(t);
-            gameInfo.setId("game-info");
+        TextFlow gameInfo = new TextFlow();
+        gameInfo.setId("game-info");
+        infoPane.getChildren().add(gameInfo);
 
-            infoPane.getChildren().add(gameInfo);
-        }
-        Bindings.bindContent(infoPane.getChildren().subList(3, infoPane.getChildren().size()), infos); // i think?
+        Bindings.bindContent(gameInfo.getChildren(), infos); // i think?
         return infoPane;
     }
 

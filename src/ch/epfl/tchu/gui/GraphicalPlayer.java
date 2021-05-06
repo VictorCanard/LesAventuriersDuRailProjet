@@ -51,7 +51,7 @@ public final class GraphicalPlayer {
 
     }
 
-    private <E> void createWindowChoice(String choiceOfWhat, ListView<E> listView) {
+    private <E> ObservableList<E> createWindowChoice(String title, ListView<E> listView) {
         Stage stage = new Stage(StageStyle.UTILITY);
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -71,30 +71,25 @@ public final class GraphicalPlayer {
         Button button = new Button(StringsFr.CHOOSE);
         //
 
-        switch (choiceOfWhat){
-            case StringsFr.CHOOSE_TICKETS:
-
-                break;
-            case StringsFr.CHOOSE_CARDS:
-
-            case StringsFr.CHOOSE_ADDITIONAL_CARDS:
-
-                makeSpecialListView(observableList);
-
-                break;
-            default:
-        }
-
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
 
         //
         verticalBox.getChildren().addAll(textFlow, listView, button);
         //
-        stage.setTitle(choiceOfWhat);
+        stage.setTitle(title);
         stage.show();
+
+        // Also add the disable property
+        ObservableList<E> chosen;
+        while((chosen = listView.getSelectionModel().getSelectedItems()).size() != 5){
+
+        }
+        return chosen;
     }
-    private ListView<SortedBag<Card>> makeSpecialListView(ObservableList<SortedBag<Card>> observableList){
-        ListView<SortedBag<Card>> listView = new ListView<>(observableList);
+
+    private ListView<SortedBag<Card>> makeSpecialListView(List<SortedBag<Card>> sortedBags) {
+        ListView<SortedBag<Card>> listView = new ListView<>(FXCollections.observableList(sortedBags));
         listView.setCellFactory(v -> new TextFieldListCell<>(new CardBagStringConverter()));
         return listView;
     }
@@ -114,7 +109,9 @@ public final class GraphicalPlayer {
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
 
+        mainPane.setPrefSize(500, 250); //Todo change this line
         Scene scene = new Scene(mainPane);
+
 
         primaryStage.setTitle("tCHu" + " \u2014 " + playerNames.get(thisPlayer));
         primaryStage.setScene(scene);
@@ -128,7 +125,7 @@ public final class GraphicalPlayer {
 
     public void receiveInfo(String messageToAdd) {
         assert isFxApplicationThread();
-        messages.add(new Text(messageToAdd));
+        messages.add(new Text('\n' + messageToAdd));
 
     }
 
@@ -153,9 +150,12 @@ public final class GraphicalPlayer {
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
 
-        ListView<SortedBag<Ticket>> listView = new ListView<>(FXCollections.observableArrayList(ticketsToChooseFrom));
-        createWindowChoice(String.format(StringsFr.CHOOSE_TICKETS, ticketsToChooseFrom),listView);
+        ObservableList<Ticket> observableList = FXCollections.observableArrayList(ticketsToChooseFrom.toList());
+        ListView<Ticket> listView = new ListView<>(observableList);
 
+        createWindowChoice(String.format(StringsFr.CHOOSE_TICKETS, ticketsToChooseFrom, StringsFr.plural(ticketsToChooseFrom.size())), listView);
+
+        //chooseTicketsHandler.onChooseTickets();
     }
 
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
@@ -163,13 +163,13 @@ public final class GraphicalPlayer {
 
         drawCardsHP.set(drawCardHandler);
 
-
-        //drawCardHandler.onDrawCards();
-
         drawTicketsHP.set(null);
         claimRouteHP.set(null);
         chooseTicketsHP.set(null);
         chooseCardsHP.set(null);
+
+
+        //drawCardHandler.onDrawCards();
     }
 
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
@@ -177,6 +177,7 @@ public final class GraphicalPlayer {
 
         createWindowChoice(StringsFr.CHOOSE_CARDS, makeSpecialListView(possibleClaimCards));
         //chooseCardsHandler.onChooseCards();
+
     }
 
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {

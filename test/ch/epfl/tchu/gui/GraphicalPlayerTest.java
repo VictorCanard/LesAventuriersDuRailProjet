@@ -13,13 +13,23 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public final class GraphicalPlayerTest extends Application {
+
+    private SortedBag<Card> makeAllCards() {
+        SortedBag.Builder<Card> cards = new SortedBag.Builder<>();
+
+        for (int i = 0; i < 10; i++) {
+            cards.add(SortedBag.of(Card.ALL));
+        }
+        return cards.build();
+    }
+
     private void setState(GraphicalPlayer player) {
 
         List<Route> playerOneRoutes = new ArrayList<>(ChMap.routes().subList(0, 3));
         playerOneRoutes.add(ChMap.routes().get(16));
         PlayerState p1State =
                 new PlayerState(SortedBag.of(ChMap.tickets().subList(0, 3)),
-                        SortedBag.of(3, Card.RED,1, Card.WHITE), playerOneRoutes
+                        makeAllCards(), playerOneRoutes
                 );
 
         PublicPlayerState p2State =
@@ -51,7 +61,13 @@ public final class GraphicalPlayerTest extends Application {
                     p.receiveInfo(String.format("Je m'empare de %s avec %s", rn, cs));
                 };
 
+        ActionHandlers.ChooseTicketsHandler chooseTicketsHandler =
+                (keptTickets -> p.receiveInfo("J'ai gardé "+ keptTickets));
+
+
         p.startTurn(drawTicketsH, drawCardH, claimRouteH);
-        //p.chooseClaimCards(List.of(SortedBag.of(1, Card.RED, 2, Card.BLUE), SortedBag.of(1, Card.BLACK, 4, Card.LOCOMOTIVE)),);
+        p.receiveInfo("Hello");
+
+        p.chooseTickets(SortedBag.of(ChMap.tickets().subList(0, 5)), chooseTicketsHandler);
     }
 }
