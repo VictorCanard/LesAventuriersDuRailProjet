@@ -31,6 +31,7 @@ public class InfoViewCreator {
         gameInfo.setId("game-info");
         infoPane.getChildren().add(gameInfo);
 
+
         Bindings.bindContent(gameInfo.getChildren(), infos); // i think?
         return infoPane;
     }
@@ -38,6 +39,7 @@ public class InfoViewCreator {
     private static VBox playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState){
         String playerName = playerNames.get(playerId);
         String playerStyle = playerId.name();
+        //
         VBox playerStats = new VBox();
         playerStats.setId("player-stats");
         playerStats.getStyleClass().add(playerStyle);
