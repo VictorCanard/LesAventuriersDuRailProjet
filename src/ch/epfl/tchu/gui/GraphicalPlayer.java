@@ -2,13 +2,10 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,8 +20,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -55,14 +50,12 @@ public final class GraphicalPlayer {
 
 
     }
-    private void endOfWindow(){
 
-    }
-
-    private <E> void createWindowChoice(String title, ListView<E> listView, int minItemsToSelect) {
+    private <E> ObservableList<E> createWindowChoice(String title, ListView<E> listView) {
         Stage stage = new Stage(StageStyle.UTILITY);
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
+
 
         //
         VBox verticalBox = new VBox();
@@ -81,6 +74,27 @@ public final class GraphicalPlayer {
         //
 
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        Button button = new Button(StringsFr.CHOOSE);
+        Text text = new Text();
+        TextFlow textFlow;
+
+      if(infoText.equals(StringsFr.CHOOSE_TICKETS)){
+          text.textProperty().bind(Bindings.format(infoText, listView.getItems().size())); //no clue how binding works when you want to bind to different things depending on the case
+          textFlow = new TextFlow(text);
+          button.disableProperty().bind(Bindings.size(/*condition*/));
+      }else if(infoText.equals(StringsFr.CHOOSE_CARDS)){
+          text = new Text(infoText);
+          textFlow = new TextFlow(text);
+
+          button.disableProperty().bind(Bindings.size(/*condition*/));
+      }else {//can we assume it will be choose additional cards
+          text = new Text(infoText);
+          textFlow = new TextFlow(text);
+      }
+
+
+
+
 
 
         //
@@ -188,9 +202,7 @@ public final class GraphicalPlayer {
 
         createWindowChoice(String.format(StringsFr.CHOOSE_TICKETS, ticketsToChooseFrom.size()-2, StringsFr.plural(ticketsToChooseFrom.size())), listView, ticketsToChooseFrom.size()-2);
 
-    }
-    private void setNull(){
-
+        //chooseTicketsHandler.onChooseTickets();
     }
 
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
@@ -218,7 +230,7 @@ public final class GraphicalPlayer {
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
 
-        createWindowChoice(StringsFr.CHOOSE_ADDITIONAL_CARDS, makeSpecialListView(possibleAdditionalCards), 1);
+        createWindowChoice(StringsFr.CHOOSE_ADDITIONAL_CARDS, makeSpecialListView(possibleAdditionalCards));
         //chooseCardsHandler.onChooseCards();
     }
 }

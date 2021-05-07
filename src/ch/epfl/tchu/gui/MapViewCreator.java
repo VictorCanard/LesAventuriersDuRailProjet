@@ -78,7 +78,6 @@ class MapViewCreator {
 
                     cardChooser.chooseCards(possibleClaimCards, chooseCardsH);
                 }
-
             }));
 
             //When a route is claimed, adds the Id of the player who claimed it to the routeGroup's style class
@@ -86,13 +85,11 @@ class MapViewCreator {
                 if (newValue != null) {
                     routeGroup.getStyleClass().add(newValue.name());
                 }
-
             });
 
             //If the route isn't claimable or if the handler is null, deactivates the routeGroup
             routeGroup.disableProperty().bind(
                     claimRouteHP.isNull().or(gameState.claimable(route).not()));
-
 
             map.getChildren().add(routeGroup);
 
