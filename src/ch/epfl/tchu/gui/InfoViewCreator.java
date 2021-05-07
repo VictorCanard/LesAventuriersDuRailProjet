@@ -58,5 +58,4 @@ public class InfoViewCreator {
 
         return playerStats;
     }
-
 }
