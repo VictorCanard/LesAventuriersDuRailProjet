@@ -23,8 +23,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -55,14 +53,14 @@ public final class GraphicalPlayer {
 
 
     }
-
-    private <E> void createWindowChoice(String title, ListView<E> listView, int minItemsToSelect) {
+    private Stage createStage(){
         Stage stage = new Stage(StageStyle.UTILITY);
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
+        return stage;
+    }
 
-
-        //
+    private <E> void createWindowChoice(String title, ListView<E> listView, Stage stage, Button button) {
         VBox verticalBox = new VBox();
         //
         Scene scene = new Scene(verticalBox);
@@ -74,27 +72,11 @@ public final class GraphicalPlayer {
         Text text = new Text();
         textFlow.getChildren().add(text);
         //
-        Button button = new Button(StringsFr.CHOOSE);
+
 
         //
 
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-
-      /*if(infoText.equals(StringsFr.CHOOSE_TICKETS)){
-          text.textProperty().bind(Bindings.format(infoText, listView.getItems().size())); //no clue how binding works when you want to bind to different things depending on the case
-          textFlow = new TextFlow(text);
-          button.disableProperty().bind(Bindings.size(*//*condition*//*));
-      }else if(infoText.equals(StringsFr.CHOOSE_CARDS)){
-          text = new Text(infoText);
-          textFlow = new TextFlow(text);
-
-          button.disableProperty().bind(Bindings.size(*//*condition*//*));
-      }else {//can we assume it will be choose additional cards
-          text = new Text(infoText);
-          textFlow = new TextFlow(text);
-      }*/
-
 
         //
         verticalBox.getChildren().addAll(textFlow, listView, button);
@@ -104,25 +86,9 @@ public final class GraphicalPlayer {
         stage.setOnCloseRequest(Event::consume);
 
         //
-        ObservableList<E> observableList = listView.getSelectionModel().getSelectedItems();
-
-        ObservableValue<Boolean> integerValue = Bindings.lessThan(Bindings.size(observableList), minItemsToSelect);
-        button.disableProperty().bind(integerValue);
 
 
-        button.setOnAction(event -> {
-            stage.hide();
-            if(chooseTicketsHP.isNull().get()){
-                E element = listView.getSelectionModel().getSelectedItem();
-                SortedBag<Card> bag = (SortedBag<Card>) element;
-                chooseCardsHP.get().onChooseCards(bag);
-            }else{
-                ArrayList<Ticket> arrayList = new ArrayList<>((Collection<? extends Ticket>) observableList);
-                SortedBag<Ticket> sortedBag = SortedBag.of(arrayList);
-                chooseTicketsHP.get().onChooseTickets(sortedBag);
-            }
 
-        });
 
 
     }
@@ -199,11 +165,23 @@ public final class GraphicalPlayer {
         ObservableList<Ticket> observableList = FXCollections.observableArrayList(ticketsToChooseFrom.toList());
         ListView<Ticket> listView = new ListView<>(observableList);
 
-        createWindowChoice(String.format(StringsFr.CHOOSE_TICKETS, ticketsToChooseFrom.size()-2, StringsFr.plural(ticketsToChooseFrom.size())), listView, ticketsToChooseFrom.size()-2);
+        Stage stage = createStage();
+        Button button = new Button(StringsFr.CHOOSE);
+        ObservableList<Ticket> list = listView.getSelectionModel().getSelectedItems();
+
+        ObservableValue<Boolean> integerValue = Bindings.lessThan(Bindings.size(list), ticketsToChooseFrom.size()-Constants.DISCARDABLE_TICKETS_COUNT);
+        button.disableProperty().bind(integerValue);
+        button.setOnAction(event -> {
+            stage.close();
+            chooseTicketsHandler.onChooseTickets(SortedBag.of(list));
+        });
+        createWindowChoice(StringsFr.TICKETS_CHOICE, listView, stage, button);
 
         //chooseTicketsHandler.onChooseTickets();
     }
 
+
+    //Todo: check this method
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
 
@@ -215,13 +193,12 @@ public final class GraphicalPlayer {
         chooseCardsHP.set(null);
 
 
-        //drawCardHandler.onDrawCards();
     }
 
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
 
-        createWindowChoice(StringsFr.CHOOSE_CARDS, makeSpecialListView(possibleClaimCards), 1);
+        //createWindowChoice(StringsFr.CHOOSE_CARDS, makeSpecialListView(possibleClaimCards), 1);
         //chooseCardsHandler.onChooseCards();
 
     }
@@ -229,7 +206,8 @@ public final class GraphicalPlayer {
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
 
-        createWindowChoice(StringsFr.CHOOSE_ADDITIONAL_CARDS, makeSpecialListView(possibleAdditionalCards), 1);
+
+        //createWindowChoice(StringsFr.CHOOSE_ADDITIONAL_CARDS, makeSpecialListView(possibleAdditionalCards), );
         //chooseCardsHandler.onChooseCards();
     }
 }

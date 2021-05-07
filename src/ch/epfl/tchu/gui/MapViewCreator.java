@@ -8,6 +8,7 @@ import ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
 import ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -31,7 +32,7 @@ class MapViewCreator {
      * @param cardChooser : an instance of the functional interface CardChooser used to choose some cards
      * @return A pane containing the map background and claimed/unclaimed routes
      */
-    public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
+    public static Node createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         Pane map = new Pane();
         //
         map.getStylesheets().addAll("map.css", "colors.css");

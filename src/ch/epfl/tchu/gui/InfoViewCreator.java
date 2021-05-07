@@ -19,9 +19,9 @@ public class InfoViewCreator {
         VBox infoPane = new VBox();
         infoPane.getStylesheets().addAll("info.css", "colors.css");
 
-        VBox player1Stats = playerStats(playerId, playerNames, gameState);
+        Node player1Stats = playerStats(playerId, playerNames, gameState);
 
-        VBox player2Stats = playerStats(playerId.next(), playerNames, gameState);
+        Node player2Stats = playerStats(playerId.next(), playerNames, gameState);
 
         Separator separator = new Separator();
 
@@ -36,7 +36,7 @@ public class InfoViewCreator {
         return infoPane;
     }
 
-    private static VBox playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState){
+    private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState){
         String playerName = playerNames.get(playerId);
         String playerStyle = playerId.name();
         //
