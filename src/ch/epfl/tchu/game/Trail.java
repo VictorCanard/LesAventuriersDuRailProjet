@@ -17,6 +17,9 @@ public final class Trail {
     private final List<Route> routes;
     private final Station station1;
     private final Station station2;
+    private final int length;
+
+    private final static Trail EMPTY_TRAIL = new Trail(List.of(), null, null);
 
     /**
      * Private constructor for a trail
@@ -25,9 +28,10 @@ public final class Trail {
      * @param station2 : arrival station
      */
     private Trail(List<Route> routes, Station station1, Station station2){
-        this.routes = List.copyOf(routes);
+        this.routes = routes;
         this.station1 = station1;
         this.station2 = station2;
+        this.length = length();
     }
 
     /**
@@ -38,12 +42,10 @@ public final class Trail {
     public static Trail longest(List<Route> routes){
         List<Trail> trails = listOfTrailsWithOneRoute(routes);
 
-        Trail longestTrail = new Trail(List.of(), null, null);
-
-        longestTrail = trails
+        Trail longestTrail = trails
                 .stream()
-                .max(Comparator.comparingInt(Trail::length))
-                .orElse(longestTrail);
+                .max(Comparator.comparingInt(trail-> trail.length))
+                .orElse(EMPTY_TRAIL);
 
         while(!(trails.isEmpty())){
             ArrayList<Trail> newTrails = new ArrayList<>();
@@ -67,8 +69,9 @@ public final class Trail {
 
             longestTrail = newTrails
                     .stream()
-                    .max(Comparator.comparingInt(Trail::length))
+                    .max(Comparator.comparingInt(trail-> trail.length))
                     .orElse(longestTrail);
+
 
         }
         return longestTrail;

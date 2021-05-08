@@ -103,7 +103,7 @@ public final class Ticket  implements Comparable<Ticket>{
                 .stream()
                 .mapToInt(trip -> trip.points(connectivity))
                 .max()
-                .orElse(0);
+                .orElseThrow();
     }
 
     /**

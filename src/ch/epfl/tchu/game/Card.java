@@ -32,7 +32,7 @@ public enum Card {
     /**
      * List of the car types of cards (excluding the locomotive card)
      */
-    public final static List<Card> CARS = ALL.subList(0,8);
+    public final static List<Card> CARS = ALL.subList(0,Color.COUNT);
 
     /**
      * Constructs the card from the given color

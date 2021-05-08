@@ -43,7 +43,7 @@ public class PublicCardState {
      * @return a list of cards
      */
     public List<Card> faceUpCards(){
-        return List.copyOf(faceUpCards);
+        return faceUpCards;
     }
 
     /**
