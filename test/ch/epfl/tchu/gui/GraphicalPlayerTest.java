@@ -23,7 +23,7 @@ public final class GraphicalPlayerTest extends Application {
         return cards.build();
     }
 
-    private void setState(GraphicalPlayer player) {
+    private void setState(GraphicalPlayer2 player) {
 
         List<Route> playerOneRoutes = new ArrayList<>(ChMap.routes().subList(0, 3));
         playerOneRoutes.add(ChMap.routes().get(16));
@@ -48,7 +48,7 @@ public final class GraphicalPlayerTest extends Application {
     public void start(Stage primaryStage) {
         Map<PlayerId, String> playerNames =
                 Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
-        GraphicalPlayer p = new GraphicalPlayer(PLAYER_1, playerNames);
+        GraphicalPlayer2 p = new GraphicalPlayer2(PLAYER_1, playerNames);
         setState(p);
 
         ActionHandlers.DrawTicketsHandler drawTicketsH =
