@@ -23,11 +23,13 @@ public final class GraphicalPlayerTest extends Application {
         return cards.build();
     }
 
+    PlayerState p1State;
+
     private void setState(GraphicalPlayer2 player) {
 
         List<Route> playerOneRoutes = new ArrayList<>(ChMap.routes().subList(0, 3));
         playerOneRoutes.add(ChMap.routes().get(16));
-        PlayerState p1State =
+        p1State =
                 new PlayerState(SortedBag.of(ChMap.tickets().subList(0, 3)),
                         makeAllCards(), playerOneRoutes
                 );
@@ -39,8 +41,10 @@ public final class GraphicalPlayerTest extends Application {
                 Map.of(PLAYER_1, p1State, PLAYER_2, p2State);
         PublicCardState cardState =
                 new PublicCardState(Card.ALL.subList(0, 5), 110 - 2 * 4 - 5, 0);
+
         PublicGameState publicGameState =
                 new PublicGameState(36, cardState, PLAYER_1, pubPlayerStates, null);
+
         player.setState(publicGameState, p1State);
     }
 
@@ -64,10 +68,13 @@ public final class GraphicalPlayerTest extends Application {
         ActionHandlers.ChooseTicketsHandler chooseTicketsHandler =
                 (keptTickets -> p.receiveInfo("J'ai gardé "+ keptTickets));
 
+        ActionHandlers.ChooseCardsHandler chooseAdditionalCardsHandler =  (additionalCards -> p.receiveInfo("J'ai joue " + additionalCards + " cartes additionelles"));
+
 
         p.startTurn(drawTicketsH, drawCardH, claimRouteH);
         p.receiveInfo("Hello");
 
         p.chooseTickets(SortedBag.of(ChMap.tickets().subList(0, 5)), chooseTicketsHandler);
+        p.chooseAdditionalCards(p1State.possibleAdditionalCards(3, SortedBag.of(3, Card.ORANGE), SortedBag.of(3, Card.ORANGE)), chooseAdditionalCardsHandler);
     }
 }
