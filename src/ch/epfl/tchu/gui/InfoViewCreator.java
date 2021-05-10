@@ -12,31 +12,53 @@ import javafx.scene.text.TextFlow;
 
 import java.util.Map;
 
-public class InfoViewCreator {
-    private InfoViewCreator(){}
+/**
+ * @author Anne-Marie (296098)
+ */
 
-    public static Node createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos){
+public class InfoViewCreator {
+    private InfoViewCreator() {
+    }
+
+    /**
+     * Creates the Information Panel on the left side of each player's graphical interface.
+     *
+     * @param playerId    : the player whose graphical interface this is.
+     * @param playerNames : the name of each player.
+     * @param gameState   : the state of the game to display.
+     * @param infos       : the messages that appear in the bottom-left corner giving information on the sequence of events of the game.
+     * @return a Vertical Box containing the messages and each player's stats.
+     */
+    public static Node createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos) {
         VBox infoPane = new VBox();
         infoPane.getStylesheets().addAll("info.css", "colors.css");
 
-        Node player1Stats = playerStats(playerId, playerNames, gameState);
+        //
+        infoPane.getChildren().add(playerStats(playerId, playerNames, gameState));
+        infoPane.getChildren().add(playerStats(playerId.next(), playerNames, gameState));
 
-        Node player2Stats = playerStats(playerId.next(), playerNames, gameState);
-
+        //
         Separator separator = new Separator();
+        infoPane.getChildren().add(separator);
 
-        infoPane.getChildren().addAll(player1Stats, player2Stats, separator);
-
+        //
         TextFlow gameInfo = new TextFlow();
         gameInfo.setId("game-info");
         infoPane.getChildren().add(gameInfo);
-
-
-        Bindings.bindContent(gameInfo.getChildren(), infos); // i think?
+        //
+        Bindings.bindContent(gameInfo.getChildren(), infos);
         return infoPane;
     }
 
-    private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState){
+    /**
+     * Creates the view on each player's stats in the top-left corner of the graphical display.
+     *
+     * @param playerId    : the player whose graphical interface this is.
+     * @param playerNames : the name of each player.
+     * @param gameState   : the state of the game to display.
+     * @return a Vertical Box with all stats concerning this player and all stats concerning the other player underneath it.
+     */
+    private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
         String playerName = playerNames.get(playerId);
         String playerStyle = playerId.name();
         //
@@ -50,10 +72,10 @@ public class InfoViewCreator {
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,
                 playerName,
-                gameState.getTicketCount(playerId).getValue(),
-                gameState.getCardCount(playerId).getValue(),
-                gameState.getCarCount(playerId).getValue(),
-                gameState.getConstructionPoints(playerId).getValue()));
+                gameState.getTicketCount(playerId).get(),
+                gameState.getCardCount(playerId).get(),
+                gameState.getCarCount(playerId).get(),
+                gameState.getConstructionPoints(playerId).get()));
 
         TextFlow textFlow = new TextFlow(circle, stats);
         playerStats.getChildren().addAll(textFlow);

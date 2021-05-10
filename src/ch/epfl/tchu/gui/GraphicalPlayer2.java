@@ -1,20 +1,14 @@
 package ch.epfl.tchu.gui;
 
 
-import ch.epfl.tchu.game.PlayerId;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import java.util.List;
-import java.util.Map;
-
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -24,13 +18,18 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
+import java.util.List;
+import java.util.Map;
 
 import static javafx.application.Platform.isFxApplicationThread;
 
-public class GraphicalPlayer2 {
+public final class GraphicalPlayer2 {
 
     private final PlayerId thisPlayer;
     private final Map<PlayerId, String> playerNames;
@@ -55,13 +54,17 @@ public class GraphicalPlayer2 {
     }
 
     private void setSceneGraph() {
-        Node mapView = MapViewCreator.createMapView(observableGameState, claimRouteHP, this::chooseClaimCards);
+        Node mapView = MapViewCreator
+                .createMapView(observableGameState, claimRouteHP, this::chooseClaimCards);
 
-        Node cardsView = DecksViewCreator.createCardsView(observableGameState, drawTicketsHP, drawCardsHP);
+        Node cardsView = DecksViewCreator
+                .createCardsView(observableGameState, drawTicketsHP, drawCardsHP);
 
-        Node handView = DecksViewCreator.createHandView(observableGameState);
+        Node handView = DecksViewCreator
+                .createHandView(observableGameState);
 
-        Node infoView = InfoViewCreator.createInfoView(thisPlayer, playerNames, observableGameState, messages);
+        Node infoView = InfoViewCreator
+                .createInfoView(thisPlayer, playerNames, observableGameState, messages);
 
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
@@ -74,6 +77,7 @@ public class GraphicalPlayer2 {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
         assert isFxApplicationThread();
         observableGameState.setState(publicGameState, playerState);
@@ -82,10 +86,10 @@ public class GraphicalPlayer2 {
     public void receiveInfo(String messageToAdd) {
         assert isFxApplicationThread();
 
-        if(messages.size() > 4){
-            messages.remove(4);
+        if (messages.size() > 4) {
+            messages.remove(0);
         }
-        messages.add(0, new Text('\n' + messageToAdd));
+        messages.add(new Text('\n' + messageToAdd));
 
     }
 
@@ -106,6 +110,7 @@ public class GraphicalPlayer2 {
 
         claimRouteHP.set(claimRouteHandler);
     }
+
     //Todo: check this method
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
@@ -130,11 +135,10 @@ public class GraphicalPlayer2 {
 
         ObservableList<Ticket> observableList = FXCollections.observableArrayList(ticketsToChooseFrom.toList());
         ListView<Ticket> listView = new ListView<>(observableList);
-        //need to hold down shift to select multiple -> normal?
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 
-        int ticketChooseSize = ticketsToChooseFrom.size()-Constants.DISCARDABLE_TICKETS_COUNT;
+        int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
         ObservableList<Ticket> list = listView.getSelectionModel().getSelectedItems();
 
         Text text = new Text(String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)));
@@ -165,7 +169,7 @@ public class GraphicalPlayer2 {
         createCardWindow(StringsFr.CHOOSE_ADDITIONAL_CARDS, possibleAdditionalCards, chooseCardsHandler);
     }
 
-    private Stage setStage(VBox vBox){
+    private Stage setStage(VBox vBox) {
         Stage stage = new Stage(StageStyle.UTILITY);
         Scene scene = new Scene(vBox);
         scene.getStylesheets().add("chooser.css");
@@ -175,23 +179,28 @@ public class GraphicalPlayer2 {
         stage.setScene(scene);
         return stage;
     }
+
     private void createCardWindow(String chooseThis, List<SortedBag<Card>> cards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
+        //
         chooseCardsHP.set(chooseCardsHandler);
         chooseTicketsHP.set(null);
+        //
 
         VBox verticalBox = new VBox();
         Stage stage = setStage(verticalBox);
 
+        //
         ListView<SortedBag<Card>> listView = makeSpecialListView(cards);
         ObservableList<SortedBag<Card>> selectedItems = listView.getSelectionModel().getSelectedItems();
-        SortedBag<Card> chosen = listView.getSelectionModel().getSelectedItem();
-
+        //
         Text text = new Text(chooseThis);
         TextFlow textFlow = new TextFlow(text);
 
+        //
         Button button = new Button(StringsFr.CHOOSE);
         verticalBox.getChildren().addAll(textFlow, listView, button);
+        //
 
         if (chooseThis.equals(StringsFr.CHOOSE_CARDS)) {
             ObservableValue<Boolean> selectCond = Bindings.lessThan(Bindings.size(selectedItems), 1);
@@ -200,7 +209,13 @@ public class GraphicalPlayer2 {
 
         button.setOnAction(event -> {
             stage.hide();
-            chooseCardsHandler.onChooseCards(chosen);
+
+            if (selectedItems.isEmpty()) {
+                chooseCardsHandler.onChooseCards(SortedBag.of());
+            }else{
+                chooseCardsHandler.onChooseCards(selectedItems.get(0));
+            }
+
         });
 
         stage.setOnCloseRequest(Event::consume);

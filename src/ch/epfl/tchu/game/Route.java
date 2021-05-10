@@ -132,6 +132,7 @@ public final class Route {
 
         switch(level){
             case UNDERGROUND:
+
                 if(color == null){
                     for (int i = 0; i < length; i++) {
                         for (Card c : Card.CARS) {
@@ -147,6 +148,7 @@ public final class Route {
                 break;
 
             case OVERGROUND:
+
                 if(color == null){
                     for(Card c : Card.CARS) {
                         possibleCards.add(SortedBag.of(length, c));
@@ -170,10 +172,10 @@ public final class Route {
         Preconditions.checkArgument(level == Level.UNDERGROUND
                                             && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
 
-        if(claimCards.equals(SortedBag.of(length, Card.LOCOMOTIVE)))
-            return drawnCards.countOf(Card.LOCOMOTIVE);
+        return (int) drawnCards.stream()
+                .filter(card -> card.equals(Card.LOCOMOTIVE) || card.equals(claimCards.get(0)))
+                .count();
 
-        return drawnCards.countOf(claimCards.get(0)) + drawnCards.countOf(Card.LOCOMOTIVE);
     }
 
     /**

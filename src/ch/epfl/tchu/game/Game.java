@@ -292,7 +292,7 @@ public final class Game {
             //Additional cost is between 1 and 3 (both included)
 
             //Cards the player could play
-            List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(additionalCost, initialClaimCards, drawnCards);
+            List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(additionalCost, initialClaimCards);
 
             if (possibleAdditionalCards.isEmpty()) { //Player can't play any additional cards
                 receiveInfoForAll(players, currentInfo.didNotClaimRoute(claimedRoute));

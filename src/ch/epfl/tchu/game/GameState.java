@@ -216,8 +216,6 @@ public final class GameState extends PublicGameState{
      * @return a new GameState with the drawn card removed from the face up cards, and a card added in that slot from the draw pile
      */
     public GameState withDrawnFaceUpCard(int slot){
-        Preconditions.checkArgument(canDrawCards());
-
         Card cardToAdd = cardState.faceUpCard(slot);
         temporaryMapToModifyPlayerState.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardToAdd));
 
@@ -230,8 +228,6 @@ public final class GameState extends PublicGameState{
      * @return a new GameState with a blindly drawn card
      */
     public GameState withBlindlyDrawnCard(){
-        Preconditions.checkArgument(canDrawCards());
-
         Card cardOnTopOfTheDeck = cardState.topDeckCard();
 
         temporaryMapToModifyPlayerState.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardOnTopOfTheDeck));

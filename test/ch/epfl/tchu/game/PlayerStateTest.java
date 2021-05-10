@@ -66,7 +66,7 @@ class PlayerStateTest {
         SortedBag<Card> drawnCards = SortedBag.of(1, Card.VIOLET, 2, Card.LOCOMOTIVE);
 
         PlayerState test = new PlayerState(ticketSortedBag, intialCards, listeRoutes3);
-        List<SortedBag<Card>> actual = test.possibleAdditionalCards(2, cardsPLayed,drawnCards);
+        List<SortedBag<Card>> actual = test.possibleAdditionalCards(2, cardsPLayed);
         System.out.println(actual);
     }
 
@@ -126,20 +126,6 @@ class PlayerStateTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void withAddedCards() {
-        PlayerState playerState = new PlayerState(ticketSortedBag,initialCards,  listeRoutes);
-        int expectedNumber = 7;
-        SortedBag<Card> expected = initialCards.union(cardSortedBag);
-
-
-        PlayerState actualPlayerState = playerState.withAddedCards(cardSortedBag);
-        int actualNumber = actualPlayerState.cards().size();
-        SortedBag<Card> actual = actualPlayerState.cards();
-
-        assertEquals(expectedNumber, actualNumber);
-        assertEquals(expected, actual);
-    }
 
     @Test
     void canClaimRoute() {
@@ -177,30 +163,30 @@ class PlayerStateTest {
         PlayerState testPlayerState2 = new PlayerState(ticketSortedBag, initialPlayerCards,  listeRoutes);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            testPlayerState2.possibleAdditionalCards(4, initialCards, drawnCards);
+            testPlayerState2.possibleAdditionalCards(4, initialCards);
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            testPlayerState2.possibleAdditionalCards(0, initialCards, drawnCards);
+            testPlayerState2.possibleAdditionalCards(0, initialCards);
         });
         assertThrows(IllegalArgumentException.class, () -> {
             SortedBag<Card> cardSortedBagWithMoreThanTwoTypes = SortedBag.of(1, Card.BLUE, 1, Card.WHITE);
             SortedBag<Card> newSortedBag = cardSortedBagWithMoreThanTwoTypes.union(SortedBag.of(Card.LOCOMOTIVE));
-            testPlayerState2.possibleAdditionalCards(3, newSortedBag, drawnCards);
+            testPlayerState2.possibleAdditionalCards(3, newSortedBag);
         });
         assertThrows(IllegalArgumentException.class, () -> {
             SortedBag<Card> drawnCardsWithOnlyOneCard = SortedBag.of(1, Card.BLUE);
-            testPlayerState2.possibleAdditionalCards(3, initialCards, drawnCardsWithOnlyOneCard);
+            testPlayerState2.possibleAdditionalCards(3, initialCards);
         });
         assertThrows(IllegalArgumentException.class, () -> {
             SortedBag<Card> emptySortedBag = SortedBag.of();
-            testPlayerState2.possibleAdditionalCards(3, emptySortedBag, drawnCards);
+            testPlayerState2.possibleAdditionalCards(3, emptySortedBag);
         });
 
         // CardsPlayedInitially: 4x BLUE
         // Drawn Cards: 2x Locomotive, 1x White
         // PLayerCards: 4x Locomotive, 4xBlue
 
-        List<SortedBag<Card>> sortedBagList = testPlayerState2.possibleAdditionalCards(3, cardsPlayedInitially, drawnCards);
+        List<SortedBag<Card>> sortedBagList = testPlayerState2.possibleAdditionalCards(3, cardsPlayedInitially);
 
         System.out.println(sortedBagList);
 
@@ -209,8 +195,7 @@ class PlayerStateTest {
         initialPlayerCards2 = initialPlayerCards2.union(SortedBag.of(3, Card.YELLOW));
         PlayerState testPlayerState3 = new PlayerState(ticketSortedBag, initialPlayerCards2,  listeRoutes);
 
-        List<SortedBag<Card>> sortedBagList2 = testPlayerState3.possibleAdditionalCards(3, cardsPlayedInitially, drawnCards);
-
+        List<SortedBag<Card>> sortedBagList2 = testPlayerState3.possibleAdditionalCards(3, cardsPlayedInitially);
         System.out.println(sortedBagList2);
 
         //playerCards: 18xBlue, 2xLocomotive, 3xYellow, 4xRed, 1x Black
@@ -219,7 +204,7 @@ class PlayerStateTest {
         initialPlayerCards3 = initialPlayerCards3.union(SortedBag.of(1, Card.BLACK));
         PlayerState testPlayerState4 = new PlayerState(ticketSortedBag, initialPlayerCards3,  listeRoutes);
 
-        List<SortedBag<Card>> sortedBagList3 = testPlayerState4.possibleAdditionalCards(3, cardsPlayedInitially, drawnCards);
+        List<SortedBag<Card>> sortedBagList3 = testPlayerState4.possibleAdditionalCards(3, cardsPlayedInitially);
 
         System.out.println(sortedBagList3);
 
@@ -228,7 +213,7 @@ class PlayerStateTest {
 
         PlayerState testPlayerState5 = new PlayerState(ticketSortedBag, initialPlayerCards4,  listeRoutes);
 
-        List<SortedBag<Card>> sortedBagList4 = testPlayerState5.possibleAdditionalCards(3, cardsPlayedInitially, drawnCards);
+        List<SortedBag<Card>> sortedBagList4 = testPlayerState5.possibleAdditionalCards(3, cardsPlayedInitially);
 
         System.out.println(sortedBagList4);
 
@@ -239,7 +224,7 @@ class PlayerStateTest {
 
         PlayerState testPlayerState6 = new PlayerState(ticketSortedBag, initialPlayerCards5,  listeRoutes);
 
-        List<SortedBag<Card>> sortedBagList5 = testPlayerState6.possibleAdditionalCards(1, cardsThatWerePlayed, cardsThatWereDrawn);
+        List<SortedBag<Card>> sortedBagList5 = testPlayerState6.possibleAdditionalCards(1, cardsThatWerePlayed);
 
         System.out.println(sortedBagList5);
 
