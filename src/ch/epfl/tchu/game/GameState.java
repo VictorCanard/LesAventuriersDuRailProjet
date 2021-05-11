@@ -13,15 +13,8 @@ public final class GameState extends PublicGameState{
 
     private final Map<PlayerId, PlayerState> playerStateMap;
 
-    /**
-     * Temporary map for modifications of the current player's state
-     */
-    private final Map<PlayerId, PlayerState> temporaryMapToModifyPlayerState;
-    
     private final Deck<Ticket> ticketDeck;
-
     private final CardState cardState;
-
 
     /**
      * Constructs a GameState with the following attributes
@@ -36,25 +29,11 @@ public final class GameState extends PublicGameState{
                       CardState cardState,
                       PlayerId currentPlayer,
                       PlayerId lastPlayer) {
-        super(ticketDeck.size(), cardState, currentPlayer, makePublic(playerStates), lastPlayer);
+        super(ticketDeck.size(), cardState, currentPlayer, Map.copyOf(playerStates), lastPlayer);
 
         this.playerStateMap = Map.copyOf(playerStates);
-        this.ticketDeck = ticketDeck;
-        this.cardState = cardState;
-        this.temporaryMapToModifyPlayerState = new EnumMap<>(playerStateMap);
-    }
-
-    /**
-     * Makes the player state map public, ie transforms a map with PlayerState values into a map with PublicPlayerState values
-     * @param playerStateMap : map to change the values of
-     * @return a new map with player ids associated to public player states
-     */
-    private static Map<PlayerId, PublicPlayerState> makePublic(Map<PlayerId, PlayerState> playerStateMap){
-        Map<PlayerId, PublicPlayerState> publicPlayerStateMap = new EnumMap<>(PlayerId.class);
-
-        publicPlayerStateMap.putAll(playerStateMap);
-
-        return publicPlayerStateMap;
+        this.ticketDeck = Objects.requireNonNull(ticketDeck);
+        this.cardState = Objects.requireNonNull(cardState);
     }
 
     /**
@@ -185,12 +164,13 @@ public final class GameState extends PublicGameState{
      * @return new GameState with added tickets for the player state associated to the param player id
      */
     public GameState withInitiallyChosenTickets(PlayerId playerId, SortedBag<Ticket> chosenTickets){
+        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
         PlayerState playerStateToModify = playerStateMap.get(playerId);
         Preconditions.checkArgument(playerStateToModify.tickets().isEmpty());
 
-        temporaryMapToModifyPlayerState.put(playerId, playerStateToModify.withAddedTickets(chosenTickets));
+        psMap.put(playerId, playerStateToModify.withAddedTickets(chosenTickets));
 
-        return new GameState(temporaryMapToModifyPlayerState, ticketDeck, cardState, super.currentPlayerId(), super.lastPlayer());
+        return new GameState(psMap, ticketDeck, cardState, super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -202,10 +182,11 @@ public final class GameState extends PublicGameState{
      */
     public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets, SortedBag<Ticket> chosenTickets){
         Preconditions.checkArgument(drawnTickets.contains(chosenTickets));
+        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
 
-        temporaryMapToModifyPlayerState.put(super.currentPlayerId(), currentPlayerState().withAddedTickets(chosenTickets));
+        psMap.put(super.currentPlayerId(), currentPlayerState().withAddedTickets(chosenTickets));
 
-        return new GameState(temporaryMapToModifyPlayerState, ticketDeck.withoutTopCards(drawnTickets.size()), cardState, super.currentPlayerId(), super.lastPlayer());
+        return new GameState(psMap, ticketDeck.withoutTopCards(drawnTickets.size()), cardState, super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -217,11 +198,12 @@ public final class GameState extends PublicGameState{
      */
     public GameState withDrawnFaceUpCard(int slot){
         Preconditions.checkArgument(canDrawCards());
+        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
 
         Card cardToAdd = cardState.faceUpCard(slot);
-        temporaryMapToModifyPlayerState.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardToAdd));
+        psMap.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardToAdd));
 
-        return new GameState(temporaryMapToModifyPlayerState, ticketDeck, cardState.withDrawnFaceUpCard(slot), super.currentPlayerId(), super.lastPlayer());
+        return new GameState(psMap, ticketDeck, cardState.withDrawnFaceUpCard(slot), super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -231,12 +213,12 @@ public final class GameState extends PublicGameState{
      */
     public GameState withBlindlyDrawnCard(){
         Preconditions.checkArgument(canDrawCards());
-
+        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
         Card cardOnTopOfTheDeck = cardState.topDeckCard();
 
-        temporaryMapToModifyPlayerState.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardOnTopOfTheDeck));
+        psMap.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardOnTopOfTheDeck));
 
-        return new GameState(temporaryMapToModifyPlayerState, ticketDeck, cardState.withoutTopDeckCard(), super.currentPlayerId(), super.lastPlayer());
+        return new GameState(psMap, ticketDeck, cardState.withoutTopDeckCard(), super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -247,10 +229,11 @@ public final class GameState extends PublicGameState{
      * @return a new GameState with a new route added and less cards for the current player
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards){
-        temporaryMapToModifyPlayerState.put(super.currentPlayerId(), currentPlayerState().withClaimedRoute(route, cards));
+        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
+        psMap.put(super.currentPlayerId(), currentPlayerState().withClaimedRoute(route, cards));
         CardState newState = cardState.withMoreDiscardedCards(cards);
 
-        return new GameState(temporaryMapToModifyPlayerState, ticketDeck, newState, super.currentPlayerId(), super.lastPlayer());
+        return new GameState(psMap, ticketDeck, newState, super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -261,7 +244,9 @@ public final class GameState extends PublicGameState{
         boolean lastPlayerIsUnknown = (super.lastPlayer() == null);
 
         int numberOfCars = super.currentPlayerState().carCount();
-        boolean onlyTwoWagonsLeftOrLess = numberOfCars <= 2;
+        int minWagons = 2;
+
+        boolean onlyTwoWagonsLeftOrLess = numberOfCars <= minWagons;
 
         return lastPlayerIsUnknown && onlyTwoWagonsLeftOrLess;
     }

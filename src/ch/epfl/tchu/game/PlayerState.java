@@ -14,6 +14,7 @@ public final class PlayerState extends PublicPlayerState {
 
     private final SortedBag<Ticket> tickets;
     private final SortedBag<Card> cards;
+    private final int typesOfCards = 2;
 
     /**
      * Constructor for the state of the player at a point in the game
@@ -147,7 +148,8 @@ public final class PlayerState extends PublicPlayerState {
     public List<SortedBag<Card>> possibleAdditionalCards(int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards){
         boolean correctAdditionalCardsCount = 1  <= additionalCardsCount && additionalCardsCount <= 3;
         boolean initialCardsNotNull = !(initialCards.isEmpty());
-        boolean initialCardsNotTooManyTypes = initialCards.toSet().size() <= 2;
+        boolean initialCardsNotTooManyTypes = initialCards.toSet().size() <= typesOfCards;
+
         boolean rightNumberOfDrawnCards = drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS;
 
         Preconditions.checkArgument(correctAdditionalCardsCount && initialCardsNotNull && initialCardsNotTooManyTypes && rightNumberOfDrawnCards);
