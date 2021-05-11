@@ -25,7 +25,7 @@ public final class GraphicalPlayerTest extends Application {
 
     PlayerState p1State;
 
-    private void setState(GraphicalPlayer2 player) {
+    private void setState(GraphicalPlayer player) {
 
         List<Route> playerOneRoutes = new ArrayList<>(ChMap.routes().subList(0, 3));
         playerOneRoutes.add(ChMap.routes().get(16));
@@ -52,29 +52,29 @@ public final class GraphicalPlayerTest extends Application {
     public void start(Stage primaryStage) {
         Map<PlayerId, String> playerNames =
                 Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
-        GraphicalPlayer2 p = new GraphicalPlayer2(PLAYER_1, playerNames);
+        GraphicalPlayer p = new GraphicalPlayer(PLAYER_1, playerNames);
         setState(p);
 
         ActionHandlers.DrawTicketsHandler drawTicketsH =
-                () -> p.receiveInfo("Je tire des billets !");
+                () -> p.receiveInfo("\nJe tire des billets !");
         ActionHandlers.DrawCardHandler drawCardH =
-                s -> p.receiveInfo(String.format("Je tire une carte de %s !", s));
+                s -> p.receiveInfo(String.format("\nJe tire une carte de %s !", s));
         ActionHandlers.ClaimRouteHandler claimRouteH =
                 (r, cs) -> {
                     String rn = r.station1() + " - " + r.station2();
-                    p.receiveInfo(String.format("Je m'empare de %s avec %s", rn, cs));
+                    p.receiveInfo(String.format("\nJe m'empare de %s avec %s", rn, cs));
                 };
 
         ActionHandlers.ChooseTicketsHandler chooseTicketsHandler =
-                (keptTickets -> p.receiveInfo("J'ai gardé "+ keptTickets));
+                (keptTickets -> p.receiveInfo("\nJ'ai gardé "+ keptTickets));
 
-        ActionHandlers.ChooseCardsHandler chooseAdditionalCardsHandler =  (additionalCards -> p.receiveInfo("J'ai joue " + additionalCards + " cartes additionelles"));
+        ActionHandlers.ChooseCardsHandler chooseCardsHandler =  (additionalCards) -> p.receiveInfo("J'ai joue, comme cartes additionnelles, " + additionalCards);
 
 
         p.startTurn(drawTicketsH, drawCardH, claimRouteH);
         p.receiveInfo("Hello");
 
         p.chooseTickets(SortedBag.of(ChMap.tickets().subList(0, 5)), chooseTicketsHandler);
-        p.chooseAdditionalCards(p1State.possibleAdditionalCards(3, SortedBag.of(3, Card.ORANGE), SortedBag.of(3, Card.ORANGE)), chooseAdditionalCardsHandler);
+        p.chooseAdditionalCards(p1State.possibleAdditionalCards(3, SortedBag.of(3, Card.ORANGE)), chooseCardsHandler);
     }
 }

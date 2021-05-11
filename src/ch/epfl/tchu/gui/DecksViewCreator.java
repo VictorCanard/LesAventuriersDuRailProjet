@@ -81,7 +81,7 @@ class DecksViewCreator {
         cardPane.setId("card-pane");
 
         //tickets button
-        Button ticketButton = new Button("Billets");
+        Button ticketButton = new Button(StringsFr.TICKETS);
         //
         ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPctLeftProperty();
         cardPane.getChildren().add(deckButtons(ticketButton, ticketsPctProperty));
@@ -113,7 +113,7 @@ class DecksViewCreator {
         }
 
         //cards button
-        Button cardButton = new Button("Cartes");
+        Button cardButton = new Button(StringsFr.CARDS);
 
         ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPctLeftProperty();
 

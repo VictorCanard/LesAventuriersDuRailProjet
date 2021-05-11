@@ -74,7 +74,7 @@ class GameTest {
             }
             if(cardInfo && isFirstTimePrinted){
                 displayCardState(publicCardState);
-                displayTotalNumberOfCards(publicCardState, publicGameState);
+
             }
 
             isFirstEOF = true;
@@ -93,12 +93,12 @@ class GameTest {
             System.out.printf("%s:: Nombre de voitures: %s      Nombre de cartes: %s     Nombre de billets: %s  \n", playerName, playerState.carCount(), playerState.cardCount(), playerState.ticketCount());
         }
 
-        private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
+        /*private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
             int totalNumber = publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount();
             System.out.print("Total Number of Cards = " + (totalNumber));
             assert totalNumber == 110;
 
-        }
+        }*/
         private static void displayEndOfGameMessage(PublicPlayerState publicPlayerState, String message){
             if (isFirstEOF){
                 System.out.println(message);

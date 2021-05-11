@@ -1,8 +1,6 @@
 package ch.epfl.tchu.gui;
 
 public final class StringsFr {
-    private StringsFr() {}
-
     // Nom des cartes
     public static final String BLACK_CARD = "noire";
     public static final String BLUE_CARD = "bleue";
@@ -13,17 +11,13 @@ public final class StringsFr {
     public static final String WHITE_CARD = "blanche";
     public static final String YELLOW_CARD = "jaune";
     public static final String LOCOMOTIVE_CARD = "locomotive";
-
-
     // Étiquettes des boutons
     public static final String TICKETS = "Billets";
     public static final String CARDS = "Cartes";
     public static final String CHOOSE = "Choisir";
-
     // Titre des fenêtres
     public static final String TICKETS_CHOICE = "Choix de billets";
     public static final String CARDS_CHOICE = "Choix de cartes";
-
     // Invites
     public static final String CHOOSE_TICKETS =
             "Choisissez au moins %s billet%s parmi ceux-ci :";
@@ -31,8 +25,7 @@ public final class StringsFr {
             "Choisissez les cartes à utiliser pour vous emparer de cette route :";
     public static final String CHOOSE_ADDITIONAL_CARDS =
             "Choisissez les cartes supplémentaires à utiliser pour vous" +
-            " emparer de ce tunnel (ou aucune pour annuler et passer votre tour) :";
-
+                    " emparer de ce tunnel (ou aucune pour annuler et passer votre tour) :";
     // Informations concernant le déroulement de la partie
     public static final String WILL_PLAY_FIRST =
             "%s jouera en premier.\n\n";
@@ -66,22 +59,22 @@ public final class StringsFr {
             "\n%s remporte la victoire avec %s point%s, contre %s point%s !\n";
     public static final String DRAW =
             "\n%s sont ex æqo avec %s points !\n";
-
     // Statistiques des joueurs
     public static final String PLAYER_STATS =
             " %s :\n– %s billets,\n– %s cartes,\n– %s wagons,\n– %s points.";
-
     // Séparateurs textuels
     public static final String AND_SEPARATOR = " et ";
     public static final String EN_DASH_SEPARATOR = " – ";
-
+    private StringsFr() {
+    }
 
     /**
      * Retourne une chaîne marquant le pluriel, ou la chaîne vide.
+     *
      * @param value la valeur déterminant la chaîne retournée
      * @return la chaîne vide si la valeur vaut ±1, la chaîne "s" sinon
      */
     public static String plural(int value) {
-        return Math.abs(value) == 1 ? "" : "s";
+        return Math.abs(value) <= 1 ? "" : "s";
     }
 }

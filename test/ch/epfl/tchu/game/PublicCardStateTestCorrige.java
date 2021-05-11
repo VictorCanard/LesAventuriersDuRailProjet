@@ -1,3 +1,4 @@
+/*
 package ch.epfl.tchu.game;
 
 import ch.epfl.test.TestRandomizer;
@@ -121,4 +122,4 @@ class PublicCardStateTestCorrige{
             assertEquals(i, cardState.discardsSize());
         }
     }
-}
+}*/
