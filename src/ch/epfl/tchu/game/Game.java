@@ -374,7 +374,6 @@ public final class Game {
      * @return a map with both player's final points
      */
     private static Map<PlayerId, Integer> calculateFinalPoints(AllGameData allGameData) {
-        PlayerId currentPlayerId = allGameData.gameState.currentPlayerId();
 
         Map<PlayerId, Player> players = allGameData.players;
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
