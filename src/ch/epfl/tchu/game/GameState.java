@@ -12,7 +12,6 @@ import java.util.*;
 public final class GameState extends PublicGameState{
 
     private final Map<PlayerId, PlayerState> playerStateMap;
-
     private final Deck<Ticket> ticketDeck;
     private final CardState cardState;
 
