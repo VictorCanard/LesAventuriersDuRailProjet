@@ -72,10 +72,10 @@ public class InfoViewCreator {
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,
                 playerName,
-                gameState.getTicketCount(playerId).get(),
-                gameState.getCardCount(playerId).get(),
-                gameState.getCarCount(playerId).get(),
-                gameState.getConstructionPoints(playerId).get()));
+                gameState.getTicketCount(playerId),
+                gameState.getCardCount(playerId),
+                gameState.getCarCount(playerId),
+                gameState.getConstructionPoints(playerId)));
 
         TextFlow textFlow = new TextFlow(circle, stats);
         playerStats.getChildren().addAll(textFlow);

@@ -21,6 +21,7 @@ import java.util.Locale;
 
 /**
  * Represents the view of the ticket and card draw piles, and face up cards, as well as the tickets and cards the player possesses.
+ *
  * @author Anne-Marie Rusu (296098)
  */
 
@@ -30,6 +31,7 @@ class DecksViewCreator {
 
     /**
      * Creates the Hand View of the player whose graphical interface this is; ie creates the tickets and cards the player possesses
+     *
      * @param gameState : Observable Game State which allows the hand view to change according to the game's state
      * @return a Horizontal Box with a specific scene graph (set of children and attached nodes)
      */
@@ -70,6 +72,7 @@ class DecksViewCreator {
 
     /**
      * Creates the cards view at the right of the screen; ie the tickets deck, the cards deck, and the 5 face-up cards
+     *
      * @param gameState   : observable game state that stores the information about the tickets and cards
      * @param drawTickets : an action handler for drawing tickets
      * @param drawCards   : an action handler for drawing cards
@@ -81,6 +84,7 @@ class DecksViewCreator {
         cardPane.setId("card-pane");
 
         //tickets button
+
         Button ticketButton = new Button(StringsFr.TICKETS);
         //
         ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPctLeftProperty();
@@ -107,7 +111,12 @@ class DecksViewCreator {
             stackPane.disableProperty().bind(drawCards.isNull());
 
             //
-            stackPane.setOnMouseClicked(event -> drawCards.getValue().onDrawCards(slot));
+            stackPane.setOnMouseClicked(event ->{
+                        drawCards.get().onDrawCards(slot);
+                        drawCards.set(null);
+                    }
+
+            );
 
             cardPane.getChildren().add(cardRectangles(stackPane));
         }
@@ -121,13 +130,17 @@ class DecksViewCreator {
         //
         cardButton.disableProperty().bind(drawCards.isNull());
         //
-        cardButton.setOnMouseClicked(event -> drawCards.get().onDrawCards(Constants.DECK_SLOT));
+        cardButton.setOnMouseClicked(event -> {
+            drawCards.get().onDrawCards(Constants.DECK_SLOT);
+            drawCards.set(null);
+        });
 
         return cardPane;
     }
 
     /**
      * Finds the String to associate to a specific card. Neutral is the card is a locomotive, its name in uppercase otherwise
+     *
      * @param card : the card which we want to know the name of
      * @return the name of the cards (in upper case)
      */
@@ -137,6 +150,7 @@ class DecksViewCreator {
 
     /**
      * Creates a gauged button with a certain percentage and a specific button
+     *
      * @param button     : button we want to add a gauge to
      * @param percentage : represents the actual value which is displayed onto the gauge
      * @return a button with a percentage bar
@@ -161,6 +175,7 @@ class DecksViewCreator {
 
     /**
      * Makes the card pane of a specific card and returns it
+     *
      * @param card : card we want to make into a stack pane
      * @return a new Stack Pane for a specific card
      */
@@ -175,6 +190,7 @@ class DecksViewCreator {
 
     /**
      * Makes the three card rectangles for a given stackPane
+     *
      * @param stackPane : to which we add an outside, inside and train rectangle
      * @return the stack pane given as an argument with three new rectangles as children of its scene graph
      */

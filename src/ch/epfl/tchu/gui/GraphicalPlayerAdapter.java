@@ -31,7 +31,7 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
-        runLater(()-> this.graphicalPlayer = new GraphicalPlayer(ownID, playerNames));
+        runLater(() -> this.graphicalPlayer = new GraphicalPlayer(ownID, playerNames));
 
     }
 
@@ -89,6 +89,7 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public Route claimedRoute() {
+
         return withTryAndCatch(routeQueue);
     }
 

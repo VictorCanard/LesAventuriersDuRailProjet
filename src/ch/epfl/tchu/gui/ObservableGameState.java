@@ -252,6 +252,7 @@ public final class ObservableGameState {
     }
 
     private void setEachPlayerCountAttributesCount(PublicGameState publicGameState) {
+
         PlayerId.ALL.forEach(playerId -> {
             ticketCount.get(playerId).set(publicGameState.playerState(playerId).ticketCount());
             cardCount.get(playerId).set(publicGameState.playerState(playerId).cardCount());

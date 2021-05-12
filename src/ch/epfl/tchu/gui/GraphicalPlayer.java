@@ -121,13 +121,21 @@ public final class GraphicalPlayer {
         chooseTicketsHP.set(null);
         chooseCardsHP.set(null);
 
-
     }
+    private void setAllNull(){
+        drawCardsHP.set(null);
+        drawTicketsHP.set(null);
+        claimRouteHP.set(null);
+        chooseTicketsHP.set(null);
+        chooseCardsHP.set(null);
+    }
+
 
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
-        chooseTicketsHP.set(chooseTicketsHandler);
-        chooseCardsHP.set(null);
+
+
+        setAllNull();
 
         VBox verticalBox = new VBox();
         Stage stage = setStage(verticalBox);
@@ -157,6 +165,8 @@ public final class GraphicalPlayer {
 
         stage.setOnCloseRequest(Event::consume);
         stage.show();
+
+
     }
 
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
@@ -183,10 +193,9 @@ public final class GraphicalPlayer {
 
     private void createCardWindow(String chooseThis, List<SortedBag<Card>> cards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
-        //
-        chooseCardsHP.set(chooseCardsHandler);
-        chooseTicketsHP.set(null);
-        //
+
+
+        setAllNull();
 
         VBox verticalBox = new VBox();
         Stage stage = setStage(verticalBox);

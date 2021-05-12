@@ -73,12 +73,14 @@ class MapViewCreator {
 
                 if (possibleClaimCards.size() == 1) {
                     claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
+
                 } else if (possibleClaimCards.size() > 1) {
                     ChooseCardsHandler chooseCardsH =
                             chosenCards -> claimRouteHP.get().onClaimRoute(route, chosenCards);
 
                     cardChooser.chooseCards(possibleClaimCards, chooseCardsH);
                 }
+                claimRouteHP.set(null);
             }));
 
             //When a route is claimed, adds the Id of the player who claimed it to the routeGroup's style class
