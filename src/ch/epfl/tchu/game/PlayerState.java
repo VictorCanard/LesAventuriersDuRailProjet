@@ -155,9 +155,8 @@ public final class PlayerState extends PublicPlayerState {
         boolean initialCardsNotNull = !(initialCards.isEmpty());
         boolean initialCardsNotTooManyTypes = initialCards.toSet().size() <= minWagons;
 
-        Preconditions.checkArgument(correctAdditionalCardsCount
-                && initialCardsNotNull
-                && initialCardsNotTooManyTypes);
+        Preconditions.checkArgument(correctAdditionalCardsCount);
+        Preconditions.checkArgument(initialCardsNotNull && initialCardsNotTooManyTypes);
 
 
         SortedBag<Card> playerCardsWithoutInitialCards = this.cards.difference(initialCards);
