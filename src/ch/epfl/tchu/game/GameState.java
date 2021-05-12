@@ -192,11 +192,9 @@ public final class GameState extends PublicGameState{
      * Draws a card from the chosen card at index slot from the face-up cards and put into the player's hand and replaces
      * it with one from the draw pile
      * @param slot : the index of the drawn face-up card
-     * @throws IllegalArgumentException if it's not possible to draw cards
      * @return a new GameState with the drawn card removed from the face up cards, and a card added in that slot from the draw pile
      */
     public GameState withDrawnFaceUpCard(int slot){
-        Preconditions.checkArgument(canDrawCards());
         Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
 
         Card cardToAdd = cardState.faceUpCard(slot);
@@ -207,11 +205,9 @@ public final class GameState extends PublicGameState{
 
     /**
      * Draws the top card from the draw pile and place it in the player's hand
-     * @throws IllegalArgumentException if it's not possible to draw cards
      * @return a new GameState with a blindly drawn card
      */
     public GameState withBlindlyDrawnCard(){
-        Preconditions.checkArgument(canDrawCards());
         Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
         Card cardOnTopOfTheDeck = cardState.topDeckCard();
 
