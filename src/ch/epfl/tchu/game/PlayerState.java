@@ -214,7 +214,7 @@ public final class PlayerState extends PublicPlayerState {
                 .stream()
                 .map((route -> Math.max(route.station1().id(), route.station2().id())))
                 .max((Integer::compareTo))
-                .orElse(0);
+                .orElseThrow();
 
         //Adds 1 to it
         maxStationId++;

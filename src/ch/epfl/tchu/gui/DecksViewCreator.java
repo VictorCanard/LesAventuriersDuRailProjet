@@ -113,7 +113,7 @@ class DecksViewCreator {
             //
             stackPane.setOnMouseClicked(event ->{
                         drawCards.get().onDrawCards(slot);
-                        drawCards.set(null);
+
                     }
 
             );
@@ -132,7 +132,6 @@ class DecksViewCreator {
         //
         cardButton.setOnMouseClicked(event -> {
             drawCards.get().onDrawCards(Constants.DECK_SLOT);
-            drawCards.set(null);
         });
 
         return cardPane;

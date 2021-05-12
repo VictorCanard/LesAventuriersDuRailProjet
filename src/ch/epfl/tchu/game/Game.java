@@ -396,7 +396,7 @@ public final class Game {
                 .stream()
                 .mapToInt(playerId -> eachPlayerAssociatedTrails.get(playerId).length())
                 .max()
-                .orElse(0);
+                .orElseThrow();
 
         PlayerId.ALL.forEach(playerId -> {
             if (eachPlayerAssociatedTrails.get(playerId).length() == maxLengthTrail) {
@@ -418,7 +418,7 @@ public final class Game {
         PlayerId currentPlayerId = allGameData.gameState.currentPlayerId();
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
 
-        int maxPoints = PlayerId.ALL.stream().mapToInt(associatedPlayerPoints::get).max().orElse(0);
+        int maxPoints = PlayerId.ALL.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
 
         int currentPlayerPoints = associatedPlayerPoints.get(currentPlayerId);
         int nextPlayerPoints = associatedPlayerPoints.get(currentPlayerId.next());

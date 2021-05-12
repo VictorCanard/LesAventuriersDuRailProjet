@@ -76,7 +76,7 @@ class StationPartitionTestCorrige {
                 .flatMap(r -> r.stations().stream())
                 .mapToInt(Station::id)
                 .max()
-                .orElse(0);
+                .orElseThrow();
 
         Random rng = TestRandomizer.newRandom();
         for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
@@ -107,7 +107,7 @@ class StationPartitionTestCorrige {
                 .flatMap(r -> r.stations().stream())
                 .mapToInt(Station::id)
                 .max()
-                .orElse(0);
+                .orElseThrow();
 
         Random rng = TestRandomizer.newRandom();
         for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {
@@ -136,7 +136,7 @@ class StationPartitionTestCorrige {
                 .flatMap(r -> r.stations().stream())
                 .mapToInt(Station::id)
                 .max()
-                .orElse(0);
+                .orElseThrow();
 
         Random rng = TestRandomizer.newRandom();
         for (int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; i++) {

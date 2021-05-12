@@ -80,7 +80,7 @@ class MapViewCreator {
 
                     cardChooser.chooseCards(possibleClaimCards, chooseCardsH);
                 }
-                claimRouteHP.set(null);
+
             }));
 
             //When a route is claimed, adds the Id of the player who claimed it to the routeGroup's style class

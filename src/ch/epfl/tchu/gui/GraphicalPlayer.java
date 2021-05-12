@@ -97,45 +97,50 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
 
         if (observableGameState.canDrawTickets()) {
-            drawTicketsHP.set(drawTicketsHandler);
-        } else {
-            drawTicketsHP.set(null);
+            drawTicketsHP.set(()->{
+                drawTicketsHandler.onDrawTickets();
+                setNull();
+            });
         }
 
         if (observableGameState.canDrawCards()) {
-            drawCardsHP.set(drawCardHandler);
-        } else {
-            drawCardsHP.set(null);
+            drawCardsHP.set((slot)->{
+                drawCardHandler.onDrawCards(slot);
+                setNull();
+
+            });
         }
 
-        claimRouteHP.set(claimRouteHandler);
+        claimRouteHP.set((route, cards)->{
+            claimRouteHandler.onClaimRoute(route,cards);
+            setNull();
+        });
+    }
+    private void setNull(){
+        drawCardsHP.set(null);
+        drawTicketsHP.set(null);
+        claimRouteHP.set(null);
     }
 
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
 
-        drawCardsHP.set(drawCardHandler);
+        drawCardsHP.set((slot)->{
+            drawCardHandler.onDrawCards(slot);
+            drawCardsHP.set(null);
+        });
 
         drawTicketsHP.set(null);
         claimRouteHP.set(null);
         chooseTicketsHP.set(null);
         chooseCardsHP.set(null);
 
-    }
-    private void setAllNull(){
-        drawCardsHP.set(null);
-        drawTicketsHP.set(null);
-        claimRouteHP.set(null);
-        chooseTicketsHP.set(null);
-        chooseCardsHP.set(null);
     }
 
 
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
 
-
-        setAllNull();
 
         VBox verticalBox = new VBox();
         Stage stage = setStage(verticalBox);
@@ -193,9 +198,6 @@ public final class GraphicalPlayer {
 
     private void createCardWindow(String chooseThis, List<SortedBag<Card>> cards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
-
-
-        setAllNull();
 
         VBox verticalBox = new VBox();
         Stage stage = setStage(verticalBox);

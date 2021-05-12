@@ -231,12 +231,8 @@ public final class ObservableGameState {
 
     private void setPlayerCards(PlayerState playerState) {
 
+        Card.ALL.forEach(card -> numberOfEachCard.get(card).set(playerState.cards().countOf(card)));
 
-        playerState.cards().forEach(card -> numberOfEachCard.merge(card, new SimpleIntegerProperty(1), (integerObjectProperty, one) -> {
-            int sum = integerObjectProperty.get() + one.get();
-            integerObjectProperty.set(sum);
-            return integerObjectProperty;
-        }));
     }
 
     private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
