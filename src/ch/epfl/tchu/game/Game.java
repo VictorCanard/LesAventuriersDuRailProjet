@@ -13,12 +13,11 @@ import java.util.*;
  * @author Anne-Marie Rusu (296098)
  */
 
-
 public final class Game {
+
     private final static int NUMBER_OF_PLAYERS = PlayerId.COUNT;
 
-    private Game() {
-    }
+    private Game() { }
 
     /**
      * Runs a game of tCHu
@@ -30,8 +29,8 @@ public final class Game {
      * @throws IllegalArgumentException if one of the maps (playerNames or players) doesn't have exactly two pairs as there as two players in the game.
      */
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng) {
-        Preconditions.checkArgument(players.size() == NUMBER_OF_PLAYERS
-                && playerNames.size() == NUMBER_OF_PLAYERS);
+        Preconditions.checkArgument(players.size() == NUMBER_OF_PLAYERS);
+        Preconditions.checkArgument(playerNames.size() == NUMBER_OF_PLAYERS);
 
         //before the game starts
 
@@ -213,11 +212,13 @@ public final class Game {
             allGameData.modifyGameState(allGameData.gameState.withCardsDeckRecreatedIfNeeded(allGameData.rng));
 
             if (i == 1) {
-                updateAllStates(players, allGameData.gameState);
                 //To update all states right before the player chooses a second card to draw
+                updateAllStates(players, allGameData.gameState);
+
             }
-            int drawSlot = currentPlayer.drawSlot();
             //-1 or from 0 to 4
+            int drawSlot = currentPlayer.drawSlot();
+
 
             if (drawSlot == Constants.DECK_SLOT) {
                 //DeckCard
@@ -314,8 +315,8 @@ public final class Game {
             //No additional cost
             allGameData.modifyGameState(allGameData.gameState.withMoreDiscardedCards(drawnCards));
 
-            return claimOverground(allGameData, currentInfo, claimedRoute, initialClaimCards);
             //In this case the procedure is the same as when claiming an overground route
+            return claimOverground(allGameData, currentInfo, claimedRoute, initialClaimCards);
         }
     }
 

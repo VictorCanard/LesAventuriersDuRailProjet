@@ -148,9 +148,12 @@ public final class PlayerState extends PublicPlayerState {
      *                                  of initial cards (excluding locomotives) or if there are not exactly 3 drawn cards.
      */
     public List<SortedBag<Card>> possibleAdditionalCards(int additionalCardsCount, SortedBag<Card> initialCards) {
-        boolean correctAdditionalCardsCount = 1 <= additionalCardsCount && additionalCardsCount <= 3;
+        int minAddCards = 1;
+        int maxAddCards = 3;
+        int minWagons = 2;
+        boolean correctAdditionalCardsCount = minAddCards <= additionalCardsCount && additionalCardsCount <= maxAddCards;
         boolean initialCardsNotNull = !(initialCards.isEmpty());
-        boolean initialCardsNotTooManyTypes = initialCards.toSet().size() <= 2;
+        boolean initialCardsNotTooManyTypes = initialCards.toSet().size() <= minWagons;
 
         Preconditions.checkArgument(correctAdditionalCardsCount
                 && initialCardsNotNull

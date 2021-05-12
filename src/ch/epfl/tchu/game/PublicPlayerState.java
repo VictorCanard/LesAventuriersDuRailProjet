@@ -53,9 +53,7 @@ public class PublicPlayerState {
      * Getter for the list of routes the player has claimed
      * @return the list of routes
      */
-    public List<Route> routes(){
-        return List.copyOf(routes);
-    }
+    public List<Route> routes(){ return routes; }
 
     /**
      * Getter for the number of cars the player has

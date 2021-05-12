@@ -17,6 +17,7 @@ public class PublicGameState {
     private final Map<PlayerId, PublicPlayerState> playerStates;
     private final PlayerId currentPlayerId;
     private final PlayerId lastPlayer;
+    private final int minCardsAllowed = 5;
 
     /**
      * Constructs the "public" state of the game
@@ -25,18 +26,18 @@ public class PublicGameState {
      * @param currentPlayerId : the player who's turn it is
      * @param playerState : the "public" state of the players at the corresponding point of the game
      * @param lastPlayer : when it is known, the last player to have a turn at the end of the game
-     * @throws IllegalArgumentException if the ticket count is negative or if there are not exactly two players
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer){
         boolean positiveTicketCount = ticketsCount >= 0;
-        boolean exactlyTwoPairs = playerState.size() == 2;
+        boolean exactlyTwoPairs = playerState.size() == PlayerId.COUNT;
 
-        Preconditions.checkArgument(positiveTicketCount && exactlyTwoPairs);
+        Preconditions.checkArgument(positiveTicketCount);
+        Preconditions.checkArgument(exactlyTwoPairs);
 
         this.ticketDeckSize = ticketsCount;
         this.publicCardState = Objects.requireNonNull(cardState);
         this.currentPlayerId = Objects.requireNonNull(currentPlayerId);
-        this.playerStates = Objects.requireNonNull(playerState);
+        this.playerStates = Objects.requireNonNull(Map.copyOf(playerState));
         this.lastPlayer = lastPlayer;
     }
 
@@ -72,7 +73,7 @@ public class PublicGameState {
         int numberOfCardsInDrawPile = publicCardState.deckSize();
         int numberOfCardsInDiscardPile = publicCardState.discardsSize();
 
-        return (numberOfCardsInDiscardPile + numberOfCardsInDrawPile) >= 5;
+        return (numberOfCardsInDiscardPile + numberOfCardsInDrawPile) >= minCardsAllowed;
     }
 
     /**
