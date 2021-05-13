@@ -137,7 +137,6 @@ public final class GraphicalPlayer {
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
 
-
         int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
 
         ListView<Ticket> listView = new ListView<>(FXCollections.observableList(ticketsToChooseFrom.toList()));
@@ -153,8 +152,6 @@ public final class GraphicalPlayer {
 
         ticketWindow.setButtonDP(ticketChooseSize);
         ticketWindow.show();
-
-
     }
 
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
@@ -188,8 +185,6 @@ public final class GraphicalPlayer {
             }
             return null;
         });
-
-        cardsWindow.setButtonDP(1);
         cardsWindow.show();
     }
 

@@ -42,9 +42,8 @@ public class ServerMain extends Application {
                 break;
         }
 
-        try (ServerSocket serverSocket = new ServerSocket(5108);
-             Socket socket = serverSocket.accept()) {
-
+        try (ServerSocket serverSocket = new ServerSocket(5108)){
+            Socket socket = serverSocket.accept();
             GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
             RemotePlayerProxy playerProxy = new RemotePlayerProxy(socket);
 

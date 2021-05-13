@@ -304,12 +304,17 @@ public final class Game {
                 //The player can play additional cards. Asks the player which set of cards he want to play.
                 SortedBag<Card> tunnelCards = currentPlayer.chooseAdditionalCards(possibleAdditionalCards);
 
-                receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
+                if(tunnelCards.isEmpty()){
+                    receiveInfoForAll(players, currentInfo.didNotClaimRoute(claimedRoute));
+                    return allGameData.gameState.withMoreDiscardedCards(drawnCards);
 
-                return allGameData.gameState
-                        //Drawn cards are put in the discard
-                        .withMoreDiscardedCards(drawnCards)
-                        .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards));
+                }else {
+                    receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
+                    return allGameData.gameState
+                            //Drawn cards are put in the discard
+                            .withMoreDiscardedCards(drawnCards)
+                            .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards));
+                }
             }
         } else {
             //No additional cost
