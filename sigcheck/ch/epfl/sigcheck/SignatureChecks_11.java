@@ -14,7 +14,7 @@ final class SignatureChecks_11 {
         v01.start(v03);
     }
 
-    void checkServerMain() throws Exception {
+    void checkServerMain() {
         v04 = new ch.epfl.tchu.gui.ServerMain();
         ch.epfl.tchu.gui.ServerMain.main(v02);
         v04.start(v03);
