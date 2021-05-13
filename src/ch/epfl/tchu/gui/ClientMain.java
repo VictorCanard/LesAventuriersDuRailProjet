@@ -13,24 +13,24 @@ public class ClientMain extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage){ //did we need to handle any exception here or no?
+    public void start(Stage primaryStage){
         List<String> parameters = getParameters().getRaw();
-        RemotePlayerClient rpc;
+        RemotePlayerClient remotePlayerClient;
         switch(parameters.size()){
             case 0:
-                rpc = new RemotePlayerClient(new GraphicalPlayerAdapter(), "localHost", 5108);
+                remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(), "localHost", 5108);
                 break;
             case 1:
-                rpc = new RemotePlayerClient(new GraphicalPlayerAdapter(),
+                remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(),
                         parameters.get(0),
                         5108);
                 break;
             default:
-                rpc = new RemotePlayerClient(new GraphicalPlayerAdapter(),
+                remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(),
                         parameters.get(0),
                         Integer.parseInt(parameters.get(1)));
                 break;
         }
-        new Thread(rpc::run).start();
+        new Thread(remotePlayerClient::run).start();
     }
 }

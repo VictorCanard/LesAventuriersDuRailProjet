@@ -6,7 +6,6 @@ import ch.epfl.tchu.game.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -26,6 +25,7 @@ import javafx.stage.StageStyle;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static javafx.application.Platform.isFxApplicationThread;
 
@@ -40,8 +40,6 @@ public final class GraphicalPlayer {
     private final ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTicketsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.DrawCardHandler> drawCardsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.ClaimRouteHandler> claimRouteHP = new SimpleObjectProperty<>(null);
-    private final ObjectProperty<ActionHandlers.ChooseTicketsHandler> chooseTicketsHP = new SimpleObjectProperty<>(null);
-    private final ObjectProperty<ActionHandlers.ChooseCardsHandler> chooseCardsHP = new SimpleObjectProperty<>(null);
 
     public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
 
@@ -97,26 +95,27 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
 
         if (observableGameState.canDrawTickets()) {
-            drawTicketsHP.set(()->{
+            drawTicketsHP.set(() -> {
                 drawTicketsHandler.onDrawTickets();
-                setNull();
+                disableAllTurnActions();
             });
         }
 
         if (observableGameState.canDrawCards()) {
-            drawCardsHP.set((slot)->{
+            drawCardsHP.set((slot) -> {
                 drawCardHandler.onDrawCards(slot);
-                setNull();
+                disableAllTurnActions();
 
             });
         }
 
-        claimRouteHP.set((route, cards)->{
-            claimRouteHandler.onClaimRoute(route,cards);
-            setNull();
+        claimRouteHP.set((route, cards) -> {
+            claimRouteHandler.onClaimRoute(route, cards);
+            disableAllTurnActions();
         });
     }
-    private void setNull(){
+
+    private void disableAllTurnActions() {
         drawCardsHP.set(null);
         drawTicketsHP.set(null);
         claimRouteHP.set(null);
@@ -125,15 +124,12 @@ public final class GraphicalPlayer {
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
 
-        drawCardsHP.set((slot)->{
+        disableAllTurnActions();
+
+        drawCardsHP.set((slot) -> {
             drawCardHandler.onDrawCards(slot);
             drawCardsHP.set(null);
         });
-
-        drawTicketsHP.set(null);
-        claimRouteHP.set(null);
-        chooseTicketsHP.set(null);
-        chooseCardsHP.set(null);
 
     }
 
@@ -142,103 +138,124 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
 
 
-        VBox verticalBox = new VBox();
-        Stage stage = setStage(verticalBox);
+        int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
 
-        ObservableList<Ticket> observableList = FXCollections.observableArrayList(ticketsToChooseFrom.toList());
-        ListView<Ticket> listView = new ListView<>(observableList);
+        ListView<Ticket> listView = new ListView<>(FXCollections.observableList(ticketsToChooseFrom.toList()));
+
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+        Window<Ticket> ticketWindow = new Window<>(primaryStage, StringsFr.TICKETS_CHOICE, String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)), listView);
 
-        int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
-        ObservableList<Ticket> list = listView.getSelectionModel().getSelectedItems();
-
-        Text text = new Text(String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)));
-        TextFlow textFlow = new TextFlow(text);
-
-        Button button = new Button(StringsFr.CHOOSE);
-
-        ObservableValue<Boolean> selectCond = Bindings.lessThan(Bindings.size(list), ticketChooseSize);
-        button.disableProperty().bind(selectCond);
-
-        verticalBox.getChildren().addAll(textFlow, listView, button);
-
-        button.setOnAction(event -> {
-            stage.hide();
-            chooseTicketsHandler.onChooseTickets(SortedBag.of(list));
+        ticketWindow.setButtonAction(selectedItems -> {
+            chooseTicketsHandler.onChooseTickets(SortedBag.of(selectedItems));
+            return null;
         });
 
-        stage.setOnCloseRequest(Event::consume);
-        stage.show();
+        ticketWindow.setButtonDP(ticketChooseSize);
+        ticketWindow.show();
 
 
     }
 
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
-        createCardWindow(StringsFr.CHOOSE_CARDS, possibleClaimCards, chooseCardsHandler);
+        assert isFxApplicationThread();
+
+        Window<SortedBag<Card>> cardsWindow = new Window<>(primaryStage, StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_CARDS, makeSpecialView(possibleClaimCards));
+
+        cardsWindow.setButtonAction((items) -> {
+
+            chooseCardsHandler.onChooseCards(items.get(0));
+
+            return null;
+        });
+
+        cardsWindow.setButtonDP(1);
+        cardsWindow.show();
+
     }
 
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
 
-        createCardWindow(StringsFr.CHOOSE_ADDITIONAL_CARDS, possibleAdditionalCards, chooseCardsHandler);
-    }
-
-    private Stage setStage(VBox vBox) {
-        Stage stage = new Stage(StageStyle.UTILITY);
-        Scene scene = new Scene(vBox);
-        //
-        scene.getStylesheets().add("chooser.css");
-        stage.setTitle(StringsFr.CARDS_CHOICE);
-        stage.initOwner(primaryStage);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.setScene(scene);
-        stage.setOnCloseRequest(Event::consume);
-        return stage;
-    }
-
-    private void createCardWindow(String chooseThis, List<SortedBag<Card>> cards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
 
-        VBox verticalBox = new VBox();
-        Stage stage = setStage(verticalBox);
+        Window<SortedBag<Card>> cardsWindow = new Window<>(primaryStage, StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_ADDITIONAL_CARDS, makeSpecialView(possibleAdditionalCards));
 
-        //
-        ListView<SortedBag<Card>> listView = makeSpecialListView(cards);
-        ObservableList<SortedBag<Card>> selectedItems = listView.getSelectionModel().getSelectedItems();
-        //
-        Text text = new Text(chooseThis);
-        TextFlow textFlow = new TextFlow(text);
-
-        //
-        Button button = new Button(StringsFr.CHOOSE);
-        verticalBox.getChildren().addAll(textFlow, listView, button);
-        //
-
-        if (chooseThis.equals(StringsFr.CHOOSE_CARDS)) {
-            ObservableValue<Boolean> selectCond = Bindings.lessThan(Bindings.size(selectedItems), 1);
-            button.disableProperty().bind(selectCond);
-        }
-
-        button.setOnAction(event -> {
-            stage.hide();
-
-            if (selectedItems.isEmpty()) {
+        cardsWindow.setButtonAction((items) -> {
+            if (items.isEmpty()) {
                 chooseCardsHandler.onChooseCards(SortedBag.of());
             } else {
-                chooseCardsHandler.onChooseCards(selectedItems.get(0));
+                chooseCardsHandler.onChooseCards(items.get(0));
             }
-
+            return null;
         });
 
-
-        stage.show();
-
+        cardsWindow.setButtonDP(1);
+        cardsWindow.show();
     }
 
-    private ListView<SortedBag<Card>> makeSpecialListView(List<SortedBag<Card>> sortedBags) {
-        ListView<SortedBag<Card>> listView = new ListView<>(FXCollections.observableList(sortedBags));
-        listView.setCellFactory(v -> new TextFieldListCell<>(new CardBagStringConverter()));
+    private ListView<SortedBag<Card>> makeSpecialView(List<SortedBag<Card>> cards) {
+        ListView<SortedBag<Card>> listView = new ListView<>(FXCollections.observableList(cards));
+
+        listView.setCellFactory(view -> new TextFieldListCell<>(new CardBagStringConverter()));
         return listView;
+    }
+
+
+    private static class Window<E> {
+        private final Button button;
+        private final ObservableList<E> selectedItems;
+        private final Stage primaryStage;
+        private final Stage stage;
+
+
+        private Window(Stage ownerStage, String title, String textToDisplay, ListView<E> listView) {
+
+            VBox vBox = new VBox();
+
+            this.primaryStage = ownerStage;
+            this.stage = setStage(vBox, title);
+            this.selectedItems = listView.getSelectionModel().getSelectedItems();
+            this.button = new Button(StringsFr.CHOOSE);
+            this.stage.setOnCloseRequest(Event::consume);
+
+
+            Text text = new Text(textToDisplay);
+            TextFlow textFlow = new TextFlow(text);
+            vBox.getChildren().addAll(textFlow, listView, button);
+
+        }
+
+
+        private void show() {
+            stage.show();
+        }
+
+        private void setButtonAction(Function<ObservableList<E>, Void> function) {
+            button.setOnAction(event -> {
+                stage.hide();
+                function.apply(selectedItems);
+            });
+        }
+
+        private void setButtonDP(int minValue) {
+
+            button.disableProperty().bind(Bindings.lessThan(Bindings.size(selectedItems), minValue));
+        }
+
+
+        private Stage setStage(VBox vBox, String title) {
+            Stage stage = new Stage(StageStyle.UTILITY);
+            Scene scene = new Scene(vBox);
+            //
+            scene.getStylesheets().add("chooser.css");
+            stage.setTitle(title);
+            //
+            stage.initOwner(primaryStage);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(scene);
+            stage.setOnCloseRequest(Event::consume);
+            return stage;
+        }
     }
 
 }

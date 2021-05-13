@@ -8,6 +8,7 @@ import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.net.RemotePlayerProxy;
 import javafx.application.Application;
 import javafx.stage.Stage;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -21,11 +22,13 @@ public class ServerMain extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         List<String> parameters = getParameters().getRaw();
         Map<PlayerId, String> playerNames;
-        switch(parameters.size()){
+
+        switch (parameters.size()) {
             case 0:
                 playerNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
                 break;
@@ -39,10 +42,10 @@ public class ServerMain extends Application {
 
         try (ServerSocket serverSocket = new ServerSocket(5108)) {
             Socket socket = serverSocket.accept();
-            GraphicalPlayerAdapter gp = new GraphicalPlayerAdapter();
+            GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
             RemotePlayerProxy playerProxy = new RemotePlayerProxy(socket);
 
-            Map<PlayerId, Player> players = Map.of(PLAYER_1, gp, PLAYER_2, playerProxy);
+            Map<PlayerId, Player> players = Map.of(PLAYER_1, graphicalPlayerAdapter, PLAYER_2, playerProxy);
 
             new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random())).start();
         }
