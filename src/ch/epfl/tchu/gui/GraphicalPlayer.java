@@ -25,7 +25,7 @@ import javafx.stage.StageStyle;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import static javafx.application.Platform.isFxApplicationThread;
 
@@ -67,7 +67,6 @@ public final class GraphicalPlayer {
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
 
-        mainPane.setPrefSize(500, 250); //Todo change this line
         Scene scene = new Scene(mainPane);
 
 
@@ -145,10 +144,7 @@ public final class GraphicalPlayer {
 
         Window<Ticket> ticketWindow = new Window<>(primaryStage, StringsFr.TICKETS_CHOICE, String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)), listView);
 
-        ticketWindow.setButtonAction(selectedItems -> {
-            chooseTicketsHandler.onChooseTickets(SortedBag.of(selectedItems));
-            return null;
-        });
+        ticketWindow.setButtonAction(selectedItems -> chooseTicketsHandler.onChooseTickets(SortedBag.of(selectedItems)));
 
         ticketWindow.setButtonDP(ticketChooseSize);
         ticketWindow.show();
@@ -159,12 +155,7 @@ public final class GraphicalPlayer {
 
         Window<SortedBag<Card>> cardsWindow = new Window<>(primaryStage, StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_CARDS, makeSpecialView(possibleClaimCards));
 
-        cardsWindow.setButtonAction((items) -> {
-
-            chooseCardsHandler.onChooseCards(items.get(0));
-
-            return null;
-        });
+        cardsWindow.setButtonAction(items -> chooseCardsHandler.onChooseCards(items.get(0)));
 
         cardsWindow.setButtonDP(1);
         cardsWindow.show();
@@ -183,7 +174,6 @@ public final class GraphicalPlayer {
             } else {
                 chooseCardsHandler.onChooseCards(items.get(0));
             }
-            return null;
         });
         cardsWindow.show();
     }
@@ -225,10 +215,10 @@ public final class GraphicalPlayer {
             stage.show();
         }
 
-        private void setButtonAction(Function<ObservableList<E>, Void> function) {
+        private void setButtonAction(Consumer<ObservableList<E>> consumer) {
             button.setOnAction(event -> {
                 stage.hide();
-                function.apply(selectedItems);
+                consumer.accept(selectedItems);
             });
         }
 

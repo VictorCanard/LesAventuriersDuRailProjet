@@ -17,8 +17,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import java.util.Locale;
-
 /**
  * Represents the view of the ticket and card draw piles, and face up cards, as well as the tickets and cards the player possesses.
  *
@@ -53,7 +51,7 @@ class DecksViewCreator {
         for (Card card : Card.ALL) {
             ReadOnlyIntegerProperty count = gameState.getNumberOfCard(card);
 
-            StackPane cardPane = cardPane(card);
+            StackPane stackPane = cardPane(card);
 
             Text text = new Text(count.getValue().toString());
             text.getStyleClass().add("count");
@@ -61,10 +59,10 @@ class DecksViewCreator {
             text.textProperty().bind(Bindings.convert(count));
             text.visibleProperty().bind(Bindings.greaterThan(count, 1));
 
-            cardPane.getChildren().add(text);
-            cardPane.visibleProperty().bind(Bindings.greaterThan(count, 0));
+            stackPane.getChildren().add(text);
+            stackPane.visibleProperty().bind(Bindings.greaterThan(count, 0));
 
-            handPane.getChildren().add(cardPane);
+            handPane.getChildren().add(stackPane);
 
         }
         return mainHBox;
@@ -111,10 +109,7 @@ class DecksViewCreator {
             stackPane.disableProperty().bind(drawCards.isNull());
 
             //
-            stackPane.setOnMouseClicked(event ->{
-                        drawCards.get().onDrawCards(slot);
-
-                    }
+            stackPane.setOnMouseClicked(event -> drawCards.get().onDrawCards(slot)
 
             );
 
@@ -130,9 +125,7 @@ class DecksViewCreator {
         //
         cardButton.disableProperty().bind(drawCards.isNull());
         //
-        cardButton.setOnMouseClicked(event -> {
-            drawCards.get().onDrawCards(Constants.DECK_SLOT);
-        });
+        cardButton.setOnMouseClicked(event -> drawCards.get().onDrawCards(Constants.DECK_SLOT));
 
         return cardPane;
     }
@@ -144,7 +137,7 @@ class DecksViewCreator {
      * @return the name of the cards (in upper case)
      */
     private static String getCardName(Card card) {
-        return (card == Card.LOCOMOTIVE) ? "NEUTRAL" : card.color().name().toUpperCase(Locale.ROOT);
+        return (card == Card.LOCOMOTIVE) ? "NEUTRAL" : card.color().name();
     }
 
     /**

@@ -17,7 +17,8 @@ public final class Game {
 
     private final static int NUMBER_OF_PLAYERS = PlayerId.COUNT;
 
-    private Game() { }
+    private Game() {
+    }
 
     /**
      * Runs a game of tCHu
@@ -304,11 +305,11 @@ public final class Game {
                 //The player can play additional cards. Asks the player which set of cards he want to play.
                 SortedBag<Card> tunnelCards = currentPlayer.chooseAdditionalCards(possibleAdditionalCards);
 
-                if(tunnelCards.isEmpty()){
+                if (tunnelCards.isEmpty()) {
                     receiveInfoForAll(players, currentInfo.didNotClaimRoute(claimedRoute));
                     return allGameData.gameState.withMoreDiscardedCards(drawnCards);
 
-                }else {
+                } else {
                     receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
                     return allGameData.gameState
                             //Drawn cards are put in the discard

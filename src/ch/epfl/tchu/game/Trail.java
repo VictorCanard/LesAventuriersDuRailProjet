@@ -67,7 +67,6 @@ public final class Trail {
 
             newTrails.add(longestTrail);
 
-            //Stream.of(newTrails.stream(), longestTrail).max(Comparator.comparingInt(trail -> trail.length)).orElseThrow();
             longestTrail = newTrails
                     .stream()
                     .max(Comparator.comparingInt(trail -> trail.length))
@@ -131,6 +130,7 @@ public final class Trail {
     private static boolean checkIfNewRouteCanBeAdded(Route routeThatCouldProlongTrail, Station trailEndStation) {
         return (routeThatCouldProlongTrail.stations().contains(trailEndStation));
     }
+
 
     /**
      * Getter for the length of a trail as the sum of the lengths of its routes

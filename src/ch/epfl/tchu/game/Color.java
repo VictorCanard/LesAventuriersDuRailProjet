@@ -4,10 +4,11 @@ import java.util.List;
 
 /**
  * Types of colors the cards and routes can be
+ *
  * @author Victor Canard-Duchêne (326913)
  */
 public enum Color {
-    BLACK,VIOLET,BLUE,GREEN,YELLOW,ORANGE,RED,WHITE;
+    BLACK, VIOLET, BLUE, GREEN, YELLOW, ORANGE, RED, WHITE;
 
     /**
      * List of all the colors

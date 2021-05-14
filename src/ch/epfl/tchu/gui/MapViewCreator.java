@@ -19,6 +19,7 @@ import java.util.Locale;
 
 /**
  * Represents the view of the game map
+ *
  * @author Victor Canard-Duchêne (326913)
  */
 class MapViewCreator {
@@ -27,9 +28,10 @@ class MapViewCreator {
 
     /**
      * Creates the map view used by both players
-     * @param gameState : observable game state which allows the graphics to change according to the game's actual state
+     *
+     * @param gameState    : observable game state which allows the graphics to change according to the game's actual state
      * @param claimRouteHP : property containing the event handler when a player wants to claim a route
-     * @param cardChooser : an instance of the functional interface CardChooser used to choose some cards
+     * @param cardChooser  : an instance of the functional interface CardChooser used to choose some cards
      * @return A pane containing the map background and claimed/unclaimed routes
      */
     public static Node createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
@@ -50,10 +52,11 @@ class MapViewCreator {
 
     /**
      * Sets the graphics and interactive properties for all the routes in the game, claimed and unclaimed
-     * @param map : the map pane
-     * @param gameState : observable game state which allows the graphics to change according to the game's actual state
+     *
+     * @param map          : the map pane
+     * @param gameState    : observable game state which allows the graphics to change according to the game's actual state
      * @param claimRouteHP : property containing the event handler when a player wants to claim a route
-     * @param cardChooser : an instance of the functional interface CardChooser used to choose some cards
+     * @param cardChooser  : an instance of the functional interface CardChooser used to choose some cards
      */
     private static void setAllRoutes(Pane map, ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         for (Route route : ChMap.routes()) {
@@ -74,7 +77,7 @@ class MapViewCreator {
                 if (possibleClaimCards.size() == 1) {
                     claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
 
-                } else if (possibleClaimCards.size() > 1) {
+                } else{
                     ChooseCardsHandler chooseCardsH =
                             chosenCards -> claimRouteHP.get().onClaimRoute(route, chosenCards);
 
@@ -103,7 +106,8 @@ class MapViewCreator {
 
     /**
      * Sets the graphics of a given route
-     * @param route : the route to set the graphics of
+     *
+     * @param route      : the route to set the graphics of
      * @param routeGroup : group of all the routes, their characteristics (id, level, color) and style class
      */
     private static void setAllBlocksOfARoute(Route route, Group routeGroup) {

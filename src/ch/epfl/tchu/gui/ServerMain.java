@@ -21,10 +21,25 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public class ServerMain extends Application {
+
+    /**
+     * Launches the application with the given args.
+     *
+     * @param args : args to pass to the launch method.
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+
+    /**
+     * Determines the names of the players, then creates a new Server Socket.
+     * There it blocks execution with .accept() until a client connects to the server.
+     * Finally, it creates the players, the first being a Graphical Player and the second a proxy for the Second Player, playing on another machine,
+     * before launching the game on a new execution thread.
+     *
+     * @param primaryStage : unused parameter.
+     */
     @Override
     public void start(Stage primaryStage) {
         List<String> parameters = getParameters().getRaw();
@@ -42,17 +57,21 @@ public class ServerMain extends Application {
                 break;
         }
 
-        try (ServerSocket serverSocket = new ServerSocket(5108)){
-            Socket socket = serverSocket.accept();
-            GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
-            RemotePlayerProxy playerProxy = new RemotePlayerProxy(socket);
+        new Thread(() -> {
+            try (ServerSocket serverSocket = new ServerSocket(5108);
+                 Socket socket = serverSocket.accept()) {
 
-            Map<PlayerId, Player> players = Map.of(PLAYER_1, graphicalPlayerAdapter, PLAYER_2, playerProxy);
+                GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
+                RemotePlayerProxy playerProxy = new RemotePlayerProxy(socket);
 
-            new Thread(() -> Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random())).start();
-        } catch (IOException ioException) {
-            throw new UncheckedIOException(ioException);
-        }
+                Map<PlayerId, Player> players = Map.of(PLAYER_1, graphicalPlayerAdapter, PLAYER_2, playerProxy);
+
+                Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random());
+            } catch (IOException ioException) {
+                throw new UncheckedIOException(ioException);
+            }
+        }).start();
+
     }
 
 }

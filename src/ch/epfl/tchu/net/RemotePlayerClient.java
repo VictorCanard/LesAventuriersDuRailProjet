@@ -14,6 +14,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 /**
  * Represents a remote player client
+ *
  * @author Anne-Marie Rusu (296098)
  */
 
@@ -26,6 +27,7 @@ public class RemotePlayerClient {
 
     /**
      * Constructor for the Client of a Player (who is not necessarily playing on the same machine)
+     *
      * @param player : the player to take their turn
      * @param name   : the host name
      * @param port   : the port number
@@ -60,7 +62,6 @@ public class RemotePlayerClient {
             String readLine;
 
             while ((readLine = bufferedReader.readLine()) != null) {
-                System.out.println("RECEIVED MESSAGE : " + readLine);
                 String[] incoming = readLine.split(spacePattern, -1);
                 String type = incoming[0];
 

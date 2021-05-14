@@ -65,6 +65,7 @@ public final class StringsFr {
     // Séparateurs textuels
     public static final String AND_SEPARATOR = " et ";
     public static final String EN_DASH_SEPARATOR = " – ";
+
     private StringsFr() {
     }
 

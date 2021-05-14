@@ -6,20 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ChMap {
-    private ChMap() { }
-
-    public static List<Station> stations() {
-        return ALL_STATIONS;
-    }
-
-    public static List<Route> routes() {
-        return ALL_ROUTES;
-    }
-
-    public static List<Ticket> tickets() {
-        return ALL_TICKETS;
-    }
-
     // Stations - cities
     private static final Station BAD = new Station(0, "Baden");
     private static final Station BAL = new Station(1, "Bâle");
@@ -55,7 +41,6 @@ public final class ChMap {
     private static final Station YVE = new Station(31, "Yverdon");
     private static final Station ZOU = new Station(32, "Zoug");
     private static final Station ZUR = new Station(33, "Zürich");
-
     // Stations - countries
     private static final Station DE1 = new Station(34, "Allemagne");
     private static final Station DE2 = new Station(35, "Allemagne");
@@ -74,18 +59,15 @@ public final class ChMap {
     private static final Station FR2 = new Station(48, "France");
     private static final Station FR3 = new Station(49, "France");
     private static final Station FR4 = new Station(50, "France");
-
     // Countries
     private static final List<Station> DE = List.of(DE1, DE2, DE3, DE4, DE5);
     private static final List<Station> AT = List.of(AT1, AT2, AT3);
     private static final List<Station> IT = List.of(IT1, IT2, IT3, IT4, IT5);
     private static final List<Station> FR = List.of(FR1, FR2, FR3, FR4);
-
     private static final List<Station> ALL_STATIONS = List.of(
             BAD, BAL, BEL, BER, BRI, BRU, COI, DAV, DEL, FRI, GEN, INT, KRE, LAU, LCF, LOC, LUC,
             LUG, MAR, NEU, OLT, PFA, SAR, SCE, SCZ, SIO, SOL, STG, VAD, WAS, WIN, YVE, ZOU, ZUR,
             DE1, DE2, DE3, DE4, DE5, AT1, AT2, AT3, IT1, IT2, IT3, IT4, IT5, FR1, FR2, FR3, FR4);
-
     // Routes
     private static final List<Route> ALL_ROUTES = List.of(
             new Route("AT1_STG_1", AT1, STG, 4, Level.UNDERGROUND, null),
@@ -176,13 +158,11 @@ public final class ChMap {
             new Route("WIN_ZUR_2", WIN, ZUR, 1, Level.OVERGROUND, Color.VIOLET),
             new Route("ZOU_ZUR_1", ZOU, ZUR, 1, Level.OVERGROUND, Color.GREEN),
             new Route("ZOU_ZUR_2", ZOU, ZUR, 1, Level.OVERGROUND, Color.RED));
-
     // Tickets
     private static final Ticket deToNeighbors = ticketToNeighbors(DE, 0, 5, 13, 5);
     private static final Ticket atToNeighbors = ticketToNeighbors(AT, 5, 0, 6, 14);
     private static final Ticket itToNeighbors = ticketToNeighbors(IT, 13, 6, 0, 11);
     private static final Ticket frToNeighbors = ticketToNeighbors(FR, 5, 14, 11, 0);
-
     private static final List<Ticket> ALL_TICKETS = List.of(
             // City-to-city tickets
             new Ticket(BAL, BER, 5),
@@ -231,6 +211,20 @@ public final class ChMap {
             atToNeighbors, atToNeighbors,
             itToNeighbors, itToNeighbors,
             frToNeighbors, frToNeighbors);
+    private ChMap() {
+    }
+
+    public static List<Station> stations() {
+        return ALL_STATIONS;
+    }
+
+    public static List<Route> routes() {
+        return ALL_ROUTES;
+    }
+
+    public static List<Ticket> tickets() {
+        return ALL_TICKETS;
+    }
 
     private static Ticket ticketToNeighbors(List<Station> from, int de, int at, int it, int fr) {
         var trips = new ArrayList<Trip>();

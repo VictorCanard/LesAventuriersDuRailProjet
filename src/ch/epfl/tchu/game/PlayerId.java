@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * The players partaking in the game
+ *
  * @author Anne-Marie Rusu (296098)
  */
 
@@ -21,10 +22,11 @@ public enum PlayerId {
     public final static int COUNT = ALL.size();
 
     /**
-     *Getter for the next player's id
+     * Getter for the next player's id
+     *
      * @return the next player's id
      */
-    public PlayerId next(){
+    public PlayerId next() {
         return (this.equals(PLAYER_1)) ? PLAYER_2 : PLAYER_1;
     }
 }

@@ -14,6 +14,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 /**
  * Represents a remote player proxy and plays the role of a Player
+ *
  * @author Victor Canard-Duchêne (326913)
  */
 public class RemotePlayerProxy implements Player {
@@ -22,6 +23,7 @@ public class RemotePlayerProxy implements Player {
 
     /**
      * Constructs the proxy using the given socket
+     *
      * @param socket : the socket the proxy will use to communicate with the client
      */
     public RemotePlayerProxy(Socket socket) {
@@ -37,11 +39,12 @@ public class RemotePlayerProxy implements Player {
             throw new UncheckedIOException(ioException);
         }
     }
-/**
- * The following eleven overridden methods from the interface Player allow the proxy to manage
- * each interaction between the proxy and the client, corresponding to the concerned action/event
- * taking place in the game.
- */
+
+    /**
+     * The following eleven overridden methods from the interface Player allow the proxy to manage
+     * each interaction between the proxy and the client, corresponding to the concerned action/event
+     * taking place in the game.
+     */
 
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
@@ -128,7 +131,8 @@ public class RemotePlayerProxy implements Player {
 
     /**
      * Sends a message to the client
-     * @param messageId : the id corresponding to the type of action taking place as described in the MessageId enum
+     *
+     * @param messageId                 : the id corresponding to the type of action taking place as described in the MessageId enum
      * @param allParametersOfTheMessage : the parameters corresponding to the arguments of the method used for the specified action
      */
     private void sendMessage(MessageId messageId, String... allParametersOfTheMessage) {
@@ -149,6 +153,7 @@ public class RemotePlayerProxy implements Player {
 
     /**
      * Receives a message from the client
+     *
      * @return the message String
      */
     private String receiveMessage() {
