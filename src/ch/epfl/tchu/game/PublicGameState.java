@@ -29,13 +29,14 @@ public class PublicGameState {
      * @param currentPlayerId : the player who's turn it is
      * @param playerState     : the "public" state of the players at the corresponding point of the game
      * @param lastPlayer      : when it is known, the last player to have a turn at the end of the game
+     * @throws IllegalArgumentException if the ticket count is negative or if there isn't the right number of pairs in the player state map.
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer) {
         boolean positiveTicketCount = ticketsCount >= 0;
-        boolean exactlyTwoPairs = playerState.size() == PlayerId.COUNT;
+        boolean rightNumberOfPairs = playerState.size() == PlayerId.COUNT;
 
         Preconditions.checkArgument(positiveTicketCount);
-        Preconditions.checkArgument(exactlyTwoPairs);
+        Preconditions.checkArgument(rightNumberOfPairs);
 
         this.ticketDeckSize = ticketsCount;
         this.publicCardState = Objects.requireNonNull(cardState);

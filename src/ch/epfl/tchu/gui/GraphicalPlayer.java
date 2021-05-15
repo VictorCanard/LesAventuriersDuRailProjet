@@ -138,7 +138,7 @@ public final class GraphicalPlayer {
 
         int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
 
-        ListView<Ticket> listView = new ListView<>(FXCollections.observableList(ticketsToChooseFrom.toList()));
+        ListView<Ticket> listView = makeNormalView(ticketsToChooseFrom.toList());
 
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -178,8 +178,12 @@ public final class GraphicalPlayer {
         cardsWindow.show();
     }
 
+    private <E> ListView<E> makeNormalView(List<E> list) {
+        return new ListView<>(FXCollections.observableList(list));
+    }
+
     private ListView<SortedBag<Card>> makeSpecialView(List<SortedBag<Card>> cards) {
-        ListView<SortedBag<Card>> listView = new ListView<>(FXCollections.observableList(cards));
+        ListView<SortedBag<Card>> listView = makeNormalView(cards);
 
         listView.setCellFactory(view -> new TextFieldListCell<>(new CardBagStringConverter()));
         return listView;

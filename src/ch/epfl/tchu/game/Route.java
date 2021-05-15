@@ -138,6 +138,8 @@ public final class Route {
 
                 if (color == null) {
                     for (int i = 0; i < length; i++) {
+
+
                         for (Card c : Card.CARS) {
                             possibleCards.add(SortedBag.of(length - i, c, i, Card.LOCOMOTIVE));
                         }
@@ -151,7 +153,6 @@ public final class Route {
                 break;
 
             case OVERGROUND:
-
 
 
                 if (color == null) {

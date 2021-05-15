@@ -78,6 +78,8 @@ public final class Constants {
      */
     public static final int LONGEST_TRAIL_BONUS_POINTS = 10;
 
+    public static final Trail EMPTY_TRAIL = Trail.longest(List.of());
+
     private Constants() {
     }
 

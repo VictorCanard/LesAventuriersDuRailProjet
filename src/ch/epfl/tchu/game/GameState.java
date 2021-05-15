@@ -180,13 +180,13 @@ public final class GameState extends PublicGameState {
      * @throws IllegalArgumentException if the player has at least one ticket already
      */
     public GameState withInitiallyChosenTickets(PlayerId playerId, SortedBag<Ticket> chosenTickets) {
-        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
+        Map<PlayerId, PlayerState> temporaryPlayerStateMap = new EnumMap<>(playerStateMap);
         PlayerState playerStateToModify = playerStateMap.get(playerId);
         Preconditions.checkArgument(playerStateToModify.tickets().isEmpty());
 
-        psMap.put(playerId, playerStateToModify.withAddedTickets(chosenTickets));
+        temporaryPlayerStateMap.put(playerId, playerStateToModify.withAddedTickets(chosenTickets));
 
-        return new GameState(psMap, ticketDeck, cardState, super.currentPlayerId(), super.lastPlayer());
+        return new GameState(temporaryPlayerStateMap, ticketDeck, cardState, super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -199,11 +199,11 @@ public final class GameState extends PublicGameState {
      */
     public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets, SortedBag<Ticket> chosenTickets) {
         Preconditions.checkArgument(drawnTickets.contains(chosenTickets));
-        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
+        Map<PlayerId, PlayerState> temporaryPlayerStateMap = new EnumMap<>(playerStateMap);
 
-        psMap.put(super.currentPlayerId(), currentPlayerState().withAddedTickets(chosenTickets));
+        temporaryPlayerStateMap.put(super.currentPlayerId(), currentPlayerState().withAddedTickets(chosenTickets));
 
-        return new GameState(psMap, ticketDeck.withoutTopCards(drawnTickets.size()), cardState, super.currentPlayerId(), super.lastPlayer());
+        return new GameState(temporaryPlayerStateMap, ticketDeck.withoutTopCards(drawnTickets.size()), cardState, super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -214,12 +214,12 @@ public final class GameState extends PublicGameState {
      * @return a new GameState with the drawn card removed from the face up cards, and a card added in that slot from the draw pile
      */
     public GameState withDrawnFaceUpCard(int slot) {
-        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
+        Map<PlayerId, PlayerState> temporaryPlayerStateMap = new EnumMap<>(playerStateMap);
 
         Card cardToAdd = cardState.faceUpCard(slot);
-        psMap.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardToAdd));
+        temporaryPlayerStateMap.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardToAdd));
 
-        return new GameState(psMap, ticketDeck, cardState.withDrawnFaceUpCard(slot), super.currentPlayerId(), super.lastPlayer());
+        return new GameState(temporaryPlayerStateMap, ticketDeck, cardState.withDrawnFaceUpCard(slot), super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -228,12 +228,12 @@ public final class GameState extends PublicGameState {
      * @return a new GameState with a blindly drawn card
      */
     public GameState withBlindlyDrawnCard() {
-        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
+        Map<PlayerId, PlayerState> temporaryPlayerStateMap = new EnumMap<>(playerStateMap);
         Card cardOnTopOfTheDeck = cardState.topDeckCard();
 
-        psMap.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardOnTopOfTheDeck));
+        temporaryPlayerStateMap.put(super.currentPlayerId(), currentPlayerState().withAddedCard(cardOnTopOfTheDeck));
 
-        return new GameState(psMap, ticketDeck, cardState.withoutTopDeckCard(), super.currentPlayerId(), super.lastPlayer());
+        return new GameState(temporaryPlayerStateMap, ticketDeck, cardState.withoutTopDeckCard(), super.currentPlayerId(), super.lastPlayer());
     }
 
     /**
@@ -245,11 +245,11 @@ public final class GameState extends PublicGameState {
      * @return a new GameState with a new route added and less cards for the current player
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards) {
-        Map<PlayerId, PlayerState> psMap = new EnumMap<>(playerStateMap);
-        psMap.put(super.currentPlayerId(), currentPlayerState().withClaimedRoute(route, cards));
+        Map<PlayerId, PlayerState> temporaryPlayerStateMap = new EnumMap<>(playerStateMap);
+        temporaryPlayerStateMap.put(super.currentPlayerId(), currentPlayerState().withClaimedRoute(route, cards));
         CardState newState = cardState.withMoreDiscardedCards(cards);
 
-        return new GameState(psMap, ticketDeck, newState, super.currentPlayerId(), super.lastPlayer());
+        return new GameState(temporaryPlayerStateMap, ticketDeck, newState, super.currentPlayerId(), super.lastPlayer());
     }
 
     /**

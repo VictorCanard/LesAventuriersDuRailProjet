@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public final class Trail {
 
-    private final static Trail EMPTY_TRAIL = new Trail(List.of(), null, null);
+
     private final List<Route> routes;
     private final Station station1;
     private final Station station2;
@@ -47,7 +47,7 @@ public final class Trail {
         Trail longestTrail = trails
                 .stream()
                 .max(Comparator.comparingInt(trail -> trail.length))
-                .orElse(EMPTY_TRAIL);
+                .orElse(Constants.EMPTY_TRAIL);
 
         while (!(trails.isEmpty())) {
             ArrayList<Trail> newTrails = new ArrayList<>();
