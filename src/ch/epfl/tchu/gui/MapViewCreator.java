@@ -15,7 +15,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Represents the view of the game map
@@ -65,7 +64,7 @@ class MapViewCreator {
             //Set Id, color and level to a route's group style class
             routeGroup.setId(route.id());
 
-            String routeColor = (route.color() == null) ? "NEUTRAL" : route.color().name().toUpperCase(Locale.ROOT);
+            String routeColor = (route.color() == null) ? "NEUTRAL" : route.color().name();
             routeGroup.getStyleClass().addAll("route", route.level().name(), routeColor);
 
 
@@ -77,7 +76,7 @@ class MapViewCreator {
                 if (possibleClaimCards.size() == 1) {
                     claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
 
-                } else{
+                } else {
                     ChooseCardsHandler chooseCardsH =
                             chosenCards -> claimRouteHP.get().onClaimRoute(route, chosenCards);
 
