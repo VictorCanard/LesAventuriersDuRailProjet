@@ -10,17 +10,22 @@ import java.util.concurrent.BlockingQueue;
 
 import static javafx.application.Platform.runLater;
 
+/**
+ * Adapts an instance of type GraphicalPlayer to an instance of type Player
+ * @author Victor Jean Canard-Duchene (326913)
+ */
 public final class GraphicalPlayerAdapter implements Player {
     private final BlockingQueue<SortedBag<Ticket>> ticketQueue;
     private final BlockingQueue<SortedBag<Card>> cardQueue;
     private final BlockingQueue<Route> routeQueue;
 
     private final BlockingQueue<Integer> integerQueue;
-
     private final BlockingQueue<TurnKind> turnKindQueue;
-
     private GraphicalPlayer graphicalPlayer;
 
+    /**
+     * Constructs the GraphicalPlayerAdapter, to be executed on a different thread than the JavaFx thread
+     */
     public GraphicalPlayerAdapter() {
         this.ticketQueue = new ArrayBlockingQueue<>(1);
         this.cardQueue = new ArrayBlockingQueue<>(1);
@@ -28,6 +33,11 @@ public final class GraphicalPlayerAdapter implements Player {
         this.turnKindQueue = new ArrayBlockingQueue<>(1);
         this.integerQueue = new ArrayBlockingQueue<>(1);
     }
+
+    /**
+     * The following eleven overridden methods from the interface Player allow the adapter to manage
+     * each interaction in the game, by calling the appropriate method from GraphicalPlayer, while running on the JavaFX thread.
+     */
 
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {

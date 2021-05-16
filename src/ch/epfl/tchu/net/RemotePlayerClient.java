@@ -36,9 +36,7 @@ public class RemotePlayerClient {
         this.player = player;
         this.name = name;
         this.port = port;
-
     }
-
 
     /**
      * Method that runs until the end of the game.

@@ -13,6 +13,7 @@ import javafx.scene.text.TextFlow;
 import java.util.Map;
 
 /**
+ * Represents the view of the information panel
  * @author Anne-Marie (296098)
  */
 

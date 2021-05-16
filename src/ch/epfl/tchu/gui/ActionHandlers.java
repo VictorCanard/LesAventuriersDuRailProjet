@@ -7,6 +7,8 @@ import ch.epfl.tchu.game.Ticket;
 
 /**
  * These handlers define the code to run when the player does one of these actions.
+ *
+ * @author Victor Jean Canard-Duchene (326913)
  */
 public interface ActionHandlers {
 

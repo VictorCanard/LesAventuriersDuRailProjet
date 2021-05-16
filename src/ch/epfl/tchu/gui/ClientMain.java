@@ -6,12 +6,17 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
+/**
+ * Main program of a tCHu client
+ * @author Anne-Marie Rusu (296098)
+ */
+
 public class ClientMain extends Application {
 
     /**
-     * Launches the application with the given args.
+     * Launches the application with the given args
      *
-     * @param args : args to pass to the launch method.
+     * @param args : args to pass to the launch method
      */
     public static void main(String[] args) {
         launch(args);
@@ -22,7 +27,7 @@ public class ClientMain extends Application {
      * Starts the client with a new Graphical Player Adapter, a default name and a default port.
      * If a name or port is specified then uses these for the remote player client creation.
      *
-     * @param primaryStage : unused parameter.
+     * @param primaryStage : unused parameter
      */
     @Override
     public void start(Stage primaryStage) {

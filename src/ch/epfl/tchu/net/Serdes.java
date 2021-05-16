@@ -11,6 +11,11 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
+/**
+ * Represents all the serdes used in the game
+ *
+ * @author Anne-Marie Rusu (296098)
+ */
 public class Serdes {
     private Serdes() {
     }

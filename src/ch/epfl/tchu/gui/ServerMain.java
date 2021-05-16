@@ -20,12 +20,16 @@ import java.util.Random;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
+/**
+ * Main program of a tCHu server
+ * @author Anne-Marie Rusu(296098)
+ */
 public class ServerMain extends Application {
 
     /**
-     * Launches the application with the given args.
+     * Launches the application with the given args
      *
-     * @param args : args to pass to the launch method.
+     * @param args : args to pass to the launch method
      */
     public static void main(String[] args) {
         launch(args);
@@ -38,7 +42,7 @@ public class ServerMain extends Application {
      * Finally, it creates the players, the first being a Graphical Player and the second a proxy for the Second Player, playing on another machine,
      * before launching the game on a new execution thread.
      *
-     * @param primaryStage : unused parameter.
+     * @param primaryStage : unused parameter
      */
     @Override
     public void start(Stage primaryStage) {

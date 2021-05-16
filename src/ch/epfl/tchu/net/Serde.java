@@ -8,13 +8,20 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Represents an object capable of serializing and deserializing values of a given type
+ *
+ * @author Victor Jean Canard-Duchene (326913)
+ * @param <T> generic type contained in the Serde
+ */
+
 public interface Serde<T> {
     /**
      * Static generic method that creates a serde with the serializing and deserializing functions given as arguments.
      *
      * @param serializingFunction   : function to turn an object of type T into a String
      * @param deserializingFunction : function to turn a String into an object of type T
-     * @param <T>                   : Generic type contained in the Serde.
+     * @param <T>                   : the type contained in the Serde.
      * @return a new Serde capable of serializing and deserializing objects of generic type T.
      */
     static <T> Serde<T> of(Function<T, String> serializingFunction, Function<String, T> deserializingFunction) {
@@ -37,7 +44,7 @@ public interface Serde<T> {
      * list of objects of type T from an enumerated type.
      *
      * @param listOfValuesOfEnumType : values of the enumerated type that have to be turned into a String
-     * @param <T>                    : Generic type contained in the Serde.
+     * @param <T>                    : the type contained in the Serde.
      * @return a new Serde capable of serializing and deserializing a value T, contained in a specific list of values, of an enumerated type.
      */
     static <T> Serde<T> oneOf(List<T> listOfValuesOfEnumType) {

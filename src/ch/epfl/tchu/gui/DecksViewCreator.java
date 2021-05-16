@@ -82,7 +82,6 @@ class DecksViewCreator {
         cardPane.setId("card-pane");
 
         //tickets button
-
         Button ticketButton = new Button(StringsFr.TICKETS);
         //
         ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPctLeftProperty();
@@ -109,9 +108,7 @@ class DecksViewCreator {
             stackPane.disableProperty().bind(drawCards.isNull());
 
             //
-            stackPane.setOnMouseClicked(event -> drawCards.get().onDrawCards(slot)
-
-            );
+            stackPane.setOnMouseClicked(event -> drawCards.get().onDrawCards(slot));
 
             cardPane.getChildren().add(cardRectangles(stackPane));
         }
@@ -198,7 +195,6 @@ class DecksViewCreator {
 
         stackPane.getChildren().addAll(outside, inside, train);
         return stackPane;
-
     }
 }
 
