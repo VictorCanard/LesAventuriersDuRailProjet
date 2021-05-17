@@ -5,6 +5,7 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.Info;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a game of tCHu
@@ -14,9 +15,6 @@ import java.util.*;
  */
 
 public final class Game {
-
-    private final static int NUMBER_OF_PLAYERS = PlayerId.COUNT;
-
     private Game() {
     }
 
@@ -30,8 +28,8 @@ public final class Game {
      * @throws IllegalArgumentException if one of the maps (playerNames or players) doesn't have exactly two pairs as there as two players in the game.
      */
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng) {
-        Preconditions.checkArgument(players.size() == NUMBER_OF_PLAYERS);
-        Preconditions.checkArgument(playerNames.size() == NUMBER_OF_PLAYERS);
+        Preconditions.checkArgument(players.size() == PlayerId.COUNT);
+        Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
 
         //before the game starts
 
@@ -362,7 +360,7 @@ public final class Game {
         //LastTurnBegins
 
         //One more turn for each player
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
+        for (int i = 0; i < PlayerId.COUNT; i++) {
             allGameData.modifyGameState(allGameData.gameState.forNextTurn());
             nextTurn(allGameData);
         }
@@ -421,33 +419,24 @@ public final class Game {
      * @param allGameData : all of the game's information:
      */
     private static void determineWinnerOrDraw(Map<PlayerId, Integer> associatedPlayerPoints, AllGameData allGameData) {
-        PlayerId currentPlayerId = allGameData.gameState.currentPlayerId();
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
 
         int maxPoints = PlayerId.ALL.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
 
-        int currentPlayerPoints = associatedPlayerPoints.get(currentPlayerId);
-        int nextPlayerPoints = associatedPlayerPoints.get(currentPlayerId.next());
-
         String endOfGameMessage;
 
-        if (currentPlayerPoints == maxPoints
-                && nextPlayerPoints == maxPoints) {
-            //Both players came to a draw
+        if (associatedPlayerPoints.values()
+                .stream()
+                .filter(integer -> integer == maxPoints)
+                .count() == PlayerId.COUNT) {
+            //All players came to a draw
             endOfGameMessage = Info
-                    .draw(new ArrayList<>(allGameData.playerNames.values()), currentPlayerPoints);
+                    .draw(new ArrayList<>(allGameData.playerNames.values()), maxPoints);
 
 
-        } else if (currentPlayerPoints == maxPoints) {
-            //Current Player won
-            endOfGameMessage = infoGenerators.get(currentPlayerId)
-                    .won(currentPlayerPoints, nextPlayerPoints);
-
-
-        } else {
-            //Next Player won
-            endOfGameMessage = infoGenerators.get(currentPlayerId)
-                    .won(nextPlayerPoints, currentPlayerPoints);
+        } else{
+            List<Integer> pointsInDescending = associatedPlayerPoints.values().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+            endOfGameMessage = infoGenerators.get(PlayerId.ALL.stream().max(Comparator.comparingInt(associatedPlayerPoints::get)).orElseThrow()).won(pointsInDescending);
         }
         receiveInfoForAll(allGameData.players, endOfGameMessage);
     }

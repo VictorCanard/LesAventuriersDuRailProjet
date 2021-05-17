@@ -36,7 +36,7 @@ public final class ObservableGameState {
     private final Map<Card, IntegerProperty> numberOfEachCard = new HashMap<>();
     private final Map<Route, BooleanProperty> canPlayerClaimRoute = new HashMap<>();
     //
-    private final Set<List<Station>> allPairsOfStationsClaimed = new HashSet<>();
+    private final Map<List<Station>, PlayerId> allPairsOfStationsClaimed = new HashMap<>();
     private PublicGameState publicGameState;
     private PlayerState playerState;
 
@@ -203,7 +203,7 @@ public final class ObservableGameState {
         ChMap.routes().forEach(route -> PlayerId.ALL.forEach(playerId -> {
             if (newPublicGameState.playerState(playerId).routes().contains(route)) {
                 allRoutesContainedByWhom.get(route).set(playerId);
-                allPairsOfStationsClaimed.add(route.stations());
+                allPairsOfStationsClaimed.put(route.stations(), playerId);
             }
         }));
     }
@@ -253,7 +253,7 @@ public final class ObservableGameState {
         canPlayerClaimRoute.forEach((route, booleanObjectProperty) -> booleanObjectProperty.set(publicGameState.currentPlayerId().equals(playerId)
                 && playerState.canClaimRoute(route)
                 && !publicGameState.claimedRoutes().contains(route)
-                && !allPairsOfStationsClaimed.contains(route.stations())));
+                && !allPairsOfStationsClaimed.get(route.stations()).equals(publicGameState.currentPlayerId())));
     }
 
     private void setEachPlayerCountAttributesCount(PublicGameState publicGameState) {

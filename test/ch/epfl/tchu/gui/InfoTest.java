@@ -214,17 +214,17 @@ class InfoTest {
         assertEquals(expected,actual);
     }
 
-    @Test
-    void won() {
-        String expected = String.format(WINS, playerOneName, 15,"s",  10,"s");
-
-        String actual = playerOneInfo.won(15, 10);
-
-        assertEquals(expected,actual);
-        String expected2 = String.format(WINS, playerOneName, 1,"",  0,"s");
-
-        String actual2 = playerOneInfo.won(1, 0);
-
-        assertEquals(expected2,actual2);
-    }
+//    @Test
+//    void won() {
+//        String expected = String.format(WINS, playerOneName, 15,"s",  10,"s");
+//
+//        String actual = playerOneInfo.won(15, 10);
+//
+//        assertEquals(expected,actual);
+//        String expected2 = String.format(WINS, playerOneName, 1,"",  0,"s");
+//
+//        String actual2 = playerOneInfo.won(1, 0);
+//
+//        assertEquals(expected2,actual2);
+//    }
 }

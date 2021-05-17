@@ -2,6 +2,7 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Trail;
 
@@ -80,9 +81,15 @@ public final class Info {
      * @return the message that the players have tied and how many points they earned
      */
     public static String draw(List<String> playerNames, int points) {
-        String playersMessage = String.format("%s%s%s", playerNames.get(0), StringsFr.AND_SEPARATOR, playerNames.get(1));
+        StringBuilder players = new StringBuilder();
+        for (int i = 0; i < PlayerId.COUNT; i++) {
+            String andSeparator = (i == PlayerId.COUNT-2) ? StringsFr.AND_SEPARATOR : "";
 
-        return String.format(StringsFr.DRAW, playersMessage, points);
+            players.append(playerNames.get(i))
+                    .append(andSeparator);
+        }
+
+        return String.format(StringsFr.DRAW, players, points);
     }
 
     /**
@@ -269,11 +276,33 @@ public final class Info {
      * Gives the message that the player has won
      *
      * @param points      : number of points the player has won with
-     * @param loserPoints : number of points the losing opponent has gained
      * @return message including the number of points of the winning and losing player
      */
-    public String won(int points, int loserPoints) {
-        return String.format(StringsFr.WINS, playerName, points, StringsFr.plural(points), loserPoints, StringsFr.plural(loserPoints));
+    public String won(List<Integer> points) {
+        switch (points.size()){
+            case 2:
+                return String.format(StringsFr.WINS_2P,
+                        playerName,
+                        points.get(0),
+                        StringsFr.plural(points.get(0)),
+                        points.get(1),
+                        StringsFr.plural(points.get(1))
+
+                        );
+            case 3:
+                return String.format(StringsFr.WINS_3P,
+                        playerName,
+                        points.get(0),
+                        StringsFr.plural(points.get(0)),
+                        points.get(1),
+                        StringsFr.plural(points.get(1)),
+                        points.get(2),
+                        StringsFr.plural(points.get(2)));
+            default:
+                return "";
+
+        }
+
     }
 
     /**

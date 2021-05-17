@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 public enum PlayerId {
-    PLAYER_1, PLAYER_2;
+    PLAYER_1, PLAYER_2, PLAYER_3;
 
     /**
      * List of all the players
@@ -27,6 +27,11 @@ public enum PlayerId {
      * @return the next player's id
      */
     public PlayerId next() {
-        return (this.equals(PLAYER_1)) ? PLAYER_2 : PLAYER_1;
+        if(this.equals(PLAYER_1)){
+            return PLAYER_2;
+        }else if(this.equals(PLAYER_2)){
+            return PLAYER_3;
+        }
+        return PLAYER_1;
     }
 }

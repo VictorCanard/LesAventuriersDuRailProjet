@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
-import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
+import static ch.epfl.tchu.game.PlayerId.*;
 
 /**
  * Main program of a tCHu server
@@ -51,24 +50,29 @@ public class ServerMain extends Application {
 
         switch (parameters.size()) {
             case 0:
-                playerNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
+                playerNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles", PLAYER_3, "Jacob");
                 break;
             case 1:
-                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, "Charles");
+                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, "Charles",PLAYER_3, "Jacob");
+                break;
+            case 2:
+                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, parameters.get(1), PLAYER_3, "Jacob");
                 break;
             default:
-                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, parameters.get(1));
-                break;
+                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, parameters.get(1), PLAYER_3, parameters.get(2));
         }
 
         new Thread(() -> {
             try (ServerSocket serverSocket = new ServerSocket(5108);
-                 Socket socket = serverSocket.accept()) {
+                 Socket socket1 = serverSocket.accept();
+            Socket socket2 = serverSocket.accept()) {
 
                 GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
-                RemotePlayerProxy playerProxy = new RemotePlayerProxy(socket);
 
-                Map<PlayerId, Player> players = Map.of(PLAYER_1, graphicalPlayerAdapter, PLAYER_2, playerProxy);
+                RemotePlayerProxy playerProxy1 = new RemotePlayerProxy(socket1);
+                RemotePlayerProxy playerProxy2 = new RemotePlayerProxy(socket2);
+
+                Map<PlayerId, Player> players = Map.of(PLAYER_1, graphicalPlayerAdapter, PLAYER_2, playerProxy1, PLAYER_3, playerProxy2);
 
                 Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random());
             } catch (IOException ioException) {

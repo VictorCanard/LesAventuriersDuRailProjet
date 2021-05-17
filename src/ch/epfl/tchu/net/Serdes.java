@@ -177,7 +177,7 @@ public class Serdes {
                         PUBLIC_CARD_STATE_SERDE.deserialize(splitString[1]),
                         PLAYER_ID_SERDE.deserialize(splitString[2]),
                         allPlayerStates,
-                        PLAYER_ID_SERDE.deserialize(splitString[5]));
+                        PLAYER_ID_SERDE.deserialize(splitString[3 +PlayerId.COUNT]));
             }
     );
 }
