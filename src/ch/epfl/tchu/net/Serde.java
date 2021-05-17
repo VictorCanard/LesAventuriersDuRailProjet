@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 /**
  * Represents an object capable of serializing and deserializing values of a given type
  *
- * @author Victor Jean Canard-Duchene (326913)
  * @param <T> generic type contained in the Serde
+ * @author Victor Jean Canard-Duchene (326913)
  */
 
 public interface Serde<T> {
@@ -48,20 +48,9 @@ public interface Serde<T> {
      * @return a new Serde capable of serializing and deserializing a value T, contained in a specific list of values, of an enumerated type.
      */
     static <T> Serde<T> oneOf(List<T> listOfValuesOfEnumType) {
-        Function<T, String> serializingFunction = (t) -> {
-            if (t == null) {
-                return "";
-            }
-            return String.valueOf(listOfValuesOfEnumType.indexOf(t));
-        };
+        Function<T, String> serializingFunction = (t) -> (t == null) ? "" : String.valueOf(listOfValuesOfEnumType.indexOf(t));
 
-        Function<String, T> deserializingFunction = (string) -> {
-
-            if (string.equals("")) {
-                return null;
-            }
-            return listOfValuesOfEnumType.get(Integer.parseInt(string));
-        };
+        Function<String, T> deserializingFunction = (string) -> (string.equals("")) ? null : listOfValuesOfEnumType.get(Integer.parseInt(string));
 
         return of(serializingFunction, deserializingFunction);
 
@@ -90,17 +79,7 @@ public interface Serde<T> {
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList());
 
-        return new Serde<>() {
-            @Override
-            public String serialize(List<T> objectToSerialize) {
-                return serializingFunction.apply(objectToSerialize);
-            }
-
-            @Override
-            public List<T> deserialize(String stringToDeserialize) {
-                return deserializingFunction.apply(stringToDeserialize);
-            }
-        };
+        return Serde.of(serializingFunction, deserializingFunction);
 
 
     }
@@ -124,18 +103,8 @@ public interface Serde<T> {
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList()));
 
+        return Serde.of(serializingFunction, deserializingFunction);
 
-        return new Serde<>() {
-            @Override
-            public String serialize(SortedBag<T> objectToSerialize) {
-                return serializingFunction.apply(objectToSerialize);
-            }
-
-            @Override
-            public SortedBag<T> deserialize(String stringToDeserialize) {
-                return deserializingFunction.apply(stringToDeserialize);
-            }
-        };
 
     }
 

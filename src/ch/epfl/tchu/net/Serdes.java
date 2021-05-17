@@ -5,11 +5,9 @@ import ch.epfl.tchu.game.*;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Represents all the serdes used in the game
@@ -38,7 +36,7 @@ public class Serdes {
      * Serde of a string
      */
     public static final Serde<String> STRING_SERDE = Serde.of(
-            (string) -> Base64.getEncoder().encodeToString(string.getBytes(UTF_8)),
+            string -> Base64.getEncoder().encodeToString(string.getBytes(UTF_8)),
 
             serializedString -> new String(
                     Base64.getDecoder().decode(serializedString),
@@ -153,26 +151,32 @@ public class Serdes {
      * Serde of a public game state
      */
     public static final Serde<PublicGameState> PUBLIC_GAME_STATE_SERDE = Serde.of(
-            (publicGameState) -> new StringJoiner(COLON)
-                    .add(INTEGER_SERDE.serialize(publicGameState.ticketsCount()))
-                    .add(PUBLIC_CARD_STATE_SERDE.serialize(publicGameState.cardState()))
-                    .add(PLAYER_ID_SERDE.serialize(publicGameState.currentPlayerId()))
-                    .add(PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(PlayerId.PLAYER_1)))
-                    .add(PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(PlayerId.PLAYER_2)))
-                    .add(PLAYER_ID_SERDE.serialize(publicGameState.lastPlayer()))
-                    .toString(),
+            (publicGameState) -> {
+                String allPublicPlayerStates = PlayerId.ALL.stream().map(playerId -> PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(playerId))).collect(Collectors.joining(COLON));
+                return new StringJoiner(COLON)
+                        .add(INTEGER_SERDE.serialize(publicGameState.ticketsCount()))
+                        .add(PUBLIC_CARD_STATE_SERDE.serialize(publicGameState.cardState()))
+                        .add(PLAYER_ID_SERDE.serialize(publicGameState.currentPlayerId()))
+                        .add(allPublicPlayerStates)
+                        .add(PLAYER_ID_SERDE.serialize(publicGameState.lastPlayer()))
+                        .toString();
+            },
+
 
             (serializedString) -> {
                 String[] splitString = serializedString.split(COLON_PATTERN, -1);
 
-                PlayerId currentPlayer = PLAYER_ID_SERDE.deserialize(splitString[2]);
+                Map<PlayerId, PublicPlayerState> allPlayerStates = new HashMap<>();
+
+                for (int i = 0; i < PlayerId.COUNT; i++) {
+                    allPlayerStates.put(PlayerId.values()[i], PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[i+3]));
+                }
 
                 return new PublicGameState(
                         INTEGER_SERDE.deserialize(splitString[0]),
                         PUBLIC_CARD_STATE_SERDE.deserialize(splitString[1]),
-                        currentPlayer,
-                        Map.of(PlayerId.PLAYER_1, PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[3]),
-                                PlayerId.PLAYER_2, PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[4])),
+                        PLAYER_ID_SERDE.deserialize(splitString[2]),
+                        allPlayerStates,
                         PLAYER_ID_SERDE.deserialize(splitString[5]));
             }
     );

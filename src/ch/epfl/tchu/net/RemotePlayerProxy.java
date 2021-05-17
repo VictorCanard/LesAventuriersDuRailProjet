@@ -48,13 +48,13 @@ public class RemotePlayerProxy implements Player {
 
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
-        String playerId = PLAYER_ID_SERDE.serialize(ownID);
+        String ownId = PLAYER_ID_SERDE.serialize(ownID);
 
         String namesOfPlayers = PlayerId.ALL.stream()
-                .map((playerId1 -> STRING_SERDE.serialize(playerNames.get(playerId1))))
+                .map((playerId -> STRING_SERDE.serialize(playerNames.get(playerId))))
                 .collect(Collectors.joining(","));
 
-        sendMessage(MessageId.INIT_PLAYERS, playerId, namesOfPlayers);
+        sendMessage(MessageId.INIT_PLAYERS, ownId, namesOfPlayers);
 
     }
 
@@ -142,8 +142,6 @@ public class RemotePlayerProxy implements Player {
                     + '\n';
 
             bufferedWriter.write(message);
-            System.out.println("SENT MESSAGE : " + message);
-
             bufferedWriter.flush();
 
         } catch (IOException ioException) {

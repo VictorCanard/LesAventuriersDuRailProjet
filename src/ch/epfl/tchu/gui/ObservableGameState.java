@@ -64,7 +64,7 @@ public final class ObservableGameState {
      */
     private void createFaceUpCards() {
         for (int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
-            this.faceUpCards.add(new SimpleObjectProperty<>(null));
+            faceUpCards.add(new SimpleObjectProperty<>(null));
         }
     }
 

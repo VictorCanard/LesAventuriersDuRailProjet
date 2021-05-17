@@ -76,7 +76,7 @@ class MapViewCreator {
                 if (possibleClaimCards.size() == 1) {
                     claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
 
-                } else {
+                } else{
                     ChooseCardsHandler chooseCardsH =
                             chosenCards -> claimRouteHP.get().onClaimRoute(route, chosenCards);
 

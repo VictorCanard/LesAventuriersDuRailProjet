@@ -34,7 +34,6 @@ class DecksViewCreator {
      * @return a Horizontal Box with a specific scene graph (set of children and attached nodes)
      */
     public static HBox createHandView(ObservableGameState gameState) {
-
         HBox mainHBox = new HBox();
         mainHBox.getStylesheets().addAll("decks.css", "colors.css");
         //
@@ -85,7 +84,7 @@ class DecksViewCreator {
         Button ticketButton = new Button(StringsFr.TICKETS);
         //
         ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPctLeftProperty();
-        cardPane.getChildren().add(deckButtons(ticketButton, ticketsPctProperty));
+        cardPane.getChildren().add(deckButton(ticketButton, ticketsPctProperty));
         //
         ticketButton.disableProperty().bind(drawTickets.isNull());
         //
@@ -118,7 +117,7 @@ class DecksViewCreator {
 
         ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPctLeftProperty();
 
-        cardPane.getChildren().add(deckButtons(cardButton, cardsPctProperty));
+        cardPane.getChildren().add(deckButton(cardButton, cardsPctProperty));
         //
         cardButton.disableProperty().bind(drawCards.isNull());
         //
@@ -144,7 +143,7 @@ class DecksViewCreator {
      * @param percentage : represents the actual value which is displayed onto the gauge
      * @return a button with a percentage bar
      */
-    private static Button deckButtons(Button button, ReadOnlyIntegerProperty percentage) {
+    private static Button deckButton(Button button, ReadOnlyIntegerProperty percentage) {
         Group group = new Group();
 
         Rectangle gaugeBackground = new Rectangle(50, 5);

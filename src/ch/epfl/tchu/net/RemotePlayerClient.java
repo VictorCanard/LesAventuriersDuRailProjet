@@ -5,6 +5,7 @@ import ch.epfl.tchu.game.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -66,10 +67,13 @@ public class RemotePlayerClient {
                 switch (MessageId.valueOf(type)) {
                     case INIT_PLAYERS:
                         PlayerId ownId = PLAYER_ID_SERDE.deserialize(incoming[1]);
-                        String[] players12 = incoming[2].split(commaPattern, -1);
+                        String[] playerNamesSerialized = incoming[2].split(commaPattern, -1);
 
-                        Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, STRING_SERDE.deserialize(players12[0]),
-                                PlayerId.PLAYER_2, STRING_SERDE.deserialize(players12[1]));
+                        Map<PlayerId, String> playerNames = new HashMap<>();
+
+                        for (int i = 0; i < PlayerId.COUNT; i++) {
+                            playerNames.put(PlayerId.values()[i], STRING_SERDE.deserialize(playerNamesSerialized[i]));
+                        }
 
                         player.initPlayers(ownId, playerNames);
                         break;

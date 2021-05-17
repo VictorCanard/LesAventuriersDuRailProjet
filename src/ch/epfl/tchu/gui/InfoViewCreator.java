@@ -35,8 +35,7 @@ public class InfoViewCreator {
         infoPane.getStylesheets().addAll("info.css", "colors.css");
 
         //
-        infoPane.getChildren().add(playerStats(playerId, playerNames, gameState));
-        infoPane.getChildren().add(playerStats(playerId.next(), playerNames, gameState));
+        PlayerId.ALL.forEach(currentPlayerId-> infoPane.getChildren().add(playerStats(playerId, playerNames, gameState)));
 
         //
         Separator separator = new Separator();
