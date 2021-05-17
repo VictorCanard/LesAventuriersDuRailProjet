@@ -183,7 +183,7 @@ public final class GraphicalPlayer {
 
         ticketWindow.show();*/
 
-        createChoiceWindow(primaryStage, StringsFr.TICKETS_CHOICE, String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)), listView, ticketChooseSize,
+        createChoiceWindow(StringsFr.TICKETS_CHOICE, String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)), listView, ticketChooseSize,
                 selectedItems -> chooseTicketsHandler.onChooseTickets(SortedBag.of(selectedItems)));
        }
 
@@ -202,7 +202,7 @@ public final class GraphicalPlayer {
 
         cardsWindow.show();*/
 
-        createChoiceWindow(primaryStage, StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_CARDS, makeSpecialView(possibleClaimCards), 1,
+        createChoiceWindow(StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_CARDS, makeSpecialView(possibleClaimCards), 1,
                 items -> chooseCardsHandler.onChooseCards(items.get(0)));
     }
 
@@ -227,7 +227,7 @@ public final class GraphicalPlayer {
         });
         cardsWindow.show();*/
 
-        createChoiceWindow(primaryStage, StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_ADDITIONAL_CARDS, makeSpecialView(possibleAdditionalCards), 0,
+        createChoiceWindow(StringsFr.CARDS_CHOICE, StringsFr.CHOOSE_ADDITIONAL_CARDS, makeSpecialView(possibleAdditionalCards), 0,
                 (items) -> {
                     if (items.isEmpty()) {
                         chooseCardsHandler.onChooseCards(SortedBag.of());
@@ -314,7 +314,7 @@ public final class GraphicalPlayer {
         }
     }*/
 
-    private <E> void createChoiceWindow(Stage ownerStage, String title, String textToDisplay, ListView<E> listView, int minValue, Consumer<ObservableList<E>> consumer){
+    private <E> void createChoiceWindow(String title, String displayText, ListView<E> listView, int minSelected, Consumer<ObservableList<E>> consumer){
         VBox vbox = new VBox();
 
         Scene scene = new Scene(vbox);
@@ -322,18 +322,18 @@ public final class GraphicalPlayer {
         //
         Stage stage = new Stage(StageStyle.UTILITY);
         stage.setTitle(title);
-        stage.initOwner(ownerStage);
+        stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setScene(scene);
         stage.setOnCloseRequest(Event::consume);
         //
-        Text text = new Text(textToDisplay);
+        Text text = new Text(displayText);
         TextFlow textFlow = new TextFlow(text);
 
         ObservableList<E> selectedItems = listView.getSelectionModel().getSelectedItems();
 
         Button button = new Button(StringsFr.CHOOSE);
-        button.disableProperty().bind(Bindings.lessThan(Bindings.size(selectedItems), minValue));
+        button.disableProperty().bind(Bindings.lessThan(Bindings.size(selectedItems), minSelected));
 
         button.setOnAction(event -> {
             stage.hide();
