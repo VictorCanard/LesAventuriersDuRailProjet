@@ -1,6 +1,7 @@
 package ch.epfl.tchu.gui;
 
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.beans.binding.Bindings;
@@ -26,6 +27,7 @@ import javafx.util.StringConverter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -54,11 +56,14 @@ public final class GraphicalPlayer {
      *
      * @param thisPlayer  : the player the graphical interface belongs to
      * @param playerNames : the names of the players in the game
+     * @throws NullPointerException if the playerId or the player names map is null
+     * @throws IllegalArgumentException if there aren't the right number of pairs in the player names map
      */
     public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
+        Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
 
-        this.thisPlayer = thisPlayer;
-        this.playerNames = playerNames;
+        this.thisPlayer = Objects.requireNonNull(thisPlayer);
+        this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
         this.observableGameState = new ObservableGameState(thisPlayer);
         this.primaryStage = new Stage();
 
@@ -160,6 +165,7 @@ public final class GraphicalPlayer {
      */
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
+        Preconditions.checkArgument(drawCardHandler != null);
 
         disableAllTurnActions();
 
@@ -177,6 +183,8 @@ public final class GraphicalPlayer {
      */
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
+        Preconditions.checkArgument(!ticketsToChooseFrom.isEmpty());
+        Preconditions.checkArgument(chooseTicketsHandler != null);
 
         int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
 
@@ -197,10 +205,12 @@ public final class GraphicalPlayer {
      */
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
+        Preconditions.checkArgument(!possibleClaimCards.isEmpty());
+        Preconditions.checkArgument(chooseCardsHandler != null);
 
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_CARDS,
-                possibleClaimCards,
+                List.copyOf(possibleClaimCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
                 1,
@@ -215,12 +225,13 @@ public final class GraphicalPlayer {
      * @param chooseCardsHandler      : the action handler corresponding to the player choosing cards
      */
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
-
         assert isFxApplicationThread();
+        Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
+        Preconditions.checkArgument(chooseCardsHandler != null);
 
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_ADDITIONAL_CARDS,
-                possibleAdditionalCards,
+                List.copyOf(possibleAdditionalCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
                 0,
@@ -236,7 +247,7 @@ public final class GraphicalPlayer {
 
     private <E> void createChoiceWindow(String title, String displayText, List<E> list, SelectionMode selectionMode, Function<E, String> objectToStringFunction, int minToSelect, Consumer<ObservableList<E>> consumer) {
         VBox vbox = new VBox();
-
+        //
         Scene scene = new Scene(vbox);
         scene.getStylesheets().add("chooser.css");
         //
@@ -249,7 +260,6 @@ public final class GraphicalPlayer {
         //
         Text text = new Text(displayText);
         TextFlow textFlow = new TextFlow(text);
-
         //
         ListView<E> listView = new ListView<>(FXCollections.observableList(list));
         listView.getSelectionModel().setSelectionMode(selectionMode);
@@ -265,6 +275,7 @@ public final class GraphicalPlayer {
             }
         }));
 
+        //
         ObservableList<E> selectedItems = listView.getSelectionModel().getSelectedItems();
 
         //

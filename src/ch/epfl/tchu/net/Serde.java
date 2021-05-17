@@ -1,5 +1,6 @@
 package ch.epfl.tchu.net;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
 import java.util.Arrays;
@@ -45,9 +46,12 @@ public interface Serde<T> {
      *
      * @param listOfValuesOfEnumType : values of the enumerated type that have to be turned into a String
      * @param <T>                    : the type contained in the Serde.
+     * @throws IllegalArgumentException if the values list is null
      * @return a new Serde capable of serializing and deserializing a value T, contained in a specific list of values, of an enumerated type.
      */
     static <T> Serde<T> oneOf(List<T> listOfValuesOfEnumType) {
+        Preconditions.checkArgument(listOfValuesOfEnumType != null);
+
         Function<T, String> serializingFunction = (t) -> (t == null) ? "" : String.valueOf(listOfValuesOfEnumType.indexOf(t));
 
         Function<String, T> deserializingFunction = (string) -> (string.equals("")) ? null : listOfValuesOfEnumType.get(Integer.parseInt(string));
@@ -79,7 +83,7 @@ public interface Serde<T> {
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList());
 
-        return Serde.of(serializingFunction, deserializingFunction);
+        return of(serializingFunction, deserializingFunction);
 
 
     }
@@ -103,7 +107,7 @@ public interface Serde<T> {
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList()));
 
-        return Serde.of(serializingFunction, deserializingFunction);
+        return of(serializingFunction, deserializingFunction);
 
 
     }

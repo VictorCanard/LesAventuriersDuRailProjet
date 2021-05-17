@@ -1,5 +1,6 @@
 package ch.epfl.tchu.net;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 
@@ -25,8 +26,10 @@ public class RemotePlayerProxy implements Player {
      * Constructs the proxy using the given socket
      *
      * @param socket : the socket the proxy will use to communicate with the client
+     * @throws IllegalArgumentException if the socket is null
      */
     public RemotePlayerProxy(Socket socket) {
+        Preconditions.checkArgument(socket != null);
         try {
             this.bufferedWriter = new BufferedWriter(
                     new OutputStreamWriter(socket.getOutputStream(),

@@ -1,5 +1,6 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.beans.property.*;
@@ -212,8 +213,11 @@ public final class ObservableGameState {
      *
      * @param publicGameState : the public game state at this point in the game
      * @param playerState     : the player state of the player the observable game state belongs to
+     * @throws IllegalArgumentException if the public game state or player state is null
      */
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
+        Preconditions.checkArgument(publicGameState != null);
+        Preconditions.checkArgument(playerState != null);
         //
         ticketsPercentageLeft.set((publicGameState.ticketsCount() * 100 / ChMap.tickets().size()));
         cardsPercentageLeft.set((publicGameState.cardState().deckSize() * 100 / Constants.ALL_CARDS.size()));

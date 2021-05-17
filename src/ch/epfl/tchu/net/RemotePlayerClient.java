@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static ch.epfl.tchu.net.Serdes.*;
@@ -23,6 +24,7 @@ public class RemotePlayerClient {
     private final Player player;
     private final String name;
     private final int port;
+
     private final String spacePattern = Pattern.quote(" ");
     private final String commaPattern = Pattern.quote(",");
 
@@ -32,11 +34,13 @@ public class RemotePlayerClient {
      * @param player : the player to take their turn
      * @param name   : the host name
      * @param port   : the port number
+     * @throws NullPointerException if the name is null
+     * @throws IndexOutOfBoundsException if the port is not between 0 and 65535
      */
     public RemotePlayerClient(Player player, String name, int port) {
         this.player = player;
-        this.name = name;
-        this.port = port;
+        this.name = Objects.requireNonNull(name);
+        this.port = Objects.checkIndex(port, 65535);
     }
 
     /**
