@@ -35,7 +35,7 @@ public class ClientMain extends Application {
         RemotePlayerClient remotePlayerClient;
         switch (parameters.size()) {
             case 0:
-                remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(), "128.179.166.205", 5108);
+                remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(), "localhost", 5108);
                 break;
             case 1:
                 remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(),

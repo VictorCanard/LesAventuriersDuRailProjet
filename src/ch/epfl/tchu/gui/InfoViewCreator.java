@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * Represents the view of the information panel
+ *
  * @author Anne-Marie (296098)
  */
 
@@ -35,7 +36,8 @@ public class InfoViewCreator {
         infoPane.getStylesheets().addAll("info.css", "colors.css");
 
         //
-        PlayerId.ALL.forEach(currentPlayerId-> infoPane.getChildren().add(playerStats(playerId, playerNames, gameState)));
+        infoPane.getChildren().add(playerStats(playerId, playerNames, gameState));
+        infoPane.getChildren().add(playerStats(playerId.next(), playerNames, gameState));
 
         //
         Separator separator = new Separator();

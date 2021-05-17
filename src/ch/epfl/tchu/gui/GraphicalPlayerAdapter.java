@@ -18,9 +18,9 @@ public final class GraphicalPlayerAdapter implements Player {
     private final BlockingQueue<SortedBag<Ticket>> ticketQueue;
     private final BlockingQueue<SortedBag<Card>> cardQueue;
     private final BlockingQueue<Route> routeQueue;
-
     private final BlockingQueue<Integer> integerQueue;
     private final BlockingQueue<TurnKind> turnKindQueue;
+    //
     private GraphicalPlayer graphicalPlayer;
 
     /**
