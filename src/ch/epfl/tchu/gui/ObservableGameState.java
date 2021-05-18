@@ -33,6 +33,7 @@ public final class ObservableGameState {
 
     //Group 3 : Complete Player State of this Player
     private final ObservableList<Ticket> allPlayerTickets = FXCollections.observableArrayList();
+    private final IntegerProperty ticketPoints = new SimpleIntegerProperty(0);
     private final Map<Card, IntegerProperty> numberOfEachCard = new HashMap<>();
     private final Map<Route, BooleanProperty> canPlayerClaimRoute = new HashMap<>();
     //
@@ -118,7 +119,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of tickets the given player has
      *
-     * @return the ticket count property of the given player
+     * @return the ticket COUNT property of the given player
      */
     public ReadOnlyIntegerProperty getTicketCount(PlayerId playerId) {
         return ticketCount.get(playerId);
@@ -127,7 +128,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of cards the given player has
      *
-     * @return the card count property of the given player
+     * @return the card COUNT property of the given player
      */
     public ReadOnlyIntegerProperty getCardCount(PlayerId playerId) {
         return cardCount.get(playerId);
@@ -136,7 +137,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of cars the given player has
      *
-     * @return the car count property of the given player
+     * @return the car COUNT property of the given player
      */
     public ReadOnlyIntegerProperty getCarCount(PlayerId playerId) {
         return carCount.get(playerId);
@@ -223,6 +224,7 @@ public final class ObservableGameState {
         cardsPercentageLeft.set((publicGameState.cardState().deckSize() * 100 / Constants.ALL_CARDS.size()));
         setFaceUpCards(publicGameState.cardState().faceUpCards());
         setRoutesPlayerId(publicGameState);
+        setTicketPoints(playerState);
         //
         setEachPlayerCountAttributesCount(publicGameState);
         //
@@ -235,6 +237,9 @@ public final class ObservableGameState {
         this.playerState = playerState;
     }
 
+    private void setTicketPoints(PlayerState playerState){
+        ticketPoints.set(playerState.ticketPoints());
+    }
     private void setPlayerTickets(PlayerState playerState) {
         allPlayerTickets.addAll(playerState
                 .tickets()
@@ -253,7 +258,7 @@ public final class ObservableGameState {
         canPlayerClaimRoute.forEach((route, booleanObjectProperty) -> booleanObjectProperty.set(publicGameState.currentPlayerId().equals(playerId)
                 && playerState.canClaimRoute(route)
                 && !publicGameState.claimedRoutes().contains(route)
-                && !allPairsOfStationsClaimed.get(route.stations()).equals(publicGameState.currentPlayerId())));
+                && !(allPairsOfStationsClaimed.get(route.stations()) == publicGameState.currentPlayerId())));
     }
 
     private void setEachPlayerCountAttributesCount(PublicGameState publicGameState) {
@@ -295,6 +300,9 @@ public final class ObservableGameState {
         return playerState.possibleClaimCards(route);
     }
 
+    public ReadOnlyIntegerProperty ticketPoints(){
+        return ticketPoints;
+    }
     /**
      * Determines if the given route is claimable or not
      *

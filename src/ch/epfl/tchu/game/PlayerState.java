@@ -168,13 +168,13 @@ public final class PlayerState extends PublicPlayerState {
                         //Only keeps locomotive cards and the ones of the same color as the initial card
                         .collect(Collectors.toList()));
 
-        //If the player can play less cards than the additional cards count then he can't play at all
+        //If the player can play less cards than the additional cards COUNT then he can't play at all
         if (cardSortedBag.size() < additionalCardsCount) {
 
             return Collections.emptyList();
         }
 
-        //Makes subsets of the size of the additional cards count
+        //Makes subsets of the size of the additional cards COUNT
         List<SortedBag<Card>> possibleAdditionalCards = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount));
 
 
@@ -213,7 +213,7 @@ public final class PlayerState extends PublicPlayerState {
                 .stream()
                 .map((route -> Math.max(route.station1().id(), route.station2().id())))
                 .max((Integer::compareTo))
-                .orElseThrow();
+                .orElse(0);
 
         //Adds 1 to it
         maxStationId++;

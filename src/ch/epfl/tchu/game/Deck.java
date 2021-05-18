@@ -87,7 +87,7 @@ public final class Deck<C extends Comparable<C>> {
      *
      * @param count : the number of cards to be revealed
      * @return a group of cards from the top of the deck
-     * @throws IllegalArgumentException if count is out of bounds of the size of the deck or if it is strictly negative
+     * @throws IllegalArgumentException if COUNT is out of bounds of the size of the deck or if it is strictly negative
      */
     public SortedBag<C> topCards(int count) {
         Preconditions.checkArgument(0 <= count && count <= size());
@@ -100,7 +100,7 @@ public final class Deck<C extends Comparable<C>> {
      *
      * @param count : the number of cards to be "removed"
      * @return a new deck with the specified number of cards removed from the top
-     * @throws IllegalArgumentException if count is out of bounds of the size of the deck or if it is strictly negative
+     * @throws IllegalArgumentException if COUNT is out of bounds of the size of the deck or if it is strictly negative
      */
     public Deck<C> withoutTopCards(int count) {
         Preconditions.checkArgument(0 <= count && count <= size());

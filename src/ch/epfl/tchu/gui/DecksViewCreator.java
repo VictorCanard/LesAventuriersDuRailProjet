@@ -6,10 +6,12 @@ import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -43,8 +45,23 @@ class DecksViewCreator {
         ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
         ListView<Ticket> listView = new ListView<>(listOfTickets);
         listView.setId("tickets");
+        //Score for Tickets
+        Label ticketScore = new Label();
+        ReadOnlyIntegerProperty points = gameState.ticketPoints();
+        ticketScore.setId("ticket-points");
+
+        ticketScore.textProperty().bind(new SimpleStringProperty("Total courant des tickets: ").concat(points));
+        points.addListener((property, oldV, newV)-> {
+            if(newV.shortValue() < 0){
+                ticketScore.getStyleClass().remove("positive");
+                ticketScore.getStyleClass().add("negative");
+            }else{
+                ticketScore.getStyleClass().remove("negative");
+                ticketScore.getStyleClass().add("positive");
+            }
+        });
         //
-        mainHBox.getChildren().addAll(listView, handPane);
+        mainHBox.getChildren().addAll(listView, ticketScore, handPane);
 
         //Cards
         for (Card card : Card.ALL) {

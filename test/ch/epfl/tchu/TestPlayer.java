@@ -88,7 +88,7 @@ public final class TestPlayer implements Player {
     }
 
     private PrintStream toStringGs(PublicGameState publicGameState) {
-        return System.out.printf("Ticket count %s\nCard State: %s\nCurrentPlayerId %s\nLast Player Id %s\nCurrent Player State %s\n", publicGameState.ticketsCount(), publicGameState.cardState(), publicGameState.currentPlayerId(), publicGameState.lastPlayer(), publicGameState.currentPlayerState());
+        return System.out.printf("Ticket COUNT %s\nCard State: %s\nCurrentPlayerId %s\nLast Player Id %s\nCurrent Player State %s\n", publicGameState.ticketsCount(), publicGameState.cardState(), publicGameState.currentPlayerId(), publicGameState.lastPlayer(), publicGameState.currentPlayerState());
     }
 
     private PrintStream toStringPs(PublicPlayerState publicPlayerState) {

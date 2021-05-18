@@ -102,8 +102,8 @@ public final class GameState extends PublicGameState {
      * Returns the specified number of tickets from the top of the pile
      *
      * @param count : number of tickets
-     * @return the count number of top tickets
-     * @throws IllegalArgumentException if the count is negative or strictly superior to the player's number of tickets
+     * @return the COUNT number of top tickets
+     * @throws IllegalArgumentException if the COUNT is negative or strictly superior to the player's number of tickets
      */
     public SortedBag<Ticket> topTickets(int count) {
         Preconditions.checkArgument(count >= 0 && count <= ticketsCount());
@@ -115,8 +115,8 @@ public final class GameState extends PublicGameState {
      * "Removes" the specified number of tickets from the top of the ticket draw pile
      *
      * @param count : number of tickets we don't want in this new GameState
-     * @return a new game state with count tickets removed
-     * @throws IllegalFormatCodePointException if the count is negative or strictly superior to the player's number of tickets
+     * @return a new game state with COUNT tickets removed
+     * @throws IllegalFormatCodePointException if the COUNT is negative or strictly superior to the player's number of tickets
      */
     public GameState withoutTopTickets(int count) {
         Preconditions.checkArgument(count >= 0 && count <= ticketsCount());

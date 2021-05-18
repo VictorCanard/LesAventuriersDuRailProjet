@@ -83,7 +83,7 @@ public final class Info {
     public static String draw(List<String> playerNames, int points) {
         StringBuilder players = new StringBuilder();
         for (int i = 0; i < PlayerId.COUNT; i++) {
-            String andSeparator = (i == PlayerId.COUNT-2) ? StringsFr.AND_SEPARATOR : "";
+            String andSeparator = (i == PlayerId.COUNT - 2) ? StringsFr.AND_SEPARATOR : "";
 
             players.append(playerNames.get(i))
                     .append(andSeparator);
@@ -275,35 +275,23 @@ public final class Info {
     /**
      * Gives the message that the player has won
      *
-     * @param points      : number of points the player has won with
+     * @param points : number of points the player has won with
      * @return message including the number of points of the winning and losing player
      */
     public String won(List<Integer> points) {
-        switch (points.size()){
-            case 2:
-                return String.format(StringsFr.WINS_2P,
-                        playerName,
-                        points.get(0),
-                        StringsFr.plural(points.get(0)),
-                        points.get(1),
-                        StringsFr.plural(points.get(1))
 
-                        );
-            case 3:
-                return String.format(StringsFr.WINS_3P,
-                        playerName,
-                        points.get(0),
-                        StringsFr.plural(points.get(0)),
-                        points.get(1),
-                        StringsFr.plural(points.get(1)),
-                        points.get(2),
-                        StringsFr.plural(points.get(2)));
-            default:
-                return "";
+        return String.format(StringsFr.WINS_3P,
+                playerName,
+                points.get(0),
+                StringsFr.plural(points.get(0)),
+                points.get(1),
+                StringsFr.plural(points.get(1)),
+                points.get(2),
+                StringsFr.plural(points.get(2)));
 
-        }
 
     }
+
 
     /**
      * Transforms a route into a textual representation

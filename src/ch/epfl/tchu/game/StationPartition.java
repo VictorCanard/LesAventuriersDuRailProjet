@@ -47,10 +47,10 @@ public final class StationPartition implements StationConnectivity {
         private final int[] partitionsArray;
 
         /**
-         * Constructs an array ranging from 0 included to the station count excluded
+         * Constructs an array ranging from 0 included to the station COUNT excluded
          *
          * @param stationCount : the maximum id plus one of the group of stations
-         * @throws IllegalArgumentException if the station count is negative
+         * @throws IllegalArgumentException if the station COUNT is negative
          */
         public Builder(int stationCount) {
             Preconditions.checkArgument(stationCount >= 0);

@@ -71,7 +71,7 @@ class MapViewCreator {
             //When a route is clicked on, checks the cards a player could use to claim this route.
             //If he can play multiple sorted bag of cards, asks the player which one he wants to use.
             routeGroup.setOnMouseClicked((event -> {
-                List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
+                List<SortedBag<Card>> possibleClaimCards = List.copyOf(gameState.possibleClaimCards(route));
 
                 if (possibleClaimCards.size() == 1) {
                     claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));

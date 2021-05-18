@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static ch.epfl.tchu.game.PlayerId.*;
 
@@ -25,6 +23,12 @@ import static ch.epfl.tchu.game.PlayerId.*;
  */
 public class ServerMain extends Application {
 
+
+    private final Map<PlayerId, String> defaultNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles", PLAYER_3, "Jacob");
+
+    private final Map<PlayerId, Player> players = new HashMap<>();
+
+    private final List<Socket> sockets = new ArrayList<>();
     /**
      * Launches the application with the given args
      *
@@ -44,37 +48,38 @@ public class ServerMain extends Application {
      * @param primaryStage : unused parameter
      */
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage){
         List<String> parameters = getParameters().getRaw();
-        Map<PlayerId, String> playerNames;
+        Map<PlayerId, String> playerNames = new HashMap<>();
 
-        switch (parameters.size()) {
-            case 0:
-                playerNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles", PLAYER_3, "Jacob");
-                break;
-            case 1:
-                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, "Charles",PLAYER_3, "Jacob");
-                break;
-            case 2:
-                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, parameters.get(1), PLAYER_3, "Jacob");
-                break;
-            default:
-                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, parameters.get(1), PLAYER_3, parameters.get(2));
+        for (int i = 0; i < COUNT; i++) {
+            PlayerId currentId = ALL.get(i);
+            if(i< parameters.size()){
+                playerNames.put(currentId, parameters.get(i));
+            }else{
+                playerNames.put(currentId, defaultNames.get(currentId));
+            }
         }
 
+
         new Thread(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(5108);
-                 Socket socket1 = serverSocket.accept();
-            Socket socket2 = serverSocket.accept()) {
+            try{
+                ServerSocket serverSocket = new ServerSocket(5108);
+                Socket socket1 = serverSocket.accept();
+                Socket socket2 = serverSocket.accept();
+
+                sockets.addAll(List.of(socket1, socket2));
 
                 GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
 
-                RemotePlayerProxy playerProxy1 = new RemotePlayerProxy(socket1);
-                RemotePlayerProxy playerProxy2 = new RemotePlayerProxy(socket2);
+                players.put(PLAYER_1, graphicalPlayerAdapter);
 
-                Map<PlayerId, Player> players = Map.of(PLAYER_1, graphicalPlayerAdapter, PLAYER_2, playerProxy1, PLAYER_3, playerProxy2);
+                for (int i = 1; i < COUNT; i++) {
+                    players.put(ALL.get(i), new RemotePlayerProxy(sockets.get(i-1)));
+                }
 
                 Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random());
+                serverSocket.close();
             } catch (IOException ioException) {
                 throw new UncheckedIOException(ioException);
             }
