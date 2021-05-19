@@ -3,6 +3,7 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.Info;
+import ch.epfl.tchu.gui.Menu;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,8 +29,8 @@ public final class Game {
      * @throws IllegalArgumentException if one of the maps (playerNames or players) doesn't have exactly two pairs as there as two players in the game.
      */
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng) {
-        Preconditions.checkArgument(players.size() == PlayerId.COUNT);
-        Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
+        Preconditions.checkArgument(players.size() == Menu.number_of_players);
+        Preconditions.checkArgument(playerNames.size() == Menu.number_of_players);
 
         //before the game starts
 
@@ -360,7 +361,7 @@ public final class Game {
         //LastTurnBegins
 
         //One more turn for each player
-        for (int i = 0; i < PlayerId.COUNT; i++) {
+        for (int i = 0; i < Menu.number_of_players; i++) {
             allGameData.modifyGameState(allGameData.gameState.forNextTurn());
             nextTurn(allGameData);
         }
@@ -428,7 +429,7 @@ public final class Game {
         if (associatedPlayerPoints.values()
                 .stream()
                 .filter(integer -> integer == maxPoints)
-                .count() == PlayerId.COUNT) {
+                .count() == Menu.number_of_players) {
             //All players came to a draw
             endOfGameMessage = Info
                     .draw(new ArrayList<>(allGameData.playerNames.values()), maxPoints);

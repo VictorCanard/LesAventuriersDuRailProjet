@@ -5,6 +5,8 @@ package ch.epfl.sigcheck;
 // possible, que les noms et les types des différentes entités à définir
 // pour cette étape du projet sont corrects.
 
+import ch.epfl.tchu.game.PlayerId;
+
 final class SignatureChecks_4 {
     private SignatureChecks_4() {}
 
@@ -20,7 +22,7 @@ final class SignatureChecks_4 {
 
     void checkPlayerId() {
         v06 = ch.epfl.tchu.game.PlayerId.ALL;
-        v05 = ch.epfl.tchu.game.PlayerId.COUNT;
+        v05 = PlayerId.COUNT;
         v07 = ch.epfl.tchu.game.PlayerId.PLAYER_1;
         v07 = ch.epfl.tchu.game.PlayerId.PLAYER_2;
         v07 = ch.epfl.tchu.game.PlayerId.valueOf(v08);

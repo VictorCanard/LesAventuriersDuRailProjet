@@ -1,6 +1,7 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
+import ch.epfl.tchu.gui.Menu;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class PublicGameState {
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer) {
         boolean positiveTicketCount = ticketsCount >= 0;
-        boolean rightNumberOfPairs = playerState.size() == PlayerId.COUNT;
+        boolean rightNumberOfPairs = playerState.size() == Menu.number_of_players;
 
         Preconditions.checkArgument(positiveTicketCount);
         Preconditions.checkArgument(rightNumberOfPairs);

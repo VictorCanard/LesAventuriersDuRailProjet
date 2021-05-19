@@ -31,26 +31,24 @@ public class ClientMain extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        System.out.println("CLient was started");
         List<String> parameters = getParameters().getRaw();
-        RemotePlayerClient remotePlayerClient1;
-        RemotePlayerClient remotePlayerClient2;
+
+        String name = "localhost";
+        int port = 5108;
+
 
         switch (parameters.size()) {
-            case 0:
-                remotePlayerClient1 = new RemotePlayerClient(new GraphicalPlayerAdapter(), "localhost", 5108);
-                remotePlayerClient2 = new RemotePlayerClient(new GraphicalPlayerAdapter(), "localhost", 5108);
-                break;
+            case 2:
+                port = Integer.parseInt(parameters.get(1));
+
             case 1:
-                remotePlayerClient1 = new RemotePlayerClient(new GraphicalPlayerAdapter(), parameters.get(0), 5108);
-                remotePlayerClient2 = new RemotePlayerClient(new GraphicalPlayerAdapter(),  parameters.get(0), 5108);
-                break;
-            default:
-                remotePlayerClient1 = new RemotePlayerClient(new GraphicalPlayerAdapter(), parameters.get(0), Integer.parseInt(parameters.get(1)));
-                remotePlayerClient2 = new RemotePlayerClient(new GraphicalPlayerAdapter(),  parameters.get(0), Integer.parseInt(parameters.get(1)));
-                break;
+                name = parameters.get(0);
+
         }
-        new Thread(remotePlayerClient1::run).start();
-        new Thread(remotePlayerClient2::run).start();
+        RemotePlayerClient remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(), name, port);
+
+        new Thread(remotePlayerClient::run).start();
 
 
     }

@@ -2,6 +2,7 @@ package ch.epfl.tchu.net;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
+import ch.epfl.tchu.gui.Menu;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -168,8 +169,8 @@ public class Serdes {
 
                 Map<PlayerId, PublicPlayerState> allPlayerStates = new HashMap<>();
 
-                for (int i = 0; i < PlayerId.COUNT; i++) {
-                    allPlayerStates.put(PlayerId.values()[i], PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[i+3]));
+                for (int i = 0; i < Menu.number_of_players; i++) {
+                    allPlayerStates.put(PlayerId.values()[i], PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[i + 3]));
                 }
 
                 return new PublicGameState(
@@ -177,7 +178,7 @@ public class Serdes {
                         PUBLIC_CARD_STATE_SERDE.deserialize(splitString[1]),
                         PLAYER_ID_SERDE.deserialize(splitString[2]),
                         allPlayerStates,
-                        PLAYER_ID_SERDE.deserialize(splitString[3 +PlayerId.COUNT]));
+                        PLAYER_ID_SERDE.deserialize(splitString[3 + Menu.number_of_players]));
             }
     );
 }

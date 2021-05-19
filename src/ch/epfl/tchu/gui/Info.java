@@ -2,7 +2,6 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
-import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Trail;
 
@@ -82,8 +81,8 @@ public final class Info {
      */
     public static String draw(List<String> playerNames, int points) {
         StringBuilder players = new StringBuilder();
-        for (int i = 0; i < PlayerId.COUNT; i++) {
-            String andSeparator = (i == PlayerId.COUNT - 2) ? StringsFr.AND_SEPARATOR : "";
+        for (int i = 0; i < Menu.number_of_players; i++) {
+            String andSeparator = (i == Menu.number_of_players - 2) ? StringsFr.AND_SEPARATOR : "";
 
             players.append(playerNames.get(i))
                     .append(andSeparator);

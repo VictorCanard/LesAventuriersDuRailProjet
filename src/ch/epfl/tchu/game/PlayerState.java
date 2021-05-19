@@ -168,13 +168,13 @@ public final class PlayerState extends PublicPlayerState {
                         //Only keeps locomotive cards and the ones of the same color as the initial card
                         .collect(Collectors.toList()));
 
-        //If the player can play less cards than the additional cards COUNT then he can't play at all
+        //If the player can play less cards than the additional cards Menu.number_of_players then he can't play at all
         if (cardSortedBag.size() < additionalCardsCount) {
 
             return Collections.emptyList();
         }
 
-        //Makes subsets of the size of the additional cards COUNT
+        //Makes subsets of the size of the additional cards Menu.number_of_players
         List<SortedBag<Card>> possibleAdditionalCards = new ArrayList<>(cardSortedBag.subsetsOfSize(additionalCardsCount));
 
 

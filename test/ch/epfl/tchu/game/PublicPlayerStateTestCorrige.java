@@ -59,7 +59,7 @@ class PublicPlayerStateTestCorrige {
             for (var route : routes) routesLength += route.length();
 
             var state = new PublicPlayerState(0, 0, routes);
-            assertEquals(TOTAL_CAR_COUNT - routesLength, state.carCount());
+            assertEquals(TOTAL_CAR_COUNT- routesLength, state.carCount());
         }
     }
 

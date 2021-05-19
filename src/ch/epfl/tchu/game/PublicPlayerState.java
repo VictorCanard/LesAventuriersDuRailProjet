@@ -23,7 +23,7 @@ public class PublicPlayerState {
      * @param ticketCount : the number of tickets the player possesses
      * @param cardCount   : the number of cards the player possesses
      * @param routes      : the list of routes the player has claimed so far
-     * @throws IllegalArgumentException if the ticket COUNT or card COUNT is negative
+     * @throws IllegalArgumentException if the ticket Menu.number_of_players or card Menu.number_of_players is negative
      */
     public PublicPlayerState(int ticketCount, int cardCount, List<Route> routes) {
         Preconditions.checkArgument(ticketCount >= 0 && cardCount >= 0);
@@ -81,10 +81,10 @@ public class PublicPlayerState {
     }
 
     /**
-     * Calculates the number of cars. Subtracts from the initial car COUNT, the sum of each captured route's length.
+     * Calculates the number of cars. Subtracts from the initial car Menu.number_of_players, the sum of each captured route's length.
      *
      * @param routes : routes captured by the player
-     * @return the actual car COUNT
+     * @return the actual car Menu.number_of_players
      */
     private int calculateCarCount(List<Route> routes) {
         int initialCarCount = Constants.INITIAL_CAR_COUNT;

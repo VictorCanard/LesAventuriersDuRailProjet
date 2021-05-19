@@ -26,7 +26,9 @@ public class PublicCardState {
      *                                  or if the sizes of the draw piles and discard piles are negative
      */
     public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize) {
-        Preconditions.checkArgument(faceUpCards.size() == Constants.FACE_UP_CARDS_COUNT && deckSize >= 0 && discardsSize >= 0);
+        Preconditions.checkArgument(faceUpCards.size() == Constants.FACE_UP_CARDS_COUNT);
+        Preconditions.checkArgument(deckSize >= 0);
+        Preconditions.checkArgument(discardsSize >= 0);
 
         this.faceUpCards = List.copyOf(faceUpCards);
         this.deckSize = deckSize;

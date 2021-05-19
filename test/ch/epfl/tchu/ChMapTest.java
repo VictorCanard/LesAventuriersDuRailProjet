@@ -230,10 +230,10 @@ public interface ChMapTest {
     Ticket ZUR_VAD = new Ticket(ZUR, VAD, 6) ;
 
             // City to country tickets
-    Ticket BER_COUNTRY = ticketToNeighbors(List.of(BER), 6, 11, 8, 5);
-    Ticket COI_COUNTRY = ticketToNeighbors(List.of(COI), 6, 3, 5, 12);
-    Ticket LUG_COUNTRY = ticketToNeighbors(List.of(LUG), 12, 13, 2, 14);
-    Ticket ZUR_COUNTRY = ticketToNeighbors(List.of(ZUR), 3, 7, 11, 7);
+    /*Ticket BER_Menu.number_of_playersRY = ticketToNeighbors(List.of(BER), 6, 11, 8, 5);
+    Ticket COI_Menu.number_of_playersRY = ticketToNeighbors(List.of(COI), 6, 3, 5, 12);
+    Ticket LUG_Menu.number_of_playersRY = ticketToNeighbors(List.of(LUG), 12, 13, 2, 14);*/
+    Ticket ZUR_COUNTY = ticketToNeighbors(List.of(ZUR), 3, 7, 11, 7);
 
     static Ticket ticketToNeighbors(List<Station> from, int de, int at, int it, int fr) {
         var trips = new ArrayList<Trip>();

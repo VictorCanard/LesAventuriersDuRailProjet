@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PlayerStateTestCorrige {
-    private static final int INITIAL_CARD_COUNT = 4;
-    private static final int TOTAL_CAR_COUNT = 40;
+    private static final int INITIAL_CARD_Menu.number_of_players = 4;
+    private static final int TOTAL_CAR_Menu.number_of_players = 40;
 
     private static final List<Color> COLORS =
             List.of(
@@ -38,12 +38,12 @@ class PlayerStateTestCorrige {
 
     @Test
     void playerStateInitialReturnsCorrectInitialState() {
-        var initialCards = SortedBag.of(INITIAL_CARD_COUNT, Card.BLUE);
+        var initialCards = SortedBag.of(INITIAL_CARD_Menu.number_of_players, Card.BLUE);
         var s = PlayerState.initial(initialCards);
         assertEquals(SortedBag.of(), s.tickets());
         assertEquals(initialCards, s.cards());
         assertEquals(List.of(), s.routes());
-        assertEquals(TOTAL_CAR_COUNT, s.carCount());
+        assertEquals(TOTAL_CAR_Menu.number_of_players, s.carCount());
         assertEquals(0, s.claimPoints());
         assertEquals(0, s.ticketPoints());
         assertEquals(0, s.finalPoints());
@@ -126,7 +126,7 @@ class PlayerStateTestCorrige {
             for (var usedCars = 30; usedCars <= 40; usedCars++) {
                 var routes = routesWithTotalLength(usedCars);
                 var playerState = new PlayerState(SortedBag.of(), cards, routes);
-                var availableCars = TOTAL_CAR_COUNT - usedCars;
+                var availableCars = TOTAL_CAR_Menu.number_of_players - usedCars;
 
                 var claimable = availableCars >= route.length();
                 assertEquals(claimable, playerState.canClaimRoute(route));
@@ -142,7 +142,7 @@ class PlayerStateTestCorrige {
             for (var usedCars = 30; usedCars <= 40; usedCars++) {
                 var routes = routesWithTotalLength(usedCars);
                 var playerState = new PlayerState(SortedBag.of(), cards, routes);
-                var availableCars = TOTAL_CAR_COUNT - usedCars;
+                var availableCars = TOTAL_CAR_Menu.number_of_players - usedCars;
 
                 if (availableCars < route.length())
                     assertThrows(IllegalArgumentException.class, () -> {

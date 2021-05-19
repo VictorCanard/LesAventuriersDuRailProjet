@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public final class CardStateTestCorrige {
     private static final List<Card> ALL_CARDS = List.of(Card.values());
-    private static final int FACE_UP_CARDS_COUNT = 5;
+    private static final int FACE_UP_CARDS_COUNT= 5;
 
     @Test
     void cardStateOfFailsIfDeckIsTooSmall() {

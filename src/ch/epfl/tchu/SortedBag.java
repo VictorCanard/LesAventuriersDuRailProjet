@@ -308,7 +308,7 @@ public final class SortedBag<E extends Comparable<E>> implements Iterable<E> {
          * @param count   le nombre d'occurrences de l'élément à ajouter
          * @param element l'élément à ajouter
          * @return le bâtisseur (<code>this</code>)
-         * @throws IllegalArgumentException si <code>COUNT</code> est négatif
+         * @throws IllegalArgumentException si <code>Menu.number_of_players</code> est négatif
          */
         public Builder<E> add(int count, E element) {
             Preconditions.checkArgument(0 <= count);

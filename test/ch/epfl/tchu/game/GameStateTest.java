@@ -70,8 +70,8 @@ class GameStateTest implements ChMapTest {
         return ticketsB.build();
     }
 
-    PlayerState playerState1 = new PlayerState(SortedBag.of(1, ChMapTest.ZUR_VAD, 1, ChMapTest.ZUR_COUNTRY), SortedBag.of(3, Card.BLUE, 1, Card.ORANGE), List.of(ChMapTest.route1, ChMapTest.route8, ChMapTest.route6));
-    PlayerState playerState2 = new PlayerState(SortedBag.of(1, ChMapTest.BAL_BER, 1, ChMapTest.ZUR_COUNTRY), SortedBag.of(3, Card.LOCOMOTIVE, 2, Card.RED), List.of(ChMapTest.route3, ChMapTest.route4));
+    PlayerState playerState1 = new PlayerState(SortedBag.of(1, ChMapTest.ZUR_VAD, 1, ChMapTest.ZUR_COUNTY), SortedBag.of(3, Card.BLUE, 1, Card.ORANGE), List.of(ChMapTest.route1, ChMapTest.route8, ChMapTest.route6));
+    PlayerState playerState2 = new PlayerState(SortedBag.of(1, ChMapTest.BAL_BER, 1, ChMapTest.ZUR_COUNTY), SortedBag.of(3, Card.LOCOMOTIVE, 2, Card.RED), List.of(ChMapTest.route3, ChMapTest.route4));
 
 
 
@@ -217,7 +217,7 @@ class GameStateTest implements ChMapTest {
 //group 2
     @Test
     void withInitiallyChosenTickets() {
-        SortedBag<Ticket> firstTwoTickets = SortedBag.of(1,ChMapTest.BAL_BER, 1 , ChMapTest.ZUR_COUNTRY);
+        SortedBag<Ticket> firstTwoTickets = SortedBag.of(1,ChMapTest.BAL_BER, 1 , ChMapTest.ZUR_COUNTY);
         SortedBag<Ticket> lastTicket = SortedBag.of(ChMapTest.BER_COI);
         SortedBag<Ticket> chosenTickets = firstTwoTickets.union(lastTicket);
 
@@ -235,7 +235,7 @@ class GameStateTest implements ChMapTest {
     }
     @Test
     void withInitiallyChosenTicketsFails(){ //As the player has at least one ticket already
-        SortedBag<Ticket> firstTwoTickets = SortedBag.of(1,ChMapTest.BAL_BER, 1 , ChMapTest.ZUR_COUNTRY);
+        SortedBag<Ticket> firstTwoTickets = SortedBag.of(1,ChMapTest.BAL_BER, 1 , ChMapTest.ZUR_COUNTY);
         SortedBag<Ticket> lastTicket = SortedBag.of(ChMapTest.BER_COI);
         SortedBag<Ticket> chosenTickets = firstTwoTickets.union(lastTicket);
         GameState stateWithFewTickets = normalState.withInitiallyChosenTickets(PlayerId.PLAYER_1, chosenTickets);

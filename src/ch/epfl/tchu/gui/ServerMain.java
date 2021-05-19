@@ -49,10 +49,11 @@ public class ServerMain extends Application {
      */
     @Override
     public void start(Stage primaryStage){
+        System.out.println("I was started");
         List<String> parameters = getParameters().getRaw();
         Map<PlayerId, String> playerNames = new HashMap<>();
 
-        for (int i = 0; i < COUNT; i++) {
+        for (int i = 0; i < Menu.number_of_players; i++) {
             PlayerId currentId = ALL.get(i);
             if(i< parameters.size()){
                 playerNames.put(currentId, parameters.get(i));
@@ -65,17 +66,15 @@ public class ServerMain extends Application {
         new Thread(() -> {
             try{
                 ServerSocket serverSocket = new ServerSocket(5108);
-                Socket socket1 = serverSocket.accept();
-                Socket socket2 = serverSocket.accept();
 
-                sockets.addAll(List.of(socket1, socket2));
+                sockets.addAll(Collections.nCopies(Menu.number_of_players-1, serverSocket.accept()));
 
                 GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
 
                 players.put(PLAYER_1, graphicalPlayerAdapter);
 
-                for (int i = 1; i < COUNT; i++) {
-                    players.put(ALL.get(i), new RemotePlayerProxy(sockets.get(i-1)));
+                for (int i = 1; i < Menu.number_of_players; i++) {
+                    players.put(ALL.get(i), new RemotePlayerProxy(sockets.get(i)));
                 }
 
                 Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random());

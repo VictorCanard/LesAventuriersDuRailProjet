@@ -119,7 +119,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of tickets the given player has
      *
-     * @return the ticket COUNT property of the given player
+     * @return the ticket Menu.number_of_players property of the given player
      */
     public ReadOnlyIntegerProperty getTicketCount(PlayerId playerId) {
         return ticketCount.get(playerId);
@@ -128,7 +128,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of cards the given player has
      *
-     * @return the card COUNT property of the given player
+     * @return the card Menu.number_of_players property of the given player
      */
     public ReadOnlyIntegerProperty getCardCount(PlayerId playerId) {
         return cardCount.get(playerId);
@@ -137,7 +137,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of cars the given player has
      *
-     * @return the car COUNT property of the given player
+     * @return the car Menu.number_of_players property of the given player
      */
     public ReadOnlyIntegerProperty getCarCount(PlayerId playerId) {
         return carCount.get(playerId);
