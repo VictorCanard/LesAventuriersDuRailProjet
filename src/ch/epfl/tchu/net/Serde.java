@@ -51,10 +51,11 @@ public interface Serde<T> {
      */
     static <T> Serde<T> oneOf(List<T> listOfValuesOfEnumType) {
         Preconditions.checkArgument(listOfValuesOfEnumType != null);
+        String emptyString = "";
 
-        Function<T, String> serializingFunction = (t) -> (t == null) ? "" : String.valueOf(listOfValuesOfEnumType.indexOf(t));
+        Function<T, String> serializingFunction = (t) -> (t == null) ? emptyString : String.valueOf(listOfValuesOfEnumType.indexOf(t));
 
-        Function<String, T> deserializingFunction = (string) -> (string.equals("")) ? null : listOfValuesOfEnumType.get(Integer.parseInt(string));
+        Function<String, T> deserializingFunction = (string) -> (string.equals(emptyString)) ? null : listOfValuesOfEnumType.get(Integer.parseInt(string));
 
         return of(serializingFunction, deserializingFunction);
 
@@ -70,15 +71,15 @@ public interface Serde<T> {
      * @return a Serde of a list of a specified type
      */
     static <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter) {
-
-        Function<List<T>, String> serializingFunction = (list) -> (list.isEmpty()) ? "" :
+        String emptyString = "";
+        Function<List<T>, String> serializingFunction = (list) -> (list.isEmpty()) ? emptyString :
                 list
                         .stream()
                         .map(usedSerde::serialize)
                         .collect(Collectors.joining(delimiter));
 
 
-        Function<String, List<T>> deserializingFunction = (string) -> (string.equals("")) ? List.of() :
+        Function<String, List<T>> deserializingFunction = (string) -> (string.equals(emptyString)) ? List.of() :
                 Arrays.stream(string.split(Pattern.quote(delimiter), -1))
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList());
@@ -97,12 +98,13 @@ public interface Serde<T> {
      * @return a Serde of a sorted bag of a specified type
      */
     static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> usedSerde, String delimiter) {
+        String emptyString = "";
         Function<SortedBag<T>, String> serializingFunction = (sortedBag) ->
                 sortedBag.stream()
                         .map(usedSerde::serialize)
                         .collect(Collectors.joining(delimiter));
 
-        Function<String, SortedBag<T>> deserializingFunction = (string) -> (string.equals("")) ? SortedBag.of() :
+        Function<String, SortedBag<T>> deserializingFunction = (string) -> (string.equals(emptyString)) ? SortedBag.of() :
                 SortedBag.of(Arrays.stream(string.split(Pattern.quote(delimiter), -1))
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList()));

@@ -109,13 +109,19 @@ class MapViewCreator {
      * @param routeGroup : group of all the routes, their characteristics (id, level, color) and style class
      */
     private static void setAllBlocksOfARoute(Route route, Group routeGroup) {
+        int rectWidth = 36;
+        int rectHeight = 12;
+        int centerDiv = 2;
+        int wheelCenterPos = 6;
+        int wheelRad = 3;
+
         for (int currentRouteCase = 1; currentRouteCase <= route.length(); currentRouteCase++) {
             Group caseGroup = new Group();
             caseGroup.setId(route.id() + "_" + currentRouteCase);
 
             routeGroup.getChildren().add(caseGroup);
             //
-            Rectangle trackRectangle = new Rectangle(36, 12);
+            Rectangle trackRectangle = new Rectangle(rectWidth, rectHeight);
             trackRectangle.getStyleClass().addAll("track", "filled");
 
             caseGroup.getChildren().add(trackRectangle);
@@ -125,14 +131,14 @@ class MapViewCreator {
 
             caseGroup.getChildren().add(wagonGroup);
             //
-            Rectangle wagonRectangle = new Rectangle(36, 12);
+            Rectangle wagonRectangle = new Rectangle(rectWidth, rectHeight);
             wagonRectangle.getStyleClass().add("filled");
 
-            double centerX = wagonRectangle.widthProperty().get() / 2;
-            double centerY = wagonRectangle.heightProperty().get() / 2;
+            double centerX = wagonRectangle.widthProperty().get() / centerDiv;
+            double centerY = wagonRectangle.heightProperty().get() / centerDiv;
 
-            Circle wheel1 = new Circle(centerX - 6, centerY, 3);
-            Circle wheel2 = new Circle(centerX + 6, centerY, 3);
+            Circle wheel1 = new Circle(centerX - wheelCenterPos, centerY, wheelRad);
+            Circle wheel2 = new Circle(centerX + wheelCenterPos, centerY, wheelRad);
 
             wagonGroup.getChildren().addAll(wagonRectangle, wheel1, wheel2);
         }

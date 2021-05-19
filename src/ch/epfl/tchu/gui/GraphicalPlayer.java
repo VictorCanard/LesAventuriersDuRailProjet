@@ -111,8 +111,9 @@ public final class GraphicalPlayer {
      */
     public void receiveInfo(String messageToAdd) {
         assert isFxApplicationThread();
+        int maxToAddMessage = 4;
 
-        if (messages.size() > 4) {
+        if (messages.size() > maxToAddMessage) {
             messages.remove(0);
         }
         messages.add(new Text(messageToAdd));
@@ -207,13 +208,13 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleClaimCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
-
+        int minSelect = 1;
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_CARDS,
                 List.copyOf(possibleClaimCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
-                1,
+                minSelect,
                 items -> chooseCardsHandler.onChooseCards(items.get(0)));
     }
 
@@ -228,13 +229,13 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
-
+        int minSelect = 0;
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_ADDITIONAL_CARDS,
                 List.copyOf(possibleAdditionalCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
-                0,
+                minSelect,
                 items -> {
                     if (items.isEmpty()) {
                         chooseCardsHandler.onChooseCards(SortedBag.of());
@@ -286,7 +287,6 @@ public final class GraphicalPlayer {
             stage.hide();
             consumer.accept(selectedItems);
         });
-
         //
         vbox.getChildren().addAll(textFlow, listView, button);
         //

@@ -218,9 +218,10 @@ public final class ObservableGameState {
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
         Preconditions.checkArgument(publicGameState != null);
         Preconditions.checkArgument(playerState != null);
+        int pctConvert = 100;
         //
-        ticketsPercentageLeft.set((publicGameState.ticketsCount() * 100 / ChMap.tickets().size()));
-        cardsPercentageLeft.set((publicGameState.cardState().deckSize() * 100 / Constants.ALL_CARDS.size()));
+        ticketsPercentageLeft.set((publicGameState.ticketsCount() * pctConvert / ChMap.tickets().size()));
+        cardsPercentageLeft.set((publicGameState.cardState().deckSize() * pctConvert / Constants.ALL_CARDS.size()));
         setFaceUpCards(publicGameState.cardState().faceUpCards());
         setRoutesPlayerId(publicGameState);
         //

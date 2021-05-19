@@ -63,12 +63,13 @@ public class InfoViewCreator {
     private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
         String playerName = playerNames.get(playerId);
         String playerStyle = playerId.name();
+        int circleRad = 5;
         //
         VBox playerStats = new VBox();
         playerStats.setId("player-stats");
         playerStats.getStyleClass().add(playerStyle);
 
-        Circle circle = new Circle(5);
+        Circle circle = new Circle(circleRad);
         circle.getStyleClass().add("filled");
 
         Text stats = new Text();

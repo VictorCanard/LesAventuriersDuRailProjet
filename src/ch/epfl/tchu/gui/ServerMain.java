@@ -49,12 +49,16 @@ public class ServerMain extends Application {
         List<String> parameters = getParameters().getRaw();
         Map<PlayerId, String> playerNames;
 
+        String defaultP1 = "Ada";
+        String defaultP2 = "Charles";
+        int port = 5108;
+
         switch (parameters.size()) {
             case 0:
-                playerNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
+                playerNames = Map.of(PLAYER_1, defaultP1, PLAYER_2, defaultP2);
                 break;
             case 1:
-                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, "Charles");
+                playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, defaultP2);
                 break;
             default:
                 playerNames = Map.of(PLAYER_1, parameters.get(0), PLAYER_2, parameters.get(1));
@@ -62,7 +66,7 @@ public class ServerMain extends Application {
         }
 
         new Thread(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(5108);
+            try (ServerSocket serverSocket = new ServerSocket(port);
                  Socket socket = serverSocket.accept()) {
 
                 GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();

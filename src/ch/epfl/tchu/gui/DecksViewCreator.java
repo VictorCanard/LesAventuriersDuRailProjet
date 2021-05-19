@@ -34,6 +34,8 @@ class DecksViewCreator {
      * @return a Horizontal Box with a specific scene graph (set of children and attached nodes)
      */
     public static HBox createHandView(ObservableGameState gameState) {
+        int minNumVis = 1;
+        int minCardVis = 0;
         HBox mainHBox = new HBox();
         mainHBox.getStylesheets().addAll("decks.css", "colors.css");
         //
@@ -56,13 +58,12 @@ class DecksViewCreator {
             text.getStyleClass().add("count");
 
             text.textProperty().bind(Bindings.convert(count));
-            text.visibleProperty().bind(Bindings.greaterThan(count, 1));
+            text.visibleProperty().bind(Bindings.greaterThan(count, minNumVis));
 
             stackPane.getChildren().add(text);
-            stackPane.visibleProperty().bind(Bindings.greaterThan(count, 0));
+            stackPane.visibleProperty().bind(Bindings.greaterThan(count, minCardVis));
 
             handPane.getChildren().add(stackPane);
-
         }
         return mainHBox;
     }
@@ -144,14 +145,17 @@ class DecksViewCreator {
      * @return a button with a percentage bar
      */
     private static Button deckButton(Button button, ReadOnlyIntegerProperty percentage) {
+        int rectWidth = 50;
+        int rectHeight = 5;
+        double pctMult = 0.5;
         Group group = new Group();
 
-        Rectangle gaugeBackground = new Rectangle(50, 5);
+        Rectangle gaugeBackground = new Rectangle(rectWidth, rectHeight);
         gaugeBackground.getStyleClass().add("background");
 
-        Rectangle gaugeForeground = new Rectangle(50, 5);
+        Rectangle gaugeForeground = new Rectangle(rectWidth, rectHeight);
         gaugeForeground.getStyleClass().add("foreground");
-        gaugeForeground.widthProperty().bind(percentage.multiply(0.5));
+        gaugeForeground.widthProperty().bind(percentage.multiply(pctMult));
 
         group.getChildren().addAll(gaugeBackground, gaugeForeground);
 
@@ -183,13 +187,17 @@ class DecksViewCreator {
      * @return the stack pane given as an argument with three new rectangles as children of its scene graph
      */
     private static StackPane cardRectangles(StackPane stackPane) {
-        Rectangle outside = new Rectangle(60, 90);
+        int outWidth = 60;
+        int outHeight = 90;
+        int inWidth = 40;
+        int inHeight = 70;
+        Rectangle outside = new Rectangle(outWidth, outHeight);
         outside.getStyleClass().add("outside");
 
-        Rectangle inside = new Rectangle(40, 70);
+        Rectangle inside = new Rectangle(inWidth, inHeight);
         inside.getStyleClass().addAll("filled", "inside");
 
-        Rectangle train = new Rectangle(40, 70);
+        Rectangle train = new Rectangle(inWidth, inHeight);
         train.getStyleClass().add("train-image");
 
         stackPane.getChildren().addAll(outside, inside, train);

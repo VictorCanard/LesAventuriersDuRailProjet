@@ -38,9 +38,10 @@ public class RemotePlayerClient {
      * @throws IndexOutOfBoundsException if the port is not between 0 and 65535
      */
     public RemotePlayerClient(Player player, String name, int port) {
+        int length = 65535;
         this.player = player;
         this.name = Objects.requireNonNull(name);
-        this.port = Objects.checkIndex(port, 65535);
+        this.port = Objects.checkIndex(port, length);
     }
 
     /**
