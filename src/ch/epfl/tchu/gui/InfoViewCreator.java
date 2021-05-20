@@ -35,7 +35,7 @@ public class InfoViewCreator {
         VBox infoPane = new VBox();
         infoPane.getStylesheets().addAll("info.css", "colors.css");
 
-        //
+        //Todo: MAke this more general
         infoPane.getChildren().add(playerStats(playerId, playerNames, gameState));
         infoPane.getChildren().add(playerStats(playerId.next(), playerNames, gameState));
 

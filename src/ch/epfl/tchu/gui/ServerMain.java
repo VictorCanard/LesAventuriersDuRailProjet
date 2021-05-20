@@ -31,7 +31,7 @@ public class ServerMain extends Application {
 
     private final int port = 5108;
 
-    private final int numberOfLocalPlayersOnTheServerMachine = 1;
+    private final int localPlayerNumber = 1;
 
     /**
      * Launches the application with the given args
@@ -67,16 +67,21 @@ public class ServerMain extends Application {
             try {
                 ServerSocket serverSocket = new ServerSocket(port);
 
-                sockets.addAll(Collections.nCopies(COUNT - numberOfLocalPlayersOnTheServerMachine, serverSocket.accept()));
+                sockets.addAll(Collections.nCopies(COUNT - localPlayerNumber, serverSocket.accept()));
 
                 for (int i = 0; i < COUNT; i++) {
-                    Player currentPlayer = (i < numberOfLocalPlayersOnTheServerMachine) ?
-                            new GraphicalPlayerAdapter() : new RemotePlayerProxy(sockets.get(i - numberOfLocalPlayersOnTheServerMachine));
+                    Player currentPlayer = (i < localPlayerNumber) ?
+                            new GraphicalPlayerAdapter() : new RemotePlayerProxy(sockets.get(i - localPlayerNumber));
 
                     players.put(ALL.get(i), currentPlayer);
                 }
 
                 Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random());
+
+                for (Socket socket : sockets
+                ) {
+                    socket.close();
+                }
 
                 serverSocket.close();
             } catch (IOException ioException) {

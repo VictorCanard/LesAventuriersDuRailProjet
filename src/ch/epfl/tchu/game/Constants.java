@@ -80,7 +80,7 @@ public final class Constants {
     /**
      * Minimum number of wagons of one player to begin the last turn for all players
      */
-    public static final int NUMBER_OF_WAGONS_FOR_LAST_TURN_TO_BEGIN = 39;
+    public static final int NUMBER_OF_WAGONS_FOR_LAST_TURN_TO_BEGIN = 2;
 
     private Constants() {
     }
