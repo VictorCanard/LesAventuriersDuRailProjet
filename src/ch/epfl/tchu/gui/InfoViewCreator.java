@@ -25,10 +25,10 @@ public class InfoViewCreator {
     /**
      * Creates the Information Panel on the left side of each player's graphical interface.
      *
-     * @param playerId    : the player whose graphical interface this is.
+     * @param playerId : the player whose graphical interface this is.
      * @param playerNames : the name of each player.
-     * @param gameState   : the state of the game to display.
-     * @param infos       : the messages that appear in the bottom-left corner giving information on the sequence of events of the game.
+     * @param gameState : the state of the game to display.
+     * @param infos : the messages that appear in the bottom-left corner giving information on the sequence of events of the game.
      * @return a Vertical Box containing the messages and each player's stats.
      */
     public static Node createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos) {
@@ -55,9 +55,9 @@ public class InfoViewCreator {
     /**
      * Creates the view on each player's stats in the top-left corner of the graphical display.
      *
-     * @param playerId    : the player whose graphical interface this is.
+     * @param playerId : the player whose graphical interface this is.
      * @param playerNames : the name of each player.
-     * @param gameState   : the state of the game to display.
+     * @param gameState : the state of the game to display.
      * @return a Vertical Box with all stats concerning this player and all stats concerning the other player underneath it.
      */
     private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {

@@ -54,10 +54,8 @@ public final class GraphicalPlayer {
     /**
      * Creates the graphical interface of the perspective of the given player
      *
-     * @param thisPlayer  : the player the graphical interface belongs to
+     * @param thisPlayer : the player the graphical interface belongs to
      * @param playerNames : the names of the players in the game
-     * @throws NullPointerException if the playerId or the player names map is null
-     * @throws IllegalArgumentException if there aren't the right number of pairs in the player names map
      */
     public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
         Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
@@ -97,7 +95,7 @@ public final class GraphicalPlayer {
      * Sets the state of the game on the javafx thread
      *
      * @param publicGameState : the public game state at the point in the game
-     * @param playerState     : the player state at the point in the game
+     * @param playerState : the player state at the point in the game
      */
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
         assert isFxApplicationThread();
@@ -123,8 +121,8 @@ public final class GraphicalPlayer {
      * Starts the player's turn on the javafx thread, where they can initially do 3 actions
      *
      * @param drawTicketsHandler : the action handler corresponding to the player drawing tickets
-     * @param drawCardHandler    : the action handler corresponding to the player drawing cards
-     * @param claimRouteHandler  : the action handler corresponding to the player claiming a route
+     * @param drawCardHandler : the action handler corresponding to the player drawing cards
+     * @param claimRouteHandler : the action handler corresponding to the player claiming a route
      */
     public void startTurn(ActionHandlers.DrawTicketsHandler drawTicketsHandler, ActionHandlers.DrawCardHandler drawCardHandler, ActionHandlers.ClaimRouteHandler claimRouteHandler) {
         assert isFxApplicationThread();
@@ -179,7 +177,7 @@ public final class GraphicalPlayer {
     /**
      * Allows the player to choose tickets through the ticket button by displaying a pop up window
      *
-     * @param ticketsToChooseFrom  : the tickets the player must choose at least 1 of
+     * @param ticketsToChooseFrom : the tickets the player must choose at least 1 of
      * @param chooseTicketsHandler : the action handler corresponding to the player choosing ticket(s)
      */
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
@@ -223,7 +221,7 @@ public final class GraphicalPlayer {
      * The player also has an option to abandon the route by not selecting cards and clicking the choose button
      *
      * @param possibleAdditionalCards : the possible additional cards the player can play to claim the route
-     * @param chooseCardsHandler      : the action handler corresponding to the player choosing cards
+     * @param chooseCardsHandler : the action handler corresponding to the player choosing cards
      */
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
@@ -266,12 +264,12 @@ public final class GraphicalPlayer {
         listView.getSelectionModel().setSelectionMode(selectionMode);
         listView.setCellFactory(v -> new TextFieldListCell<>(new StringConverter<>() {
             @Override
-            public String toString(E object) {
+            public String toString(E object){
                 return objectToStringFunction.apply(object);
             }
 
             @Override
-            public E fromString(String string) {
+            public E fromString(String string){
                 throw new UnsupportedOperationException();
             }
         }));

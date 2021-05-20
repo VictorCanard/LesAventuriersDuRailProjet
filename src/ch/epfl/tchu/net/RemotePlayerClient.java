@@ -32,10 +32,8 @@ public class RemotePlayerClient {
      * Constructor for the Client of a Player (who is not necessarily playing on the same machine)
      *
      * @param player : the player to take their turn
-     * @param name   : the host name
-     * @param port   : the port number
-     * @throws NullPointerException      if the name is null
-     * @throws IndexOutOfBoundsException if the port is not between 0 and 65535
+     * @param name : the host name
+     * @param port : the port number
      */
     public RemotePlayerClient(Player player, String name, int port) {
         int maxPortLength = 65535;

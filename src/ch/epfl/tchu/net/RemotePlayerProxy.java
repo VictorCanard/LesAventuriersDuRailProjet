@@ -26,7 +26,6 @@ public class RemotePlayerProxy implements Player {
      * Constructs the proxy using the given socket
      *
      * @param socket : the socket the proxy will use to communicate with the client
-     * @throws IllegalArgumentException if the socket is null
      */
     public RemotePlayerProxy(Socket socket) {
         Preconditions.checkArgument(socket != null);
@@ -135,7 +134,7 @@ public class RemotePlayerProxy implements Player {
     /**
      * Sends a message to the client
      *
-     * @param messageId                 : the id corresponding to the type of action taking place as described in the MessageId enum
+     * @param messageId : the id corresponding to the type of action taking place as described in the MessageId enum
      * @param allParametersOfTheMessage : the parameters corresponding to the arguments of the method used for the specified action
      */
     private void sendMessage(MessageId messageId, String... allParametersOfTheMessage) {

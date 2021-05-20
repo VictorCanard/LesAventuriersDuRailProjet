@@ -29,7 +29,7 @@ public final class Info {
     /**
      * Gives the french name of the given card
      *
-     * @param card  : the specified card to get the name from
+     * @param card : the specified card to get the name from
      * @param count : the number of cards there are
      * @return message including the french name of the given card, in plural if there is more than one
      */
@@ -76,7 +76,7 @@ public final class Info {
      * Gives the message that the two players have tied at the end of the game
      *
      * @param playerNames : the list of names of the two players
-     * @param points      : number of points they have earned at the end of the game
+     * @param points : number of points they have earned at the end of the game
      * @return the message that the players have tied and how many points they earned
      */
     public static String draw(List<String> playerNames, int points) {
@@ -204,7 +204,7 @@ public final class Info {
     /**
      * Gives the message announcing that the player wants to take a tunnel route
      *
-     * @param route        : the tunnel route to be claimed
+     * @param route : the tunnel route to be claimed
      * @param initialCards : the cards the player has put down initially to claim the tunnel route
      * @return message including the tunnel to be attempted and the initial cards played by the player
      */
@@ -215,7 +215,7 @@ public final class Info {
     /**
      * Gives the message that the player has drawn 3 additional cards from the draw pile
      *
-     * @param drawnCards     : the three drawn cards
+     * @param drawnCards : the three drawn cards
      * @param additionalCost : the additional cost from the three cards
      * @return message including the names of the additional cards and the additional cost
      */
@@ -268,7 +268,7 @@ public final class Info {
     /**
      * Gives the message that the player has won
      *
-     * @param points      : number of points the player has won with
+     * @param points : number of points the player has won with
      * @param loserPoints : number of points the losing opponent has gained
      * @return message including the number of points of the winning and losing player
      */

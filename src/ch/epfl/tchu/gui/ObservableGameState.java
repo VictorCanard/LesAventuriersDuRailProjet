@@ -212,8 +212,7 @@ public final class ObservableGameState {
      * Sets the state of the observable game state
      *
      * @param publicGameState : the public game state at this point in the game
-     * @param playerState     : the player state of the player the observable game state belongs to
-     * @throws IllegalArgumentException if the public game state or player state is null
+     * @param playerState : the player state of the player the observable game state belongs to
      */
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
         Preconditions.checkArgument(publicGameState != null);

@@ -71,9 +71,9 @@ class DecksViewCreator {
     /**
      * Creates the cards view at the right of the screen; ie the tickets deck, the cards deck, and the 5 face-up cards
      *
-     * @param gameState   : observable game state that stores the information about the tickets and cards
+     * @param gameState : observable game state that stores the information about the tickets and cards
      * @param drawTickets : an action handler for drawing tickets
-     * @param drawCards   : an action handler for drawing cards
+     * @param drawCards : an action handler for drawing cards
      * @return a vertical box with a specific scene graph
      */
     public static Node createCardsView(ObservableGameState gameState, ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTickets, ObjectProperty<ActionHandlers.DrawCardHandler> drawCards) {
@@ -133,14 +133,14 @@ class DecksViewCreator {
      * @param card : the card which we want to know the name of
      * @return the name of the cards (in upper case)
      */
-    private static String getCardName(Card card) {
+    private static String getCardName(Card card){
         return (card == Card.LOCOMOTIVE) ? "NEUTRAL" : card.color().name();
     }
 
     /**
      * Creates a gauged button with a certain percentage and a specific button
      *
-     * @param button     : button we want to add a gauge to
+     * @param button : button we want to add a gauge to
      * @param percentage : represents the actual value which is displayed onto the gauge
      * @return a button with a percentage bar
      */
