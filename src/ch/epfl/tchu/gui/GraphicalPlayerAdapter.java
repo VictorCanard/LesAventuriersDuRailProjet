@@ -28,6 +28,7 @@ public final class GraphicalPlayerAdapter implements Player {
      */
     public GraphicalPlayerAdapter() {
         int cap = 1;
+
         this.ticketQueue = new ArrayBlockingQueue<>(cap);
         this.cardQueue = new ArrayBlockingQueue<>(cap);
         this.routeQueue = new ArrayBlockingQueue<>(cap);

@@ -77,8 +77,10 @@ public final class Constants {
      * Nombre de points bonus obtenus par le(s) joueur(s) disposant du plus long chemin.
      */
     public static final int LONGEST_TRAIL_BONUS_POINTS = 10;
-
-    public static final Trail EMPTY_TRAIL = Trail.longest(List.of());
+    /**
+     * Minimum number of wagons of one player to begin the last turn for all players
+     */
+    public static final int NUMBER_OF_WAGONS_FOR_LAST_TURN_TO_BEGIN = 39;
 
     private Constants() {
     }

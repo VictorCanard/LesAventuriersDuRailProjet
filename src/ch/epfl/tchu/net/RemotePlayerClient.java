@@ -34,14 +34,15 @@ public class RemotePlayerClient {
      * @param player : the player to take their turn
      * @param name   : the host name
      * @param port   : the port number
-     * @throws NullPointerException if the name is null
+     * @throws NullPointerException      if the name is null
      * @throws IndexOutOfBoundsException if the port is not between 0 and 65535
      */
     public RemotePlayerClient(Player player, String name, int port) {
-        int length = 65535;
+        int maxPortLength = 65535;
+
         this.player = player;
         this.name = Objects.requireNonNull(name);
-        this.port = Objects.checkIndex(port, length);
+        this.port = Objects.checkIndex(port, maxPortLength);
     }
 
     /**
@@ -77,7 +78,7 @@ public class RemotePlayerClient {
                         Map<PlayerId, String> playerNames = new HashMap<>();
 
                         for (int i = 0; i < PlayerId.COUNT; i++) {
-                            playerNames.put(PlayerId.values()[i], STRING_SERDE.deserialize(playerNamesSerialized[i]));
+                            playerNames.put(PlayerId.ALL.get(i), STRING_SERDE.deserialize(playerNamesSerialized[i]));
                         }
 
                         player.initPlayers(ownId, playerNames);

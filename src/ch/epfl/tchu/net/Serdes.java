@@ -3,7 +3,6 @@ package ch.epfl.tchu.net;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -18,14 +17,13 @@ public class Serdes {
     private Serdes() {
     }
 
+
     private static final String SEMI_COLON = ";";
     private static final String COMMA = ",";
     private static final String COLON = ":";
 
     private static final String SEMI_COLON_PATTERN = Pattern.quote(";");
     private static final String COLON_PATTERN = Pattern.quote(":");
-
-    private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     /**
      * Serde of an integer
@@ -36,11 +34,11 @@ public class Serdes {
      * Serde of a string
      */
     public static final Serde<String> STRING_SERDE = Serde.of(
-            string -> Base64.getEncoder().encodeToString(string.getBytes(UTF_8)),
+            string -> Base64.getEncoder().encodeToString(string.getBytes(StandardCharsets.UTF_8)),
 
             serializedString -> new String(
                     Base64.getDecoder().decode(serializedString),
-                    UTF_8)
+                    StandardCharsets.UTF_8)
     );
     /**
      * Serde of a player id
@@ -153,6 +151,7 @@ public class Serdes {
     public static final Serde<PublicGameState> PUBLIC_GAME_STATE_SERDE = Serde.of(
             (publicGameState) -> {
                 String allPublicPlayerStates = PlayerId.ALL.stream().map(playerId -> PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(playerId))).collect(Collectors.joining(COLON));
+
                 return new StringJoiner(COLON)
                         .add(INTEGER_SERDE.serialize(publicGameState.ticketsCount()))
                         .add(PUBLIC_CARD_STATE_SERDE.serialize(publicGameState.cardState()))
@@ -177,7 +176,7 @@ public class Serdes {
                         PUBLIC_CARD_STATE_SERDE.deserialize(splitString[1]),
                         PLAYER_ID_SERDE.deserialize(splitString[2]),
                         allPlayerStates,
-                        PLAYER_ID_SERDE.deserialize(splitString[5]));
+                        PLAYER_ID_SERDE.deserialize(splitString[3 + PlayerId.COUNT]));
             }
     );
 }
