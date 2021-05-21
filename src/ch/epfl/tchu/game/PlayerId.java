@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.gui.Menu;
+
 import java.util.List;
 
 /**
@@ -28,14 +30,8 @@ public enum PlayerId {
      * @return the next player's id
      */
     public PlayerId next() {
-        if(this.equals(PLAYER_1)){
-            return PLAYER_2;
-        }else if(this.equals(PLAYER_2)){
-            return PLAYER_3;
-        }
-        return PLAYER_1;
+        return ALL.get((this.ordinal() + 1) % Menu.number_of_players);
     }
-
 
 
 }

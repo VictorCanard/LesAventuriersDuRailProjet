@@ -55,10 +55,11 @@ public final class StringsFr {
             "\n%s n'a plus que %s wagon%s, le dernier tour commence !\n";
     public static final String GETS_BONUS =
             "\n%s reçoit un bonus de 10 points pour le plus long trajet (%s).\n";
+
     public static final String WINS_2P =
             "\n%s remporte la victoire avec %s point%s, contre %s point%s!\n";
     public static final String WINS_3P =
-            "\n%s remporte la victoire avec %s point%s, contre %s point%s et %s point%s!\n";
+            "\n%s remporte la victoire avec %s point%s, contre %s point%s pour et %s point%s pour %s!\n";
     public static final String DRAW =
             "\n%s sont ex æqo avec %s points !\n";
     // Statistiques des joueurs

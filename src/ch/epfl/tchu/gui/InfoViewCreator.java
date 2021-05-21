@@ -36,10 +36,11 @@ public class InfoViewCreator {
         infoPane.getStylesheets().addAll("info.css", "colors.css");
 
         //
-
-        infoPane.getChildren().add(playerStats(playerId, playerNames, gameState));
-        infoPane.getChildren().add(playerStats(playerId.next(), playerNames, gameState));
-        infoPane.getChildren().add(playerStats(playerId.next().next(), playerNames, gameState));
+        PlayerId currentId = playerId;
+        for (int i = 0; i < Menu.number_of_players; i++) {
+            infoPane.getChildren().add(playerStats(currentId, playerNames, gameState));
+            currentId = currentId.next();
+        }
 
         //
         Separator separator = new Separator();

@@ -20,7 +20,6 @@ public class PublicGameState {
     private final Map<PlayerId, PublicPlayerState> playerStates;
     private final PlayerId currentPlayerId;
     private final PlayerId lastPlayer;
-    private final int minCardsAllowed = 5;
 
     /**
      * Constructs the "public" state of the game
@@ -81,6 +80,7 @@ public class PublicGameState {
         int numberOfCardsInDrawPile = publicCardState.deckSize();
         int numberOfCardsInDiscardPile = publicCardState.discardsSize();
 
+        int minCardsAllowed = 5;
         return (numberOfCardsInDiscardPile + numberOfCardsInDrawPile) >= minCardsAllowed;
     }
 

@@ -386,7 +386,7 @@ public final class Game {
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
 
-        PlayerId.ALL.forEach((playerId -> {
+        Menu.activePlayers.forEach((playerId -> {
             //Calculate longest trails
             Trail playerLongestTrail = Trail.longest(allGameData.gameState.playerState(playerId).routes());
             eachPlayerAssociatedTrails.put(playerId, playerLongestTrail);
@@ -397,13 +397,13 @@ public final class Game {
 
         updateAllStates(players, allGameData.gameState);
 
-        int maxLengthTrail = PlayerId.ALL
+        int maxLengthTrail = Menu.activePlayers
                 .stream()
                 .mapToInt(playerId -> eachPlayerAssociatedTrails.get(playerId).length())
                 .max()
                 .orElseThrow();
 
-        PlayerId.ALL.forEach(playerId -> {
+        Menu.activePlayers.forEach(playerId -> {
             if (eachPlayerAssociatedTrails.get(playerId).length() == maxLengthTrail) {
 
                 associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);
@@ -422,7 +422,7 @@ public final class Game {
     private static void determineWinnerOrDraw(Map<PlayerId, Integer> associatedPlayerPoints, AllGameData allGameData) {
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
 
-        int maxPoints = PlayerId.ALL.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
+        int maxPoints = Menu.activePlayers.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
 
         String endOfGameMessage;
 
@@ -437,7 +437,7 @@ public final class Game {
 
         } else{
             List<Integer> pointsInDescending = associatedPlayerPoints.values().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-            endOfGameMessage = infoGenerators.get(PlayerId.ALL.stream().max(Comparator.comparingInt(associatedPlayerPoints::get)).orElseThrow()).won(pointsInDescending);
+            endOfGameMessage = infoGenerators.get(Menu.activePlayers.stream().max(Comparator.comparingInt(associatedPlayerPoints::get)).orElseThrow()).won(pointsInDescending);
         }
         receiveInfoForAll(allGameData.players, endOfGameMessage);
     }

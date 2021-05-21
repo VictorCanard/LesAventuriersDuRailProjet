@@ -67,14 +67,16 @@ public class ServerMain extends Application {
             try{
                 ServerSocket serverSocket = new ServerSocket(5108);
 
-                sockets.addAll(Collections.nCopies(Menu.number_of_players-1, serverSocket.accept()));
+                for (int i = 0; i < Menu.number_of_players-1; i++) {
+                    sockets.add(serverSocket.accept());
+                }
 
                 GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
 
                 players.put(PLAYER_1, graphicalPlayerAdapter);
 
                 for (int i = 1; i < Menu.number_of_players; i++) {
-                    players.put(ALL.get(i), new RemotePlayerProxy(sockets.get(i)));
+                    players.put(ALL.get(i), new RemotePlayerProxy(sockets.get(i-1)));
                 }
 
                 Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random());

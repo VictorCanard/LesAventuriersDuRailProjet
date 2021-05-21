@@ -77,7 +77,7 @@ public class RemotePlayerClient {
                         Map<PlayerId, String> playerNames = new HashMap<>();
 
                         for (int i = 0; i < Menu.number_of_players; i++) {
-                            playerNames.put(PlayerId.values()[i], STRING_SERDE.deserialize(playerNamesSerialized[i]));
+                            playerNames.put(Menu.activePlayers.get(i), STRING_SERDE.deserialize(playerNamesSerialized[i]));
                         }
 
                         player.initPlayers(ownId, playerNames);

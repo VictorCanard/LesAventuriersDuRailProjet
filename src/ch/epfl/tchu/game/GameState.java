@@ -57,7 +57,7 @@ public final class GameState extends PublicGameState {
         Deck<Card> initialDeck = Deck.of(Constants.ALL_CARDS, rng);
 
         //Initializes each player's deck to the top 4 cards of the deck (and then the 4 next)
-        for (PlayerId playerId : PlayerId.values()) {
+        for (PlayerId playerId : Menu.activePlayers) {
             SortedBag<Card> top4Cards = initialDeck.topCards(Constants.INITIAL_CARDS_COUNT);
             initialDeck = initialDeck.withoutTopCards(Constants.INITIAL_CARDS_COUNT);
 
@@ -73,7 +73,7 @@ public final class GameState extends PublicGameState {
 
         int firstPlayerIndex = rng.nextInt(Menu.number_of_players);
         //Picks a player at random
-        PlayerId firstPlayerId = PlayerId.ALL.get(firstPlayerIndex);
+        PlayerId firstPlayerId = Menu.activePlayers.get(firstPlayerIndex);
 
         return new GameState(playerStateMap, ticketDeck, cardState, firstPlayerId, null);
     }
