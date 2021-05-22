@@ -33,8 +33,8 @@ public class ClientMain extends Application {
     public void start(Stage primaryStage) {
         List<String> parameters = getParameters().getRaw();
 
-        String name = "localhost";
-        int port = 5108;
+        String name = "128.179.184.185";
+        int port = 5109;
 
         switch (parameters.size()) {
             case 2:
