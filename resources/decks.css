@@ -59,11 +59,12 @@ Button.gauged .foreground {
 }
 
 #ticket-points .negative{
-    -fx-fill: red;
+    -fx-text-fill: red;
+    -fx-font-size: 48;
 }
 
 #ticket-points .positive{
-    -fx-fill: green;
+    -fx-text-fill: green;
 }
 
 #hand-pane {

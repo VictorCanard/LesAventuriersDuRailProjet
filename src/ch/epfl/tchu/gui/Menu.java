@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import java.util.List;
 
 public class Menu extends Application {
-    public static int number_of_players = 3;
+    public static int number_of_players = 2;
     public static List<PlayerId> activePlayers = PlayerId.ALL.subList(0, number_of_players);
 
     public static void main(String[] args) {

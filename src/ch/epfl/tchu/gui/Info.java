@@ -277,16 +277,26 @@ public final class Info {
      * @param points : number of points the player has won with
      * @return message including the number of points of the winning and losing player
      */
-    public String won(List<Integer> points) {
+    public String won(List<String> winnersToLosers, List<Integer> points) {
+        StringBuilder sb = new StringBuilder();
 
-        return String.format(StringsFr.WINS_3P,
-                playerName,
-                points.get(0),
-                StringsFr.plural(points.get(0)),
-                points.get(1),
-                StringsFr.plural(points.get(1)),
-                points.get(2),
-                StringsFr.plural(points.get(2)));
+        sb
+                .append("\n")
+                .append(String.format(StringsFr.WINS, playerName, points.get(0), StringsFr.plural(points.get(0))));
+
+        for (int i = 1; i < Menu.number_of_players; i++) {
+            String contre = (i == 1) ? StringsFr.CONTRE : "";
+            String and = (i == Menu.number_of_players -2) ? StringsFr.AND_SEPARATOR : "";
+            String comma = (i < Menu.number_of_players -2) ? ", " : "";
+            sb
+                    .append(comma)
+                    .append(and)
+                    .append(contre)
+                    .append(String.format(StringsFr.POINTS, points.get(i), StringsFr.plural(points.get(i)), winnersToLosers.get(i)));
+        }
+        sb.append(".\n");
+
+        return sb.toString();
 
 
     }

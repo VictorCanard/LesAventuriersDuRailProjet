@@ -421,6 +421,7 @@ public final class Game {
      */
     private static void determineWinnerOrDraw(Map<PlayerId, Integer> associatedPlayerPoints, AllGameData allGameData) {
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
+        Map<PlayerId, String> names = allGameData.playerNames;
 
         int maxPoints = Menu.activePlayers.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
 
@@ -436,10 +437,31 @@ public final class Game {
 
 
         } else{
-            List<Integer> pointsInDescending = associatedPlayerPoints.values().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-            endOfGameMessage = infoGenerators.get(Menu.activePlayers.stream().max(Comparator.comparingInt(associatedPlayerPoints::get)).orElseThrow()).won(pointsInDescending);
+            List<PlayerId> playerIds =
+                    associatedPlayerPoints
+                            .entrySet()
+                            .stream()
+                            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                            .map(Map.Entry::getKey)
+                            .collect(Collectors.toList());
+
+            List<Integer> pointsInDescending = associatedPlayerPoints
+                    .values()
+                    .stream()
+                    .sorted(Comparator.reverseOrder())
+                    .collect(Collectors.toList());
+
+            List<String> winnersToL = new ArrayList<>();
+
+            playerIds.stream().map(playerId -> names.get(playerId)).collect(Collectors.toList());
+
+            /*endOfGameMessage = infoGenerators.get(Menu.activePlayers
+                    .stream()
+                    .max(Comparator.comparingInt(associatedPlayerPoints::get))
+                    .orElseThrow())
+                    .won(pointsInDescending);*/
         }
-        receiveInfoForAll(allGameData.players, endOfGameMessage);
+        //receiveInfoForAll(allGameData.players, endOfGameMessage);
     }
 
     /**

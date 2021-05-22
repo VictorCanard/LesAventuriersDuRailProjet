@@ -4,6 +4,7 @@ import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringExpression;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -50,14 +51,14 @@ class DecksViewCreator {
         ReadOnlyIntegerProperty points = gameState.ticketPoints();
         ticketScore.setId("ticket-points");
 
-        ticketScore.textProperty().bind(new SimpleStringProperty("Total courant des tickets: ").concat(points));
+        StringExpression string = new SimpleStringProperty("Total courant des tickets: ").concat(points);
+        ticketScore.textProperty().bind(string);
+
         points.addListener((property, oldV, newV)-> {
             if(newV.shortValue() < 0){
-                ticketScore.getStyleClass().remove("positive");
-                ticketScore.getStyleClass().add("negative");
+                ticketScore.getStyleClass().set(0, "negative");
             }else{
-                ticketScore.getStyleClass().remove("negative");
-                ticketScore.getStyleClass().add("positive");
+                ticketScore.getStyleClass().set(0, "positive");
             }
         });
         //

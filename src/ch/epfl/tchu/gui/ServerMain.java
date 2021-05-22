@@ -50,26 +50,28 @@ public class ServerMain extends Application {
     @Override
     public void start(Stage primaryStage){
         System.out.println("I was started");
-        List<String> parameters = getParameters().getRaw();
-        Map<PlayerId, String> playerNames = new HashMap<>();
-
-        for (int i = 0; i < Menu.number_of_players; i++) {
-            PlayerId currentId = ALL.get(i);
-            if(i< parameters.size()){
-                playerNames.put(currentId, parameters.get(i));
-            }else{
-                playerNames.put(currentId, defaultNames.get(currentId));
-            }
-        }
-
 
         new Thread(() -> {
             try{
                 ServerSocket serverSocket = new ServerSocket(5108);
-
                 for (int i = 0; i < Menu.number_of_players-1; i++) {
                     sockets.add(serverSocket.accept());
                 }
+
+
+                List<String> parameters = getParameters().getRaw();
+                Map<PlayerId, String> playerNames = new HashMap<>();
+
+                for (int i = 0; i < Menu.number_of_players; i++) {
+                    PlayerId currentId = ALL.get(i);
+                    if(i< parameters.size()){
+                        playerNames.put(currentId, parameters.get(i));
+                    }else{
+                        playerNames.put(currentId, defaultNames.get(currentId));
+                    }
+                }
+
+
 
                 GraphicalPlayerAdapter graphicalPlayerAdapter = new GraphicalPlayerAdapter();
 
