@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Represents the view of the ticket and card draw piles, and face up cards, as well as the tickets and cards the player possesses.
@@ -89,7 +90,7 @@ class DecksViewCreator {
 
             handPane.getChildren().add(stackPane);
 
-            X_HAND_CARD_POS.put(card, (double) (-790 + 75*Card.ALL.indexOf(card)));
+            X_HAND_CARD_POS.put(card, (double) (-745 + 75*Card.ALL.indexOf(card)));
         }
         System.out.println(X_HAND_CARD_POS);
         return mainHBox;
@@ -128,13 +129,13 @@ class DecksViewCreator {
             animCard.getStyleClass().add("card");
 
 
-
             //changes the graphics of the card according to what card is stored in the slot
             gameState.getFaceUpCard(slot).addListener((property, oldValue, newValue) -> {
                 stackPane.getStyleClass().add(getCardName(newValue));
+                System.out.println("clicked " + oldValue);
 
                 if (oldValue != null) {
-                    animCard.getStyleClass().add(getCardName(oldValue));
+                   animCard.getStyleClass().add(getCardName(oldValue));
                     stackPane.getStyleClass().remove(getCardName(oldValue));
                     if(animCard.getStyleClass().size()>1) {
                         animCard.getStyleClass().remove(1);
@@ -143,14 +144,24 @@ class DecksViewCreator {
                 }else{
                     animCard.getStyleClass().add(getCardName(newValue));
                 }
+
+                System.out.println("result from listener " + animCard.getStyleClass());
+                System.out.println("---------------");
             });
             stackPane.disableProperty().bind(drawCards.isNull());
+
             //
 
             stackPane.setOnMouseClicked(event -> {
+                System.out.println("**************");
 //StackPane@78279375[styleClass=card ORANGE]
                 String source = event.getSource().toString();
-                String cardname = source.substring(35, source.length()-1);
+                System.out.println("the source of the click " + source);
+                String bracketPattern = Pattern.quote("[");
+                String[] sourceTab = source.split(bracketPattern, -1);
+
+                String cardname = sourceTab[1].substring(16, sourceTab[1].length()-1);
+                System.out.println(cardname + " : card");
 
                 double posx =0;
                 if (cardname.equals("NEUTRAL")) {
@@ -160,8 +171,12 @@ class DecksViewCreator {
                     Card cardType = Card.of(color);
                     posx = X_HAND_CARD_POS.get(cardType);
                 }
-               // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 500-(slot*100));
-                Animations.translate(animCard, posx,550-(slot*100));
+                if(animCard.getStyleClass().size()>1){ animCard.getStyleClass().remove(1);}
+                animCard.getStyleClass().add(cardname);
+                System.out.println("anim used in mouse event " + animCard.getStyleClass());
+               // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 575-(slot*100));
+                Animations.translate(animCard, posx,575-(slot*100));
+
 
                 drawCards.get().onDrawCards(slot);
 

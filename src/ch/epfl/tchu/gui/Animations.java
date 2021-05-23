@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -17,14 +16,14 @@ import javafx.animation.TranslateTransition;
 //organizing all the animation possibilities
 public class Animations extends Application{
     private static final Duration ONE_S = Duration.millis(1000);
-    private static final double PATH_RATE = 1.75;
+    private static final double PATH_RATE = 1.2;
 
 
 //works
     public static void translate(Node node, double x, double y){
         node.setVisible(true);
         TranslateTransition translate  = new TranslateTransition();
-        //translate.setRate(PATH_RATE);
+        translate.setRate(PATH_RATE);
         translate.setFromX(0);
         translate.setFromY(0);
         translate.setByX(x);
