@@ -36,7 +36,7 @@ public class Animations extends Application{
 
     }
 //works
-    public static void flip(Node faceDown, Node faceUp){
+    public static void flip(Node faceDown, Node faceUp){ //maybe do all three at the same time in sequence to do setOnFinished to hide the three
         int rotAngle = 90;
         RotateTransition fromFaceDown = new RotateTransition(ONE_S);
         RotateTransition toFaceUp = new RotateTransition(ONE_S);
@@ -77,6 +77,7 @@ public class Animations extends Application{
 
 
         SequentialTransition sq = new SequentialTransition(pt, tt);
+        sq.setOnFinished(event -> node.setVisible(false));
         sq.play();
 
     }
