@@ -16,8 +16,9 @@ import java.util.stream.Collectors;
  */
 
 public final class Game {
-    private Game() {
-    }
+    private Game() {}
+
+    private static SortedBag<Card> tunnelDrawnCards;
 
     /**
      * Runs a game of tCHu
@@ -280,6 +281,8 @@ public final class Game {
             allGameData.modifyGameState(allGameData.gameState.withoutTopCard());
         }
         SortedBag<Card> drawnCards = drawCardsBuild.build();
+        //aaaaaaa
+        tunnelDrawnCards = drawnCards;
 
         //Calculating additional cost
         int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
@@ -464,6 +467,9 @@ public final class Game {
         //receiveInfoForAll(allGameData.players, endOfGameMessage);
     }
 
+    public static SortedBag<Card> getDrawnCards(){ return tunnelDrawnCards; }
+
+
     /**
      * Represents the information contained in the game, and provides utility methods to go to the game's next turn or check if the last turn begins.
      * This class was created to avoid having >5 arguments in each method that is called by play().
@@ -517,5 +523,6 @@ public final class Game {
         private boolean lastTurnBegins() {
             return this.gameState.lastTurnBegins();
         }
+
     }
 }

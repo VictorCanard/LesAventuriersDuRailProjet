@@ -1,6 +1,8 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.Color;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
@@ -20,6 +22,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * Represents the view of the ticket and card draw piles, and face up cards, as well as the tickets and cards the player possesses.
  *
@@ -27,6 +32,9 @@ import javafx.scene.text.Text;
  */
 
 class DecksViewCreator {
+    private static final Map<Card, Double> X_HAND_CARD_POS = new EnumMap(Card.class) ;
+
+
     private DecksViewCreator() {
     }
 
@@ -81,7 +89,9 @@ class DecksViewCreator {
 
             handPane.getChildren().add(stackPane);
 
+            X_HAND_CARD_POS.put(card, (double) (-790 + 75*Card.ALL.indexOf(card)));
         }
+        System.out.println(X_HAND_CARD_POS);
         return mainHBox;
     }
 
@@ -110,24 +120,55 @@ class DecksViewCreator {
 
         //face up cards
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
+            StackPane mainStack = new StackPane();
             StackPane stackPane = new StackPane();
             stackPane.getStyleClass().add("card");
 
+            StackPane animCard = new StackPane();
+            animCard.getStyleClass().add("card");
+
+
+
             //changes the graphics of the card according to what card is stored in the slot
             gameState.getFaceUpCard(slot).addListener((property, oldValue, newValue) -> {
-
                 stackPane.getStyleClass().add(getCardName(newValue));
 
                 if (oldValue != null) {
+                    animCard.getStyleClass().add(getCardName(oldValue));
                     stackPane.getStyleClass().remove(getCardName(oldValue));
+                    if(animCard.getStyleClass().size()>1) {
+                        animCard.getStyleClass().remove(1);
+                    }
+
+                }else{
+                    animCard.getStyleClass().add(getCardName(newValue));
                 }
             });
             stackPane.disableProperty().bind(drawCards.isNull());
-
             //
-            stackPane.setOnMouseClicked(event -> drawCards.get().onDrawCards(slot));
 
-            cardPane.getChildren().add(cardRectangles(stackPane));
+            stackPane.setOnMouseClicked(event -> {
+//StackPane@78279375[styleClass=card ORANGE]
+                String source = event.getSource().toString();
+                String cardname = source.substring(35, source.length()-1);
+
+                double posx =0;
+                if (cardname.equals("NEUTRAL")) {
+                    posx = X_HAND_CARD_POS.get(Card.LOCOMOTIVE);
+                } else {
+                    Color color = Color.valueOf(cardname);
+                    Card cardType = Card.of(color);
+                    posx = X_HAND_CARD_POS.get(cardType);
+                }
+               // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 500-(slot*100));
+                Animations.translate(animCard, posx,550-(slot*100));
+
+                drawCards.get().onDrawCards(slot);
+
+            });
+
+            mainStack.getChildren().addAll(cardRectangles(animCard), cardRectangles(stackPane));
+            cardPane.getChildren().addAll(mainStack);
         }
 
         //cards button
@@ -143,6 +184,32 @@ class DecksViewCreator {
 
         return cardPane;
     }
+
+
+    public static Node createDrawnCards(SortedBag<Card> drawnCards, ObservableGameState gameState){
+        HBox hbox = new HBox();
+        HBox mainHbox = new HBox(hbox);
+        mainHbox.getStylesheets().addAll("decks.css", "colors.css");
+        mainHbox.setId("drawCards");
+
+  /*      StackPane sp1 = new StackPane(cardPane(drawnCards.get(0)), backOfCard());
+        StackPane sp2 = new StackPane(cardPane(drawnCards.get(1)), backOfCard());
+        StackPane sp3 = new StackPane(cardPane(drawnCards.get(2)), backOfCard());*/
+
+
+        StackPane sp1 = new StackPane(backOfCard(), cardPane(drawnCards.get(0)));
+        StackPane sp2 = new StackPane(backOfCard(), cardPane(drawnCards.get(1)));
+        StackPane sp3 = new StackPane(backOfCard(), cardPane(drawnCards.get(2)));
+
+        hbox.getChildren().addAll(sp1, sp2, sp3);
+
+        //visible property
+
+        return mainHbox;
+    }
+
+
+
 
     /**
      * Finds the String to associate to a specific card. Neutral is the card is a locomotive, its name in uppercase otherwise
@@ -213,5 +280,20 @@ class DecksViewCreator {
         stackPane.getChildren().addAll(outside, inside, train);
         return stackPane;
     }
+
+    private static StackPane backOfCard(){
+        StackPane stackPane = new StackPane();
+        stackPane.getStyleClass().add("card");
+        Rectangle outside = new Rectangle(60, 90);
+        outside.getStyleClass().add("outside");
+
+        stackPane.getChildren().add(outside);
+        return stackPane;
+    }
+
+
+
+
+
 }
 

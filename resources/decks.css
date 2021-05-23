@@ -72,3 +72,9 @@ Button.gauged .foreground {
     -fx-padding: 5 50 5 50;
     -fx-spacing: 10;
 }
+/* 3 Drawn cards to be revealed */
+#drawCards{
+    -fx-alignment: center;
+    -fx-spacing: 5;
+}
+
