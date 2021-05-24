@@ -16,6 +16,7 @@ import java.util.List;
 public final class Info {
     private final String playerName;
 
+
     /**
      * Info constructor: assigns a player name under which all the activity will be described
      *
@@ -28,7 +29,7 @@ public final class Info {
     /**
      * Gives the french name of the given card
      *
-     * @param card : the specified card to get the name from
+     * @param card  : the specified card to get the name from
      * @param count : the number of cards there are
      * @return message including the french name of the given card, in plural if there is more than one
      */
@@ -75,13 +76,19 @@ public final class Info {
      * Gives the message that the two players have tied at the end of the game
      *
      * @param playerNames : the list of names of the two players
-     * @param points : number of points they have earned at the end of the game
+     * @param points      : number of points they have earned at the end of the game
      * @return the message that the players have tied and how many points they earned
      */
     public static String draw(List<String> playerNames, int points) {
-        String playersMessage = String.format("%s%s%s", playerNames.get(0), StringsFr.AND_SEPARATOR, playerNames.get(1));
+        StringBuilder players = new StringBuilder();
+        for (int i = 0; i < Menu.number_of_players; i++) {
+            String andSeparator = (i == Menu.number_of_players - 2) ? StringsFr.AND_SEPARATOR : "";
 
-        return String.format(StringsFr.DRAW, playersMessage, points);
+            players.append(playerNames.get(i))
+                    .append(andSeparator);
+        }
+
+        return String.format(StringsFr.DRAW, players, points);
     }
 
     /**
@@ -96,12 +103,11 @@ public final class Info {
         List<String> cardList = getListOfCards(bagOfCards);
 
         for (int i = 0; i < cardList.size(); i++) {
-            int commaNumber = 2;
             //Only adds commas for n-2 objects
-            String commaSeparator = (i < cardList.size() - commaNumber) ? ", " : "";
+            String commaSeparator = (i < cardList.size() - 2) ? ", " : "";
 
             //Only adds an And Separator after the second to last object
-            String andSeparator = (i == cardList.size() - commaNumber) ? StringsFr.AND_SEPARATOR : "";
+            String andSeparator = (i == cardList.size() - 2) ? StringsFr.AND_SEPARATOR : "";
 
             stringOfAllCardNamesToReturn
                     //Name of the card in French
@@ -122,13 +128,12 @@ public final class Info {
      */
     private static List<String> getListOfCards(SortedBag<Card> originalBag) {
         List<String> stringList = new ArrayList<>();
-        String space = " ";
 
         for (Card currentCard : originalBag.toSet()) {
             //Number of cards
             int multiplicity = originalBag.countOf(currentCard);
 
-            String stringToAdd = multiplicity + space + cardName(currentCard, multiplicity);
+            String stringToAdd = multiplicity + " " + cardName(currentCard, multiplicity);
             stringList.add(stringToAdd);
         }
         return stringList;
@@ -188,8 +193,7 @@ public final class Info {
      * @return message including the card name that was drawn from the face-up cards
      */
     public String drewVisibleCard(Card card) {
-        int numberOfCards = 1;
-        return String.format(StringsFr.DREW_VISIBLE_CARD, playerName, cardName(card, numberOfCards));
+        return String.format(StringsFr.DREW_VISIBLE_CARD, playerName, cardName(card, 1));
     }
 
     /**
@@ -206,7 +210,7 @@ public final class Info {
     /**
      * Gives the message announcing that the player wants to take a tunnel route
      *
-     * @param route : the tunnel route to be claimed
+     * @param route        : the tunnel route to be claimed
      * @param initialCards : the cards the player has put down initially to claim the tunnel route
      * @return message including the tunnel to be attempted and the initial cards played by the player
      */
@@ -217,7 +221,7 @@ public final class Info {
     /**
      * Gives the message that the player has drawn 3 additional cards from the draw pile
      *
-     * @param drawnCards : the three drawn cards
+     * @param drawnCards     : the three drawn cards
      * @param additionalCost : the additional cost from the three cards
      * @return message including the names of the additional cards and the additional cost
      */
@@ -271,12 +275,32 @@ public final class Info {
      * Gives the message that the player has won
      *
      * @param points : number of points the player has won with
-     * @param loserPoints : number of points the losing opponent has gained
      * @return message including the number of points of the winning and losing player
      */
-    public String won(int points, int loserPoints) {
-        return String.format(StringsFr.WINS, playerName, points, StringsFr.plural(points), loserPoints, StringsFr.plural(loserPoints));
+    public String won(List<String> winnersToLosers, List<Integer> points) {
+        StringBuilder sb = new StringBuilder();
+
+        sb
+                .append("\n")
+                .append(String.format(StringsFr.WINS, playerName, points.get(0), StringsFr.plural(points.get(0))));
+
+        for (int i = 1; i < Menu.number_of_players; i++) {
+            String contre = (i == 1) ? StringsFr.CONTRE : "";
+            String and = (i == Menu.number_of_players -1) ? StringsFr.AND_SEPARATOR : "";
+            String comma = (i < Menu.number_of_players -1) ? ", " : "";
+            sb
+                    .append(comma)
+                    .append(and)
+                    .append(contre)
+                    .append(String.format(StringsFr.POINTS, points.get(i), StringsFr.plural(points.get(i)), winnersToLosers.get(i)));
+        }
+        sb.append(".\n");
+
+        return sb.toString();
+
+
     }
+
 
     /**
      * Transforms a route into a textual representation

@@ -3,8 +3,10 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.Info;
+import ch.epfl.tchu.gui.Menu;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a game of tCHu
@@ -27,8 +29,8 @@ public final class Game {
      * @throws IllegalArgumentException if one of the maps (playerNames or players) doesn't have exactly two pairs as there as two players in the game.
      */
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng) {
-        Preconditions.checkArgument(players.size() == PlayerId.COUNT);
-        Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
+        Preconditions.checkArgument(players.size() == Menu.number_of_players);
+        Preconditions.checkArgument(playerNames.size() == Menu.number_of_players);
 
         //before the game starts
 
@@ -39,13 +41,10 @@ public final class Game {
 
         allGameData.modifyGameState(setup(allGameData));
 
-        //plays one round first so as to make sure the condition lastTurnBegins() is tested at the right moment
-        allGameData.modifyGameState(nextTurn(allGameData));
-
         //the actual game starts
-        while (!allGameData.lastTurnBegins()) {
-            allGameData.forNextTurn();
+        while (allGameData.gameState.lastPlayer() == null) {
             allGameData.modifyGameState(nextTurn(allGameData));
+            allGameData.forNextTurn();
         }
         //Last turn begins returned true thus the end of game is activated
         endOfGame(allGameData);
@@ -359,7 +358,7 @@ public final class Game {
         //LastTurnBegins
 
         //One more turn for each player
-        for (int i = 0; i < PlayerId.COUNT; i++) {
+        for (int i = 0; i < Menu.number_of_players; i++) {
             allGameData.modifyGameState(allGameData.gameState.forNextTurn());
             nextTurn(allGameData);
         }
@@ -384,7 +383,7 @@ public final class Game {
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
 
-        PlayerId.ALL.forEach((playerId -> {
+        Menu.activePlayers.forEach((playerId -> {
             //Calculate longest trails
             Trail playerLongestTrail = Trail.longest(allGameData.gameState.playerState(playerId).routes());
             eachPlayerAssociatedTrails.put(playerId, playerLongestTrail);
@@ -395,13 +394,13 @@ public final class Game {
 
         updateAllStates(players, allGameData.gameState);
 
-        int maxLengthTrail = PlayerId.ALL
+        int maxLengthTrail = Menu.activePlayers
                 .stream()
                 .mapToInt(playerId -> eachPlayerAssociatedTrails.get(playerId).length())
                 .max()
                 .orElseThrow();
 
-        PlayerId.ALL.forEach(playerId -> {
+        Menu.activePlayers.forEach(playerId -> {
             if (eachPlayerAssociatedTrails.get(playerId).length() == maxLengthTrail) {
 
                 associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);
@@ -418,33 +417,51 @@ public final class Game {
      * @param allGameData : all of the game's information:
      */
     private static void determineWinnerOrDraw(Map<PlayerId, Integer> associatedPlayerPoints, AllGameData allGameData) {
-        PlayerId currentPlayerId = allGameData.gameState.currentPlayerId();
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
+        Map<PlayerId, String> names = allGameData.playerNames;
 
-        int maxPoints = PlayerId.ALL.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
-
-        int currentPlayerPoints = associatedPlayerPoints.get(currentPlayerId);
-        int nextPlayerPoints = associatedPlayerPoints.get(currentPlayerId.next());
+        int maxPoints = Menu.activePlayers.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
 
         String endOfGameMessage;
 
         if (associatedPlayerPoints.values()
                 .stream()
                 .filter(integer -> integer == maxPoints)
-                .count() == PlayerId.COUNT) {
-            //Both players came to a draw (can be generalized to all players)
+                .count() == Menu.number_of_players) {
+            //All players came to a draw
             endOfGameMessage = Info
-                    .draw(new ArrayList<>(allGameData.playerNames.values()), currentPlayerPoints);
+                    .draw(new ArrayList<>(allGameData.playerNames.values()), maxPoints);
 
-        } else if (currentPlayerPoints == maxPoints) {
-            //Current Player won
-            endOfGameMessage = infoGenerators.get(currentPlayerId)
-                    .won(currentPlayerPoints, nextPlayerPoints);
 
-        } else {
-            //Next Player won
-            endOfGameMessage = infoGenerators.get(currentPlayerId.next())
-                    .won(nextPlayerPoints, currentPlayerPoints);
+        } else{
+            List<PlayerId> playerIds =
+                    associatedPlayerPoints
+                            .entrySet()
+                            .stream()
+                            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                            .map(Map.Entry::getKey)
+                            .collect(Collectors.toList());
+
+            List<Integer> pointsInDescending = associatedPlayerPoints
+                    .values()
+                    .stream()
+                    .sorted(Comparator.reverseOrder())
+                    .collect(Collectors.toList());
+
+
+
+            List<String> winnersToL =
+                    playerIds
+                    .stream()
+                    .map(names::get)
+                    .collect(Collectors.toList());
+
+
+            endOfGameMessage = infoGenerators.get(Menu.activePlayers
+                    .stream()
+                    .max(Comparator.comparingInt(associatedPlayerPoints::get))
+                    .orElseThrow())
+                    .won(winnersToL, pointsInDescending);
         }
         receiveInfoForAll(allGameData.players, endOfGameMessage);
     }
@@ -492,15 +509,6 @@ public final class Game {
          */
         private void forNextTurn() {
             this.gameState = this.gameState.forNextTurn();
-        }
-
-        /**
-         * Checks to see if last turn is beginning
-         *
-         * @return true if the last turn begins, else otherwise
-         */
-        private boolean lastTurnBegins() {
-            return this.gameState.lastTurnBegins();
         }
     }
 }

@@ -46,7 +46,7 @@ public final class Trail {
     public static Trail longest(List<Route> routes) {
         List<Trail> trails = listOfTrailsWithOneRoute(routes);
 
-        Trail longestTrail = trails
+        Trail longestTrail = (routes.isEmpty()) ? EMPTY_TRAIL : trails
                 .stream()
                 .max(Comparator.comparingInt(trail -> trail.length))
                 .orElse(EMPTY_TRAIL);
