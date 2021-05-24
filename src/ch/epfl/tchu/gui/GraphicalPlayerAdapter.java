@@ -99,7 +99,6 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public Route claimedRoute() {
-
         return withTryAndCatch(routeQueue);
     }
 

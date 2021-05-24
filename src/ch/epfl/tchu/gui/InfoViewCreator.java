@@ -1,5 +1,8 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.Game;
 import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -50,6 +53,9 @@ public class InfoViewCreator {
         TextFlow gameInfo = new TextFlow();
         gameInfo.setId("game-info");
         infoPane.getChildren().add(gameInfo);
+        /*draw cards to be displayed under infos bc there is space*/
+        infoPane.getChildren().add(DecksViewCreator.createDrawnCards(SortedBag.of(2, Card.LOCOMOTIVE, 1, Card.ORANGE), gameState));
+
         //
         Bindings.bindContent(gameInfo.getChildren(), infos);
         return infoPane;
@@ -87,4 +93,9 @@ public class InfoViewCreator {
 
         return playerStats;
     }
+
+    private static Node cards(ObservableGameState gameState, Node cards){
+        return cards;
+    }
+
 }
