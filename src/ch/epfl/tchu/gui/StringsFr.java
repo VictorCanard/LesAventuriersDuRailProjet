@@ -58,7 +58,7 @@ public final class StringsFr {
 
     public static final String WINS =
             "\n%s remporte la victoire avec %s point%s";
-    public static final String CONTRE = "contre";
+    public static final String CONTRE = "contre ";
     public static final String POINTS =
             "%s point%s pour %s";
 

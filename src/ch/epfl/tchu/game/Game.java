@@ -41,13 +41,10 @@ public final class Game {
 
         allGameData.modifyGameState(setup(allGameData));
 
-        //plays one round first so as to make sure the condition lastTurnBegins() is tested at the right moment
-        allGameData.modifyGameState(nextTurn(allGameData));
-
         //the actual game starts
-        while (!allGameData.lastTurnBegins()) {
-            allGameData.forNextTurn();
+        while (allGameData.gameState.lastPlayer() == null) {
             allGameData.modifyGameState(nextTurn(allGameData));
+            allGameData.forNextTurn();
         }
         //Last turn begins returned true thus the end of game is activated
         endOfGame(allGameData);
@@ -451,17 +448,22 @@ public final class Game {
                     .sorted(Comparator.reverseOrder())
                     .collect(Collectors.toList());
 
-            List<String> winnersToL = new ArrayList<>();
 
-            playerIds.stream().map(playerId -> names.get(playerId)).collect(Collectors.toList());
 
-            /*endOfGameMessage = infoGenerators.get(Menu.activePlayers
+            List<String> winnersToL =
+                    playerIds
+                    .stream()
+                    .map(names::get)
+                    .collect(Collectors.toList());
+
+
+            endOfGameMessage = infoGenerators.get(Menu.activePlayers
                     .stream()
                     .max(Comparator.comparingInt(associatedPlayerPoints::get))
                     .orElseThrow())
-                    .won(pointsInDescending);*/
+                    .won(winnersToL, pointsInDescending);
         }
-        //receiveInfoForAll(allGameData.players, endOfGameMessage);
+        receiveInfoForAll(allGameData.players, endOfGameMessage);
     }
 
     /**
@@ -507,15 +509,6 @@ public final class Game {
          */
         private void forNextTurn() {
             this.gameState = this.gameState.forNextTurn();
-        }
-
-        /**
-         * Checks to see if last turn is beginning
-         *
-         * @return true if the last turn begins, else otherwise
-         */
-        private boolean lastTurnBegins() {
-            return this.gameState.lastTurnBegins();
         }
     }
 }

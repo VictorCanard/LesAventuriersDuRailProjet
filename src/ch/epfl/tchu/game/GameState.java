@@ -262,9 +262,8 @@ public final class GameState extends PublicGameState {
         boolean lastPlayerIsUnknown = (super.lastPlayer() == null);
 
         int numberOfCars = super.currentPlayerState().carCount();
-        int minWagons = 2;
 
-        boolean onlyTwoWagonsLeftOrLess = numberOfCars <= minWagons;
+        boolean onlyTwoWagonsLeftOrLess = numberOfCars <= Constants.NUMBER_OF_WAGONS_TO_BEGIN_LAST_TURN;
 
         return lastPlayerIsUnknown && onlyTwoWagonsLeftOrLess;
     }

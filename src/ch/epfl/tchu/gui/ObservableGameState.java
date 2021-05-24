@@ -237,9 +237,10 @@ public final class ObservableGameState {
         this.playerState = playerState;
     }
 
-    private void setTicketPoints(PlayerState playerState){
+    private void setTicketPoints(PlayerState playerState) {
         ticketPoints.set(playerState.ticketPoints());
     }
+
     private void setPlayerTickets(PlayerState playerState) {
         allPlayerTickets.addAll(playerState
                 .tickets()
@@ -255,10 +256,21 @@ public final class ObservableGameState {
     }
 
     private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
-        canPlayerClaimRoute.forEach((route, booleanObjectProperty) -> booleanObjectProperty.set(publicGameState.currentPlayerId().equals(playerId)
-                && playerState.canClaimRoute(route)
-                && !publicGameState.claimedRoutes().contains(route)
-                && !(allPairsOfStationsClaimed.get(route.stations()) == publicGameState.currentPlayerId())));
+        canPlayerClaimRoute.forEach((route, booleanObjectProperty) -> {
+            if (publicGameState.currentPlayerId().equals(playerId)
+                    && playerState.canClaimRoute(route)
+                    && !publicGameState.claimedRoutes().contains(route)) {
+
+                if (Menu.number_of_players == Constants.NUMBER_OF_PLAYERS_FOR_NO_DOUBLE_ROUTE_CAPTURE
+                ) {
+                    booleanObjectProperty.set(allPairsOfStationsClaimed.get(route.stations()) == null);
+                } else
+                    booleanObjectProperty.set(!(allPairsOfStationsClaimed.get(route.stations()) == publicGameState.currentPlayerId()));
+            } else {
+                booleanObjectProperty.set(false);
+            }
+
+        });
     }
 
     private void setEachPlayerCountAttributesCount(PublicGameState publicGameState) {
@@ -300,9 +312,10 @@ public final class ObservableGameState {
         return playerState.possibleClaimCards(route);
     }
 
-    public ReadOnlyIntegerProperty ticketPoints(){
+    public ReadOnlyIntegerProperty ticketPoints() {
         return ticketPoints;
     }
+
     /**
      * Determines if the given route is claimable or not
      *

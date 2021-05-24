@@ -21,6 +21,8 @@ public final class Trail {
     private final Station station2;
     private final int length;
 
+    private static final Trail EMPTY_TRAIL = new Trail(List.of(), null, null);
+
     /**
      * Private constructor for a trail
      *
@@ -44,10 +46,10 @@ public final class Trail {
     public static Trail longest(List<Route> routes) {
         List<Trail> trails = listOfTrailsWithOneRoute(routes);
 
-        Trail longestTrail = trails
+        Trail longestTrail = (routes.isEmpty()) ? EMPTY_TRAIL : trails
                 .stream()
                 .max(Comparator.comparingInt(trail -> trail.length))
-                .orElse(Constants.EMPTY_TRAIL);
+                .orElse(EMPTY_TRAIL);
 
         while (!(trails.isEmpty())) {
             ArrayList<Trail> newTrails = new ArrayList<>();
