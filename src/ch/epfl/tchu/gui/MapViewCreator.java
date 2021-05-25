@@ -39,7 +39,7 @@ class MapViewCreator {
         map.getStylesheets().addAll("map.css", "colors.css");
 
         //
-        ImageView mapBackground = new ImageView("map.png");
+        ImageView mapBackground = new ImageView();
 
         map.getChildren().add(mapBackground);
 

@@ -19,6 +19,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -58,16 +59,16 @@ class DecksViewCreator {
         //Score for Tickets
         Label ticketScore = new Label();
         ReadOnlyIntegerProperty points = gameState.ticketPoints();
-        ticketScore.setId("ticket-points");
+        ticketScore.getStyleClass().add("ticket-points");
 
         StringExpression string = new SimpleStringProperty("Total courant des tickets: ").concat(points);
         ticketScore.textProperty().bind(string);
 
         points.addListener((property, oldV, newV)-> {
             if(newV.shortValue() < 0){
-                ticketScore.getStyleClass().set(0, "negative");
+                ticketScore.setTextFill(Paint.valueOf("red"));
             }else{
-                ticketScore.getStyleClass().set(0, "positive");
+                ticketScore.setTextFill(Paint.valueOf("green"));
             }
         });
         //
@@ -134,8 +135,8 @@ class DecksViewCreator {
                 stackPane.getStyleClass().add(getCardName(newValue));
                 System.out.println("clicked " + oldValue);
 
-                if (oldValue != null) {
-                   animCard.getStyleClass().add(getCardName(oldValue));
+                if (oldValue != null) { //You can just use a set here
+                   animCard.getStyleClass().add(getCardName(oldValue)); //New value here no ?
                     stackPane.getStyleClass().remove(getCardName(oldValue));
                     if(animCard.getStyleClass().size()>1) {
                         animCard.getStyleClass().remove(1);
