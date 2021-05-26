@@ -28,34 +28,31 @@ class MapViewCreator {
     /**
      * Creates the map view used by both players
      *
-     * @param gameState : observable game state which allows the graphics to change according to the game's actual state
+     * @param gameState    : observable game state which allows the graphics to change according to the game's actual state
      * @param claimRouteHP : property containing the event handler when a player wants to claim a route
-     * @param cardChooser : an instance of the functional interface CardChooser used to choose some cards
+     * @param cardChooser  : an instance of the functional interface CardChooser used to choose some cards
      * @return A pane containing the map background and claimed/unclaimed routes
      */
     public static Node createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         Pane map = new Pane();
         //
         map.getStylesheets().addAll("map.css", "colors.css");
-
         //
-        ImageView mapBackground = new ImageView("map.png");
-
+        ImageView mapBackground = new ImageView();
         map.getChildren().add(mapBackground);
-
         //
         setAllRoutes(map, gameState, claimRouteHP, cardChooser);
-
+        //
         return map;
     }
 
     /**
      * Sets the graphics and interactive properties for all the routes in the game, claimed and unclaimed
      *
-     * @param map : the map pane
-     * @param gameState : observable game state which allows the graphics to change according to the game's actual state
+     * @param map          : the map pane
+     * @param gameState    : observable game state which allows the graphics to change according to the game's actual state
      * @param claimRouteHP : property containing the event handler when a player wants to claim a route
-     * @param cardChooser : an instance of the functional interface CardChooser used to choose some cards
+     * @param cardChooser  : an instance of the functional interface CardChooser used to choose some cards
      */
     private static void setAllRoutes(Pane map, ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         for (Route route : ChMap.routes()) {
@@ -63,10 +60,8 @@ class MapViewCreator {
 
             //Set Id, color and level to a route's group style class
             routeGroup.setId(route.id());
-
             String routeColor = (route.color() == null) ? "NEUTRAL" : route.color().name();
             routeGroup.getStyleClass().addAll("route", route.level().name(), routeColor);
-
 
             //When a route is clicked on, checks the cards a player could use to claim this route.
             //If he can play multiple sorted bag of cards, asks the player which one he wants to use.
@@ -76,7 +71,7 @@ class MapViewCreator {
                 if (possibleClaimCards.size() == 1) {
                     claimRouteHP.get().onClaimRoute(route, possibleClaimCards.get(0));
 
-                } else{
+                } else {
                     ChooseCardsHandler chooseCardsH =
                             chosenCards -> claimRouteHP.get().onClaimRoute(route, chosenCards);
 
@@ -85,18 +80,14 @@ class MapViewCreator {
             }));
 
             //When a route is claimed, adds the Id of the player who claimed it to the routeGroup's style class
-            gameState.getPlayerIdClaimingRoute(route).addListener((property, oldValue, newValue) -> {
-                if (newValue != null) {
-                    routeGroup.getStyleClass().add(newValue.name());
-                }
-            });
+            gameState.getPlayerIdClaimingRoute(route).addListener((property, oldValue, newValue) -> routeGroup.getStyleClass().add(newValue.name()));
 
             //If the route isn't claimable or if the handler is null, deactivates the routeGroup
             routeGroup.disableProperty().bind(
                     claimRouteHP.isNull().or(gameState.claimable(route).not()));
 
+            //Adds the route group to the map
             map.getChildren().add(routeGroup);
-
             //
             setAllBlocksOfARoute(route, routeGroup);
         }
@@ -105,15 +96,15 @@ class MapViewCreator {
     /**
      * Sets the graphics of a given route
      *
-     * @param route : the route to set the graphics of
+     * @param route      : the route to set the graphics of
      * @param routeGroup : group of all the routes, their characteristics (id, level, color) and style class
      */
     private static void setAllBlocksOfARoute(Route route, Group routeGroup) {
-        int rectWidth = 36;
-        int rectHeight = 12;
-        int centerDiv = 2;
-        int wheelCenterPos = 6;
-        int wheelRad = 3;
+        int rectangleWidth = 36;
+        int rectangleHeight = 12;
+        int centerDivide = 2;
+        int wheelCenterPosition = 6;
+        int wheelRadius = 3;
 
         for (int currentRouteCase = 1; currentRouteCase <= route.length(); currentRouteCase++) {
             Group caseGroup = new Group();
@@ -121,7 +112,7 @@ class MapViewCreator {
 
             routeGroup.getChildren().add(caseGroup);
             //
-            Rectangle trackRectangle = new Rectangle(rectWidth, rectHeight);
+            Rectangle trackRectangle = new Rectangle(rectangleWidth, rectangleHeight);
             trackRectangle.getStyleClass().addAll("track", "filled");
 
             caseGroup.getChildren().add(trackRectangle);
@@ -131,14 +122,15 @@ class MapViewCreator {
 
             caseGroup.getChildren().add(wagonGroup);
             //
-            Rectangle wagonRectangle = new Rectangle(rectWidth, rectHeight);
+            Rectangle wagonRectangle = new Rectangle(rectangleWidth, rectangleHeight);
             wagonRectangle.getStyleClass().add("filled");
 
-            double centerX = wagonRectangle.widthProperty().get() / centerDiv;
-            double centerY = wagonRectangle.heightProperty().get() / centerDiv;
+            //
+            double centerX = wagonRectangle.widthProperty().get() / centerDivide;
+            double centerY = wagonRectangle.heightProperty().get() / centerDivide;
 
-            Circle wheel1 = new Circle(centerX - wheelCenterPos, centerY, wheelRad);
-            Circle wheel2 = new Circle(centerX + wheelCenterPos, centerY, wheelRad);
+            Circle wheel1 = new Circle(centerX - wheelCenterPosition, centerY, wheelRadius);
+            Circle wheel2 = new Circle(centerX + wheelCenterPosition, centerY, wheelRadius);
 
             wagonGroup.getChildren().addAll(wagonRectangle, wheel1, wheel2);
         }

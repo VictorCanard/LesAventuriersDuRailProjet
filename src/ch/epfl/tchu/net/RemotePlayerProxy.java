@@ -45,7 +45,8 @@ public class RemotePlayerProxy implements Player {
     /**
      * The following eleven overridden methods from the interface Player allow the proxy to manage
      * each interaction between the proxy and the client, corresponding to the concerned action/event
-     * taking place in the game.
+     * taking place in the game. Each method serializes the arguments it receives, which are then written on the output stream,
+     * if the method has a return value, it also reads serialized objects on the input stream which it deserializes and then returns.
      */
 
     @Override

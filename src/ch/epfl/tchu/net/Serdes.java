@@ -3,13 +3,14 @@ package ch.epfl.tchu.net;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Represents all the serdes used in the game
+ * Represents all the Serdes used in the game
  *
  * @author Anne-Marie Rusu (296098)
  */
@@ -24,21 +25,22 @@ public class Serdes {
 
     private static final String SEMI_COLON_PATTERN = Pattern.quote(";");
     private static final String COLON_PATTERN = Pattern.quote(":");
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     /**
      * Serde of an integer
      */
-    public static final Serde<Integer> INTEGER_SERDE = Serde.of(i -> Integer.toString(i), Integer::parseInt);
+    public static final Serde<Integer> INTEGER_SERDE = Serde.of(integer -> Integer.toString(integer), Integer::parseInt);
 
     /**
      * Serde of a string
      */
     public static final Serde<String> STRING_SERDE = Serde.of(
-            string -> Base64.getEncoder().encodeToString(string.getBytes(StandardCharsets.UTF_8)),
+            string -> Base64.getEncoder().encodeToString(string.getBytes(UTF_8)),
 
             serializedString -> new String(
                     Base64.getDecoder().decode(serializedString),
-                    StandardCharsets.UTF_8)
+                    UTF_8)
     );
     /**
      * Serde of a player id
@@ -102,7 +104,7 @@ public class Serdes {
                     .toString(),
 
             (string) -> {
-                String[] splitString = string.split(SEMI_COLON_PATTERN, -1);
+                String[] splitString = string.split(SEMI_COLON_PATTERN, Serde.patternLimit);
                 return new PublicCardState(
                         LIST_CARD_SERDE.deserialize(splitString[0]),
                         INTEGER_SERDE.deserialize(splitString[1]),
@@ -120,7 +122,7 @@ public class Serdes {
                     .toString(),
 
             (string) -> {
-                String[] splitString = string.split(SEMI_COLON_PATTERN, -1);
+                String[] splitString = string.split(SEMI_COLON_PATTERN, Serde.patternLimit);
                 return new PublicPlayerState(
                         INTEGER_SERDE.deserialize(splitString[0]),
                         INTEGER_SERDE.deserialize(splitString[1]),
@@ -139,7 +141,7 @@ public class Serdes {
                     .toString(),
 
             (string) -> {
-                String[] splitString = string.split(SEMI_COLON_PATTERN, -1);
+                String[] splitString = string.split(SEMI_COLON_PATTERN, Serde.patternLimit);
                 return new PlayerState(
                         SORTED_BAG_TICKET_SERDE.deserialize(splitString[0]),
                         SORTED_BAG_CARD_SERDE.deserialize(splitString[1]),
@@ -150,7 +152,10 @@ public class Serdes {
      */
     public static final Serde<PublicGameState> PUBLIC_GAME_STATE_SERDE = Serde.of(
             (publicGameState) -> {
-                String allPublicPlayerStates = PlayerId.ALL.stream().map(playerId -> PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(playerId))).collect(Collectors.joining(COLON));
+                String allPublicPlayerStates = PlayerId.ALL
+                        .stream()
+                        .map(playerId -> PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(playerId)))
+                        .collect(Collectors.joining(COLON));
 
                 return new StringJoiner(COLON)
                         .add(INTEGER_SERDE.serialize(publicGameState.ticketsCount()))
@@ -163,12 +168,12 @@ public class Serdes {
 
 
             (serializedString) -> {
-                String[] splitString = serializedString.split(COLON_PATTERN, -1);
+                String[] splitString = serializedString.split(COLON_PATTERN, Serde.patternLimit);
 
                 Map<PlayerId, PublicPlayerState> allPlayerStates = new HashMap<>();
 
                 for (int i = 0; i < PlayerId.COUNT; i++) {
-                    allPlayerStates.put(PlayerId.values()[i], PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[i+3]));
+                    allPlayerStates.put(PlayerId.ALL.get(i), PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[i+3]));
                 }
 
                 return new PublicGameState(

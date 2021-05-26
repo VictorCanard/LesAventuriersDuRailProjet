@@ -67,6 +67,7 @@ public class ServerMain extends Application {
             try {
                 ServerSocket serverSocket = new ServerSocket(port);
 
+               
                 sockets.addAll(Collections.nCopies(COUNT - localPlayerNumber, serverSocket.accept()));
 
                 for (int i = 0; i < COUNT; i++) {

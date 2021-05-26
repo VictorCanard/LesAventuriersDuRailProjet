@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
  */
 
 public interface Serde<T> {
+    String emptyString = "";
+    int patternLimit = -1;
+    
     /**
      * Static generic method that creates a serde with the serializing and deserializing functions given as arguments.
      *
@@ -50,7 +53,6 @@ public interface Serde<T> {
      */
     static <T> Serde<T> oneOf(List<T> listOfValuesOfEnumType) {
         Preconditions.checkArgument(listOfValuesOfEnumType != null);
-        String emptyString = "";
 
         Function<T, String> serializingFunction = (t) -> (t == null) ? emptyString : String.valueOf(listOfValuesOfEnumType.indexOf(t));
 
@@ -70,7 +72,6 @@ public interface Serde<T> {
      * @return a Serde of a list of a specified type
      */
     static <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter) {
-        String emptyString = "";
         Function<List<T>, String> serializingFunction = (list) -> (list.isEmpty()) ? emptyString :
                 list
                         .stream()
@@ -79,7 +80,7 @@ public interface Serde<T> {
 
 
         Function<String, List<T>> deserializingFunction = (string) -> (string.equals(emptyString)) ? List.of() :
-                Arrays.stream(string.split(Pattern.quote(delimiter), -1))
+                Arrays.stream(string.split(Pattern.quote(delimiter), patternLimit))
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList());
 
@@ -97,14 +98,13 @@ public interface Serde<T> {
      * @return a Serde of a sorted bag of a specified type
      */
     static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> usedSerde, String delimiter) {
-        String emptyString = "";
         Function<SortedBag<T>, String> serializingFunction = (sortedBag) ->
                 sortedBag.stream()
                         .map(usedSerde::serialize)
                         .collect(Collectors.joining(delimiter));
 
         Function<String, SortedBag<T>> deserializingFunction = (string) -> (string.equals(emptyString)) ? SortedBag.of() :
-                SortedBag.of(Arrays.stream(string.split(Pattern.quote(delimiter), -1))
+                SortedBag.of(Arrays.stream(string.split(Pattern.quote(delimiter), patternLimit))
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList()));
 
