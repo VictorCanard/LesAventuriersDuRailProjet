@@ -22,7 +22,8 @@ HBox {
 }
 
 #start-button{
-    -fx-translate-y: 150px;
+    -fx-translate-y: 135px;
+    -fx-translate-x: -20px;
     -fx-background-color: green;
     -fx-text-fill: lightgreen;
     -fx-scale-y: 3px;
