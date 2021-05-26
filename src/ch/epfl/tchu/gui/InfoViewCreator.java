@@ -1,21 +1,25 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+import javafx.scene.Node;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Represents the view of the information panel
  *
  * @author Anne-Marie (296098)
- * @author Victor Canard-Duchêne (326913)
  */
 
 public class InfoViewCreator {
@@ -31,28 +35,29 @@ public class InfoViewCreator {
      * @param infos       : the messages that appear in the bottom-left corner giving information on the sequence of events of the game.
      * @return a Vertical Box containing the messages and each player's stats.
      */
-    public static VBox createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos) {
-        final String info = "info.css";
-        final String gameInfoString = "game-info";
-
+    public static Node createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos) {
         VBox infoPane = new VBox();
-        infoPane.getStylesheets().addAll(info, GuiUtils.COLORS);
+        infoPane.getStylesheets().addAll("info.css", "colors.css");
 
-        //Adds the players' statistics to their windows
+        //
         PlayerId currentId = playerId;
-        for (int i = 0; i < PlayerId.COUNT; i++) {
+        for (int i = 0; i < Menu.number_of_players; i++) {
             infoPane.getChildren().add(playerStats(currentId, playerNames, gameState));
             currentId = currentId.next();
         }
 
+        //
         Separator separator = new Separator();
         infoPane.getChildren().add(separator);
 
+        //
         TextFlow gameInfo = new TextFlow();
-        gameInfo.setId(gameInfoString);
+        gameInfo.setId("game-info");
         infoPane.getChildren().add(gameInfo);
-
         Bindings.bindContent(gameInfo.getChildren(), infos);
+
+        //draw cards to be displayed under infos bc there is space
+        infoPane.getChildren().add(DecksViewCreator.createDrawnCards(gameState)); //why can only the server see the 3 cards change...
 
         return infoPane;
     }
@@ -65,21 +70,20 @@ public class InfoViewCreator {
      * @param gameState   : the state of the game to display.
      * @return a Vertical Box with all stats concerning this player and all stats concerning the other player underneath it.
      */
-    private static VBox playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
-        final int circleRadius = 5;
-        final String playerStatsString = "player-stats";
-
+    private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
+        String playerName = playerNames.get(playerId);
+        String playerStyle = playerId.name();
+        //
         VBox playerStats = new VBox();
-        playerStats.setId(playerStatsString);
-        playerStats.getStyleClass().add(playerId.name());
+        playerStats.setId("player-stats");
+        playerStats.getStyleClass().add(playerStyle);
 
-        Circle circle = new Circle(circleRadius);
-        circle.getStyleClass().add(GuiUtils.FILLED);
-        
-        //Creates the text of the player's statistics
+        Circle circle = new Circle(5);
+        circle.getStyleClass().add("filled");
+
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,
-                playerNames.get(playerId),
+                playerName,
                 gameState.getTicketCount(playerId),
                 gameState.getCardCount(playerId),
                 gameState.getCarCount(playerId),
@@ -90,4 +94,9 @@ public class InfoViewCreator {
 
         return playerStats;
     }
+
+    private static Node cards(ObservableGameState gameState, Node cards){
+        return cards;
+    }
+
 }

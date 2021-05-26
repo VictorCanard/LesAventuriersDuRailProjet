@@ -41,7 +41,6 @@ public final class ObservableGameState {
     private PublicGameState publicGameState;
     private PlayerState playerState;
     private final List<ObjectProperty<Card>> tunnelDrawCards = new ArrayList<>();
-    private final ObservableList<Card> tDCards = FXCollections.observableArrayList();
 
     /**
      * Creates an instance of the observable game state in its initial state
@@ -78,7 +77,6 @@ public final class ObservableGameState {
             tunnelDrawCards.add(new SimpleObjectProperty<>(null));
         }
     }
-
 
     /**
      * Getter for the property corresponding to the percentage of tickets left in the ticket draw pile
@@ -119,17 +117,13 @@ public final class ObservableGameState {
     public ReadOnlyObjectProperty<Card> getTunnelDrawCard(int slot) {
         return tunnelDrawCards.get(slot);
     }
-    public ObservableList<Card> getTDCards(){ return tDCards;}
 
     private void setTunnelDrawCards(List<Card> newDrawCards) {
-        for (int i = 0; i< Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
+        for (int i = 0; i< 3; i++) {
             ObjectProperty<Card> cardObjectProperty = tunnelDrawCards.get(i);
             Card newCard = newDrawCards.get(i);
             cardObjectProperty.set(newCard);
         }
-    }
-    private void setTDCards(List<Card> newDrawCards) {
-        tDCards.setAll(newDrawCards);
     }
 
     /**
@@ -235,13 +229,6 @@ public final class ObservableGameState {
         }));
     }
 
-
-    public void setTD(){
-        if(Game.getAddTunnelCards() != null)
-            setTDCards(Game.getAddTunnelCards().toList());
-    }
-
-
     /**
      * Sets the state of the observable game state
      *
@@ -258,7 +245,6 @@ public final class ObservableGameState {
         setFaceUpCards(publicGameState.cardState().faceUpCards());
         setRoutesPlayerId(publicGameState);
         setTicketPoints(playerState);
-
         //new
         if(Game.getAddTunnelCards() != null)
         setTunnelDrawCards(Objects.requireNonNull(Game.getAddTunnelCards().toList()));
