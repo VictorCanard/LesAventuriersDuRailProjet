@@ -34,8 +34,9 @@ class DecksViewCreator {
      * @return a Horizontal Box with a specific scene graph (set of children and attached nodes)
      */
     public static HBox createHandView(ObservableGameState gameState) {
-        int minNumVis = 1;
-        int minCardVis = 0;
+        int minNumberVisible = 1;
+        int minCardVisible = 0;
+        //
         HBox mainHBox = new HBox();
         mainHBox.getStylesheets().addAll("decks.css", "colors.css");
         //
@@ -51,18 +52,18 @@ class DecksViewCreator {
         //Cards
         for (Card card : Card.ALL) {
             ReadOnlyIntegerProperty count = gameState.getNumberOfCard(card);
-
+            //
             StackPane stackPane = cardPane(card);
-
+            //
             Text text = new Text(count.getValue().toString());
             text.getStyleClass().add("count");
-
+            //
             text.textProperty().bind(Bindings.convert(count));
-            text.visibleProperty().bind(Bindings.greaterThan(count, minNumVis));
-
+            text.visibleProperty().bind(Bindings.greaterThan(count, minNumberVisible));
+            //
             stackPane.getChildren().add(text);
-            stackPane.visibleProperty().bind(Bindings.greaterThan(count, minCardVis));
-
+            stackPane.visibleProperty().bind(Bindings.greaterThan(count, minCardVisible));
+            //
             handPane.getChildren().add(stackPane);
         }
         return mainHBox;
@@ -81,22 +82,22 @@ class DecksViewCreator {
         cardPane.getStylesheets().addAll("decks.css", "colors.css");
         cardPane.setId("card-pane");
 
-        //tickets button
+        //Tickets button
         Button ticketButton = new Button(StringsFr.TICKETS);
         //
-        ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPctLeftProperty();
+        ReadOnlyIntegerProperty ticketsPctProperty = gameState.ticketsPercentageLeftProperty();
         cardPane.getChildren().add(deckButton(ticketButton, ticketsPctProperty));
         //
         ticketButton.disableProperty().bind(drawTickets.isNull());
         //
         ticketButton.setOnMouseClicked(event -> drawTickets.get().onDrawTickets());
 
-        //face up cards
+        //Face-Up cards
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             StackPane stackPane = new StackPane();
             stackPane.getStyleClass().add("card");
 
-            //changes the graphics of the card according to what card is stored in the slot
+            //Changes the graphics of the card according to what card is stored in the slot
             gameState.getFaceUpCard(slot).addListener((property, oldValue, newValue) -> {
 
                 stackPane.getStyleClass().add(getCardName(newValue));
@@ -106,19 +107,18 @@ class DecksViewCreator {
                 }
             });
             stackPane.disableProperty().bind(drawCards.isNull());
-
             //
             stackPane.setOnMouseClicked(event -> drawCards.get().onDrawCards(slot));
-
+            //
             cardPane.getChildren().add(cardRectangles(stackPane));
         }
 
-        //cards button
+        //Cards button
         Button cardButton = new Button(StringsFr.CARDS);
 
-        ReadOnlyIntegerProperty cardsPctProperty = gameState.cardsPctLeftProperty();
+        ReadOnlyIntegerProperty cardsPercentageProperty = gameState.cardsPercentageLeftProperty();
 
-        cardPane.getChildren().add(deckButton(cardButton, cardsPctProperty));
+        cardPane.getChildren().add(deckButton(cardButton, cardsPercentageProperty));
         //
         cardButton.disableProperty().bind(drawCards.isNull());
         //
@@ -145,23 +145,24 @@ class DecksViewCreator {
      * @return a button with a percentage bar
      */
     private static Button deckButton(Button button, ReadOnlyIntegerProperty percentage) {
-        int rectWidth = 50;
-        int rectHeight = 5;
-        double pctMult = 0.5;
+        int rectangleWidth = 50;
+        int rectangleHeight = 5;
+        double percentageMultiplier = 0.5;
+        //
         Group group = new Group();
-
-        Rectangle gaugeBackground = new Rectangle(rectWidth, rectHeight);
+        //
+        Rectangle gaugeBackground = new Rectangle(rectangleWidth, rectangleHeight);
         gaugeBackground.getStyleClass().add("background");
-
-        Rectangle gaugeForeground = new Rectangle(rectWidth, rectHeight);
+        //
+        Rectangle gaugeForeground = new Rectangle(rectangleWidth, rectangleHeight);
+        gaugeForeground.widthProperty().bind(percentage.multiply(percentageMultiplier));
         gaugeForeground.getStyleClass().add("foreground");
-        gaugeForeground.widthProperty().bind(percentage.multiply(pctMult));
-
+        //
         group.getChildren().addAll(gaugeBackground, gaugeForeground);
-
+        //
         button.setGraphic(group);
         button.getStyleClass().add("gauged");
-
+        //
         return button;
     }
 
@@ -173,10 +174,10 @@ class DecksViewCreator {
      */
     private static StackPane cardPane(Card card) {
         String cardName = getCardName(card);
-
+        //
         StackPane stackPane = new StackPane();
         stackPane.getStyleClass().addAll(cardName, "card");
-
+        //
         return cardRectangles(stackPane);
     }
 
@@ -191,16 +192,18 @@ class DecksViewCreator {
         int outHeight = 90;
         int inWidth = 40;
         int inHeight = 70;
+        //
         Rectangle outside = new Rectangle(outWidth, outHeight);
         outside.getStyleClass().add("outside");
-
+        //
         Rectangle inside = new Rectangle(inWidth, inHeight);
         inside.getStyleClass().addAll("filled", "inside");
-
+        //
         Rectangle train = new Rectangle(inWidth, inHeight);
         train.getStyleClass().add("train-image");
-
+        //
         stackPane.getChildren().addAll(outside, inside, train);
+        //
         return stackPane;
     }
 }

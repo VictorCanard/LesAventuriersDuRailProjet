@@ -35,7 +35,8 @@ public final class ObservableGameState {
     private final ObservableList<Ticket> allPlayerTickets = FXCollections.observableArrayList();
     private final Map<Card, IntegerProperty> numberOfEachCard = new HashMap<>();
     private final Map<Route, BooleanProperty> canPlayerClaimRoute = new HashMap<>();
-    //
+    
+    //Other variables for accessing information contained in the ObservableGameState
     private final Set<List<Station>> allPairsOfStationsClaimed = new HashSet<>();
     private PublicGameState publicGameState;
     private PlayerState playerState;
@@ -69,12 +70,31 @@ public final class ObservableGameState {
         }
     }
 
+    private void createRoutes() {
+
+        ChMap.routes().forEach(route -> allRoutesContainedByWhom.put(route, new SimpleObjectProperty<>(null)));
+    }
+
+    private void createEmptyMap(Map<PlayerId, IntegerProperty> currentMap) {
+
+        Arrays.stream(PlayerId.values()).forEach(playerId -> currentMap.put(playerId, new SimpleIntegerProperty(0)));
+    }
+
+    private void setNumberOfEachCard() {
+        Arrays.stream(Card.values()).forEach(card -> numberOfEachCard.put(card, new SimpleIntegerProperty(0)));
+    }
+    
+    private void createRoutesClaimedOrNot() {
+
+        ChMap.routes().forEach(route -> canPlayerClaimRoute.put(route, new SimpleBooleanProperty(false)));
+    }
+    
     /**
      * Getter for the property corresponding to the percentage of tickets left in the ticket draw pile
      *
      * @return the (read-only) integer property corresponding to the percentage of tickets left
      */
-    public ReadOnlyIntegerProperty ticketsPctLeftProperty() {
+    public ReadOnlyIntegerProperty ticketsPercentageLeftProperty() {
         return ticketsPercentageLeft;
     }
 
@@ -83,7 +103,7 @@ public final class ObservableGameState {
      *
      * @return the (read-only) integer property corresponding to the percentage of card left
      */
-    public ReadOnlyIntegerProperty cardsPctLeftProperty() {
+    public ReadOnlyIntegerProperty cardsPercentageLeftProperty() {
         return cardsPercentageLeft;
     }
 
@@ -178,26 +198,7 @@ public final class ObservableGameState {
 
         return new HashMap<>(canPlayerClaimRoute);
     }
-
-    private void setNumberOfEachCard() {
-        Arrays.stream(Card.values()).forEach(card -> numberOfEachCard.put(card, new SimpleIntegerProperty(0)));
-    }
-
-    private void createRoutesClaimedOrNot() {
-
-        ChMap.routes().forEach(route -> canPlayerClaimRoute.put(route, new SimpleBooleanProperty(false)));
-    }
-
-    private void createEmptyMap(Map<PlayerId, IntegerProperty> currentMap) {
-
-        Arrays.stream(PlayerId.values()).forEach(playerId -> currentMap.put(playerId, new SimpleIntegerProperty(0)));
-    }
-
-    private void createRoutes() {
-
-        ChMap.routes().forEach(route -> allRoutesContainedByWhom.put(route, new SimpleObjectProperty<>(null)));
-    }
-
+    
     private void setRoutesPlayerId(PublicGameState newPublicGameState) {
 
         ChMap.routes().forEach(route -> PlayerId.ALL.forEach(playerId -> {
@@ -217,10 +218,11 @@ public final class ObservableGameState {
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
         Preconditions.checkArgument(publicGameState != null);
         Preconditions.checkArgument(playerState != null);
-        int pctConvert = 100;
         //
-        ticketsPercentageLeft.set((publicGameState.ticketsCount() * pctConvert / ChMap.tickets().size()));
-        cardsPercentageLeft.set((publicGameState.cardState().deckSize() * pctConvert / Constants.ALL_CARDS.size()));
+        int percentageConvert = 100;
+        //
+        ticketsPercentageLeft.set((publicGameState.ticketsCount() * percentageConvert / ChMap.tickets().size()));
+        cardsPercentageLeft.set((publicGameState.cardState().deckSize() * percentageConvert / Constants.TOTAL_CARDS_COUNT));
         setFaceUpCards(publicGameState.cardState().faceUpCards());
         setRoutesPlayerId(publicGameState);
         //
@@ -229,7 +231,6 @@ public final class ObservableGameState {
         setPlayerTickets(playerState);
         setPlayerCards(playerState);
         setPlayerCanClaimRouteOrNot(publicGameState, playerState);
-
         //
         this.publicGameState = publicGameState;
         this.playerState = playerState;
@@ -250,7 +251,8 @@ public final class ObservableGameState {
     }
 
     private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
-        canPlayerClaimRoute.forEach((route, booleanObjectProperty) -> booleanObjectProperty.set(publicGameState.currentPlayerId().equals(playerId)
+        canPlayerClaimRoute.forEach((route, booleanObjectProperty) -> booleanObjectProperty.set(
+                publicGameState.currentPlayerId().equals(playerId)
                 && playerState.canClaimRoute(route)
                 && !publicGameState.claimedRoutes().contains(route)
                 && !allPairsOfStationsClaimed.contains(route.stations())));
@@ -302,7 +304,6 @@ public final class ObservableGameState {
      * @return a true property if the route can be claimed, a false property otherwise
      */
     public ReadOnlyBooleanProperty claimable(Route route) {
-
         return getCanPlayerClaimRoute().get(route);
     }
 }

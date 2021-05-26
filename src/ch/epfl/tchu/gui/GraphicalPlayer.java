@@ -54,17 +54,17 @@ public final class GraphicalPlayer {
     /**
      * Creates the graphical interface of the perspective of the given player
      *
-     * @param thisPlayer : the player the graphical interface belongs to
+     * @param thisPlayer  : the player the graphical interface belongs to
      * @param playerNames : the names of the players in the game
      */
     public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
         Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
-
+        //
         this.thisPlayer = Objects.requireNonNull(thisPlayer);
         this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
         this.observableGameState = new ObservableGameState(thisPlayer);
         this.primaryStage = new Stage();
-
+        //
         setSceneGraph();
     }
 
@@ -81,11 +81,12 @@ public final class GraphicalPlayer {
         Node infoView = InfoViewCreator
                 .createInfoView(thisPlayer, playerNames, observableGameState, messages);
 
+        //
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
-
+        //
         Scene scene = new Scene(mainPane);
-
+        //
         primaryStage.setTitle("tCHu" + " \u2014 " + playerNames.get(thisPlayer));
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -95,10 +96,11 @@ public final class GraphicalPlayer {
      * Sets the state of the game on the javafx thread
      *
      * @param publicGameState : the public game state at the point in the game
-     * @param playerState : the player state at the point in the game
+     * @param playerState     : the player state at the point in the game
      */
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
         assert isFxApplicationThread();
+
         observableGameState.setState(publicGameState, playerState);
     }
 
@@ -109,6 +111,7 @@ public final class GraphicalPlayer {
      */
     public void receiveInfo(String messageToAdd) {
         assert isFxApplicationThread();
+
         int maxToAddMessage = 4;
 
         if (messages.size() > maxToAddMessage) {
@@ -121,8 +124,8 @@ public final class GraphicalPlayer {
      * Starts the player's turn on the javafx thread, where they can initially do 3 actions
      *
      * @param drawTicketsHandler : the action handler corresponding to the player drawing tickets
-     * @param drawCardHandler : the action handler corresponding to the player drawing cards
-     * @param claimRouteHandler : the action handler corresponding to the player claiming a route
+     * @param drawCardHandler    : the action handler corresponding to the player drawing cards
+     * @param claimRouteHandler  : the action handler corresponding to the player claiming a route
      */
     public void startTurn(ActionHandlers.DrawTicketsHandler drawTicketsHandler, ActionHandlers.DrawCardHandler drawCardHandler, ActionHandlers.ClaimRouteHandler claimRouteHandler) {
         assert isFxApplicationThread();
@@ -138,7 +141,6 @@ public final class GraphicalPlayer {
             drawCardsHP.set((slot) -> {
                 drawCardHandler.onDrawCards(slot);
                 disableAllTurnActions();
-
             });
         }
 
@@ -165,9 +167,9 @@ public final class GraphicalPlayer {
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(drawCardHandler != null);
-
+        //
         disableAllTurnActions();
-
+        //
         drawCardsHP.set((slot) -> {
             drawCardHandler.onDrawCards(slot);
             drawCardsHP.set(null);
@@ -177,16 +179,16 @@ public final class GraphicalPlayer {
     /**
      * Allows the player to choose tickets through the ticket button by displaying a pop up window
      *
-     * @param ticketsToChooseFrom : the tickets the player must choose at least 1 of
+     * @param ticketsToChooseFrom  : the tickets the player must choose at least 1 of
      * @param chooseTicketsHandler : the action handler corresponding to the player choosing ticket(s)
      */
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!ticketsToChooseFrom.isEmpty());
         Preconditions.checkArgument(chooseTicketsHandler != null);
-
+        //
         int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
-
+        //
         createChoiceWindow(StringsFr.TICKETS_CHOICE,
                 String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)),
                 ticketsToChooseFrom.toList(),
@@ -206,7 +208,9 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleClaimCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
+        //
         int minSelect = 1;
+        //
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_CARDS,
                 List.copyOf(possibleClaimCards),
@@ -221,13 +225,15 @@ public final class GraphicalPlayer {
      * The player also has an option to abandon the route by not selecting cards and clicking the choose button
      *
      * @param possibleAdditionalCards : the possible additional cards the player can play to claim the route
-     * @param chooseCardsHandler : the action handler corresponding to the player choosing cards
+     * @param chooseCardsHandler      : the action handler corresponding to the player choosing cards
      */
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
+        //
         int minSelect = 0;
+        //
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_ADDITIONAL_CARDS,
                 List.copyOf(possibleAdditionalCards),
@@ -264,12 +270,12 @@ public final class GraphicalPlayer {
         listView.getSelectionModel().setSelectionMode(selectionMode);
         listView.setCellFactory(v -> new TextFieldListCell<>(new StringConverter<>() {
             @Override
-            public String toString(E object){
+            public String toString(E object) {
                 return objectToStringFunction.apply(object);
             }
 
             @Override
-            public E fromString(String string){
+            public E fromString(String string) {
                 throw new UnsupportedOperationException();
             }
         }));
