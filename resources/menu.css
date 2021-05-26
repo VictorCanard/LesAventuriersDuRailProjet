@@ -1,0 +1,36 @@
+VBox {
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-padding: 20;
+    -fx-max-width: 450;
+}
+
+HBox {
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-padding: 20;
+    -fx-max-width: 450;
+}
+
+
+
+#title {
+    -fx-translate-x: 300px;
+
+    -fx-font-family: 'Lato', sans-serif;
+    -fx-font-size: 54px;
+}
+
+#start-button{
+    -fx-translate-y: 135px;
+    -fx-translate-x: -20px;
+    -fx-background-color: green;
+    -fx-text-fill: lightgreen;
+    -fx-scale-y: 3px;
+    -fx-scale-x: 2px;
+}
+
+#player-names {
+    -fx-translate-x: 150px;
+    -fx-translate-y: -50px;
+}
