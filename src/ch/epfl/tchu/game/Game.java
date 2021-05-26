@@ -4,6 +4,7 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.Info;
 import ch.epfl.tchu.gui.Menu;
+import ch.epfl.tchu.gui.ObservableGameState;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -469,7 +470,8 @@ public final class Game {
         receiveInfoForAll(allGameData.players, endOfGameMessage);
     }
 
-    public static SortedBag<Card> getDrawnCards(){ return tunnelDrawnCards; }
+
+    public static SortedBag<Card> getAddTunnelCards(){ return tunnelDrawnCards; }
 
 
     /**

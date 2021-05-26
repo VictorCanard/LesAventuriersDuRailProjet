@@ -26,6 +26,13 @@
     -fx-fill: mediumturquoise;
 }
 
+.card .tunnel-card{
+    -fx-arc-width: 10;
+    -fx-arc-height: 10;
+    -fx-fill: dimgrey;
+    -fx-stroke: White;
+}
+
 .card .count {
     -fx-font-size: 24;
     -fx-fill: white;
@@ -60,6 +67,10 @@ Button.gauged .foreground {
 
 #ticket-points-negative{
     -fx-text-fill: red;
+}
+
+#ticket-points-positive{
+    -fx-text-fill: green;
 }
 
 #hand-pane {

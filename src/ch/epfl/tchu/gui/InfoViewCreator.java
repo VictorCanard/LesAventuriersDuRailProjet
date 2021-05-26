@@ -1,11 +1,11 @@
 package ch.epfl.tchu.gui;
 
-import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
-import ch.epfl.tchu.game.Game;
 import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
@@ -13,6 +13,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -53,11 +54,11 @@ public class InfoViewCreator {
         TextFlow gameInfo = new TextFlow();
         gameInfo.setId("game-info");
         infoPane.getChildren().add(gameInfo);
-        /*draw cards to be displayed under infos bc there is space*/
-        infoPane.getChildren().add(DecksViewCreator.createDrawnCards(SortedBag.of(2, Card.LOCOMOTIVE, 1, Card.ORANGE), gameState));
-
-        //
         Bindings.bindContent(gameInfo.getChildren(), infos);
+
+        //draw cards to be displayed under infos bc there is space
+        infoPane.getChildren().add(DecksViewCreator.createDrawnCards(gameState)); //why can only the server see the 3 cards change...
+
         return infoPane;
     }
 

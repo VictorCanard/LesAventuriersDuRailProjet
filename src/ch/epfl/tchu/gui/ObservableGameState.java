@@ -40,7 +40,7 @@ public final class ObservableGameState {
     private final Map<List<Station>, PlayerId> allPairsOfStationsClaimed = new HashMap<>();
     private PublicGameState publicGameState;
     private PlayerState playerState;
-    private ObjectProperty<SortedBag<Card>> tunnelCards;
+    private final List<ObjectProperty<Card>> tunnelDrawCards = new ArrayList<>();
 
     /**
      * Creates an instance of the observable game state in its initial state
@@ -49,6 +49,7 @@ public final class ObservableGameState {
      */
     public ObservableGameState(PlayerId playerId) {
         createFaceUpCards();
+        createTunnelDrawCards();
         //
         createRoutes();
         createEmptyMap(ticketCount);
@@ -58,6 +59,7 @@ public final class ObservableGameState {
         //
         setNumberOfEachCard();
         createRoutesClaimedOrNot();
+
         //
         this.playerId = playerId;
     }
@@ -68,6 +70,11 @@ public final class ObservableGameState {
     private void createFaceUpCards() {
         for (int i = 0; i < Constants.FACE_UP_CARDS_COUNT; i++) {
             faceUpCards.add(new SimpleObjectProperty<>(null));
+        }
+    }
+    private void createTunnelDrawCards() {
+        for (int i = 0; i < 3; i++) {
+            tunnelDrawCards.add(new SimpleObjectProperty<>(null));
         }
     }
 
@@ -103,6 +110,18 @@ public final class ObservableGameState {
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             ObjectProperty<Card> cardObjectProperty = faceUpCards.get(slot);
             Card newCard = newFaceUpCards.get(slot);
+            cardObjectProperty.set(newCard);
+        }
+    }
+
+    public ReadOnlyObjectProperty<Card> getTunnelDrawCard(int slot) {
+        return tunnelDrawCards.get(slot);
+    }
+
+    private void setTunnelDrawCards(List<Card> newDrawCards) {
+        for (int i = 0; i< 3; i++) {
+            ObjectProperty<Card> cardObjectProperty = tunnelDrawCards.get(i);
+            Card newCard = newDrawCards.get(i);
             cardObjectProperty.set(newCard);
         }
     }
@@ -226,6 +245,9 @@ public final class ObservableGameState {
         setFaceUpCards(publicGameState.cardState().faceUpCards());
         setRoutesPlayerId(publicGameState);
         setTicketPoints(playerState);
+        //new
+        if(Game.getAddTunnelCards() != null)
+        setTunnelDrawCards(Objects.requireNonNull(Game.getAddTunnelCards().toList()));
         //
         setEachPlayerCountAttributesCount(publicGameState);
         //
@@ -327,4 +349,5 @@ public final class ObservableGameState {
 
         return getCanPlayerClaimRoute().get(route);
     }
+
 }

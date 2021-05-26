@@ -130,10 +130,9 @@ class DecksViewCreator {
             //changes the graphics of the card according to what card is stored in the slot
             gameState.getFaceUpCard(slot).addListener((property, oldValue, newValue) -> {
                 stackPane.getStyleClass().add(getCardName(newValue));
-                //System.out.println("clicked " + oldValue);
 
-                if (oldValue != null) { //You can just use a set here //i tried but it did weird things i didnt have time to debug rn
-                    animCard.getStyleClass().add(getCardName(oldValue)); //New value here no ? Nope bc new value is the card that will replace the one picked
+                if (oldValue != null) {
+                    animCard.getStyleClass().add(getCardName(oldValue));
                     stackPane.getStyleClass().remove(getCardName(oldValue));
                     if(animCard.getStyleClass().size()>2) {
                         animCard.getStyleClass().remove(1);
@@ -141,24 +140,17 @@ class DecksViewCreator {
                 }else{
                     animCard.getStyleClass().add(getCardName(newValue));
                 }
-
-                //System.out.println("result from listener " + animCard.getStyleClass());
-                //System.out.println("---------------");
             });
             stackPane.disableProperty().bind(drawCards.isNull());
 
             //
 
             stackPane.setOnMouseClicked(event -> {
-                //System.out.println("**************");
-//StackPane@78279375[styleClass=card ORANGE]
                 String source = event.getSource().toString();
-                //System.out.println("the source of the click " + source);
                 String bracketPattern = Pattern.quote("[");
                 String[] sourceTab = source.split(bracketPattern, -1);
 
                 String cardname = sourceTab[1].substring(16, sourceTab[1].length()-1);
-                //System.out.println(cardname + " : card");
 
                 double posx =0;
                 if (cardname.equals("NEUTRAL")) {
@@ -170,10 +162,8 @@ class DecksViewCreator {
                 }
                 if(animCard.getStyleClass().size()>1){ animCard.getStyleClass().remove(1);}
                 animCard.getStyleClass().add(cardname);
-                //System.out.println("anim used in mouse event " + animCard.getStyleClass());
                 // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 575-(slot*100));
                 Animations.translate(animCard, posx,575-(slot*100));
-
 
                 drawCards.get().onDrawCards(slot);
 
@@ -198,27 +188,40 @@ class DecksViewCreator {
     }
 
 
-    public static Node createDrawnCards(SortedBag<Card> drawnCards, ObservableGameState gameState){
+    public static Node createDrawnCards(ObservableGameState gameState){
         HBox hbox = new HBox();
-        HBox mainHbox = new HBox(hbox);
-        mainHbox.getStylesheets().addAll("decks.css", "colors.css");
-        mainHbox.setId("drawCards");
+        hbox.getStylesheets().addAll("decks.css", "colors.css");
+        hbox.setId("drawCards");
 
-  /*      StackPane sp1 = new StackPane(cardPane(drawnCards.get(0)), backOfCard());
-        StackPane sp2 = new StackPane(cardPane(drawnCards.get(1)), backOfCard());
-        StackPane sp3 = new StackPane(cardPane(drawnCards.get(2)), backOfCard());*/
+        for (int i = 0; i<3 ; i++) {
+            StackPane mainStack = new StackPane();
+            StackPane stackPane = new StackPane();
+            stackPane.getStyleClass().add("card");
+
+            gameState.getTunnelDrawCard(i).addListener((property, oldValue, newValue) -> {
+                stackPane.getStyleClass().add("tunnel-card"); //doesnt seem to work also beginning is weird
+
+                if(newValue != null){
+                stackPane.getStyleClass().add(getCardName(newValue));}
+
+                if(oldValue != null ){
+                    stackPane.getStyleClass().remove(getCardName(oldValue));
+
+                }else{
+                    stackPane.getStyleClass().add("tunnel-card");
+                }
 
 
-        StackPane sp1 = new StackPane(backOfCard(), cardPane(drawnCards.get(0)));
-        StackPane sp2 = new StackPane(backOfCard(), cardPane(drawnCards.get(1)));
-        StackPane sp3 = new StackPane(backOfCard(), cardPane(drawnCards.get(2)));
+                Animations.flip(backOfCard(), stackPane); //animation doesnt show for card where newValue = oldValue, or the "back of the card"
+                // i want to launch the animation after you pick the initial claim cards but before you receive the info of the draw cards and the window of the choose additional cards. But idk how
+            });
+            mainStack.getChildren().add(cardRectangles(stackPane));
+            hbox.getChildren().addAll(mainStack);
+        }
 
-        hbox.getChildren().addAll(sp1, sp2, sp3);
-
-        //visible property
-
-        return mainHbox;
+        return hbox;
     }
+
 
 
 
@@ -297,9 +300,12 @@ class DecksViewCreator {
         StackPane stackPane = new StackPane();
         stackPane.getStyleClass().add("card");
         Rectangle outside = new Rectangle(60, 90);
-        outside.getStyleClass().add("outside");
+        outside.getStyleClass().add("tunnel-card");
 
-        stackPane.getChildren().add(outside);
+        Rectangle train = new Rectangle(40, 70);
+        train.getStyleClass().add("train-image");
+
+        stackPane.getChildren().addAll(outside, train);
         return stackPane;
     }
 

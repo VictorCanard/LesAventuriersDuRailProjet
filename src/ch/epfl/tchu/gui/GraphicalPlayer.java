@@ -18,6 +18,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
@@ -46,6 +47,7 @@ public final class GraphicalPlayer {
     private final ObservableGameState observableGameState;
     private final ObservableList<Text> messages = FXCollections.observableArrayList();
     private final Stage primaryStage;
+    private final ObjectProperty<SortedBag<Card>> tunnelCards = new SimpleObjectProperty<>(SortedBag.of());
 
     private final ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTicketsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.DrawCardHandler> drawCardsHP = new SimpleObjectProperty<>(null);
@@ -71,6 +73,10 @@ public final class GraphicalPlayer {
     }
 
     private void setSceneGraph() {
+
+       // boolean darkMode = true;
+
+        primaryStage.setResizable(false);
         Node mapView = MapViewCreator
                 .createMapView(observableGameState, claimRouteHP, this::chooseClaimCards);
 
@@ -87,6 +93,9 @@ public final class GraphicalPlayer {
                 new BorderPane(mapView, null, cardsView, handView, infoView);
 
         Scene scene = new Scene(mainPane);
+
+        //if(darkMode) scene.getStylesheets().add("dark-mode.css");
+
 
         primaryStage.setTitle("tCHu" + " \u2014 " + playerNames.get(thisPlayer));
         primaryStage.setScene(scene);
@@ -117,6 +126,7 @@ public final class GraphicalPlayer {
         }
         messages.add(new Text(messageToAdd));
     }
+
 
     /**
      * Starts the player's turn on the javafx thread, where they can initially do 3 actions
