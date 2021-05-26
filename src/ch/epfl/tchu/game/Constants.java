@@ -41,7 +41,7 @@ public final class Constants {
     /**
      * Nombre de cartes distribuées à chaque joueur en début de partie.
      */
-    public static final int INITIAL_CARDS_COUNT = 4;
+    public static final int INITIAL_CARDS_COUNT = 20; //4
     /**
      * Nombre de wagons dont dispose chaque joueur en début de partie.
      */
@@ -79,7 +79,7 @@ public final class Constants {
     public static final int LONGEST_TRAIL_BONUS_POINTS = 10;
 
 
-    public static final int NUMBER_OF_WAGONS_TO_BEGIN_LAST_TURN = 40;
+    public static final int NUMBER_OF_WAGONS_TO_BEGIN_LAST_TURN = 2;
 
     public static final int NUMBER_OF_PLAYERS_FOR_NO_DOUBLE_ROUTE_CAPTURE = 2;
 

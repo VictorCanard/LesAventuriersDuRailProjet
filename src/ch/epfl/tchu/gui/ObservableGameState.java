@@ -40,6 +40,7 @@ public final class ObservableGameState {
     private final Map<List<Station>, PlayerId> allPairsOfStationsClaimed = new HashMap<>();
     private PublicGameState publicGameState;
     private PlayerState playerState;
+    private ObjectProperty<SortedBag<Card>> tunnelCards;
 
     /**
      * Creates an instance of the observable game state in its initial state

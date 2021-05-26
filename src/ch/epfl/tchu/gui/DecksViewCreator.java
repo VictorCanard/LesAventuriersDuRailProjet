@@ -48,7 +48,7 @@ class DecksViewCreator {
      */
     public static HBox createHandView(ObservableGameState gameState) {
         HBox mainHBox = new HBox();
-        mainHBox.getStylesheets().addAll("decks.css", "colors.css");
+        mainHBox.getStylesheets().addAll("decks.css", "colors.css", "info.css");
         //
         HBox handPane = new HBox();
         handPane.setId("hand-pane");
@@ -59,16 +59,16 @@ class DecksViewCreator {
         //Score for Tickets
         Label ticketScore = new Label();
         ReadOnlyIntegerProperty points = gameState.ticketPoints();
-        ticketScore.getStyleClass().add("ticket-points");
 
         StringExpression string = new SimpleStringProperty("Total courant des tickets: ").concat(points);
         ticketScore.textProperty().bind(string);
+        System.out.println("ticketScore style class: " + ticketScore.getStyleClass());
 
         points.addListener((property, oldV, newV)-> {
             if(newV.shortValue() < 0){
-                ticketScore.setTextFill(Paint.valueOf("red"));
+                ticketScore.setId("ticket-points-negative");
             }else{
-                ticketScore.setTextFill(Paint.valueOf("green"));
+                ticketScore.setId("ticket-points-positive");
             }
         });
         //
@@ -93,7 +93,6 @@ class DecksViewCreator {
 
             X_HAND_CARD_POS.put(card, (double) (-745 + 75*Card.ALL.indexOf(card)));
         }
-        System.out.println(X_HAND_CARD_POS);
         return mainHBox;
     }
 
@@ -133,36 +132,35 @@ class DecksViewCreator {
             //changes the graphics of the card according to what card is stored in the slot
             gameState.getFaceUpCard(slot).addListener((property, oldValue, newValue) -> {
                 stackPane.getStyleClass().add(getCardName(newValue));
-                System.out.println("clicked " + oldValue);
+                //System.out.println("clicked " + oldValue);
 
-                if (oldValue != null) { //You can just use a set here
-                   animCard.getStyleClass().add(getCardName(oldValue)); //New value here no ?
+                if (oldValue != null) { //You can just use a set here //i tried but it did weird things i didnt have time to debug rn
+                    animCard.getStyleClass().add(getCardName(oldValue)); //New value here no ? Nope bc new value is the card that will replace the one picked
                     stackPane.getStyleClass().remove(getCardName(oldValue));
-                    if(animCard.getStyleClass().size()>1) {
+                    if(animCard.getStyleClass().size()>2) {
                         animCard.getStyleClass().remove(1);
                     }
-
                 }else{
                     animCard.getStyleClass().add(getCardName(newValue));
                 }
 
-                System.out.println("result from listener " + animCard.getStyleClass());
-                System.out.println("---------------");
+                //System.out.println("result from listener " + animCard.getStyleClass());
+                //System.out.println("---------------");
             });
             stackPane.disableProperty().bind(drawCards.isNull());
 
             //
 
             stackPane.setOnMouseClicked(event -> {
-                System.out.println("**************");
+                //System.out.println("**************");
 //StackPane@78279375[styleClass=card ORANGE]
                 String source = event.getSource().toString();
-                System.out.println("the source of the click " + source);
+                //System.out.println("the source of the click " + source);
                 String bracketPattern = Pattern.quote("[");
                 String[] sourceTab = source.split(bracketPattern, -1);
 
                 String cardname = sourceTab[1].substring(16, sourceTab[1].length()-1);
-                System.out.println(cardname + " : card");
+                //System.out.println(cardname + " : card");
 
                 double posx =0;
                 if (cardname.equals("NEUTRAL")) {
@@ -174,8 +172,8 @@ class DecksViewCreator {
                 }
                 if(animCard.getStyleClass().size()>1){ animCard.getStyleClass().remove(1);}
                 animCard.getStyleClass().add(cardname);
-                System.out.println("anim used in mouse event " + animCard.getStyleClass());
-               // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 575-(slot*100));
+                //System.out.println("anim used in mouse event " + animCard.getStyleClass());
+                // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 575-(slot*100));
                 Animations.translate(animCard, posx,575-(slot*100));
 
 

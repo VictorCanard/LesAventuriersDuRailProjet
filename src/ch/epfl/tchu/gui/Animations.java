@@ -23,6 +23,7 @@ public class Animations extends Application{
     public static void translate(Node node, double x, double y){
         node.setVisible(true);
         TranslateTransition translate  = new TranslateTransition();
+
         translate.setRate(PATH_RATE);
         translate.setFromX(0);
         translate.setFromY(0);
