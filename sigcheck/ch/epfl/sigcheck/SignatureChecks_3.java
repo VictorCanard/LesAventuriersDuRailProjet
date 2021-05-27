@@ -53,7 +53,7 @@ final class SignatureChecks_3 {
         v17 = v16.keptTickets(v06);
         v17 = v16.lastTurnBegins(v06);
         v17 = v16.willPlayFirst();
-        v17 = v16.won(v06, v06);
+        //v17 = v16.won(v06, v06);
     }
 
     interface C extends Comparable<C> {}
