@@ -24,8 +24,8 @@ public class ClientMain extends Application {
 
 
     /**
-     * Starts the client with a new Graphical Player Adapter, a default name and a default port.
-     * If a name or port is specified then uses these for the remote player client creation.
+     * Starts the client with a new Graphical Player Adapter, a default name and a default PORT.
+     * If a name or PORT is specified then uses these for the remote player client creation.
      *
      * @param primaryStage : unused parameter
      */
@@ -34,7 +34,7 @@ public class ClientMain extends Application {
         List<String> parameters = getParameters().getRaw();
 
         String name = "localhost";
-        int port = 5108;
+        int port = GuiUtils.PORT;
 
         switch (parameters.size()) {
             case 2:

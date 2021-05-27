@@ -71,8 +71,7 @@ public class ServerMain extends Application {
 
     @NotNull
     private ServerSocket createSockets() throws IOException {
-        int port = 5108;
-        ServerSocket serverSocket = new ServerSocket(port);
+        ServerSocket serverSocket = new ServerSocket(GuiUtils.PORT);
         for (int i = localPlayerNumber; i < COUNT; i++) {
             sockets.add(serverSocket.accept());
         }
@@ -102,12 +101,12 @@ public class ServerMain extends Application {
 
 
     private void close(ServerSocket serverSocket) throws IOException {
-        serverSocket.close();
-
         for (Socket socket : sockets
         ) {
             socket.close();
         }
+
+        serverSocket.close();
     }
 
 }

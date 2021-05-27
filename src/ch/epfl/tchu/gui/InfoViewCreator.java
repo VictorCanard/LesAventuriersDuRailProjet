@@ -33,7 +33,7 @@ public class InfoViewCreator {
      */
     public static Node createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos) {
         VBox infoPane = new VBox();
-        infoPane.getStylesheets().addAll("info.css", "colors.css");
+        infoPane.getStylesheets().addAll("info.css", GuiUtils.COLORS);
         //
         PlayerId currentId = playerId;
         for (int i = 0; i < PlayerId.COUNT; i++) {
@@ -62,13 +62,13 @@ public class InfoViewCreator {
      * @return a Vertical Box with all stats concerning this player and all stats concerning the other player underneath it.
      */
     private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
-        int circleRadius = 5;
+        final int CIRCLE_RADIUS = 5;
         //
         VBox playerStats = new VBox();
         playerStats.setId("player-stats");
         playerStats.getStyleClass().add(playerId.name());
         //
-        Circle circle = new Circle(circleRadius);
+        Circle circle = new Circle(CIRCLE_RADIUS);
         circle.getStyleClass().add("filled");
         //
         Text stats = new Text();

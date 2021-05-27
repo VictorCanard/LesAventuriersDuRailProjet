@@ -79,7 +79,7 @@ class DecksViewCreator {
      */
     public static Node createCardsView(ObservableGameState gameState, ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTickets, ObjectProperty<ActionHandlers.DrawCardHandler> drawCards) {
         VBox cardPane = new VBox();
-        cardPane.getStylesheets().addAll("decks.css", "colors.css");
+        cardPane.getStylesheets().addAll("decks.css", GuiUtils.COLORS);
         cardPane.setId("card-pane");
 
         //Tickets button
@@ -145,17 +145,17 @@ class DecksViewCreator {
      * @return a button with a percentage bar
      */
     private static Button deckButton(Button button, ReadOnlyIntegerProperty percentage) {
-        int rectangleWidth = 50;
-        int rectangleHeight = 5;
-        double percentageMultiplier = 0.5;
+        final int RECTANGLE_WIDTH = 50;
+        final int RECTANGLE_HEIGHT = 5;
+        final double PERCENTAGE_MULTIPLIER = 0.5;
         //
         Group group = new Group();
         //
-        Rectangle gaugeBackground = new Rectangle(rectangleWidth, rectangleHeight);
+        Rectangle gaugeBackground = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
         gaugeBackground.getStyleClass().add("background");
         //
-        Rectangle gaugeForeground = new Rectangle(rectangleWidth, rectangleHeight);
-        gaugeForeground.widthProperty().bind(percentage.multiply(percentageMultiplier));
+        Rectangle gaugeForeground = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
+        gaugeForeground.widthProperty().bind(percentage.multiply(PERCENTAGE_MULTIPLIER));
         gaugeForeground.getStyleClass().add("foreground");
         //
         group.getChildren().addAll(gaugeBackground, gaugeForeground);
@@ -188,18 +188,18 @@ class DecksViewCreator {
      * @return the stack pane given as an argument with three new rectangles as children of its scene graph
      */
     private static StackPane cardRectangles(StackPane stackPane) {
-        int outWidth = 60;
-        int outHeight = 90;
-        int inWidth = 40;
-        int inHeight = 70;
+        final int OUT_WIDTH = 60;
+        final int OUT_HEIGHT = 90;
+        final int IN_WIDTH = 40;
+        final int IN_HEIGHT = 70;
         //
-        Rectangle outside = new Rectangle(outWidth, outHeight);
+        Rectangle outside = new Rectangle(OUT_WIDTH, OUT_HEIGHT);
         outside.getStyleClass().add("outside");
         //
-        Rectangle inside = new Rectangle(inWidth, inHeight);
+        Rectangle inside = new Rectangle(IN_WIDTH, IN_HEIGHT);
         inside.getStyleClass().addAll("filled", "inside");
         //
-        Rectangle train = new Rectangle(inWidth, inHeight);
+        Rectangle train = new Rectangle(IN_WIDTH, IN_HEIGHT);
         train.getStyleClass().add("train-image");
         //
         stackPane.getChildren().addAll(outside, inside, train);

@@ -41,7 +41,7 @@ import static javafx.application.Platform.isFxApplicationThread;
  */
 public final class GraphicalPlayer {
 
-    private final PlayerId thisPlayer;
+    private final PlayerId player;
     private final Map<PlayerId, String> playerNames;
     private final ObservableGameState observableGameState;
     private final ObservableList<Text> messages = FXCollections.observableArrayList();
@@ -54,21 +54,24 @@ public final class GraphicalPlayer {
     /**
      * Creates the graphical interface of the perspective of the given player
      *
-     * @param thisPlayer  : the player the graphical interface belongs to
+     * @param player  : the player the graphical interface belongs to
      * @param playerNames : the names of the players in the game
      */
-    public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
+    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> playerNames) {
         Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
         //
-        this.thisPlayer = Objects.requireNonNull(thisPlayer);
+        this.player = Objects.requireNonNull(player);
         this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
-        this.observableGameState = new ObservableGameState(thisPlayer);
+        this.observableGameState = new ObservableGameState(player);
         this.primaryStage = new Stage();
         //
         setSceneGraph();
     }
 
     private void setSceneGraph() {
+        final char dash = '—';
+        final String title = "tCHu";
+        //
         Node mapView = MapViewCreator
                 .createMapView(observableGameState, claimRouteHP, this::chooseClaimCards);
 
@@ -79,7 +82,7 @@ public final class GraphicalPlayer {
                 .createHandView(observableGameState);
 
         Node infoView = InfoViewCreator
-                .createInfoView(thisPlayer, playerNames, observableGameState, messages);
+                .createInfoView(player, playerNames, observableGameState, messages);
 
         //
         BorderPane mainPane =
@@ -87,7 +90,7 @@ public final class GraphicalPlayer {
         //
         Scene scene = new Scene(mainPane);
         //
-        primaryStage.setTitle("tCHu" + " \u2014 " + playerNames.get(thisPlayer));
+        primaryStage.setTitle(title + dash + playerNames.get(player));
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -111,6 +114,8 @@ public final class GraphicalPlayer {
      */
     public void receiveInfo(String messageToAdd) {
         assert isFxApplicationThread();
+
+        Preconditions.checkArgument(!messageToAdd.isEmpty());
 
         int maxToAddMessage = 4;
 
@@ -166,7 +171,6 @@ public final class GraphicalPlayer {
      */
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
-        Preconditions.checkArgument(drawCardHandler != null);
         //
         disableAllTurnActions();
         //
@@ -185,7 +189,6 @@ public final class GraphicalPlayer {
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!ticketsToChooseFrom.isEmpty());
-        Preconditions.checkArgument(chooseTicketsHandler != null);
         //
         int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
         //
@@ -207,16 +210,15 @@ public final class GraphicalPlayer {
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleClaimCards.isEmpty());
-        Preconditions.checkArgument(chooseCardsHandler != null);
         //
-        int minSelect = 1;
+        final int MIN_TO_SELECT = 1;
         //
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_CARDS,
                 List.copyOf(possibleClaimCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
-                minSelect,
+                MIN_TO_SELECT,
                 items -> chooseCardsHandler.onChooseCards(items.get(0)));
     }
 
@@ -230,16 +232,15 @@ public final class GraphicalPlayer {
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
-        Preconditions.checkArgument(chooseCardsHandler != null);
         //
-        int minSelect = 0;
+        final int MIN_TO_SELECT = 0;
         //
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_ADDITIONAL_CARDS,
                 List.copyOf(possibleAdditionalCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
-                minSelect,
+                MIN_TO_SELECT,
                 items -> {
                     if (items.isEmpty()) {
                         chooseCardsHandler.onChooseCards(SortedBag.of());

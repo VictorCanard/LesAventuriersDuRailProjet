@@ -119,9 +119,8 @@ public final class ObservableGameState {
 
     private void setFaceUpCards(List<Card> newFaceUpCards) {
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
-            ObjectProperty<Card> cardObjectProperty = faceUpCards.get(slot);
             Card newCard = newFaceUpCards.get(slot);
-            cardObjectProperty.set(newCard);
+            faceUpCards.get(slot).set(newCard);
         }
     }
 
@@ -268,7 +267,17 @@ public final class ObservableGameState {
 
         });
     }
+    /**
+     * Determines if the given route is claimable or not
+     *
+     * @param route : the route to be claimed
+     * @return a true property if the route can be claimed, a false property otherwise
+     */
+    public ReadOnlyBooleanProperty claimable(Route route) {
+        return getCanPlayerClaimRoute().get(route);
+    }
 
+    //Methods that call the respective method (with the same name) on the publicGameState or playerState contained in this ObservableGameState
     /**
      * Determines if the player can draw tickets
      *
@@ -297,13 +306,5 @@ public final class ObservableGameState {
         return playerState.possibleClaimCards(route);
     }
 
-    /**
-     * Determines if the given route is claimable or not
-     *
-     * @param route : the route to be claimed
-     * @return a true property if the route can be claimed, a false property otherwise
-     */
-    public ReadOnlyBooleanProperty claimable(Route route) {
-        return getCanPlayerClaimRoute().get(route);
-    }
+
 }

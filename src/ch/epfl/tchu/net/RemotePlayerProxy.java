@@ -53,9 +53,9 @@ public class RemotePlayerProxy implements Player {
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
         String ownId = PLAYER_ID_SERDE.serialize(ownID);
 
-        String namesOfPlayers = PlayerId.ALL.stream()
-                .map((playerId -> STRING_SERDE.serialize(playerNames.get(playerId))))
-                .collect(Collectors.joining(","));
+        String namesOfPlayers = LIST_STRING_SERDE.serialize(PlayerId.ALL.stream()
+                .map(playerNames::get)
+                .collect(Collectors.toList()));
 
         sendMessage(MessageId.INIT_PLAYERS, ownId, namesOfPlayers);
 
@@ -135,7 +135,7 @@ public class RemotePlayerProxy implements Player {
     /**
      * Sends a message to the client
      *
-     * @param messageId : the id corresponding to the type of action taking place as described in the MessageId enum
+     * @param messageId                 : the id corresponding to the type of action taking place as described in the MessageId enum
      * @param allParametersOfTheMessage : the parameters corresponding to the arguments of the method used for the specified action
      */
     private void sendMessage(MessageId messageId, String... allParametersOfTheMessage) {

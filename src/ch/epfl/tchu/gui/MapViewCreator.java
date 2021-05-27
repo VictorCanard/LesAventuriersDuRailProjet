@@ -36,7 +36,7 @@ class MapViewCreator {
     public static Node createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         Pane map = new Pane();
         //
-        map.getStylesheets().addAll("map.css", "colors.css");
+        map.getStylesheets().addAll("map.css", GuiUtils.COLORS);
         //
         ImageView mapBackground = new ImageView();
         map.getChildren().add(mapBackground);
@@ -100,11 +100,11 @@ class MapViewCreator {
      * @param routeGroup : group of all the routes, their characteristics (id, level, color) and style class
      */
     private static void setAllBlocksOfARoute(Route route, Group routeGroup) {
-        int rectangleWidth = 36;
-        int rectangleHeight = 12;
-        int centerDivide = 2;
-        int wheelCenterPosition = 6;
-        int wheelRadius = 3;
+        final int RECTANGLE_WIDTH = 36;
+        final int RECTANGLE_HEIGHT = 12;
+        final int CENTER_DIVIDE = 2;
+        final int WHEEL_CENTER_POSITION = 6;
+        final int WHEEL_RADIUS = 3;
 
         for (int currentRouteCase = 1; currentRouteCase <= route.length(); currentRouteCase++) {
             Group caseGroup = new Group();
@@ -112,7 +112,7 @@ class MapViewCreator {
 
             routeGroup.getChildren().add(caseGroup);
             //
-            Rectangle trackRectangle = new Rectangle(rectangleWidth, rectangleHeight);
+            Rectangle trackRectangle = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
             trackRectangle.getStyleClass().addAll("track", "filled");
 
             caseGroup.getChildren().add(trackRectangle);
@@ -122,15 +122,15 @@ class MapViewCreator {
 
             caseGroup.getChildren().add(wagonGroup);
             //
-            Rectangle wagonRectangle = new Rectangle(rectangleWidth, rectangleHeight);
+            Rectangle wagonRectangle = new Rectangle(RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
             wagonRectangle.getStyleClass().add("filled");
 
             //
-            double centerX = wagonRectangle.widthProperty().get() / centerDivide;
-            double centerY = wagonRectangle.heightProperty().get() / centerDivide;
+            double centerX = wagonRectangle.widthProperty().get() / CENTER_DIVIDE;
+            double centerY = wagonRectangle.heightProperty().get() / CENTER_DIVIDE;
 
-            Circle wheel1 = new Circle(centerX - wheelCenterPosition, centerY, wheelRadius);
-            Circle wheel2 = new Circle(centerX + wheelCenterPosition, centerY, wheelRadius);
+            Circle wheel1 = new Circle(centerX - WHEEL_CENTER_POSITION, centerY, WHEEL_RADIUS);
+            Circle wheel2 = new Circle(centerX + WHEEL_CENTER_POSITION, centerY, WHEEL_RADIUS);
 
             wagonGroup.getChildren().addAll(wagonRectangle, wheel1, wheel2);
         }

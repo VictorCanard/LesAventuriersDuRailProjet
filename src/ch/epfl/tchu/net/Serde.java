@@ -9,6 +9,8 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static ch.epfl.tchu.net.NetUtils.patternLimit;
+
 /**
  * Represents an object capable of serializing and deserializing values of a given type
  *
@@ -18,8 +20,7 @@ import java.util.stream.Collectors;
 
 public interface Serde<T> {
     String emptyString = "";
-    int patternLimit = -1;
-    
+
     /**
      * Static generic method that creates a serde with the serializing and deserializing functions given as arguments.
      *

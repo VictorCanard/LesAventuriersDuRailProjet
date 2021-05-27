@@ -29,12 +29,12 @@ public class RemotePlayerClient {
      * Constructor for the Client of a Player (who is not necessarily playing on the same machine)
      *
      * @param player : the player to take their turn
-     * @param name : the host name
-     * @param port : the port number
+     * @param name   : the host name
+     * @param port   : the port number
      */
     public RemotePlayerClient(Player player, String name, int port) {
         //Largest number that can be represented by an unsigned 16 bit binary number
-        int maxPortLength = (int) Math.pow(2, 16) -1 ;
+        int maxPortLength = (int) Math.pow(2, 16) - 1;
 
         this.player = player;
         this.name = Objects.requireNonNull(name);
@@ -63,101 +63,95 @@ public class RemotePlayerClient {
             String readLine;
 
             while ((readLine = bufferedReader.readLine()) != null) {
-                int patternLimit = -1;
-                char lineReturn = '\n';
+                Iterator<String> arguments = NetUtils.getStringIterator(readLine, spacePattern);
 
-                String[] incoming = readLine.split(spacePattern, patternLimit);
-                Iterator<String> stringIterator = Arrays.stream(incoming).iterator();
-
-                switch (MessageId.valueOf(stringIterator.next())) {
+                switch (MessageId.valueOf(arguments.next())) {
                     case INIT_PLAYERS:
-                        PlayerId ownId = PLAYER_ID_SERDE.deserialize(stringIterator.next());
-                        String[] playerNamesSerialized = stringIterator.next().split(commaPattern, patternLimit);
+                        PlayerId ownId = PLAYER_ID_SERDE.deserialize(arguments.next());
+                        //
+                        Iterator<String> nameIterator = NetUtils.getStringIterator(arguments.next(), commaPattern);
 
                         Map<PlayerId, String> playerNames = new HashMap<>();
 
-                        for (int i = 0; i < PlayerId.COUNT; i++) {
-                            playerNames.put(PlayerId.ALL.get(i), STRING_SERDE.deserialize(playerNamesSerialized[i]));
-                        }
+                        PlayerId.ALL.forEach(playerId -> playerNames.put(playerId, STRING_SERDE.deserialize(nameIterator.next())));
 
                         player.initPlayers(ownId, playerNames);
                         break;
 
                     case RECEIVE_INFO:
-                        String info = STRING_SERDE.deserialize(stringIterator.next());
+                        String info = STRING_SERDE.deserialize(arguments.next());
 
                         player.receiveInfo(info);
                         break;
 
                     case UPDATE_STATE:
-                        PublicGameState newState = PUBLIC_GAME_STATE_SERDE.deserialize(stringIterator.next());
-                        PlayerState ownState = PLAYER_STATE_SERDE.deserialize(stringIterator.next());
+                        PublicGameState newState = PUBLIC_GAME_STATE_SERDE.deserialize(arguments.next());
+                        PlayerState ownState = PLAYER_STATE_SERDE.deserialize(arguments.next());
 
                         player.updateState(newState, ownState);
                         break;
 
                     case SET_INITIAL_TICKETS:
-                        SortedBag<Ticket> tickets = SORTED_BAG_TICKET_SERDE.deserialize(stringIterator.next());
+                        SortedBag<Ticket> tickets = SORTED_BAG_TICKET_SERDE.deserialize(arguments.next());
 
                         player.setInitialTicketChoice(tickets);
                         break;
 
                     case CHOOSE_INITIAL_TICKETS:
                         SortedBag<Ticket> chosen = player.chooseInitialTickets();
-
-                        bufferedWriter.write(SORTED_BAG_TICKET_SERDE.serialize(chosen) + lineReturn);
-                        bufferedWriter.flush();
+                        writeAndFlush(bufferedWriter, SORTED_BAG_TICKET_SERDE.serialize(chosen));
                         break;
 
                     case NEXT_TURN:
                         Player.TurnKind turn = player.nextTurn();
 
-                        bufferedWriter.write(TURN_KIND_SERDE.serialize(turn) + lineReturn);
-                        bufferedWriter.flush();
+                        writeAndFlush(bufferedWriter, TURN_KIND_SERDE.serialize(turn));
                         break;
 
                     case CHOOSE_TICKETS:
-                        SortedBag<Ticket> ticketOptions = SORTED_BAG_TICKET_SERDE.deserialize(stringIterator.next());
+                        SortedBag<Ticket> ticketOptions = SORTED_BAG_TICKET_SERDE.deserialize(arguments.next());
                         String chosenTickets = SORTED_BAG_TICKET_SERDE.serialize(player.chooseTickets(ticketOptions));
 
-                        bufferedWriter.write(chosenTickets + lineReturn);
-                        bufferedWriter.flush();
+                        writeAndFlush(bufferedWriter, chosenTickets);
                         break;
 
 
                     case DRAW_SLOT:
                         int drawSlot = player.drawSlot();
 
-                        bufferedWriter.write(INTEGER_SERDE.serialize(drawSlot) + lineReturn);
-                        bufferedWriter.flush();
+                        writeAndFlush(bufferedWriter, INTEGER_SERDE.serialize(drawSlot));
                         break;
 
                     case ROUTE:
                         Route claimedRoute = player.claimedRoute();
 
-                        String string = ROUTE_SERDE.serialize(claimedRoute) + lineReturn;
-                        bufferedWriter.write(string);
-                        bufferedWriter.flush();
+                        writeAndFlush(bufferedWriter, ROUTE_SERDE.serialize(claimedRoute));
                         break;
 
                     case CARDS:
                         SortedBag<Card> initialClaimCards = player.initialClaimCards();
 
-                        bufferedWriter.write(SORTED_BAG_CARD_SERDE.serialize(initialClaimCards) + lineReturn);
-                        bufferedWriter.flush();
+                        writeAndFlush(bufferedWriter, SORTED_BAG_CARD_SERDE.serialize(initialClaimCards));
                         break;
 
                     case CHOOSE_ADDITIONAL_CARDS:
-                        List<SortedBag<Card>> cardOptions = LIST_SORTED_BAG_CARD_SERDE.deserialize(stringIterator.next());
-                        SortedBag<Card> addCards = player.chooseAdditionalCards(cardOptions);
+                        List<SortedBag<Card>> cardOptions = LIST_SORTED_BAG_CARD_SERDE.deserialize(arguments.next());
+                        SortedBag<Card> additionalCards = player.chooseAdditionalCards(cardOptions);
 
-                        bufferedWriter.write(SORTED_BAG_CARD_SERDE.serialize(addCards) + lineReturn);
-                        bufferedWriter.flush();
+                        writeAndFlush(bufferedWriter, SORTED_BAG_CARD_SERDE.serialize(additionalCards));
                         break;
                 }
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+
+    private void writeAndFlush(BufferedWriter bufferedWriter, String serialized) throws IOException {
+        char lineReturn = '\n';
+        //
+        bufferedWriter.write(serialized + lineReturn);
+        bufferedWriter.flush();
     }
 }

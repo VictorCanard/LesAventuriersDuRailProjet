@@ -5,9 +5,14 @@ import ch.epfl.tchu.game.*;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Base64;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static ch.epfl.tchu.net.NetUtils.getStringIterator;
 
 /**
  * Represents all the Serdes used in the game
@@ -104,12 +109,14 @@ public class Serdes {
                     .toString(),
 
             (string) -> {
-                String[] splitString = string.split(SEMI_COLON_PATTERN, Serde.patternLimit);
+                Iterator<String> arguments = getStringIterator(string, SEMI_COLON_PATTERN);
+
                 return new PublicCardState(
-                        LIST_CARD_SERDE.deserialize(splitString[0]),
-                        INTEGER_SERDE.deserialize(splitString[1]),
-                        INTEGER_SERDE.deserialize(splitString[2]));
+                        LIST_CARD_SERDE.deserialize(arguments.next()),
+                        INTEGER_SERDE.deserialize(arguments.next()),
+                        INTEGER_SERDE.deserialize(arguments.next()));
             });
+
 
     /**
      * Serde of a public player state
@@ -122,11 +129,12 @@ public class Serdes {
                     .toString(),
 
             (string) -> {
-                String[] splitString = string.split(SEMI_COLON_PATTERN, Serde.patternLimit);
+                Iterator<String> arguments = getStringIterator(string, SEMI_COLON_PATTERN);
+
                 return new PublicPlayerState(
-                        INTEGER_SERDE.deserialize(splitString[0]),
-                        INTEGER_SERDE.deserialize(splitString[1]),
-                        LIST_ROUTE_SERDE.deserialize(splitString[2]));
+                        INTEGER_SERDE.deserialize(arguments.next()),
+                        INTEGER_SERDE.deserialize(arguments.next()),
+                        LIST_ROUTE_SERDE.deserialize(arguments.next()));
             }
     );
     /**
@@ -141,11 +149,12 @@ public class Serdes {
                     .toString(),
 
             (string) -> {
-                String[] splitString = string.split(SEMI_COLON_PATTERN, Serde.patternLimit);
+                Iterator<String> arguments = getStringIterator(string, SEMI_COLON_PATTERN);
+
                 return new PlayerState(
-                        SORTED_BAG_TICKET_SERDE.deserialize(splitString[0]),
-                        SORTED_BAG_CARD_SERDE.deserialize(splitString[1]),
-                        LIST_ROUTE_SERDE.deserialize(splitString[2]));
+                        SORTED_BAG_TICKET_SERDE.deserialize(arguments.next()),
+                        SORTED_BAG_CARD_SERDE.deserialize(arguments.next()),
+                        LIST_ROUTE_SERDE.deserialize(arguments.next()));
             });
     /**
      * Serde of a public game state
@@ -168,20 +177,15 @@ public class Serdes {
 
 
             (serializedString) -> {
-                String[] splitString = serializedString.split(COLON_PATTERN, Serde.patternLimit);
-
-                Map<PlayerId, PublicPlayerState> allPlayerStates = new HashMap<>();
-
-                for (int i = 0; i < PlayerId.COUNT; i++) {
-                    allPlayerStates.put(PlayerId.ALL.get(i), PUBLIC_PLAYER_STATE_SERDE.deserialize(splitString[i+3]));
-                }
+                Iterator<String> arguments = getStringIterator(serializedString, COLON_PATTERN);
 
                 return new PublicGameState(
-                        INTEGER_SERDE.deserialize(splitString[0]),
-                        PUBLIC_CARD_STATE_SERDE.deserialize(splitString[1]),
-                        PLAYER_ID_SERDE.deserialize(splitString[2]),
-                        allPlayerStates,
-                        PLAYER_ID_SERDE.deserialize(splitString[3 + PlayerId.COUNT]));
+                        INTEGER_SERDE.deserialize(arguments.next()),
+                        PUBLIC_CARD_STATE_SERDE.deserialize(arguments.next()),
+                        PLAYER_ID_SERDE.deserialize(arguments.next()),
+                        PlayerId.ALL.stream().collect(Collectors.toMap(playerId -> playerId, playerId -> PUBLIC_PLAYER_STATE_SERDE.deserialize(arguments.next()))),
+                        PLAYER_ID_SERDE.deserialize(arguments.next()));
             }
     );
+
 }
