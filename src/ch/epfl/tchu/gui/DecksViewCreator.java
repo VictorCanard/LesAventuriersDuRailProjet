@@ -1,6 +1,5 @@
 package ch.epfl.tchu.gui;
 
-import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Color;
 import ch.epfl.tchu.game.Constants;
@@ -203,6 +202,7 @@ class DecksViewCreator {
             stackPane.setVisible(false);
 
 
+            //GraphicalPlayer.getCanShowCards().addListener();
             gameState.getTunnelDrawCard(i).addListener((property, oldValue, newValue) -> {
                 stackPane.setVisible(true);
 

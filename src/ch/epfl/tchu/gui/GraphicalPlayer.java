@@ -6,6 +6,7 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,7 +19,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
@@ -234,10 +234,19 @@ public final class GraphicalPlayer {
      * @param possibleAdditionalCards : the possible additional cards the player can play to claim the route
      * @param chooseCardsHandler      : the action handler corresponding to the player choosing cards
      */
+
+    static boolean showDrawnCards = false;
+
+    static public ReadOnlyBooleanProperty getCanShowCards(){
+        return null;
+    }
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
+
+        //UPDATE DRAWN CARDS
+        showDrawnCards = true;
 
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_ADDITIONAL_CARDS,
@@ -252,6 +261,8 @@ public final class GraphicalPlayer {
                         chooseCardsHandler.onChooseCards(items.get(0));
                     }
                 });
+
+        showDrawnCards = false;
     }
 
 
