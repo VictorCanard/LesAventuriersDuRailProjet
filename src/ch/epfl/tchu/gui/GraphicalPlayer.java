@@ -302,5 +302,6 @@ public final class GraphicalPlayer {
         //
         stage.show();
     }
+
 }
 

@@ -188,33 +188,41 @@ class DecksViewCreator {
     }
 
 
-    public static Node createDrawnCards(ObservableGameState gameState){
+    public static Node createDrawnCards(ObservableGameState gameState){ //only shows on server window :(
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css");
         hbox.setId("drawCards");
+        String [] cardNames = new String[3];
 
-        for (int i = 0; i<3 ; i++) {
+        for (int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS ; i++) {
             StackPane mainStack = new StackPane();
             StackPane stackPane = new StackPane();
             stackPane.getStyleClass().add("card");
 
+            //to not see them before the cards are drawn
+            stackPane.setVisible(false);
+
+
             gameState.getTunnelDrawCard(i).addListener((property, oldValue, newValue) -> {
-                stackPane.getStyleClass().add("tunnel-card"); //doesnt seem to work also beginning is weird
+                stackPane.setVisible(true);
 
                 if(newValue != null){
                 stackPane.getStyleClass().add(getCardName(newValue));}
 
-                if(oldValue != null ){
+                if(oldValue != null ) {
                     stackPane.getStyleClass().remove(getCardName(oldValue));
-
-                }else{
-                    stackPane.getStyleClass().add("tunnel-card");
                 }
+                System.out.println("draw cards style class : " + stackPane.getStyleClass());
 
+              //  Animations.flip(backOfCard(), stackPane);
+               //everything inside the listener only is communicated to the server, so we dont see the cards on the client window even if its their turn.
+                // dont see the back of card and animation doenst show up when oldValue == newValue (obviously)
 
-                Animations.flip(backOfCard(), stackPane); //animation doesnt show for card where newValue = oldValue, or the "back of the card"
-                // i want to launch the animation after you pick the initial claim cards but before you receive the info of the draw cards and the window of the choose additional cards. But idk how
+                // i want to show the cards after you pick the initial claim cards but before you receive the info of the draw cards and the window of the choose additional cards. But idk how
+           //for the info, we can remove the text where it says the drawn cards bc those are displayed, but then for putting before the choose cards window.... idk (graphical player adapter maybe when we run it??)
             });
+
+
             mainStack.getChildren().add(cardRectangles(stackPane));
             hbox.getChildren().addAll(mainStack);
         }
