@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Main program of a tCHu client
+ *
  * @author Anne-Marie Rusu (296098)
  */
 

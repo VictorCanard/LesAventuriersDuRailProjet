@@ -27,13 +27,13 @@ public final class GraphicalPlayerAdapter implements Player {
      * Constructs the GraphicalPlayerAdapter, to be executed on a different thread than the JavaFx thread
      */
     public GraphicalPlayerAdapter() {
-        final int CAP = 1;
+        final int cap = 1;
 
-        this.ticketQueue = new ArrayBlockingQueue<>(CAP);
-        this.cardQueue = new ArrayBlockingQueue<>(CAP);
-        this.routeQueue = new ArrayBlockingQueue<>(CAP);
-        this.turnKindQueue = new ArrayBlockingQueue<>(CAP);
-        this.integerQueue = new ArrayBlockingQueue<>(CAP);
+        this.ticketQueue = new ArrayBlockingQueue<>(cap);
+        this.cardQueue = new ArrayBlockingQueue<>(cap);
+        this.routeQueue = new ArrayBlockingQueue<>(cap);
+        this.turnKindQueue = new ArrayBlockingQueue<>(cap);
+        this.integerQueue = new ArrayBlockingQueue<>(cap);
     }
 
     /**
@@ -44,7 +44,6 @@ public final class GraphicalPlayerAdapter implements Player {
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
         runLater(() -> this.graphicalPlayer = new GraphicalPlayer(ownID, playerNames));
-
     }
 
     @Override
