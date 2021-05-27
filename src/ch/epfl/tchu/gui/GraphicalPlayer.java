@@ -117,7 +117,7 @@ public final class GraphicalPlayer {
 
         Preconditions.checkArgument(!messageToAdd.isEmpty());
 
-        int maxToAddMessage = 4;
+        final int maxToAddMessage = 4;
 
         if (messages.size() > maxToAddMessage) {
             messages.remove(0);
@@ -211,14 +211,14 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleClaimCards.isEmpty());
         //
-        final int MIN_TO_SELECT = 1;
+        final int minToSelect = 1;
         //
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_CARDS,
                 List.copyOf(possibleClaimCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
-                MIN_TO_SELECT,
+                minToSelect,
                 items -> chooseCardsHandler.onChooseCards(items.get(0)));
     }
 
@@ -233,14 +233,14 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
         //
-        final int MIN_TO_SELECT = 0;
+        final int minToSelect = 0;
         //
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_ADDITIONAL_CARDS,
                 List.copyOf(possibleAdditionalCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
-                MIN_TO_SELECT,
+                minToSelect,
                 items -> {
                     if (items.isEmpty()) {
                         chooseCardsHandler.onChooseCards(SortedBag.of());

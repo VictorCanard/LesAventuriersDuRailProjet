@@ -62,13 +62,13 @@ public class InfoViewCreator {
      * @return a Vertical Box with all stats concerning this player and all stats concerning the other player underneath it.
      */
     private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
-        final int CIRCLE_RADIUS = 5;
+        final int circleRadius = 5;
         //
         VBox playerStats = new VBox();
         playerStats.setId("player-stats");
         playerStats.getStyleClass().add(playerId.name());
         //
-        Circle circle = new Circle(CIRCLE_RADIUS);
+        Circle circle = new Circle(circleRadius);
         circle.getStyleClass().add("filled");
         //
         Text stats = new Text();

@@ -8,7 +8,6 @@ import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.net.RemotePlayerProxy;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -69,7 +68,6 @@ public class ServerMain extends Application {
 
     }
 
-    @NotNull
     private ServerSocket createSockets() throws IOException {
         ServerSocket serverSocket = new ServerSocket(GuiUtils.PORT);
         for (int i = localPlayerNumber; i < COUNT; i++) {

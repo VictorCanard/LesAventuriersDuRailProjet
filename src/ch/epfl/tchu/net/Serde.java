@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static ch.epfl.tchu.net.NetUtils.patternLimit;
+import static ch.epfl.tchu.net.NetUtils.PATTERN_LIMIT;
 
 /**
  * Represents an object capable of serializing and deserializing values of a given type
@@ -81,7 +81,7 @@ public interface Serde<T> {
 
 
         Function<String, List<T>> deserializingFunction = (string) -> (string.equals(emptyString)) ? List.of() :
-                Arrays.stream(string.split(Pattern.quote(delimiter), patternLimit))
+                Arrays.stream(string.split(Pattern.quote(delimiter), PATTERN_LIMIT))
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList());
 
@@ -105,7 +105,7 @@ public interface Serde<T> {
                         .collect(Collectors.joining(delimiter));
 
         Function<String, SortedBag<T>> deserializingFunction = (string) -> (string.equals(emptyString)) ? SortedBag.of() :
-                SortedBag.of(Arrays.stream(string.split(Pattern.quote(delimiter), patternLimit))
+                SortedBag.of(Arrays.stream(string.split(Pattern.quote(delimiter), PATTERN_LIMIT))
                         .map(usedSerde::deserialize)
                         .collect(Collectors.toList()));
 
