@@ -4,10 +4,12 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -15,7 +17,8 @@ import javafx.animation.TranslateTransition;
 
 //organizing all the animation possibilities
 public class Animations extends Application{
-    private static final Duration ONE_S = Duration.millis(1000);
+    private static final Duration DURATION = Duration.seconds(1);
+    private static final Duration PAUSE = Duration.seconds(3);
     private static final double PATH_RATE = 1.2;
 
 
@@ -40,8 +43,8 @@ public class Animations extends Application{
     public static void flip(Node faceDown, Node faceUp){
         faceUp.setVisible(true);
         int rotAngle = 90;
-        RotateTransition fromFaceDown = new RotateTransition(ONE_S);
-        RotateTransition toFaceUp = new RotateTransition(ONE_S);
+        RotateTransition fromFaceDown = new RotateTransition(DURATION);
+        RotateTransition toFaceUp = new RotateTransition(DURATION);
 
         fromFaceDown.setAxis(Rotate.Y_AXIS);
         fromFaceDown.setByAngle(rotAngle);
@@ -53,7 +56,7 @@ public class Animations extends Application{
         fromFaceDown.setNode(faceDown);
         toFaceUp.setNode(faceUp);
 
-        SequentialTransition sq = new SequentialTransition( fromFaceDown, toFaceUp, new PauseTransition(ONE_S));
+        SequentialTransition sq = new SequentialTransition(new PauseTransition(DURATION), fromFaceDown, toFaceUp, new PauseTransition(PAUSE));
         sq.setOnFinished(event -> faceUp.setVisible(false));
         sq.play();
     }
@@ -69,11 +72,11 @@ public class Animations extends Application{
         arc.setCenterY(centery);
 
         PathTransition pt = new PathTransition();
-        pt.setDuration(ONE_S);
+        pt.setDuration(DURATION);
         pt.setPath(arc);
         pt.setNode(node);
 
-        TranslateTransition tt = new TranslateTransition(ONE_S);
+        TranslateTransition tt = new TranslateTransition(DURATION);
         tt.setToY(finaly);
         tt.setToX(finalx);
         tt.setNode(node);
@@ -105,13 +108,28 @@ public class Animations extends Application{
 
 
 
+
+
             //translate(cir, 400, 0, 0);
             //flip(cir, cir2);
             //arcTranslate(cir, 600, 250, 200, 200);
 
             //Configuring Group and Scene
             Group root = new Group();
-            root.getChildren().addAll(cir, cir2);
+            root.getStylesheets().add("decks.css");
+
+            StackPane stackPane = new StackPane();
+            stackPane.getStyleClass().add("card");
+            Rectangle outside = new Rectangle(60, 90);
+            outside.getStyleClass().add("tunnel-card");
+
+            Rectangle train = new Rectangle(40, 70);
+            train.getStyleClass().add("train-image");
+
+            stackPane.getChildren().addAll(outside, train);
+
+
+            root.getChildren().add(stackPane);
             Scene scene = new Scene(root,1500,700,Color.WHITE);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Animation Test");

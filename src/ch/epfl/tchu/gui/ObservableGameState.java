@@ -122,7 +122,7 @@ public final class ObservableGameState {
     public ObservableList<Card> getTDCards(){ return tDCards;}
 
     private void setTunnelDrawCards(List<Card> newDrawCards) {
-        for (int i = 0; i< 3; i++) {
+        for (int i = 0; i< Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
             ObjectProperty<Card> cardObjectProperty = tunnelDrawCards.get(i);
             Card newCard = newDrawCards.get(i);
             cardObjectProperty.set(newCard);

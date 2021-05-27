@@ -56,7 +56,7 @@ public class InfoViewCreator {
         infoPane.getChildren().add(gameInfo);
         Bindings.bindContent(gameInfo.getChildren(), infos);
 
-        //draw cards to be displayed under infos bc there is space
+        //draw cards to be displayed under information
         infoPane.getChildren().add(DecksViewCreator.createDrawnCards(gameState)); //why can only the server see the 3 cards change...
 
         return infoPane;
