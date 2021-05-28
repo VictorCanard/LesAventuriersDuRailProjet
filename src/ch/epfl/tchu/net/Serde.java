@@ -24,9 +24,9 @@ public interface Serde<T> {
     /**
      * Static generic method that creates a serde with the serializing and deserializing functions given as arguments.
      *
-     * @param serializingFunction : function to turn an object of type T into a String
+     * @param serializingFunction   : function to turn an object of type T into a String
      * @param deserializingFunction : function to turn a String into an object of type T
-     * @param <T> : the type contained in the Serde.
+     * @param <T>                   : the type contained in the Serde.
      * @return a new Serde capable of serializing and deserializing objects of generic type T.
      */
     static <T> Serde<T> of(Function<T, String> serializingFunction, Function<String, T> deserializingFunction) {
@@ -49,7 +49,7 @@ public interface Serde<T> {
      * list of objects of type T from an enumerated type.
      *
      * @param listOfValuesOfEnumType : values of the enumerated type that have to be turned into a String
-     * @param <T> : the type contained in the Serde
+     * @param <T>                    : the type contained in the Serde
      * @return a new Serde capable of serializing and deserializing a value T, contained in a specific list of values, of an enumerated type
      */
     static <T> Serde<T> oneOf(List<T> listOfValuesOfEnumType) {
@@ -69,7 +69,7 @@ public interface Serde<T> {
      *
      * @param usedSerde : a given serde
      * @param delimiter : delimiter separating the components of the string
-     * @param <T> : the type to be contained in the serde
+     * @param <T>       : the type to be contained in the serde
      * @return a Serde of a list of a specified type
      */
     static <T> Serde<List<T>> listOf(Serde<T> usedSerde, String delimiter) {
@@ -78,7 +78,6 @@ public interface Serde<T> {
                         .stream()
                         .map(usedSerde::serialize)
                         .collect(Collectors.joining(delimiter));
-
 
         Function<String, List<T>> deserializingFunction = (string) -> (string.equals(emptyString)) ? List.of() :
                 Arrays.stream(string.split(Pattern.quote(delimiter), PATTERN_LIMIT))
@@ -95,19 +94,14 @@ public interface Serde<T> {
      *
      * @param usedSerde : a given serde
      * @param delimiter : the delimiter separating the components of the string
-     * @param <T> : the type to be contained in the serde
+     * @param <T>       : the type to be contained in the serde
      * @return a Serde of a sorted bag of a specified type
      */
     static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> usedSerde, String delimiter) {
-        Function<SortedBag<T>, String> serializingFunction = (sortedBag) ->
-                sortedBag.stream()
-                        .map(usedSerde::serialize)
-                        .collect(Collectors.joining(delimiter));
+        Serde<List<T>> listSerde = listOf(usedSerde, delimiter);
 
-        Function<String, SortedBag<T>> deserializingFunction = (string) -> (string.equals(emptyString)) ? SortedBag.of() :
-                SortedBag.of(Arrays.stream(string.split(Pattern.quote(delimiter), PATTERN_LIMIT))
-                        .map(usedSerde::deserialize)
-                        .collect(Collectors.toList()));
+        Function<SortedBag<T>, String> serializingFunction = (sortedBag) -> listSerde.serialize(sortedBag.toList());
+        Function<String, SortedBag<T>> deserializingFunction = (string) -> SortedBag.of(listSerde.deserialize(string));
 
         return of(serializingFunction, deserializingFunction);
 
