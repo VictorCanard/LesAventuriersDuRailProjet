@@ -75,6 +75,7 @@ public class InfoViewCreator {
 
         Circle circle = new Circle(circleRadius);
         circle.getStyleClass().add(GuiUtils.FILLED);
+        circle.getStyleClass().add("Circle");
         //Creates the text of the player's statistics
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,
