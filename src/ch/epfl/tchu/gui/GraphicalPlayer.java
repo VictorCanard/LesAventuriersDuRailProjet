@@ -41,7 +41,6 @@ import static javafx.application.Platform.isFxApplicationThread;
  */
 public final class GraphicalPlayer {
     private final PlayerId playerId;
-    private final Map<PlayerId, String> playerNames;
     private final ObservableGameState observableGameState;
     private final ObservableList<Text> messages = FXCollections.observableArrayList();
     private final Stage primaryStage;
@@ -60,14 +59,13 @@ public final class GraphicalPlayer {
         Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
 
         this.playerId = Objects.requireNonNull(playerId);
-        this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
         this.observableGameState = new ObservableGameState(playerId);
         this.primaryStage = new Stage();
         //sets the scene
-        setSceneGraph();
+        setSceneGraph(Objects.requireNonNull(playerNames));
     }
 
-    private void setSceneGraph() {
+    private void setSceneGraph(Map<PlayerId, String> playerNames) {
         final char dash = '—';
         final String title = "tCHu";
 

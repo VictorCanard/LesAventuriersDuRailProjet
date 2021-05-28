@@ -30,7 +30,6 @@ public interface Serde<T> {
      * @return a new Serde capable of serializing and deserializing objects of generic type T.
      */
     static <T> Serde<T> of(Function<T, String> serializingFunction, Function<String, T> deserializingFunction) {
-
         return new Serde<>() {
             @Override
             public String serialize(T objectToSerialize) {
