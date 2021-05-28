@@ -21,7 +21,7 @@ public final class Trail {
     private final Station station2;
     private final int length;
 
-    private static final Trail EMPTY_TRAIL = Trail.longest(List.of());
+    private static final Trail EMPTY_TRAIL = new Trail(List.of(), null, null);
 
     /**
      * Private constructor for a trail
