@@ -34,14 +34,13 @@ import java.util.function.Function;
 import static javafx.application.Platform.isFxApplicationThread;
 
 /**
- * Represents the graphical interface of a player of the game
+ * Represents the graphical interface of a playerId of the game
  *
  * @author Victor Jean Canard-Duchene (326913)
  * @author Anne-Marie Rusu (296098)
  */
 public final class GraphicalPlayer {
-
-    private final PlayerId player;
+    private final PlayerId playerId;
     private final Map<PlayerId, String> playerNames;
     private final ObservableGameState observableGameState;
     private final ObservableList<Text> messages = FXCollections.observableArrayList();
@@ -52,17 +51,17 @@ public final class GraphicalPlayer {
     private final ObjectProperty<ActionHandlers.ClaimRouteHandler> claimRouteHP = new SimpleObjectProperty<>(null);
 
     /**
-     * Creates the graphical interface of the perspective of the given player
+     * Creates the graphical interface of the perspective of the given playerId
      *
-     * @param player  : the player the graphical interface belongs to
+     * @param playerId  : the playerId the graphical interface belongs to
      * @param playerNames : the names of the players in the game
      */
-    public GraphicalPlayer(PlayerId player, Map<PlayerId, String> playerNames) {
+    public GraphicalPlayer(PlayerId playerId, Map<PlayerId, String> playerNames) {
         Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
         //
-        this.player = Objects.requireNonNull(player);
+        this.playerId = Objects.requireNonNull(playerId);
         this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
-        this.observableGameState = new ObservableGameState(player);
+        this.observableGameState = new ObservableGameState(playerId);
         this.primaryStage = new Stage();
         //
         setSceneGraph();
@@ -82,7 +81,7 @@ public final class GraphicalPlayer {
                 .createHandView(observableGameState);
 
         Node infoView = InfoViewCreator
-                .createInfoView(player, playerNames, observableGameState, messages);
+                .createInfoView(playerId, playerNames, observableGameState, messages);
 
         //
         BorderPane mainPane =
@@ -90,7 +89,7 @@ public final class GraphicalPlayer {
         //
         Scene scene = new Scene(mainPane);
         //
-        primaryStage.setTitle(title + dash + playerNames.get(player));
+        primaryStage.setTitle(title + dash + playerNames.get(playerId));
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -99,7 +98,7 @@ public final class GraphicalPlayer {
      * Sets the state of the game on the javafx thread
      *
      * @param publicGameState : the public game state at the point in the game
-     * @param playerState     : the player state at the point in the game
+     * @param playerState     : the playerId state at the point in the game
      */
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
         assert isFxApplicationThread();
@@ -110,7 +109,7 @@ public final class GraphicalPlayer {
     /**
      * Adds the given message to the information view of the graphical interface
      *
-     * @param messageToAdd : the information to be displayed to the player
+     * @param messageToAdd : the information to be displayed to the playerId
      */
     public void receiveInfo(String messageToAdd) {
         assert isFxApplicationThread();
@@ -126,11 +125,11 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Starts the player's turn on the javafx thread, where they can initially do 3 actions
+     * Starts the playerId's turn on the javafx thread, where they can initially do 3 actions
      *
-     * @param drawTicketsHandler : the action handler corresponding to the player drawing tickets
-     * @param drawCardHandler    : the action handler corresponding to the player drawing cards
-     * @param claimRouteHandler  : the action handler corresponding to the player claiming a route
+     * @param drawTicketsHandler : the action handler corresponding to the playerId drawing tickets
+     * @param drawCardHandler    : the action handler corresponding to the playerId drawing cards
+     * @param claimRouteHandler  : the action handler corresponding to the playerId claiming a route
      */
     public void startTurn(ActionHandlers.DrawTicketsHandler drawTicketsHandler, ActionHandlers.DrawCardHandler drawCardHandler, ActionHandlers.ClaimRouteHandler claimRouteHandler) {
         assert isFxApplicationThread();
@@ -156,7 +155,7 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Disables all the actions for the player
+     * Disables all the actions for the playerId
      */
     private void disableAllTurnActions() {
         drawCardsHP.set(null);
@@ -165,9 +164,9 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Allows the player to draw cards, through the 5 face up cards or the cards button
+     * Allows the playerId to draw cards, through the 5 face up cards or the cards button
      *
-     * @param drawCardHandler : the action handler corresponding to the player drawing cards
+     * @param drawCardHandler : the action handler corresponding to the playerId drawing cards
      */
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
@@ -181,16 +180,16 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Allows the player to choose tickets through the ticket button by displaying a pop up window
+     * Allows the playerId to choose tickets through the ticket button by displaying a pop up window
      *
-     * @param ticketsToChooseFrom  : the tickets the player must choose at least 1 of
-     * @param chooseTicketsHandler : the action handler corresponding to the player choosing ticket(s)
+     * @param ticketsToChooseFrom  : the tickets the playerId must choose at least 1 of
+     * @param chooseTicketsHandler : the action handler corresponding to the playerId choosing ticket(s)
      */
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!ticketsToChooseFrom.isEmpty());
         //
-        int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
+        final int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
         //
         createChoiceWindow(StringsFr.TICKETS_CHOICE,
                 String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)),
@@ -202,10 +201,10 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Allows the player to choose the initial claim cards they want to use when attempting to claim a route
+     * Allows the playerId to choose the initial claim cards they want to use when attempting to claim a route
      *
-     * @param possibleClaimCards : the list of groups of claim cards the player can use for the route
-     * @param chooseCardsHandler : the action handler corresponding to the player choosing cards
+     * @param possibleClaimCards : the list of groups of claim cards the playerId can use for the route
+     * @param chooseCardsHandler : the action handler corresponding to the playerId choosing cards
      */
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
@@ -223,11 +222,11 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Allows the player to choose additional cards when it is necessary when attempting to claim a tunnel route.
-     * The player also has an option to abandon the route by not selecting cards and clicking the choose button
+     * Allows the playerId to choose additional cards when it is necessary when attempting to claim a tunnel route.
+     * The playerId also has an option to abandon the route by not selecting cards and clicking the choose button
      *
-     * @param possibleAdditionalCards : the possible additional cards the player can play to claim the route
-     * @param chooseCardsHandler      : the action handler corresponding to the player choosing cards
+     * @param possibleAdditionalCards : the possible additional cards the playerId can play to claim the route
+     * @param chooseCardsHandler      : the action handler corresponding to the playerId choosing cards
      */
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
@@ -252,10 +251,12 @@ public final class GraphicalPlayer {
 
 
     private <E> void createChoiceWindow(String title, String displayText, List<E> list, SelectionMode selectionMode, Function<E, String> objectToStringFunction, int minToSelect, Consumer<ObservableList<E>> consumer) {
+        final String chooser = "chooser.css";
+
         VBox vbox = new VBox();
         //
         Scene scene = new Scene(vbox);
-        scene.getStylesheets().add("chooser.css");
+        scene.getStylesheets().add(chooser);
         //
         Stage stage = new Stage(StageStyle.UTILITY);
         stage.setTitle(title);

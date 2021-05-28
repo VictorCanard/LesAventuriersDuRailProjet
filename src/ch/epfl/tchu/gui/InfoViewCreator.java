@@ -16,6 +16,7 @@ import java.util.Map;
  * Represents the view of the information panel
  *
  * @author Anne-Marie (296098)
+ * @author Victor Canard-Duchêne (326913)
  */
 
 public class InfoViewCreator {
@@ -32,8 +33,11 @@ public class InfoViewCreator {
      * @return a Vertical Box containing the messages and each player's stats.
      */
     public static Node createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos) {
+        final String info = "info.css";
+        final String gameInfoString = "game-info";
+
         VBox infoPane = new VBox();
-        infoPane.getStylesheets().addAll("info.css", GuiUtils.COLORS);
+        infoPane.getStylesheets().addAll(info, GuiUtils.COLORS);
         //
         PlayerId currentId = playerId;
         for (int i = 0; i < PlayerId.COUNT; i++) {
@@ -45,7 +49,7 @@ public class InfoViewCreator {
         infoPane.getChildren().add(separator);
         //
         TextFlow gameInfo = new TextFlow();
-        gameInfo.setId("game-info");
+        gameInfo.setId(gameInfoString);
         infoPane.getChildren().add(gameInfo);
         //
         Bindings.bindContent(gameInfo.getChildren(), infos);
@@ -63,13 +67,14 @@ public class InfoViewCreator {
      */
     private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
         final int circleRadius = 5;
+        final String playerStatsString = "playerStats";
         //
         VBox playerStats = new VBox();
-        playerStats.setId("player-stats");
+        playerStats.setId(playerStatsString);
         playerStats.getStyleClass().add(playerId.name());
         //
         Circle circle = new Circle(circleRadius);
-        circle.getStyleClass().add("filled");
+        circle.getStyleClass().add(GuiUtils.FILLED);
         //
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,

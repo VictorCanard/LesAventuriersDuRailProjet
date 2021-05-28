@@ -49,12 +49,12 @@ public class RemotePlayerClient {
      * and send it back onto the Socket (it will write it with the buffered writer).
      */
     public void run() {
-        try (Socket socket = new Socket(name, port);
-             BufferedReader bufferedReader =
+        try (final Socket socket = new Socket(name, port);
+             final BufferedReader bufferedReader =
                      new BufferedReader(
                              new InputStreamReader(socket.getInputStream(),
                                      US_ASCII));
-             BufferedWriter bufferedWriter =
+             final BufferedWriter bufferedWriter =
                      new BufferedWriter(
                              new OutputStreamWriter(socket.getOutputStream(),
                                      US_ASCII))) {
@@ -149,7 +149,7 @@ public class RemotePlayerClient {
 
 
     private void writeAndFlush(BufferedWriter bufferedWriter, String serialized) throws IOException {
-        char lineReturn = '\n';
+        final char lineReturn = '\n';
         //
         bufferedWriter.write(serialized + lineReturn);
         bufferedWriter.flush();

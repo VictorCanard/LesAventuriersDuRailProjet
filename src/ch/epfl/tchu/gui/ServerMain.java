@@ -21,6 +21,7 @@ import static ch.epfl.tchu.game.PlayerId.*;
  * Main program of a tCHu server
  *
  * @author Anne-Marie Rusu(296098)
+ * @author Victor Canard-Duchêne (326913)
  */
 public class ServerMain extends Application {
     private final List<Socket> sockets = new ArrayList<>();

@@ -63,7 +63,6 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public SortedBag<Ticket> chooseInitialTickets() {
-
         return withTryAndCatch(ticketQueue);
     }
 
@@ -85,7 +84,6 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
-
         setInitialTicketChoice(options);
         return chooseInitialTickets();
     }

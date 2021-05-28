@@ -21,9 +21,13 @@ import javafx.scene.text.Text;
  * Represents the view of the ticket and card draw piles, and face up cards, as well as the tickets and cards the player possesses.
  *
  * @author Anne-Marie Rusu (296098)
+ * @author Victor Canard-Duchêne (326913)
  */
 
 class DecksViewCreator {
+    private static final String DECKS = "decks.css";
+    private static final String CARD_STRING = "card";
+
     private DecksViewCreator() {
     }
 
@@ -34,18 +38,24 @@ class DecksViewCreator {
      * @return a Horizontal Box with a specific scene graph (set of children and attached nodes)
      */
     public static HBox createHandView(ObservableGameState gameState) {
-        int minNumberVisible = 1;
-        int minCardVisible = 0;
+        final int minNumberVisible = 1;
+        final int minCardVisible = 0;
+
+
+        final String handPaneString = "hand-pane";
+        final String tickets = "tickets";
+        final String countString = "count";
+
         //
         HBox mainHBox = new HBox();
-        mainHBox.getStylesheets().addAll("decks.css", "colors.css");
+        mainHBox.getStylesheets().addAll(DecksViewCreator.DECKS, GuiUtils.COLORS);
         //
         HBox handPane = new HBox();
-        handPane.setId("hand-pane");
+        handPane.setId(handPaneString);
         //
         ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
         ListView<Ticket> listView = new ListView<>(listOfTickets);
-        listView.setId("tickets");
+        listView.setId(tickets);
         //
         mainHBox.getChildren().addAll(listView, handPane);
 
@@ -56,7 +66,7 @@ class DecksViewCreator {
             StackPane stackPane = cardPane(card);
             //
             Text text = new Text(count.getValue().toString());
-            text.getStyleClass().add("count");
+            text.getStyleClass().add(countString);
             //
             text.textProperty().bind(Bindings.convert(count));
             text.visibleProperty().bind(Bindings.greaterThan(count, minNumberVisible));
@@ -72,15 +82,17 @@ class DecksViewCreator {
     /**
      * Creates the cards view at the right of the screen; ie the tickets deck, the cards deck, and the 5 face-up cards
      *
-     * @param gameState : observable game state that stores the information about the tickets and cards
+     * @param gameState   : observable game state that stores the information about the tickets and cards
      * @param drawTickets : an action handler for drawing tickets
-     * @param drawCards : an action handler for drawing cards
+     * @param drawCards   : an action handler for drawing cards
      * @return a vertical box with a specific scene graph
      */
     public static Node createCardsView(ObservableGameState gameState, ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTickets, ObjectProperty<ActionHandlers.DrawCardHandler> drawCards) {
+        final String cardPaneString = "card-pane";
+
         VBox cardPane = new VBox();
-        cardPane.getStylesheets().addAll("decks.css", GuiUtils.COLORS);
-        cardPane.setId("card-pane");
+        cardPane.getStylesheets().addAll(DECKS, GuiUtils.COLORS);
+        cardPane.setId(cardPaneString);
 
         //Tickets button
         Button ticketButton = new Button(StringsFr.TICKETS);
@@ -95,7 +107,7 @@ class DecksViewCreator {
         //Face-Up cards
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             StackPane stackPane = new StackPane();
-            stackPane.getStyleClass().add("card");
+            stackPane.getStyleClass().add(CARD_STRING);
 
             //Changes the graphics of the card according to what card is stored in the slot
             gameState.getFaceUpCard(slot).addListener((property, oldValue, newValue) -> {
@@ -133,14 +145,14 @@ class DecksViewCreator {
      * @param card : the card which we want to know the name of
      * @return the name of the cards (in upper case)
      */
-    private static String getCardName(Card card){
-        return (card == Card.LOCOMOTIVE) ? "NEUTRAL" : card.color().name();
+    private static String getCardName(Card card) {
+        return (card == Card.LOCOMOTIVE) ? GuiUtils.NEUTRAL : card.color().name();
     }
 
     /**
      * Creates a gauged button with a certain percentage and a specific button
      *
-     * @param button : button we want to add a gauge to
+     * @param button     : button we want to add a gauge to
      * @param percentage : represents the actual value which is displayed onto the gauge
      * @return a button with a percentage bar
      */
@@ -148,20 +160,24 @@ class DecksViewCreator {
         final int rectangleWidth = 50;
         final int rectangleHeight = 5;
         final double percentageMultiplier = 0.5;
+
+        final String bg = "background";
+        final String fg = "foreground";
+        final String gauged = "gauged";
         //
         Group group = new Group();
         //
         Rectangle gaugeBackground = new Rectangle(rectangleWidth, rectangleHeight);
-        gaugeBackground.getStyleClass().add("background");
+        gaugeBackground.getStyleClass().add(bg);
         //
         Rectangle gaugeForeground = new Rectangle(rectangleWidth, rectangleHeight);
         gaugeForeground.widthProperty().bind(percentage.multiply(percentageMultiplier));
-        gaugeForeground.getStyleClass().add("foreground");
+        gaugeForeground.getStyleClass().add(fg);
         //
         group.getChildren().addAll(gaugeBackground, gaugeForeground);
         //
         button.setGraphic(group);
-        button.getStyleClass().add("gauged");
+        button.getStyleClass().add(gauged);
         //
         return button;
     }
@@ -176,7 +192,7 @@ class DecksViewCreator {
         String cardName = getCardName(card);
         //
         StackPane stackPane = new StackPane();
-        stackPane.getStyleClass().addAll(cardName, "card");
+        stackPane.getStyleClass().addAll(cardName, CARD_STRING);
         //
         return cardRectangles(stackPane);
     }
@@ -192,15 +208,19 @@ class DecksViewCreator {
         final int outHeight = 90;
         final int inWidth = 40;
         final int inHeight = 70;
+
+        final String outsideString = "outside";
+        final String insideString = "inside";
+        final String trainImage = "train-image";
         //
         Rectangle outside = new Rectangle(outWidth, outHeight);
-        outside.getStyleClass().add("outside");
+        outside.getStyleClass().add(outsideString);
         //
         Rectangle inside = new Rectangle(inWidth, inHeight);
-        inside.getStyleClass().addAll("filled", "inside");
+        inside.getStyleClass().addAll(GuiUtils.FILLED, insideString);
         //
         Rectangle train = new Rectangle(inWidth, inHeight);
-        train.getStyleClass().add("train-image");
+        train.getStyleClass().add(trainImage);
         //
         stackPane.getChildren().addAll(outside, inside, train);
         //

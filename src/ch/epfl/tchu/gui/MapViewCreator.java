@@ -55,13 +55,15 @@ class MapViewCreator {
      * @param cardChooser  : an instance of the functional interface CardChooser used to choose some cards
      */
     private static void setAllRoutes(Pane map, ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
+        final String routeString = "route";
+
         for (Route route : ChMap.routes()) {
             Group routeGroup = new Group();
 
             //Set Id, color and level to a route's group style class
             routeGroup.setId(route.id());
-            String routeColor = (route.color() == null) ? "NEUTRAL" : route.color().name();
-            routeGroup.getStyleClass().addAll("route", route.level().name(), routeColor);
+            String routeColor = (route.color() == null) ? GuiUtils.NEUTRAL : route.color().name();
+            routeGroup.getStyleClass().addAll(routeString, route.level().name(), routeColor);
 
             //When a route is clicked on, checks the cards a player could use to claim this route.
             //If he can play multiple sorted bag of cards, asks the player which one he wants to use.
@@ -106,24 +108,28 @@ class MapViewCreator {
         final int wheelCenterPosition = 6;
         final int wheelRadius = 3;
 
+        final String underscore = "_";
+        final String track = "track";
+        final String car = "car";
+        
         for (int currentRouteCase = 1; currentRouteCase <= route.length(); currentRouteCase++) {
             Group caseGroup = new Group();
-            caseGroup.setId(route.id() + "_" + currentRouteCase);
+            caseGroup.setId(route.id() + underscore + currentRouteCase);
 
             routeGroup.getChildren().add(caseGroup);
             //
             Rectangle trackRectangle = new Rectangle(rectangleWidth, rectangleHeight);
-            trackRectangle.getStyleClass().addAll("track", "filled");
+            trackRectangle.getStyleClass().addAll(track, GuiUtils.FILLED);
 
             caseGroup.getChildren().add(trackRectangle);
             //
             Group wagonGroup = new Group();
-            wagonGroup.getStyleClass().add("car");
+            wagonGroup.getStyleClass().add(car);
 
             caseGroup.getChildren().add(wagonGroup);
             //
             Rectangle wagonRectangle = new Rectangle(rectangleWidth, rectangleHeight);
-            wagonRectangle.getStyleClass().add("filled");
+            wagonRectangle.getStyleClass().add(GuiUtils.FILLED);
 
             //
             double centerX = wagonRectangle.widthProperty().get() / centerDivide;

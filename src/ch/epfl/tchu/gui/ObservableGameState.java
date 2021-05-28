@@ -23,9 +23,9 @@ public final class ObservableGameState {
     private final IntegerProperty ticketsPercentageLeft = new SimpleIntegerProperty(0);
     private final IntegerProperty cardsPercentageLeft = new SimpleIntegerProperty(0);
     private final List<ObjectProperty<Card>> faceUpCards = new ArrayList<>();
+    private final Map<Route, ObjectProperty<PlayerId>> allRoutesContainedByWhom = new HashMap<>();
 
     //Group 2 : Both Player's Public Player States
-    private final Map<Route, ObjectProperty<PlayerId>> allRoutesContainedByWhom = new HashMap<>();
     private final Map<PlayerId, IntegerProperty> ticketCount = new HashMap<>();
     private final Map<PlayerId, IntegerProperty> cardCount = new HashMap<>();
     private final Map<PlayerId, IntegerProperty> carCount = new HashMap<>();
@@ -88,6 +88,89 @@ public final class ObservableGameState {
 
         ChMap.routes().forEach(route -> canPlayerClaimRoute.put(route, new SimpleBooleanProperty(false)));
     }
+
+
+    /**
+     * Sets the state of the observable game state. Uses the auxiliary methods down below to set each of the properties
+     * contained in this ObservableGameState to the values contained in the publicGameState and playerState passed as arguments.
+     *
+     * @param publicGameState : the public game state at this point in the game
+     * @param playerState : the player state of the player the observable game state belongs to
+     */
+    public void setState(PublicGameState publicGameState, PlayerState playerState) {
+        Preconditions.checkArgument(publicGameState != null);
+        Preconditions.checkArgument(playerState != null);
+        //
+        final int percentageConvert = 100;
+        //
+        ticketsPercentageLeft.set((publicGameState.ticketsCount() * percentageConvert / ChMap.tickets().size()));
+        cardsPercentageLeft.set((publicGameState.cardState().deckSize() * percentageConvert / Constants.TOTAL_CARDS_COUNT));
+        setFaceUpCards(publicGameState.cardState().faceUpCards());
+        setRoutesPlayerId(publicGameState);
+        //
+        setEachPlayerCountAttributesCount(publicGameState);
+        //
+        setPlayerTickets(playerState);
+        setPlayerCards(playerState);
+        setPlayerCanClaimRouteOrNot(publicGameState, playerState);
+        //
+        this.publicGameState = publicGameState;
+        this.playerState = playerState;
+    }
+    //Group 1
+    private void setFaceUpCards(List<Card> newFaceUpCards) {
+        for (int slot : Constants.FACE_UP_CARD_SLOTS) {
+            Card newCard = newFaceUpCards.get(slot);
+            faceUpCards.get(slot).set(newCard);
+        }
+    }
+
+    private void setRoutesPlayerId(PublicGameState newPublicGameState) {
+
+        ChMap.routes().forEach(route -> PlayerId.ALL.forEach(playerId -> {
+            if (newPublicGameState.playerState(playerId).routes().contains(route)) {
+                allRoutesContainedByWhom.get(route).set(playerId);
+                allPairsOfStationsClaimed.add(route.stations());
+            }
+        }));
+    }
+    //Group 2
+
+    private void setEachPlayerCountAttributesCount(PublicGameState publicGameState) {
+
+        PlayerId.ALL.forEach(playerId -> {
+            ticketCount.get(playerId).set(publicGameState.playerState(playerId).ticketCount());
+            cardCount.get(playerId).set(publicGameState.playerState(playerId).cardCount());
+            carCount.get(playerId).set(publicGameState.playerState(playerId).carCount());
+            constructionPoints.get(playerId).set(publicGameState.playerState(playerId).claimPoints());
+
+        });
+    }
+    //Group 3
+
+    private void setPlayerTickets(PlayerState playerState) {
+        allPlayerTickets.addAll(playerState
+                .tickets()
+                .stream()
+                .filter(ticket -> !allPlayerTickets.contains(ticket))
+                .collect(Collectors.toList()));
+    }
+
+    private void setPlayerCards(PlayerState playerState) {
+
+        Card.ALL.forEach(card -> numberOfEachCard.get(card).set(playerState.cards().countOf(card)));
+
+    }
+
+    private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
+        canPlayerClaimRoute.forEach((route, booleanObjectProperty) -> booleanObjectProperty.set(
+                publicGameState.currentPlayerId().equals(playerId)
+                        && playerState.canClaimRoute(route)
+                        && !publicGameState.claimedRoutes().contains(route)
+                        && !allPairsOfStationsClaimed.contains(route.stations())));
+    }
+
+
     
     /**
      * Getter for the property corresponding to the percentage of tickets left in the ticket draw pile
@@ -115,13 +198,6 @@ public final class ObservableGameState {
      */
     public ReadOnlyObjectProperty<Card> getFaceUpCard(int slot) {
         return faceUpCards.get(slot);
-    }
-
-    private void setFaceUpCards(List<Card> newFaceUpCards) {
-        for (int slot : Constants.FACE_UP_CARD_SLOTS) {
-            Card newCard = newFaceUpCards.get(slot);
-            faceUpCards.get(slot).set(newCard);
-        }
     }
 
     /**
@@ -197,76 +273,7 @@ public final class ObservableGameState {
 
         return new HashMap<>(canPlayerClaimRoute);
     }
-    
-    private void setRoutesPlayerId(PublicGameState newPublicGameState) {
 
-        ChMap.routes().forEach(route -> PlayerId.ALL.forEach(playerId -> {
-            if (newPublicGameState.playerState(playerId).routes().contains(route)) {
-                allRoutesContainedByWhom.get(route).set(playerId);
-                allPairsOfStationsClaimed.add(route.stations());
-            }
-        }));
-    }
-
-    /**
-     * Sets the state of the observable game state
-     *
-     * @param publicGameState : the public game state at this point in the game
-     * @param playerState : the player state of the player the observable game state belongs to
-     */
-    public void setState(PublicGameState publicGameState, PlayerState playerState) {
-        Preconditions.checkArgument(publicGameState != null);
-        Preconditions.checkArgument(playerState != null);
-        //
-        int percentageConvert = 100;
-        //
-        ticketsPercentageLeft.set((publicGameState.ticketsCount() * percentageConvert / ChMap.tickets().size()));
-        cardsPercentageLeft.set((publicGameState.cardState().deckSize() * percentageConvert / Constants.TOTAL_CARDS_COUNT));
-        setFaceUpCards(publicGameState.cardState().faceUpCards());
-        setRoutesPlayerId(publicGameState);
-        //
-        setEachPlayerCountAttributesCount(publicGameState);
-        //
-        setPlayerTickets(playerState);
-        setPlayerCards(playerState);
-        setPlayerCanClaimRouteOrNot(publicGameState, playerState);
-        //
-        this.publicGameState = publicGameState;
-        this.playerState = playerState;
-    }
-
-    private void setPlayerTickets(PlayerState playerState) {
-        allPlayerTickets.addAll(playerState
-                .tickets()
-                .stream()
-                .filter(ticket -> !allPlayerTickets.contains(ticket))
-                .collect(Collectors.toList()));
-    }
-
-    private void setPlayerCards(PlayerState playerState) {
-
-        Card.ALL.forEach(card -> numberOfEachCard.get(card).set(playerState.cards().countOf(card)));
-
-    }
-
-    private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
-        canPlayerClaimRoute.forEach((route, booleanObjectProperty) -> booleanObjectProperty.set(
-                publicGameState.currentPlayerId().equals(playerId)
-                && playerState.canClaimRoute(route)
-                && !publicGameState.claimedRoutes().contains(route)
-                && !allPairsOfStationsClaimed.contains(route.stations())));
-    }
-
-    private void setEachPlayerCountAttributesCount(PublicGameState publicGameState) {
-
-        PlayerId.ALL.forEach(playerId -> {
-            ticketCount.get(playerId).set(publicGameState.playerState(playerId).ticketCount());
-            cardCount.get(playerId).set(publicGameState.playerState(playerId).cardCount());
-            carCount.get(playerId).set(publicGameState.playerState(playerId).carCount());
-            constructionPoints.get(playerId).set(publicGameState.playerState(playerId).claimPoints());
-
-        });
-    }
     /**
      * Determines if the given route is claimable or not
      *
