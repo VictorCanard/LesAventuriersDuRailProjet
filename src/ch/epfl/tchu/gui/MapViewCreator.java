@@ -33,9 +33,10 @@ class MapViewCreator {
      * @return A pane containing the map background and claimed/unclaimed routes
      */
     public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
+        final String mapCss = "map.css";
         Pane map = new Pane();
 
-        map.getStylesheets().addAll("map.css", GuiUtils.COLORS);
+        map.getStylesheets().addAll(mapCss, GuiUtils.COLORS);
 
         ImageView mapBackground = new ImageView();
         map.getChildren().add(mapBackground);

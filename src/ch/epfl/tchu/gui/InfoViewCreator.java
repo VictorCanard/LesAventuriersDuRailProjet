@@ -67,16 +67,15 @@ public class InfoViewCreator {
      */
     private static VBox playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
         final int circleRadius = 5;
-        final String playerStatsString = "playerStats";
+        final String playerStatsString = "player-stats";
 
         VBox playerStats = new VBox();
         playerStats.setId(playerStatsString);
         playerStats.getStyleClass().add(playerId.name());
 
         Circle circle = new Circle(circleRadius);
-        circle.setId("player-stats");
         circle.getStyleClass().add(GuiUtils.FILLED);
-        circle.getStyleClass().add("Circle");
+        
         //Creates the text of the player's statistics
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,
