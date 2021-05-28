@@ -6,9 +6,8 @@ import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -151,7 +150,7 @@ class DecksViewCreator {
 
                 String cardname = sourceTab[1].substring(16, sourceTab[1].length()-1);
 
-                double posx =0;
+                double posx;
                 if (cardname.equals("NEUTRAL")) {
                     posx = X_HAND_CARD_POS.get(Card.LOCOMOTIVE);
                 } else {
@@ -191,9 +190,21 @@ class DecksViewCreator {
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css");
         hbox.setId("drawCards");
-        String [] cardNames = new String[3];
 
-        for (int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS ; i++) {
+        gameState.getTDCards().addListener(new ListChangeListener<Card>() {
+            @Override
+            public void onChanged(Change<? extends Card> c) {
+                hbox.getChildren().clear();
+                System.out.println("hbox clear?");
+                //recreate w new cards
+            }
+        });
+
+
+
+
+
+        /*for (int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS ; i++) {
             StackPane mainStack = new StackPane();
             StackPane stackPane = new StackPane();
             stackPane.getStyleClass().add("card");
@@ -202,8 +213,63 @@ class DecksViewCreator {
             stackPane.setVisible(false);
 
 
-            //GraphicalPlayer.getCanShowCards().addListener();
-            gameState.getTunnelDrawCard(i).addListener((property, oldValue, newValue) -> {
+            int finalI = i;
+            GraphicalPlayer.getCanShowCards().addListener((property, oldValue, newValue) -> {
+                //System.out.println(finalI +" entered boolean listener " + newValue);
+                ReadOnlyObjectProperty<Card> tunnelCard = gameState.getTunnelDrawCard(finalI);
+
+               // System.out.println("-------tunnel card in boolean listener:  " + tunnelCard.getValue());
+
+                if(tunnelCard.getValue()!=null) {
+                    if (newValue) {
+                        System.out.println("new value is true detected in listener");
+                        stackPane.setVisible(true);
+                        if(tunnelCard.getValue()== Card.LOCOMOTIVE){
+                            stackPane.getStyleClass().add("NEUTRAL");
+                        }else {
+                            stackPane.getStyleClass().add(getCardName(tunnelCard.getValue()));
+                        }
+                    } else if(oldValue) {
+                        if(tunnelCard.getValue() == Card.LOCOMOTIVE){
+                            stackPane.getStyleClass().remove("NEUTRAL");
+                        }else {
+                            stackPane.getStyleClass().remove(getCardName(tunnelCard.getValue()));
+                        }
+                    }
+                }
+                tunnelCard.addListener((prop, old, newV) -> {
+                    stackPane.setVisible(true);
+
+                    if(newV != null){
+                        stackPane.getStyleClass().add(getCardName(newV));}
+
+                    if(old != null ) {
+                        stackPane.getStyleClass().remove(getCardName(old));
+                    }
+
+
+                    if(stackPane.getStyleClass().size()>2){
+                        stackPane.getStyleClass().subList(1, stackPane.getStyleClass().size() - 1).clear();
+                    }
+
+
+
+                    System.out.println("draw cards style class inside tunnel card listener : " + stackPane.getStyleClass());
+
+                });
+
+                System.out.println("draw cards style class : " + stackPane.getStyleClass());
+
+
+
+               // Animations.flip(backOfCard(), stackPane);
+
+            });
+
+*/
+
+
+            /*gameState.getTunnelDrawCard(i).addListener((property, oldValue, newValue) -> {
                 stackPane.setVisible(true);
 
                 if(newValue != null){
@@ -215,6 +281,7 @@ class DecksViewCreator {
                 System.out.println("draw cards style class : " + stackPane.getStyleClass());
 
               //  Animations.flip(backOfCard(), stackPane);
+
                //everything inside the listener only is communicated to the server, so we dont see the cards on the client window even if its their turn.
                 // dont see the back of card and animation doenst show up when oldValue == newValue (obviously)
 
@@ -225,7 +292,7 @@ class DecksViewCreator {
 
             mainStack.getChildren().add(cardRectangles(stackPane));
             hbox.getChildren().addAll(mainStack);
-        }
+        }*/
 
         return hbox;
     }

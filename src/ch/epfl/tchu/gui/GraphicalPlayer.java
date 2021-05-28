@@ -5,9 +5,7 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -224,7 +222,13 @@ public final class GraphicalPlayer {
                 SelectionMode.SINGLE,
                 Info::cardNames,
                 1,
-                items -> chooseCardsHandler.onChooseCards(items.get(0)));
+        items -> chooseCardsHandler.onChooseCards(items.get(0)));
+
+        observableGameState.setTD();
+
+        b.set(true);
+        System.out.println("true from choose claim cards");
+        b.set(false);
     }
 
     /**
@@ -235,18 +239,19 @@ public final class GraphicalPlayer {
      * @param chooseCardsHandler      : the action handler corresponding to the player choosing cards
      */
 
-    static boolean showDrawnCards = false;
 
-    static public ReadOnlyBooleanProperty getCanShowCards(){
-        return null;
+
+     static BooleanProperty b = new SimpleBooleanProperty(false);
+
+     public static ReadOnlyBooleanProperty getCanShowCards(){
+         System.out.println(b + "from getter method");
+         return b;
     }
+
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
-
-        //UPDATE DRAWN CARDS
-        showDrawnCards = true;
 
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_ADDITIONAL_CARDS,
@@ -261,8 +266,6 @@ public final class GraphicalPlayer {
                         chooseCardsHandler.onChooseCards(items.get(0));
                     }
                 });
-
-        showDrawnCards = false;
     }
 
 
