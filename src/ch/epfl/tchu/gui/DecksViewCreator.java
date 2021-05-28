@@ -1,15 +1,13 @@
 package ch.epfl.tchu.gui;
 
-import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Color;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -19,7 +17,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -48,7 +45,7 @@ class DecksViewCreator {
      */
     public static HBox createHandView(ObservableGameState gameState) {
         HBox mainHBox = new HBox();
-        mainHBox.getStylesheets().addAll("decks.css", "colors.css");
+        mainHBox.getStylesheets().addAll("decks.css", "colors.css", "info.css");
         //
         HBox handPane = new HBox();
         handPane.setId("hand-pane");
@@ -59,16 +56,15 @@ class DecksViewCreator {
         //Score for Tickets
         Label ticketScore = new Label();
         ReadOnlyIntegerProperty points = gameState.ticketPoints();
-        ticketScore.getStyleClass().add("ticket-points");
 
         StringExpression string = new SimpleStringProperty("Total courant des tickets: ").concat(points);
         ticketScore.textProperty().bind(string);
 
         points.addListener((property, oldV, newV)-> {
             if(newV.shortValue() < 0){
-                ticketScore.setTextFill(Paint.valueOf("red"));
+                ticketScore.setId("ticket-points-negative");
             }else{
-                ticketScore.setTextFill(Paint.valueOf("green"));
+                ticketScore.setId("ticket-points-positive");
             }
         });
         //
@@ -93,7 +89,6 @@ class DecksViewCreator {
 
             X_HAND_CARD_POS.put(card, (double) (-745 + 75*Card.ALL.indexOf(card)));
         }
-        System.out.println(X_HAND_CARD_POS);
         return mainHBox;
     }
 
@@ -133,38 +128,29 @@ class DecksViewCreator {
             //changes the graphics of the card according to what card is stored in the slot
             gameState.getFaceUpCard(slot).addListener((property, oldValue, newValue) -> {
                 stackPane.getStyleClass().add(getCardName(newValue));
-                System.out.println("clicked " + oldValue);
 
-                if (oldValue != null) { //You can just use a set here
-                   animCard.getStyleClass().add(getCardName(oldValue)); //New value here no ?
+                if (oldValue != null) {
+                    animCard.getStyleClass().add(getCardName(oldValue));
                     stackPane.getStyleClass().remove(getCardName(oldValue));
-                    if(animCard.getStyleClass().size()>1) {
+                    if(animCard.getStyleClass().size()>2) {
                         animCard.getStyleClass().remove(1);
                     }
-
                 }else{
                     animCard.getStyleClass().add(getCardName(newValue));
                 }
-
-                System.out.println("result from listener " + animCard.getStyleClass());
-                System.out.println("---------------");
             });
             stackPane.disableProperty().bind(drawCards.isNull());
 
             //
 
             stackPane.setOnMouseClicked(event -> {
-                System.out.println("**************");
-//StackPane@78279375[styleClass=card ORANGE]
                 String source = event.getSource().toString();
-                System.out.println("the source of the click " + source);
                 String bracketPattern = Pattern.quote("[");
                 String[] sourceTab = source.split(bracketPattern, -1);
 
                 String cardname = sourceTab[1].substring(16, sourceTab[1].length()-1);
-                System.out.println(cardname + " : card");
 
-                double posx =0;
+                double posx;
                 if (cardname.equals("NEUTRAL")) {
                     posx = X_HAND_CARD_POS.get(Card.LOCOMOTIVE);
                 } else {
@@ -174,10 +160,8 @@ class DecksViewCreator {
                 }
                 if(animCard.getStyleClass().size()>1){ animCard.getStyleClass().remove(1);}
                 animCard.getStyleClass().add(cardname);
-                System.out.println("anim used in mouse event " + animCard.getStyleClass());
-               // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 575-(slot*100));
+                // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 575-(slot*100));
                 Animations.translate(animCard, posx,575-(slot*100));
-
 
                 drawCards.get().onDrawCards(slot);
 
@@ -202,27 +186,117 @@ class DecksViewCreator {
     }
 
 
-    public static Node createDrawnCards(SortedBag<Card> drawnCards, ObservableGameState gameState){
+    public static Node createDrawnCards(ObservableGameState gameState){ //only shows on server window :(
         HBox hbox = new HBox();
-        HBox mainHbox = new HBox(hbox);
-        mainHbox.getStylesheets().addAll("decks.css", "colors.css");
-        mainHbox.setId("drawCards");
+        hbox.getStylesheets().addAll("decks.css", "colors.css");
+        hbox.setId("drawCards");
 
-  /*      StackPane sp1 = new StackPane(cardPane(drawnCards.get(0)), backOfCard());
-        StackPane sp2 = new StackPane(cardPane(drawnCards.get(1)), backOfCard());
-        StackPane sp3 = new StackPane(cardPane(drawnCards.get(2)), backOfCard());*/
+        gameState.getTDCards().addListener(new ListChangeListener<Card>() {
+            @Override
+            public void onChanged(Change<? extends Card> c) {
+                hbox.getChildren().clear();
+                System.out.println("hbox clear?");
+                //recreate w new cards
+            }
+        });
 
 
-        StackPane sp1 = new StackPane(backOfCard(), cardPane(drawnCards.get(0)));
-        StackPane sp2 = new StackPane(backOfCard(), cardPane(drawnCards.get(1)));
-        StackPane sp3 = new StackPane(backOfCard(), cardPane(drawnCards.get(2)));
 
-        hbox.getChildren().addAll(sp1, sp2, sp3);
 
-        //visible property
 
-        return mainHbox;
+        /*for (int i = 0; i<Constants.ADDITIONAL_TUNNEL_CARDS ; i++) {
+            StackPane mainStack = new StackPane();
+            StackPane stackPane = new StackPane();
+            stackPane.getStyleClass().add("card");
+
+            //to not see them before the cards are drawn
+            stackPane.setVisible(false);
+
+
+            int finalI = i;
+            GraphicalPlayer.getCanShowCards().addListener((property, oldValue, newValue) -> {
+                //System.out.println(finalI +" entered boolean listener " + newValue);
+                ReadOnlyObjectProperty<Card> tunnelCard = gameState.getTunnelDrawCard(finalI);
+
+               // System.out.println("-------tunnel card in boolean listener:  " + tunnelCard.getValue());
+
+                if(tunnelCard.getValue()!=null) {
+                    if (newValue) {
+                        System.out.println("new value is true detected in listener");
+                        stackPane.setVisible(true);
+                        if(tunnelCard.getValue()== Card.LOCOMOTIVE){
+                            stackPane.getStyleClass().add("NEUTRAL");
+                        }else {
+                            stackPane.getStyleClass().add(getCardName(tunnelCard.getValue()));
+                        }
+                    } else if(oldValue) {
+                        if(tunnelCard.getValue() == Card.LOCOMOTIVE){
+                            stackPane.getStyleClass().remove("NEUTRAL");
+                        }else {
+                            stackPane.getStyleClass().remove(getCardName(tunnelCard.getValue()));
+                        }
+                    }
+                }
+                tunnelCard.addListener((prop, old, newV) -> {
+                    stackPane.setVisible(true);
+
+                    if(newV != null){
+                        stackPane.getStyleClass().add(getCardName(newV));}
+
+                    if(old != null ) {
+                        stackPane.getStyleClass().remove(getCardName(old));
+                    }
+
+
+                    if(stackPane.getStyleClass().size()>2){
+                        stackPane.getStyleClass().subList(1, stackPane.getStyleClass().size() - 1).clear();
+                    }
+
+
+
+                    System.out.println("draw cards style class inside tunnel card listener : " + stackPane.getStyleClass());
+
+                });
+
+                System.out.println("draw cards style class : " + stackPane.getStyleClass());
+
+
+
+               // Animations.flip(backOfCard(), stackPane);
+
+            });
+
+*/
+
+
+            /*gameState.getTunnelDrawCard(i).addListener((property, oldValue, newValue) -> {
+                stackPane.setVisible(true);
+
+                if(newValue != null){
+                stackPane.getStyleClass().add(getCardName(newValue));}
+
+                if(oldValue != null ) {
+                    stackPane.getStyleClass().remove(getCardName(oldValue));
+                }
+                System.out.println("draw cards style class : " + stackPane.getStyleClass());
+
+              //  Animations.flip(backOfCard(), stackPane);
+
+               //everything inside the listener only is communicated to the server, so we dont see the cards on the client window even if its their turn.
+                // dont see the back of card and animation doenst show up when oldValue == newValue (obviously)
+
+                // i want to show the cards after you pick the initial claim cards but before you receive the info of the draw cards and the window of the choose additional cards. But idk how
+           //for the info, we can remove the text where it says the drawn cards bc those are displayed, but then for putting before the choose cards window.... idk (graphical player adapter maybe when we run it??)
+            });
+
+
+            mainStack.getChildren().add(cardRectangles(stackPane));
+            hbox.getChildren().addAll(mainStack);
+        }*/
+
+        return hbox;
     }
+
 
 
 
@@ -301,9 +375,12 @@ class DecksViewCreator {
         StackPane stackPane = new StackPane();
         stackPane.getStyleClass().add("card");
         Rectangle outside = new Rectangle(60, 90);
-        outside.getStyleClass().add("outside");
+        outside.getStyleClass().add("tunnel-card");
 
-        stackPane.getChildren().add(outside);
+        Rectangle train = new Rectangle(40, 70);
+        train.getStyleClass().add("train-image");
+
+        stackPane.getChildren().addAll(outside, train);
         return stackPane;
     }
 
