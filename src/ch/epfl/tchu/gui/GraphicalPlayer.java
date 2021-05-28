@@ -53,7 +53,7 @@ public final class GraphicalPlayer {
     /**
      * Creates the graphical interface of the perspective of the given playerId
      *
-     * @param playerId  : the playerId the graphical interface belongs to
+     * @param playerId    : the playerId the graphical interface belongs to
      * @param playerNames : the names of the players in the game
      */
     public GraphicalPlayer(PlayerId playerId, Map<PlayerId, String> playerNames) {

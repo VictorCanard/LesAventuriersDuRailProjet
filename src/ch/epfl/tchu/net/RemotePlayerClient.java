@@ -140,6 +140,8 @@ public class RemotePlayerClient {
 
                         writeAndFlush(bufferedWriter, SORTED_BAG_CARD_SERDE.serialize(additionalCards));
                         break;
+                    default:
+                        throw new Error();
                 }
             }
         } catch (IOException e) {

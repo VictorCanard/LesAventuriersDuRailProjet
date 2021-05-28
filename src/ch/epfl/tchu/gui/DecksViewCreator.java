@@ -41,7 +41,6 @@ class DecksViewCreator {
         final int minNumberVisible = 1;
         final int minCardVisible = 0;
 
-
         final String handPaneString = "hand-pane";
         final String tickets = "tickets";
         final String countString = "count";
