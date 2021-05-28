@@ -58,8 +58,6 @@ public class RemotePlayerClient {
                      new BufferedWriter(
                              new OutputStreamWriter(socket.getOutputStream(),
                                      US_ASCII))) {
-
-
             String readLine;
 
             while ((readLine = bufferedReader.readLine()) != null) {
@@ -68,7 +66,7 @@ public class RemotePlayerClient {
                 switch (MessageId.valueOf(arguments.next())) {
                     case INIT_PLAYERS:
                         PlayerId ownId = PLAYER_ID_SERDE.deserialize(arguments.next());
-                        //
+
                         Iterator<String> nameIterator = NetUtils.getStringIterator(arguments.next(), commaPattern);
 
                         Map<PlayerId, String> playerNames = new HashMap<>();
@@ -152,7 +150,7 @@ public class RemotePlayerClient {
 
     private void writeAndFlush(BufferedWriter bufferedWriter, String serialized) throws IOException {
         final char lineReturn = '\n';
-        //
+
         bufferedWriter.write(serialized + lineReturn);
         bufferedWriter.flush();
     }

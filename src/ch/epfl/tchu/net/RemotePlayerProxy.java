@@ -140,8 +140,9 @@ public class RemotePlayerProxy implements Player {
      */
     private void sendMessage(MessageId messageId, String... allParametersOfTheMessage) {
         try {
-
-            String message = messageId.name() + " " + String.join(" ", allParametersOfTheMessage) + '\n';
+            String space = " ";
+            char lineReturn = '\n';
+            String message = messageId.name() + space + String.join(space, allParametersOfTheMessage) + lineReturn;
 
             bufferedWriter.write(message);
             bufferedWriter.flush();

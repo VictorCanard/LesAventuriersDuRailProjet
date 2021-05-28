@@ -58,19 +58,19 @@ public final class GraphicalPlayer {
      */
     public GraphicalPlayer(PlayerId playerId, Map<PlayerId, String> playerNames) {
         Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
-        //
+
         this.playerId = Objects.requireNonNull(playerId);
         this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
         this.observableGameState = new ObservableGameState(playerId);
         this.primaryStage = new Stage();
-        //
+        //sets the scene
         setSceneGraph();
     }
 
     private void setSceneGraph() {
         final char dash = '—';
         final String title = "tCHu";
-        //
+
         Node mapView = MapViewCreator
                 .createMapView(observableGameState, claimRouteHP, this::chooseClaimCards);
 
@@ -83,12 +83,12 @@ public final class GraphicalPlayer {
         Node infoView = InfoViewCreator
                 .createInfoView(playerId, playerNames, observableGameState, messages);
 
-        //
+
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
-        //
+
         Scene scene = new Scene(mainPane);
-        //
+
         primaryStage.setTitle(title + dash + playerNames.get(playerId));
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -170,9 +170,9 @@ public final class GraphicalPlayer {
      */
     public void drawCard(ActionHandlers.DrawCardHandler drawCardHandler) {
         assert isFxApplicationThread();
-        //
+        //disables all the other actions when the player decides to draw a card
         disableAllTurnActions();
-        //
+
         drawCardsHP.set((slot) -> {
             drawCardHandler.onDrawCards(slot);
             drawCardsHP.set(null);
@@ -188,9 +188,9 @@ public final class GraphicalPlayer {
     public void chooseTickets(SortedBag<Ticket> ticketsToChooseFrom, ActionHandlers.ChooseTicketsHandler chooseTicketsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!ticketsToChooseFrom.isEmpty());
-        //
+
         final int ticketChooseSize = ticketsToChooseFrom.size() - Constants.DISCARDABLE_TICKETS_COUNT;
-        //
+
         createChoiceWindow(StringsFr.TICKETS_CHOICE,
                 String.format(StringsFr.CHOOSE_TICKETS, ticketChooseSize, StringsFr.plural(ticketChooseSize)),
                 ticketsToChooseFrom.toList(),
@@ -209,9 +209,9 @@ public final class GraphicalPlayer {
     public void chooseClaimCards(List<SortedBag<Card>> possibleClaimCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleClaimCards.isEmpty());
-        //
+
         final int minToSelect = 1;
-        //
+
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_CARDS,
                 List.copyOf(possibleClaimCards),
@@ -231,9 +231,9 @@ public final class GraphicalPlayer {
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
-        //
+
         final int minToSelect = 0;
-        //
+
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_ADDITIONAL_CARDS,
                 List.copyOf(possibleAdditionalCards),
@@ -249,27 +249,40 @@ public final class GraphicalPlayer {
                 });
     }
 
-
+    /**
+     * Creates the pop up window for which the player can select options of the given type, specific to the action they have taken in the game
+     *
+     * @param title : the title of the window
+     * @param displayText : the text to be displayed in the window
+     * @param list : the list of type E to which the player must select options from
+     * @param selectionMode : the selection mode of the list (how many options the player can select)
+     * @param objectToStringFunction : functional interface which will perform the given operation (in this case to transform the given objects into Strings)
+     * @param minToSelect : minimum number of options the player must select
+     * @param consumer : functional interface which will perform the given operation via the accept method
+     * @param <E> : the type of object the player will pick options of
+     */
     private <E> void createChoiceWindow(String title, String displayText, List<E> list, SelectionMode selectionMode, Function<E, String> objectToStringFunction, int minToSelect, Consumer<ObservableList<E>> consumer) {
         final String chooser = "chooser.css";
 
         VBox vbox = new VBox();
-        //
+
         Scene scene = new Scene(vbox);
         scene.getStylesheets().add(chooser);
-        //
+
         Stage stage = new Stage(StageStyle.UTILITY);
         stage.setTitle(title);
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setScene(scene);
         stage.setOnCloseRequest(Event::consume);
-        //
+
         Text text = new Text(displayText);
         TextFlow textFlow = new TextFlow(text);
-        //
+
         ListView<E> listView = new ListView<>(FXCollections.observableList(list));
         listView.getSelectionModel().setSelectionMode(selectionMode);
+
+        //transforms the objects to Strings
         listView.setCellFactory(v -> new TextFieldListCell<>(new StringConverter<>() {
             @Override
             public String toString(E object) {
@@ -282,10 +295,9 @@ public final class GraphicalPlayer {
             }
         }));
 
-        //
         ObservableList<E> selectedItems = listView.getSelectionModel().getSelectedItems();
 
-        //
+        //Configures the choose button
         Button button = new Button(StringsFr.CHOOSE);
         button.disableProperty().bind(Bindings.lessThan(Bindings.size(selectedItems), minToSelect));
 
@@ -293,9 +305,8 @@ public final class GraphicalPlayer {
             stage.hide();
             consumer.accept(selectedItems);
         });
-        //
+
         vbox.getChildren().addAll(textFlow, listView, button);
-        //
         stage.show();
     }
 }

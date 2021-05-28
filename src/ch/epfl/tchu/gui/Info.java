@@ -16,7 +16,6 @@ import java.util.List;
 public final class Info {
     private final String playerName;
 
-
     /**
      * Info constructor: assigns a player name under which all the activity will be described
      *
@@ -97,11 +96,12 @@ public final class Info {
         List<String> cardList = getListOfCards(bagOfCards);
 
         for (int i = 0; i < cardList.size(); i++) {
+            int commaNumber = 2;
             //Only adds commas for n-2 objects
-            String commaSeparator = (i < cardList.size() - 2) ? ", " : "";
+            String commaSeparator = (i < cardList.size() - commaNumber) ? ", " : "";
 
             //Only adds an And Separator after the second to last object
-            String andSeparator = (i == cardList.size() - 2) ? StringsFr.AND_SEPARATOR : "";
+            String andSeparator = (i == cardList.size() - commaNumber) ? StringsFr.AND_SEPARATOR : "";
 
             stringOfAllCardNamesToReturn
                     //Name of the card in French
@@ -122,12 +122,13 @@ public final class Info {
      */
     private static List<String> getListOfCards(SortedBag<Card> originalBag) {
         List<String> stringList = new ArrayList<>();
+        String space = " ";
 
         for (Card currentCard : originalBag.toSet()) {
             //Number of cards
             int multiplicity = originalBag.countOf(currentCard);
 
-            String stringToAdd = multiplicity + " " + cardName(currentCard, multiplicity);
+            String stringToAdd = multiplicity + space + cardName(currentCard, multiplicity);
             stringList.add(stringToAdd);
         }
         return stringList;
@@ -187,7 +188,8 @@ public final class Info {
      * @return message including the card name that was drawn from the face-up cards
      */
     public String drewVisibleCard(Card card) {
-        return String.format(StringsFr.DREW_VISIBLE_CARD, playerName, cardName(card, 1));
+        int numberOfCards = 1;
+        return String.format(StringsFr.DREW_VISIBLE_CARD, playerName, cardName(card, numberOfCards));
     }
 
     /**

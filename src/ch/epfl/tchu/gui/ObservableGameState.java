@@ -48,16 +48,16 @@ public final class ObservableGameState {
      */
     public ObservableGameState(PlayerId playerId) {
         createFaceUpCards();
-        //
+
         createRoutes();
         createEmptyMap(ticketCount);
         createEmptyMap(cardCount);
         createEmptyMap(carCount);
         createEmptyMap(constructionPoints);
-        //
+
         setNumberOfEachCard();
         createRoutesClaimedOrNot();
-        //
+
         this.playerId = playerId;
     }
 
@@ -100,20 +100,20 @@ public final class ObservableGameState {
     public void setState(PublicGameState publicGameState, PlayerState playerState) {
         Preconditions.checkArgument(publicGameState != null);
         Preconditions.checkArgument(playerState != null);
-        //
+
         final int percentageConvert = 100;
-        //
+
         ticketsPercentageLeft.set((publicGameState.ticketsCount() * percentageConvert / ChMap.tickets().size()));
         cardsPercentageLeft.set((publicGameState.cardState().deckSize() * percentageConvert / Constants.TOTAL_CARDS_COUNT));
         setFaceUpCards(publicGameState.cardState().faceUpCards());
         setRoutesPlayerId(publicGameState);
-        //
+
         setEachPlayerCountAttributesCount(publicGameState);
-        //
+
         setPlayerTickets(playerState);
         setPlayerCards(playerState);
         setPlayerCanClaimRouteOrNot(publicGameState, playerState);
-        //
+
         this.publicGameState = publicGameState;
         this.playerState = playerState;
     }
@@ -146,8 +146,8 @@ public final class ObservableGameState {
 
         });
     }
-    //Group 3
 
+    //Group 3
     private void setPlayerTickets(PlayerState playerState) {
         allPlayerTickets.addAll(playerState
                 .tickets()
@@ -159,7 +159,6 @@ public final class ObservableGameState {
     private void setPlayerCards(PlayerState playerState) {
 
         Card.ALL.forEach(card -> numberOfEachCard.get(card).set(playerState.cards().countOf(card)));
-
     }
 
     private void setPlayerCanClaimRouteOrNot(PublicGameState publicGameState, PlayerState playerState) {
@@ -170,8 +169,6 @@ public final class ObservableGameState {
                         && !allPairsOfStationsClaimed.contains(route.stations())));
     }
 
-
-    
     /**
      * Getter for the property corresponding to the percentage of tickets left in the ticket draw pile
      *

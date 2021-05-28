@@ -3,7 +3,6 @@ package ch.epfl.tchu.gui;
 import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
@@ -32,28 +31,29 @@ public class InfoViewCreator {
      * @param infos       : the messages that appear in the bottom-left corner giving information on the sequence of events of the game.
      * @return a Vertical Box containing the messages and each player's stats.
      */
-    public static Node createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos) {
+    public static VBox createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infos) {
         final String info = "info.css";
         final String gameInfoString = "game-info";
 
         VBox infoPane = new VBox();
         infoPane.getStylesheets().addAll(info, GuiUtils.COLORS);
-        //
+
+        //Adds the players' statistics to their windows
         PlayerId currentId = playerId;
         for (int i = 0; i < PlayerId.COUNT; i++) {
             infoPane.getChildren().add(playerStats(currentId, playerNames, gameState));
             currentId = currentId.next();
         }
-        //
+
         Separator separator = new Separator();
         infoPane.getChildren().add(separator);
-        //
+
         TextFlow gameInfo = new TextFlow();
         gameInfo.setId(gameInfoString);
         infoPane.getChildren().add(gameInfo);
-        //
+
         Bindings.bindContent(gameInfo.getChildren(), infos);
-        //
+
         return infoPane;
     }
 
@@ -65,17 +65,17 @@ public class InfoViewCreator {
      * @param gameState   : the state of the game to display.
      * @return a Vertical Box with all stats concerning this player and all stats concerning the other player underneath it.
      */
-    private static Node playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
+    private static VBox playerStats(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState) {
         final int circleRadius = 5;
         final String playerStatsString = "playerStats";
-        //
+
         VBox playerStats = new VBox();
         playerStats.setId(playerStatsString);
         playerStats.getStyleClass().add(playerId.name());
-        //
+
         Circle circle = new Circle(circleRadius);
         circle.getStyleClass().add(GuiUtils.FILLED);
-        //
+        //Creates the text of the player's statistics
         Text stats = new Text();
         stats.textProperty().bind(Bindings.format(StringsFr.PLAYER_STATS,
                 playerNames.get(playerId),
@@ -83,10 +83,10 @@ public class InfoViewCreator {
                 gameState.getCardCount(playerId),
                 gameState.getCarCount(playerId),
                 gameState.getConstructionPoints(playerId)));
-        //
+
         TextFlow textFlow = new TextFlow(circle, stats);
         playerStats.getChildren().addAll(textFlow);
-        //
+
         return playerStats;
     }
 }

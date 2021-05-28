@@ -8,7 +8,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
@@ -45,36 +44,34 @@ class DecksViewCreator {
         final String tickets = "tickets";
         final String countString = "count";
 
-        //
         HBox mainHBox = new HBox();
         mainHBox.getStylesheets().addAll(DecksViewCreator.DECKS, GuiUtils.COLORS);
-        //
         HBox handPane = new HBox();
         handPane.setId(handPaneString);
-        //
+
+        //Tickets the player possesses
         ObservableList<Ticket> listOfTickets = gameState.getAllPlayerTickets();
         ListView<Ticket> listView = new ListView<>(listOfTickets);
         listView.setId(tickets);
-        //
-        mainHBox.getChildren().addAll(listView, handPane);
 
-        //Cards
+        //Cards in the player's hand
         for (Card card : Card.ALL) {
-            ReadOnlyIntegerProperty count = gameState.getNumberOfCard(card);
-            //
+            //Appearance of the card
             StackPane stackPane = cardPane(card);
-            //
+            //Number of the current card
+            ReadOnlyIntegerProperty count = gameState.getNumberOfCard(card);
             Text text = new Text(count.getValue().toString());
             text.getStyleClass().add(countString);
-            //
             text.textProperty().bind(Bindings.convert(count));
             text.visibleProperty().bind(Bindings.greaterThan(count, minNumberVisible));
-            //
+
             stackPane.getChildren().add(text);
             stackPane.visibleProperty().bind(Bindings.greaterThan(count, minCardVisible));
-            //
+
             handPane.getChildren().add(stackPane);
         }
+
+        mainHBox.getChildren().addAll(listView, handPane);
         return mainHBox;
     }
 
@@ -84,9 +81,9 @@ class DecksViewCreator {
      * @param gameState   : observable game state that stores the information about the tickets and cards
      * @param drawTickets : an action handler for drawing tickets
      * @param drawCards   : an action handler for drawing cards
-     * @return a vertical box with a specific scene graph
+     * @return a vertical box containing the face up cards and ticket/card buttons
      */
-    public static Node createCardsView(ObservableGameState gameState, ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTickets, ObjectProperty<ActionHandlers.DrawCardHandler> drawCards) {
+    public static VBox createCardsView(ObservableGameState gameState, ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTickets, ObjectProperty<ActionHandlers.DrawCardHandler> drawCards) {
         final String cardPaneString = "card-pane";
 
         VBox cardPane = new VBox();
@@ -197,10 +194,10 @@ class DecksViewCreator {
     }
 
     /**
-     * Makes the three card rectangles for a given stackPane
+     * Makes the card graphics for a given stackPane
      *
-     * @param stackPane : to which we add an outside, inside and train rectangle
-     * @return the stack pane given as an argument with three new rectangles as children of its scene graph
+     * @param stackPane : the StackPane to which we add an outside, inside and train rectangle
+     * @return the stack pane given as an argument with the three new rectangles as children of its scene graph
      */
     private static StackPane cardRectangles(StackPane stackPane) {
         final int outWidth = 60;
@@ -214,15 +211,14 @@ class DecksViewCreator {
         //
         Rectangle outside = new Rectangle(outWidth, outHeight);
         outside.getStyleClass().add(outsideString);
-        //
+
         Rectangle inside = new Rectangle(inWidth, inHeight);
         inside.getStyleClass().addAll(GuiUtils.FILLED, insideString);
-        //
+
         Rectangle train = new Rectangle(inWidth, inHeight);
         train.getStyleClass().add(trainImage);
-        //
+
         stackPane.getChildren().addAll(outside, inside, train);
-        //
         return stackPane;
     }
 }

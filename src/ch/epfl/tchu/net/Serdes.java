@@ -174,8 +174,6 @@ public class Serdes {
                         .add(PLAYER_ID_SERDE.serialize(publicGameState.lastPlayer()))
                         .toString();
             },
-
-
             (serializedString) -> {
                 Iterator<String> arguments = getStringIterator(serializedString, COLON_PATTERN);
 
@@ -187,5 +185,4 @@ public class Serdes {
                         PLAYER_ID_SERDE.deserialize(arguments.next()));
             }
     );
-
 }

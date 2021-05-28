@@ -66,7 +66,6 @@ public class ServerMain extends Application {
                 throw new UncheckedIOException(ioException);
             }
         }).start();
-
     }
 
     private ServerSocket createSockets() throws IOException {
@@ -104,7 +103,6 @@ public class ServerMain extends Application {
         ) {
             socket.close();
         }
-
         serverSocket.close();
     }
 
