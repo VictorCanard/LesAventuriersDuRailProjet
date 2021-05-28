@@ -48,7 +48,7 @@ public final class Trip {
      *                                  or if the number of points is negative
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points) {
-        Preconditions.checkArgument(from != null && to != null && points > 0);
+        Preconditions.checkArgument(!from.isEmpty() && !to.isEmpty() && points > 0);
 
         ArrayList<Trip> allTrips = new ArrayList<>();
 
