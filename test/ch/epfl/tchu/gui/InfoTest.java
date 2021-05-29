@@ -214,7 +214,7 @@ class InfoTest {
         assertEquals(expected,actual);
     }
 
-    @Test
+   /* @Test
     void won() {
         String expected = String.format(WINS, playerOneName, 15,"s",  10,"s");
 
@@ -226,5 +226,5 @@ class InfoTest {
         String actual2 = playerOneInfo.won(1, 0);
 
         assertEquals(expected2,actual2);
-    }
+    }*/
 }

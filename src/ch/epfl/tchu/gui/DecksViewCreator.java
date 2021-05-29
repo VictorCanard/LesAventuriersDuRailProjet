@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  */
 
 class DecksViewCreator {
-    private static final Map<Card, Double> X_HAND_CARD_POS = new EnumMap(Card.class) ;
+    private static final Map<Card, Double> X_HAND_CARD_POS = new EnumMap<>(Card.class) ;
 
 
     private DecksViewCreator() {
@@ -191,13 +191,10 @@ class DecksViewCreator {
         hbox.getStylesheets().addAll("decks.css", "colors.css");
         hbox.setId("drawCards");
 
-        gameState.getTDCards().addListener(new ListChangeListener<Card>() {
-            @Override
-            public void onChanged(Change<? extends Card> c) {
-                hbox.getChildren().clear();
-                System.out.println("hbox clear?");
-                //recreate w new cards
-            }
+        gameState.getTDCards().addListener((ListChangeListener<Card>) c -> {
+            hbox.getChildren().clear();
+            System.out.println("hbox clear?");
+            //recreate w new cards
         });
 
 
