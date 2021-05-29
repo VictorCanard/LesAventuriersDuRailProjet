@@ -278,7 +278,6 @@ public final class Game {
         }
         SortedBag<Card> drawnCards = drawCardsBuild.build();
         //new
-        allGameData.modifyGameState(allGameData.gameState.withThreeAdditionalDrawnCards(drawnCards));
         currentPlayer.tunnelDrawnCards(drawnCards);
 
         //Calculating additional cost

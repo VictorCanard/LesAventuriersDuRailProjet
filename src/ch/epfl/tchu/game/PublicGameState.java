@@ -20,7 +20,6 @@ public class PublicGameState {
     private final Map<PlayerId, PublicPlayerState> playerStates;
     private final PlayerId currentPlayerId;
     private final PlayerId lastPlayer;
-    private final SortedBag<Card> threeDrawnCards;
 
     /**
      * Constructs the "public" state of the game
@@ -31,7 +30,7 @@ public class PublicGameState {
      * @param playerState     : the "public" state of the players at the corresponding point of the game
      * @param lastPlayer      : when it is known, the last player to have a turn at the end of the game
      */
-    public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer,SortedBag<Card> threeDrawnCards) {
+    public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer) {
         boolean positiveTicketCount = ticketsCount >= 0;
         boolean rightNumberOfPairs = playerState.size() == PlayerId.COUNT;
 
@@ -43,9 +42,7 @@ public class PublicGameState {
         this.currentPlayerId = Objects.requireNonNull(currentPlayerId);
         this.playerStates = Objects.requireNonNull(Map.copyOf(playerState));
         this.lastPlayer = lastPlayer;
-        this.threeDrawnCards = threeDrawnCards;
     }
-    public SortedBag<Card> getThreeDrawnCards(){return threeDrawnCards;}
 
     /**
      * Getter for the size of the ticket draw pile

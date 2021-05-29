@@ -40,7 +40,7 @@ public final class ObservableGameState {
     private final Map<List<Station>, PlayerId> allPairsOfStationsClaimed = new HashMap<>();
     private PublicGameState publicGameState;
     private PlayerState playerState;
-    private final ObservableList<Card> tDCards = FXCollections.observableArrayList();
+
 
     /**
      * Creates an instance of the observable game state in its initial state
@@ -107,12 +107,6 @@ public final class ObservableGameState {
             Card newCard = newFaceUpCards.get(slot);
             cardObjectProperty.set(newCard);
         }
-    }
-
-    public ObservableList<Card> getTDCards(){ return tDCards;}
-
-    private void setTDCards(List<Card> newDrawCards) {
-        tDCards.setAll(newDrawCards);
     }
 
     /**
@@ -236,7 +230,7 @@ public final class ObservableGameState {
         setRoutesPlayerId(publicGameState);
         setTicketPoints(playerState);
         //new
-        setTDCards(publicGameState.getThreeDrawnCards().toList());
+
         //
         setEachPlayerCountAttributesCount(publicGameState);
         //
