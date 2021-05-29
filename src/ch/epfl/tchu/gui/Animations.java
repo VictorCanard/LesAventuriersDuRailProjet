@@ -56,8 +56,7 @@ public class Animations extends Application{
         fromFaceDown.setNode(faceDown);
         toFaceUp.setNode(faceUp);
 
-        SequentialTransition sq = new SequentialTransition(new PauseTransition(DURATION), fromFaceDown, toFaceUp, new PauseTransition(PAUSE));
-        sq.setOnFinished(event -> faceUp.setVisible(false));
+        SequentialTransition sq = new SequentialTransition( new PauseTransition(DURATION), fromFaceDown, toFaceUp);
         sq.play();
     }
 
@@ -128,8 +127,20 @@ public class Animations extends Application{
 
             stackPane.getChildren().addAll(outside, train);
 
+            StackPane sp = new StackPane();
+            stackPane.getStyleClass().add("card");
+            Rectangle out = new Rectangle(60, 90);
+            out.getStyleClass().add("outside");
 
-            root.getChildren().add(stackPane);
+            Rectangle tr = new Rectangle(40, 70);
+            tr.getStyleClass().add("train-image");
+
+            sp.getChildren().addAll(out, tr);
+
+
+
+            root.getChildren().addAll(sp, stackPane);
+            flip(stackPane, sp);
             Scene scene = new Scene(root,1500,700,Color.WHITE);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Animation Test");

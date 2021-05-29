@@ -13,8 +13,12 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public final class GraphicalPlayerTest extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
 
-    private SortedBag<Card> makeAllCards() {
+    }
+
+   /* private SortedBag<Card> makeAllCards() {
         SortedBag.Builder<Card> cards = new SortedBag.Builder<>();
 
         for (int i = 0; i < 10; i++) {
@@ -76,5 +80,5 @@ public final class GraphicalPlayerTest extends Application {
 
         p.chooseTickets(SortedBag.of(ChMap.tickets().subList(0, 5)), chooseTicketsHandler);
         p.chooseAdditionalCards(p1State.possibleAdditionalCards(3, SortedBag.of(3, Card.ORANGE)), chooseCardsHandler);
-    }
+    }*/
 }

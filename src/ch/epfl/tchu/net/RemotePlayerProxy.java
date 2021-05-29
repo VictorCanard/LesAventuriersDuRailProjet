@@ -132,6 +132,15 @@ public class RemotePlayerProxy implements Player {
         return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
     }
 
+    @Override
+    public SortedBag<Card> tunnelDrawnCards(SortedBag<Card> cards) {
+        String cardsString = SORTED_BAG_CARD_SERDE.serialize(cards);
+        sendMessage(MessageId.THREE_DRAWN_CARDS, cardsString);
+
+        return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
+
+    }
+
     /**
      * Sends a message to the client
      *
@@ -144,7 +153,7 @@ public class RemotePlayerProxy implements Player {
             char lineReturn = '\n';
             String message = messageId.name() + space + String.join(space, allParametersOfTheMessage) + lineReturn;
 
-            System.out.println(message);
+           //System.out.println(message);
             bufferedWriter.write(message);
             bufferedWriter.flush();
 

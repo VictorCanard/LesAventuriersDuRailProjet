@@ -172,6 +172,7 @@ public class Serdes {
                         .add(PLAYER_ID_SERDE.serialize(publicGameState.currentPlayerId()))
                         .add(allPublicPlayerStates)
                         .add(PLAYER_ID_SERDE.serialize(publicGameState.lastPlayer()))
+                        .add(SORTED_BAG_CARD_SERDE.serialize(publicGameState.getThreeDrawnCards()))
                         .toString();
             },
             (serializedString) -> {
@@ -182,7 +183,8 @@ public class Serdes {
                         PUBLIC_CARD_STATE_SERDE.deserialize(arguments.next()),
                         PLAYER_ID_SERDE.deserialize(arguments.next()),
                         PlayerId.ALL.stream().collect(Collectors.toMap(playerId -> playerId, playerId -> PUBLIC_PLAYER_STATE_SERDE.deserialize(arguments.next()))),
-                        PLAYER_ID_SERDE.deserialize(arguments.next()));
+                        PLAYER_ID_SERDE.deserialize(arguments.next()),
+                        SORTED_BAG_CARD_SERDE.deserialize(arguments.next()));
             }
     );
 }

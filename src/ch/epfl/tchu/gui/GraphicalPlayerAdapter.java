@@ -113,6 +113,12 @@ public final class GraphicalPlayerAdapter implements Player {
         return initialClaimCards();
     }
 
+    @Override
+    public SortedBag<Card> tunnelDrawnCards(SortedBag<Card> cards) {
+        runLater(() -> graphicalPlayer.createDrawnCardWindow2(cards));
+        return cards;
+    }
+
     private <E> E withTryAndCatch(BlockingQueue<E> e) {
         try {
             return e.take();

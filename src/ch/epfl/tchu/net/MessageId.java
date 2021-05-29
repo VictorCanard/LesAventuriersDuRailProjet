@@ -15,5 +15,7 @@ public enum MessageId {
     DRAW_SLOT,
     ROUTE,
     CARDS,
+    THREE_DRAWN_CARDS,
     CHOOSE_ADDITIONAL_CARDS
+
 }

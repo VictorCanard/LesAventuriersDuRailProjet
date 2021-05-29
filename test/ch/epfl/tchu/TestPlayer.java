@@ -188,6 +188,11 @@ public final class TestPlayer implements Player {
                 ? SortedBag.of()
                 : options.get(rng.nextInt(options.size()));
     }
+
+    @Override
+    public SortedBag<Card> tunnelDrawnCards(SortedBag<Card> c) {
+        return null;
+    }
 }
 
 

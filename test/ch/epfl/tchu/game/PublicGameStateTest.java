@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PublicGameStateTest implements ChMapTest, RouteTestMap {
 
-//Everything ok
+/*//Everything ok
     List<Card> faceUpCards1 = new ArrayList<>(List.of(Card.BLACK, Card.BLUE, Card.LOCOMOTIVE, Card.BLUE, Card.RED));
     List<Card> pioche = new ArrayList<>(List.of(Card.BLUE, Card.BLACK, Card.LOCOMOTIVE,Card.BLACK, Card.BLUE, Card.LOCOMOTIVE, Card.BLUE, Card.RED ));
     List<Card> discards = new ArrayList<>(List.of(Card.BLUE));
@@ -104,5 +104,5 @@ class PublicGameStateTest implements ChMapTest, RouteTestMap {
     @Test
     void lastPlayer() {
         assertNull(publicGameStateOK.lastPlayer());
-    }
+    }*/
 }

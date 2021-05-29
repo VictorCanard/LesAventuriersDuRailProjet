@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 public final class Game {
     private Game() {}
 
-    private static SortedBag<Card> tunnelDrawnCards;
-
     /**
      * Runs a game of tCHu
      *
@@ -279,8 +277,9 @@ public final class Game {
             allGameData.modifyGameState(allGameData.gameState.withoutTopCard());
         }
         SortedBag<Card> drawnCards = drawCardsBuild.build();
-        //aaaaaaa
-        tunnelDrawnCards = drawnCards;
+        //new
+        allGameData.modifyGameState(allGameData.gameState.withThreeAdditionalDrawnCards(drawnCards));
+        currentPlayer.tunnelDrawnCards(drawnCards);
 
         //Calculating additional cost
         int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
@@ -469,9 +468,6 @@ public final class Game {
         }
         receiveInfoForAll(allGameData.players, endOfGameMessage);
     }
-
-
-    public static SortedBag<Card> getAddTunnelCards(){ return tunnelDrawnCards; }
 
 
     /**

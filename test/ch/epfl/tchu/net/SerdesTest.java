@@ -270,7 +270,7 @@ class SerdesTest {
                     PLAYER_1, new PublicPlayerState(((int) Math.round(Math.random()*15)), ((int) Math.round(Math.random()*9)), rs1),
                     PLAYER_2, new PublicPlayerState(((int) Math.round(Math.random()*20)), ((int) Math.round(Math.random()*8)), List.of()));
             PublicGameState gs =
-                    new PublicGameState(((int) Math.round(Math.random()*40)), cs, PLAYER_2, ps, null);
+                    new PublicGameState(((int) Math.round(Math.random()*40)), cs, PLAYER_2, ps, null, SortedBag.of());
 
 
             String serialized = Serdes.PUBLIC_GAME_STATE_SERDE.serialize(gs);
@@ -302,7 +302,7 @@ class SerdesTest {
                 PLAYER_1, new PublicPlayerState(0, 0, rs1),
                 PLAYER_2, new PublicPlayerState(0, 0, List.of()));
         PublicGameState gs =
-                new PublicGameState(0, cs, PLAYER_2, ps, null);
+                new PublicGameState(0, cs, PLAYER_2, ps, null, SortedBag.of());
 
         String serialized = Serdes.PUBLIC_GAME_STATE_SERDE.serialize(gs);
 

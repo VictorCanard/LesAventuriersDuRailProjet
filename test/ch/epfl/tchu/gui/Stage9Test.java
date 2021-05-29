@@ -24,9 +24,13 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public final class Stage9Test extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+    }
 
 
-    private final SortedBag<Card> allCards = makeAllCards();
+    /*private final SortedBag<Card> allCards = makeAllCards();
 
     public static void main(String[] args) {
         launch(args);
@@ -133,5 +137,5 @@ public final class Stage9Test extends Application {
         PublicGameState publicGameState =
                 new PublicGameState(36, cardState, PLAYER_1, pubPlayerStates, null);
         gameState.setState(publicGameState, p1State);
-    }
+    }*/
 }

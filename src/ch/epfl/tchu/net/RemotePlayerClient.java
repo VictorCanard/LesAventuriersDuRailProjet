@@ -138,6 +138,11 @@ public class RemotePlayerClient {
 
                         writeAndFlush(bufferedWriter, SORTED_BAG_CARD_SERDE.serialize(additionalCards));
                         break;
+                    case THREE_DRAWN_CARDS:
+                        SortedBag<Card> cards = SORTED_BAG_CARD_SERDE.deserialize(arguments.next());
+                        SortedBag<Card> drawn = player.tunnelDrawnCards(cards);
+                        writeAndFlush(bufferedWriter, SORTED_BAG_CARD_SERDE.serialize(drawn));
+                        break;
                     default:
                         throw new Error();
                 }

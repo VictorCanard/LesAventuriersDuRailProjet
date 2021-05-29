@@ -9,11 +9,11 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ch.epfl.tchu.game.GameTestCorrige.PlayerMethod.*;
+//import static ch.epfl.tchu.game.GameTestCorrige.PlayerMethod.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameTestCorrige {
-    enum PlayerMethod {
+  /*  enum PlayerMethod {
         INIT_PLAYERS,
         RECEIVE_INFO,
         UPDATE_STATE,
@@ -641,5 +641,5 @@ class GameTestCorrige {
             if (fr != 0) trips.addAll(Trip.all(from, FR, fr));
             return new Ticket(trips);
         }
-    }
+    }*/
 }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 class GameTest {
 
-    public static List<Route> routes;
+   /* public static List<Route> routes;
 
     private static final Map<PlayerId, String> playerNames = Map.of(PlayerId.PLAYER_1, "Jacob", PlayerId.PLAYER_2, "Martha");
     private static final SortedBag<Ticket> initialTickets = SortedBag.of(ChMap.tickets());
@@ -28,9 +28,9 @@ class GameTest {
 
     @Test
     void playWorks10000times() {
-       /* for (int i = 0; i < 0; i++) {
+       *//* for (int i = 0; i < 0; i++) {
             playWorks100Times();
-        }*/
+        }*//*
 
     }
 
@@ -93,12 +93,12 @@ class GameTest {
             System.out.printf("%s:: Nombre de voitures: %s      Nombre de cartes: %s     Nombre de billets: %s  \n", playerName, playerState.carCount(), playerState.cardCount(), playerState.ticketCount());
         }
 
-        /*private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
+        *//*private static void displayTotalNumberOfCards(PublicCardState publicCardState, PublicGameState publicGameState){
             int totalNumber = publicCardState.totalSize()+publicGameState.currentPlayerState().cardCount() + publicGameState.playerState(publicGameState.currentPlayerId().next()).cardCount();
             System.out.print("Total Number of Cards = " + (totalNumber));
             assert totalNumber == 110;
 
-        }*/
+        }*//*
         private static void displayEndOfGameMessage(PublicPlayerState publicPlayerState, String message){
             if (isFirstEOF){
                 System.out.println(message);
@@ -301,7 +301,7 @@ class GameTest {
             int index = rng.nextInt(options.size());
             return options.get(index);
         }
-    }
+    }*/
 
 
 }

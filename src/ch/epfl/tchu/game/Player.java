@@ -94,6 +94,10 @@ public interface Player {
      */
     SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options);
 
+    SortedBag<Card> tunnelDrawnCards(SortedBag<Card> cards);
+
+
+
     /**
      * Describes the three kinds of actions a player can do during their turn
      */

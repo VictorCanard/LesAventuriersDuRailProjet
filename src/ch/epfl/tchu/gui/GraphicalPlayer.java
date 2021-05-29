@@ -120,7 +120,11 @@ public final class GraphicalPlayer {
     public void receiveInfo(String messageToAdd) {
         assert isFxApplicationThread();
 
-        if (messages.size() > 4) {
+        Preconditions.checkArgument(!messageToAdd.isEmpty());
+
+        final int maxToAddMessage = 4;
+
+        if (messages.size() > maxToAddMessage) {
             messages.remove(0);
         }
         messages.add(new Text(messageToAdd));
@@ -216,6 +220,7 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleClaimCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
+        //createDrawnCardWindow();
 
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_CARDS,
@@ -225,13 +230,16 @@ public final class GraphicalPlayer {
                 1,
         items -> chooseCardsHandler.onChooseCards(items.get(0)));
 
-        observableGameState.setTD();
 
-        b.set(true);
-        System.out.println("true from choose claim cards");
-        b.set(false);
+
+
     }
+    static BooleanProperty b = new SimpleBooleanProperty(false);
 
+    public static ReadOnlyBooleanProperty getCanShowCards(){
+        System.out.println(b + "from getter method");
+        return b;
+    }
     /**
      * Allows the player to choose additional cards when it is necessary when attempting to claim a tunnel route.
      * The player also has an option to abandon the route by not selecting cards and clicking the choose button
@@ -239,16 +247,6 @@ public final class GraphicalPlayer {
      * @param possibleAdditionalCards : the possible additional cards the player can play to claim the route
      * @param chooseCardsHandler      : the action handler corresponding to the player choosing cards
      */
-
-
-
-     static BooleanProperty b = new SimpleBooleanProperty(false);
-
-     public static ReadOnlyBooleanProperty getCanShowCards(){
-         System.out.println(b + "from getter method");
-         return b;
-    }
-
     public void chooseAdditionalCards(List<SortedBag<Card>> possibleAdditionalCards, ActionHandlers.ChooseCardsHandler chooseCardsHandler) {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
@@ -269,6 +267,32 @@ public final class GraphicalPlayer {
                 });
     }
 
+
+    public void createDrawnCardWindow2(SortedBag<Card> cards){
+        VBox vbox = new VBox();
+
+        Scene scene = new Scene(vbox);
+        scene.getStylesheets().add("additional-cards.css");
+
+        Stage stage = new Stage(StageStyle.UTILITY);
+        stage.setTitle("Cartes Additionnelles");
+        stage.initOwner(primaryStage);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setScene(scene);
+        stage.setOnCloseRequest(Event::consume);
+
+        Text text = new Text("Les 3 cartes supplementaires sont: ");
+        TextFlow textFlow = new TextFlow(text);
+
+
+        Button button = new Button("Fermer");
+
+        button.setOnAction(event -> stage.hide());
+        vbox.getChildren().addAll(textFlow, DecksViewCreator.createDrawnCards2(cards), button);
+
+        stage.setAlwaysOnTop(true);
+        stage.show();
+    }
 
     private <E> void createChoiceWindow(String title, String displayText, List<E> list, SelectionMode selectionMode, Function<E, String> objectToStringFunction, int minToSelect, Consumer<ObservableList<E>> consumer) {
         VBox vbox = new VBox();
