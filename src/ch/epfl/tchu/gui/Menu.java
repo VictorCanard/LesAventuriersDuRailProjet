@@ -2,6 +2,7 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.game.PlayerId;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -19,8 +20,8 @@ import java.util.List;
 
 
 public class Menu extends Application {
-    public static int number_of_players = 2;
-    public static List<PlayerId> activePlayers = PlayerId.ALL.subList(0, number_of_players);
+    public static int numberOfPlayers = 2;
+    public static List<PlayerId> activePlayers = PlayerId.ALL.subList(0, numberOfPlayers);
 
 
     public static void main(String[] args) {
@@ -34,7 +35,6 @@ public class Menu extends Application {
         mainPane.getStylesheets().add("menu.css");
 
         Scene scene = new Scene(mainPane);
-
 
         primaryStage.setResizable(false);
         primaryStage.setTitle("tCHu");
@@ -51,12 +51,12 @@ public class Menu extends Application {
         Button startGame = new Button("Commencer");
         startGame.setId("start-button");
 
-        Node playerNames = makePlayerNamesNode();
-        playerNames.setId("player-names");
-
         HBox center = new HBox();
         Label numberOfPlayers = new Label("Nombre de Joueurs: ");
         ChoiceBox<Integer> choiceBox = new ChoiceBox<>(FXCollections.observableList(List.of(2, 3)));
+
+        Node playerNames = makePlayerNamesNode(choiceBox);
+        playerNames.setId("player-names");
 
         center.getChildren().addAll(numberOfPlayers, choiceBox);
 
@@ -67,13 +67,15 @@ public class Menu extends Application {
         return mainPane;
     }
 
-    private Node makePlayerNamesNode() {
+    private Node makePlayerNamesNode(ChoiceBox<Integer> choiceBox) {
         VBox vBox = new VBox();
 
         for (int i = 1; i <= 3; i++) {
             HBox hBox = new HBox();
             Label label = new Label("Joueur "+ i+ ":");
             TextField textField = new TextField();
+
+            textField.disableProperty().bind(Bindings.lessTanOrEqual(Bindings.integerValueAt(choiceBox.itemsProperty().get(), 0),i));
 
             hBox.getChildren().addAll(label, textField);
             vBox.getChildren().add(hBox);

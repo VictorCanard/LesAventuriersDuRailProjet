@@ -1,11 +1,8 @@
 package ch.epfl.tchu.gui;
 
-import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
@@ -13,7 +10,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -41,7 +37,7 @@ public class InfoViewCreator {
 
         //
         PlayerId currentId = playerId;
-        for (int i = 0; i < Menu.number_of_players; i++) {
+        for (int i = 0; i < Menu.numberOfPlayers; i++) {
             infoPane.getChildren().add(playerStats(currentId, playerNames, gameState));
             currentId = currentId.next();
         }

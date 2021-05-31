@@ -81,8 +81,8 @@ public final class Info {
      */
     public static String draw(List<String> playerNames, int points) {
         StringBuilder players = new StringBuilder();
-        for (int i = 0; i < Menu.number_of_players; i++) {
-            String andSeparator = (i == Menu.number_of_players - 2) ? StringsFr.AND_SEPARATOR : "";
+        for (int i = 0; i < Menu.numberOfPlayers; i++) {
+            String andSeparator = (i == Menu.numberOfPlayers - 2) ? StringsFr.AND_SEPARATOR : "";
 
             players.append(playerNames.get(i))
                     .append(andSeparator);
@@ -284,10 +284,10 @@ public final class Info {
                 .append("\n")
                 .append(String.format(StringsFr.WINS, playerName, points.get(0), StringsFr.plural(points.get(0))));
 
-        for (int i = 1; i < Menu.number_of_players; i++) {
+        for (int i = 1; i < Menu.numberOfPlayers; i++) {
             String contre = (i == 1) ? StringsFr.CONTRE : "";
-            String and = (i == Menu.number_of_players -1) ? StringsFr.AND_SEPARATOR : "";
-            String comma = (i < Menu.number_of_players -1) ? ", " : "";
+            String and = (i == Menu.numberOfPlayers -1) ? StringsFr.AND_SEPARATOR : "";
+            String comma = (i < Menu.numberOfPlayers -1) ? ", " : "";
             sb
                     .append(comma)
                     .append(and)

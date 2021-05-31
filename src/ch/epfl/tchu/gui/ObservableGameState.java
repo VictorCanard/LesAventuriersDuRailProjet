@@ -122,7 +122,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of tickets the given player has
      *
-     * @return the ticket Menu.number_of_players property of the given player
+     * @return the ticket Menu.numberOfPlayers property of the given player
      */
     public ReadOnlyIntegerProperty getTicketCount(PlayerId playerId) {
         return ticketCount.get(playerId);
@@ -131,7 +131,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of cards the given player has
      *
-     * @return the card Menu.number_of_players property of the given player
+     * @return the card Menu.numberOfPlayers property of the given player
      */
     public ReadOnlyIntegerProperty getCardCount(PlayerId playerId) {
         return cardCount.get(playerId);
@@ -140,7 +140,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of cars the given player has
      *
-     * @return the car Menu.number_of_players property of the given player
+     * @return the car Menu.numberOfPlayers property of the given player
      */
     public ReadOnlyIntegerProperty getCarCount(PlayerId playerId) {
         return carCount.get(playerId);
@@ -267,7 +267,7 @@ public final class ObservableGameState {
                     && playerState.canClaimRoute(route)
                     && !publicGameState.claimedRoutes().contains(route)) {
 
-                if (Menu.number_of_players == Constants.NUMBER_OF_PLAYERS_FOR_NO_DOUBLE_ROUTE_CAPTURE
+                if (Menu.numberOfPlayers == Constants.NUMBER_OF_PLAYERS_FOR_NO_DOUBLE_ROUTE_CAPTURE
                 ) {
                     booleanObjectProperty.set(allPairsOfStationsClaimed.get(route.stations()) == null);
                 } else

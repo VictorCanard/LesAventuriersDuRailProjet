@@ -22,10 +22,10 @@ HBox {
 }
 
 #start-button{
-    -fx-translate-y: 135px;
-    -fx-translate-x: -20px;
-    -fx-background-color: green;
-    -fx-text-fill: lightgreen;
+    -fx-translate-y: 125px;
+    -fx-translate-x: -50px;
+    -fx-background-color: #416bba;
+    -fx-text-fill: white;
     -fx-scale-y: 3px;
     -fx-scale-x: 2px;
 }

@@ -17,7 +17,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
@@ -61,7 +60,7 @@ public final class GraphicalPlayer {
      * @throws IllegalArgumentException if there aren't the right number of pairs in the player names map
      */
     public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
-        Preconditions.checkArgument(playerNames.size() == Menu.number_of_players);
+        Preconditions.checkArgument(playerNames.size() == Menu.numberOfPlayers);
 
         this.thisPlayer = Objects.requireNonNull(thisPlayer);
         this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));

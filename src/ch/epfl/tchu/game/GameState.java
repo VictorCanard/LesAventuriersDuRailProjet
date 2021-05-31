@@ -72,7 +72,7 @@ public final class GameState extends PublicGameState {
         CardState cardState = CardState.of(cardDeck);
         //Makes a CardState of that initial deck (5 face-up cards, a draw-pile and an empty discard pile)
 
-        int firstPlayerIndex = rng.nextInt(Menu.number_of_players);
+        int firstPlayerIndex = rng.nextInt(Menu.numberOfPlayers);
         //Picks a player at random
         PlayerId firstPlayerId = Menu.activePlayers.get(firstPlayerIndex);
 
@@ -104,8 +104,8 @@ public final class GameState extends PublicGameState {
      * Returns the specified number of tickets from the top of the pile
      *
      * @param count : number of tickets
-     * @return the Menu.number_of_players number of top tickets
-     * @throws IllegalArgumentException if the Menu.number_of_players is negative or strictly superior to the player's number of tickets
+     * @return the Menu.numberOfPlayers number of top tickets
+     * @throws IllegalArgumentException if the Menu.numberOfPlayers is negative or strictly superior to the player's number of tickets
      */
     public SortedBag<Ticket> topTickets(int count) {
         Preconditions.checkArgument(count >= 0 && count <= ticketsCount());
@@ -117,8 +117,8 @@ public final class GameState extends PublicGameState {
      * "Removes" the specified number of tickets from the top of the ticket draw pile
      *
      * @param count : number of tickets we don't want in this new GameState
-     * @return a new game state with Menu.number_of_players tickets removed
-     * @throws IllegalFormatCodePointException if the Menu.number_of_players is negative or strictly superior to the player's number of tickets
+     * @return a new game state with Menu.numberOfPlayers tickets removed
+     * @throws IllegalFormatCodePointException if the Menu.numberOfPlayers is negative or strictly superior to the player's number of tickets
      */
     public GameState withoutTopTickets(int count) {
         Preconditions.checkArgument(count >= 0 && count <= ticketsCount());

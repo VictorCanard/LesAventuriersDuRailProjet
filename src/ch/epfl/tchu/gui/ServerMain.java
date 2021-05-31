@@ -70,7 +70,7 @@ public class ServerMain extends Application {
 
     private ServerSocket createSockets() throws IOException {
         ServerSocket serverSocket = new ServerSocket(GuiUtils.PORT);
-        for (int i = localPlayerNumber; i < COUNT; i++) {
+        for (int i = localPlayerNumber; i < Menu.numberOfPlayers; i++) {
             sockets.add(serverSocket.accept());
         }
         return serverSocket;
@@ -79,7 +79,7 @@ public class ServerMain extends Application {
     private void createPlayerNames() {
         List<String> parameters = getParameters().getRaw();
 
-        for (int i = 0; i < COUNT; i++) {
+        for (int i = 0; i < Menu.numberOfPlayers; i++) {
             PlayerId currentId = ALL.get(i);
             if (i < parameters.size()) {
                 playerNames.put(currentId, parameters.get(i));
@@ -92,7 +92,7 @@ public class ServerMain extends Application {
     private void createPlayers() {
         players.put(PLAYER_1, new GraphicalPlayerAdapter());
 
-        for (int i = localPlayerNumber; i < COUNT; i++) {
+        for (int i = localPlayerNumber; i < Menu.numberOfPlayers; i++) {
             players.put(ALL.get(i), new RemotePlayerProxy(sockets.get(i - localPlayerNumber)));
         }
     }
