@@ -75,7 +75,7 @@ public class Menu extends Application {
             Label label = new Label("Joueur "+ i+ ":");
             TextField textField = new TextField();
 
-            textField.disableProperty().bind(Bindings.lessTanOrEqual(Bindings.integerValueAt(choiceBox.itemsProperty().get(), 0),i));
+            textField.disableProperty().bind(Bindings.lessThanOrEqual(Bindings.integerValueAt(choiceBox.itemsProperty().get(), 0),i));
 
             hBox.getChildren().addAll(label, textField);
             vBox.getChildren().add(hBox);

@@ -2,6 +2,7 @@ package ch.epfl.tchu.net;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
+import ch.epfl.tchu.gui.Menu;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -50,7 +51,7 @@ public class Serdes {
     /**
      * Serde of a player id
      */
-    public static final Serde<PlayerId> PLAYER_ID_SERDE = Serde.oneOf(PlayerId.ALL);
+    public static final Serde<PlayerId> PLAYER_ID_SERDE = Serde.oneOf(Menu.activePlayers);
 
     /**
      * Serde of the kind of action a player can take on their turn
@@ -161,7 +162,7 @@ public class Serdes {
      */
     public static final Serde<PublicGameState> PUBLIC_GAME_STATE_SERDE = Serde.of(
             (publicGameState) -> {
-                String allPublicPlayerStates = PlayerId.ALL
+                String allPublicPlayerStates = Menu.activePlayers
                         .stream()
                         .map(playerId -> PUBLIC_PLAYER_STATE_SERDE.serialize(publicGameState.playerState(playerId)))
                         .collect(Collectors.joining(COLON));
@@ -181,7 +182,7 @@ public class Serdes {
                         INTEGER_SERDE.deserialize(arguments.next()),
                         PUBLIC_CARD_STATE_SERDE.deserialize(arguments.next()),
                         PLAYER_ID_SERDE.deserialize(arguments.next()),
-                        PlayerId.ALL.stream().collect(Collectors.toMap(playerId -> playerId, playerId -> PUBLIC_PLAYER_STATE_SERDE.deserialize(arguments.next()))),
+                        Menu.activePlayers.stream().collect(Collectors.toMap(playerId -> playerId, playerId -> PUBLIC_PLAYER_STATE_SERDE.deserialize(arguments.next()))),
                         PLAYER_ID_SERDE.deserialize(arguments.next()));
             }
     );

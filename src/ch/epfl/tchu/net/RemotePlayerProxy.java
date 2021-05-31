@@ -3,6 +3,7 @@ package ch.epfl.tchu.net;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
+import ch.epfl.tchu.gui.Menu;
 
 import java.io.*;
 import java.net.Socket;
@@ -53,7 +54,7 @@ public class RemotePlayerProxy implements Player {
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
         String ownId = PLAYER_ID_SERDE.serialize(ownID);
 
-        String namesOfPlayers = LIST_STRING_SERDE.serialize(PlayerId.ALL.stream()
+        String namesOfPlayers = LIST_STRING_SERDE.serialize(Menu.activePlayers.stream()
                 .map(playerNames::get)
                 .collect(Collectors.toList()));
 
