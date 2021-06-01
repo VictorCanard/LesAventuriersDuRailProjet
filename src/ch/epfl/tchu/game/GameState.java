@@ -2,7 +2,7 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
-import ch.epfl.tchu.gui.ServerMain;
+import ch.epfl.tchu.gui.Menu;
 
 import java.util.*;
 
@@ -58,7 +58,7 @@ public final class GameState extends PublicGameState {
         Deck<Card> initialDeck = Deck.of(Constants.ALL_CARDS, rng);
 
         //Initializes each player's deck to the top 4 cards of the deck (and then the 4 next)
-        for (PlayerId playerId : ServerMain.activePlayers) {
+        for (PlayerId playerId : Menu.activePlayers) {
             SortedBag<Card> top4Cards = initialDeck.topCards(Constants.INITIAL_CARDS_COUNT);
             initialDeck = initialDeck.withoutTopCards(Constants.INITIAL_CARDS_COUNT);
 
@@ -72,9 +72,9 @@ public final class GameState extends PublicGameState {
         CardState cardState = CardState.of(cardDeck);
         //Makes a CardState of that initial deck (5 face-up cards, a draw-pile and an empty discard pile)
 
-        int firstPlayerIndex = rng.nextInt(ServerMain.numberOfPlayers);
+        int firstPlayerIndex = rng.nextInt(Menu.numberOfPlayers);
         //Picks a player at random
-        PlayerId firstPlayerId = ServerMain.activePlayers.get(firstPlayerIndex);
+        PlayerId firstPlayerId = Menu.activePlayers.get(firstPlayerIndex);
 
         return new GameState(playerStateMap, ticketDeck, cardState, firstPlayerId, null);
     }
@@ -104,8 +104,8 @@ public final class GameState extends PublicGameState {
      * Returns the specified number of tickets from the top of the pile
      *
      * @param count : number of tickets
-     * @return the ServerMain.numberOfPlayers number of top tickets
-     * @throws IllegalArgumentException if the ServerMain.numberOfPlayers is negative or strictly superior to the player's number of tickets
+     * @return the Menu.numberOfPlayers number of top tickets
+     * @throws IllegalArgumentException if the Menu.numberOfPlayers is negative or strictly superior to the player's number of tickets
      */
     public SortedBag<Ticket> topTickets(int count) {
         Preconditions.checkArgument(count >= 0 && count <= ticketsCount());
@@ -117,8 +117,8 @@ public final class GameState extends PublicGameState {
      * "Removes" the specified number of tickets from the top of the ticket draw pile
      *
      * @param count : number of tickets we don't want in this new GameState
-     * @return a new game state with ServerMain.numberOfPlayers tickets removed
-     * @throws IllegalFormatCodePointException if the ServerMain.numberOfPlayers is negative or strictly superior to the player's number of tickets
+     * @return a new game state with Menu.numberOfPlayers tickets removed
+     * @throws IllegalFormatCodePointException if the Menu.numberOfPlayers is negative or strictly superior to the player's number of tickets
      */
     public GameState withoutTopTickets(int count) {
         Preconditions.checkArgument(count >= 0 && count <= ticketsCount());

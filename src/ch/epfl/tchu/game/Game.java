@@ -3,7 +3,7 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.Info;
-import ch.epfl.tchu.gui.ServerMain;
+import ch.epfl.tchu.gui.Menu;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,8 +28,8 @@ public final class Game {
      * @throws IllegalArgumentException if one of the maps (playerNames or players) doesn't have exactly two pairs as there as two players in the game.
      */
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng) {
-        Preconditions.checkArgument(players.size() == ServerMain.numberOfPlayers);
-        Preconditions.checkArgument(playerNames.size() == ServerMain.numberOfPlayers);
+        Preconditions.checkArgument(players.size() == Menu.numberOfPlayers);
+        Preconditions.checkArgument(playerNames.size() == Menu.numberOfPlayers);
 
         //before the game starts
 
@@ -276,14 +276,12 @@ public final class Game {
             allGameData.modifyGameState(allGameData.gameState.withoutTopCard());
         }
         SortedBag<Card> drawnCards = drawCardsBuild.build();
-        //new
+
         currentPlayer.tunnelDrawnCards(drawnCards);
 
         //Calculating additional cost
         int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
         currentPlayer.additionalCost(additionalCost);
-        //Displaying that cost for all players and the drawn cards
-        receiveInfoForAll(players, currentInfo.drewAdditionalCards(drawnCards, additionalCost));
 
         PlayerState playerState = allGameData.gameState.currentPlayerState();
 
@@ -359,7 +357,7 @@ public final class Game {
         //LastTurnBegins
 
         //One more turn for each player
-        for (int i = 0; i < ServerMain.numberOfPlayers; i++) {
+        for (int i = 0; i < Menu.numberOfPlayers; i++) {
             allGameData.modifyGameState(allGameData.gameState.forNextTurn());
             nextTurn(allGameData);
         }
@@ -384,7 +382,7 @@ public final class Game {
         Map<PlayerId, Trail> eachPlayerAssociatedTrails = new EnumMap<>(PlayerId.class);
         Map<PlayerId, Integer> associatedPlayerPoints = new EnumMap<>(PlayerId.class);
 
-        ServerMain.activePlayers.forEach((playerId -> {
+        Menu.activePlayers.forEach((playerId -> {
             //Calculate longest trails
             Trail playerLongestTrail = Trail.longest(allGameData.gameState.playerState(playerId).routes());
             eachPlayerAssociatedTrails.put(playerId, playerLongestTrail);
@@ -395,13 +393,13 @@ public final class Game {
 
         updateAllStates(players, allGameData.gameState);
 
-        int maxLengthTrail = ServerMain.activePlayers
+        int maxLengthTrail = Menu.activePlayers
                 .stream()
                 .mapToInt(playerId -> eachPlayerAssociatedTrails.get(playerId).length())
                 .max()
                 .orElseThrow();
 
-        ServerMain.activePlayers.forEach(playerId -> {
+        Menu.activePlayers.forEach(playerId -> {
             if (eachPlayerAssociatedTrails.get(playerId).length() == maxLengthTrail) {
 
                 associatedPlayerPoints.merge(playerId, Constants.LONGEST_TRAIL_BONUS_POINTS, Integer::sum);
@@ -421,14 +419,14 @@ public final class Game {
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
         Map<PlayerId, String> names = allGameData.playerNames;
 
-        int maxPoints = ServerMain.activePlayers.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
+        int maxPoints = Menu.activePlayers.stream().mapToInt(associatedPlayerPoints::get).max().orElseThrow();
 
         String endOfGameMessage;
 
         if (associatedPlayerPoints.values()
                 .stream()
                 .filter(integer -> integer == maxPoints)
-                .count() == ServerMain.numberOfPlayers) {
+                .count() == Menu.numberOfPlayers) {
             //All players came to a draw
             endOfGameMessage = Info
                     .draw(new ArrayList<>(allGameData.playerNames.values()), maxPoints);
@@ -453,12 +451,12 @@ public final class Game {
 
             List<String> winnersToL =
                     playerIds
-                    .stream()
-                    .map(names::get)
-                    .collect(Collectors.toList());
+                            .stream()
+                            .map(names::get)
+                            .collect(Collectors.toList());
 
 
-            endOfGameMessage = infoGenerators.get(ServerMain.activePlayers
+            endOfGameMessage = infoGenerators.get(Menu.activePlayers
                     .stream()
                     .max(Comparator.comparingInt(associatedPlayerPoints::get))
                     .orElseThrow())

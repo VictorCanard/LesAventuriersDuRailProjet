@@ -32,6 +32,7 @@ public class ClientMain extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        System.out.println("client started");
         List<String> parameters = getParameters().getRaw();
 
         String name = "localhost";

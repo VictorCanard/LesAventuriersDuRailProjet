@@ -60,7 +60,7 @@ public final class GraphicalPlayer {
      * @throws IllegalArgumentException if there aren't the right number of pairs in the player names map
      */
     public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
-        Preconditions.checkArgument(playerNames.size() == ServerMain.numberOfPlayers);
+        Preconditions.checkArgument(playerNames.size() == Menu.numberOfPlayers);
 
         this.thisPlayer = Objects.requireNonNull(thisPlayer);
         this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
