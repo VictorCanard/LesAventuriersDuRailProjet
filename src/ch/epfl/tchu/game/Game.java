@@ -277,11 +277,12 @@ public final class Game {
         }
         SortedBag<Card> drawnCards = drawCardsBuild.build();
 
-        currentPlayer.tunnelDrawnCards(drawnCards);
 
         //Calculating additional cost
         int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
         currentPlayer.additionalCost(additionalCost);
+        currentPlayer.tunnelDrawnCards(drawnCards);
+
 
         PlayerState playerState = allGameData.gameState.currentPlayerState();
 

@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.animation.TranslateTransition;
 
+import java.util.function.Consumer;
+
 //organizing all the animation possibilities
 public class Animations extends Application{
     private static final Duration DURATION = Duration.seconds(1);
@@ -39,8 +41,21 @@ public class Animations extends Application{
 
 
     }
-//works
-    public static void flip(Node faceDown, Node faceUp){
+
+
+    public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String name, boolean noAddCost){
+        SequentialTransition sq = new SequentialTransition(new PauseTransition(DURATION), simpleFlip(faceDown[0], faceUp[0]), simpleFlip(faceDown[1], faceUp[1]), simpleFlip(faceDown[2], faceUp[2]));
+       if(noAddCost) {
+           sq.setOnFinished(event -> {
+               consumer.accept("TURN FOR :  " + name + '\n');
+
+           });
+       }
+        sq.play();
+    }
+
+
+    private static SequentialTransition simpleFlip(Node faceDown, Node faceUp){
         faceUp.setVisible(true);
         int rotAngle = 90;
         RotateTransition fromFaceDown = new RotateTransition(DURATION);
@@ -56,8 +71,8 @@ public class Animations extends Application{
         fromFaceDown.setNode(faceDown);
         toFaceUp.setNode(faceUp);
 
-        SequentialTransition sq = new SequentialTransition( new PauseTransition(DURATION), fromFaceDown, toFaceUp);
-        sq.play();
+        return new SequentialTransition(fromFaceDown, toFaceUp);
+
     }
 
     public static void arcTranslate(Node node, double centerx, double centery, double radx, double rady, double finalx, double finaly){
@@ -140,7 +155,7 @@ public class Animations extends Application{
 
 
             root.getChildren().addAll(sp, stackPane);
-            flip(stackPane, sp);
+            //flip(stackPane, sp);
             Scene scene = new Scene(root,1500,700,Color.WHITE);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Animation Test");

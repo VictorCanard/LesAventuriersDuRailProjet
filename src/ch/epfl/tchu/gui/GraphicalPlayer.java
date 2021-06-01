@@ -45,7 +45,6 @@ public final class GraphicalPlayer {
     private final ObservableGameState observableGameState;
     private final ObservableList<Text> messages = FXCollections.observableArrayList();
     private final Stage primaryStage;
-    private final ObjectProperty<SortedBag<Card>> tunnelCards = new SimpleObjectProperty<>(SortedBag.of());
 
     private final ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTicketsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.DrawCardHandler> drawCardsHP = new SimpleObjectProperty<>(null);
@@ -284,10 +283,17 @@ public final class GraphicalPlayer {
 
         Button button = new Button("Fermer");
 
-        button.setOnAction(event -> {
-            stage.hide();
-        });
-        vbox.getChildren().addAll(textFlow, DecksViewCreator.createDrawnCards(cards), button);
+        button.setOnAction(event -> stage.hide());
+
+       Node  drawnCards;
+        if(addCost.equals(StringsFr.getAdditionalCost(0))) {
+            receiveInfo("NO ADDITIONAL COST");
+            drawnCards = DecksViewCreator.createDrawnCards(cards, this::receiveInfo, playerNames.get((thisPlayer.next())), true);}
+        else { receiveInfo("SOME ADDITIONAL COST");
+            drawnCards = DecksViewCreator.createDrawnCards(cards, this::receiveInfo, playerNames.get((thisPlayer.next())), false);}
+
+
+        vbox.getChildren().addAll(textFlow, drawnCards, button);
         stage.setAlwaysOnTop(true);
         stage.show();
 

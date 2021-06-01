@@ -22,6 +22,7 @@ import javafx.scene.text.Text;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -185,10 +186,13 @@ class DecksViewCreator {
         return cardPane;
     }
 
-    public static Node createDrawnCards(SortedBag<Card> cards){
+    public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String name, boolean noAddCost){
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css", "additional-cards.css");
         hbox.setId("drawCards");
+        StackPane [] stacks = new StackPane[Constants.ADDITIONAL_TUNNEL_CARDS];
+        StackPane[] backs = new StackPane[Constants.ADDITIONAL_TUNNEL_CARDS];
+
 
             for (int i = 0; i < Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
                 StackPane mainStack = new StackPane();
@@ -197,15 +201,23 @@ class DecksViewCreator {
                 StackPane frontOfCard = new StackPane();
                 frontOfCard.getStyleClass().add(getCardName(cards.get(i)));
 
-
                 StackPane back = new StackPane();
                 StackPane backOfCard = backOfCardRectangle(back);
 
                 mainStack.getChildren().addAll(cardRectangles(frontOfCard), backOfCard);
 
+                stacks [i] = frontOfCard;
+                backs[i] = backOfCard;
+
+
                 hbox.getChildren().add(mainStack);
-                Animations.flip(backOfCard, frontOfCard);
+
             }
+        if (noAddCost) {
+            Animations.flip(backs, stacks, consumer, name, true); //todo : get the success/fail text too
+        } else {
+            Animations.flip(backs, stacks, consumer, name, false);
+        }
 
         return hbox;
     }
