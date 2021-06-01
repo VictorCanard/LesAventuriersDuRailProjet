@@ -281,7 +281,7 @@ public final class Game {
 
         //Calculating additional cost
         int additionalCost = claimedRoute.additionalClaimCardsCount(initialClaimCards, drawnCards);
-
+        currentPlayer.additionalCost(additionalCost);
         //Displaying that cost for all players and the drawn cards
         receiveInfoForAll(players, currentInfo.drewAdditionalCards(drawnCards, additionalCost));
 

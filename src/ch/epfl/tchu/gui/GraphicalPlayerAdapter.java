@@ -115,9 +115,17 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public SortedBag<Card> tunnelDrawnCards(SortedBag<Card> cards) {
-        runLater(() -> graphicalPlayer.createDrawnCardWindow2(cards));
+        runLater(() -> graphicalPlayer.createDrawnCardWindow(cards));
         return cards;
     }
+
+    @Override
+    public int additionalCost(int additionalCost) {
+        runLater(() -> graphicalPlayer.addCost(additionalCost));
+        return additionalCost;
+    }
+
+
 
     private <E> E withTryAndCatch(BlockingQueue<E> e) {
         try {

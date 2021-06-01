@@ -128,6 +128,7 @@ public class RemotePlayerProxy implements Player {
     @Override
     public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
         String optionsString = LIST_SORTED_BAG_CARD_SERDE.serialize(options);
+
         sendMessage(MessageId.CHOOSE_ADDITIONAL_CARDS, optionsString);
 
         return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
@@ -140,6 +141,15 @@ public class RemotePlayerProxy implements Player {
 
         return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
 
+    }
+
+    @Override
+    public int additionalCost(int additionalCost) {
+
+        String addCost = INTEGER_SERDE.serialize(additionalCost);
+        sendMessage(MessageId.ADDITIONAL_COST, addCost);
+
+        return INTEGER_SERDE.deserialize(receiveMessage());
     }
 
     /**

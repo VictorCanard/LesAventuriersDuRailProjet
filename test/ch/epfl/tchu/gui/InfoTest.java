@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InfoTest {
-    private static final String playerOneName = "Ethan";
+    /*private static final String playerOneName = "Ethan";
     private static final Info playerOneInfo = new Info(playerOneName);
     private final static List<String> listOfAllCards =
             List.of(StringsFr.BLACK_CARD,
@@ -214,7 +214,7 @@ class InfoTest {
         assertEquals(expected,actual);
     }
 
-   /* @Test
+   *//* @Test
     void won() {
         String expected = String.format(WINS, playerOneName, 15,"s",  10,"s");
 

@@ -1,5 +1,8 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.game.Card;
+
 public final class StringsFr {
     // Nom des cartes
     public static final String BLACK_CARD = "noire";
@@ -44,11 +47,11 @@ public final class StringsFr {
     public static final String ATTEMPTS_TUNNEL_CLAIM =
             "%s tente de s'emparer du tunnel %s au moyen de %s !\n";
     public static final String ADDITIONAL_CARDS_ARE =
-            "Les cartes supplémentaires sont %s. ";
+            "Les cartes supplémentaires sont: ";
     public static final String NO_ADDITIONAL_COST =
-            "Elles n'impliquent aucun coût additionnel.\n";
+            "Il y a aucun coût additionnel.\n";
     public static final String SOME_ADDITIONAL_COST =
-            "Elles impliquent un coût additionnel de %s carte%s.\n";
+            "Il y a un coût additionnel de %s carte%s.\n";
     public static final String DID_NOT_CLAIM_ROUTE =
             "%s n'a pas pu (ou voulu) s'emparer de la route %s.\n";
     public static final String LAST_TURN_BEGINS =
@@ -83,4 +86,22 @@ public final class StringsFr {
     public static String plural(int value) {
         return Math.abs(value) <= 1 ? "" : "s";
     }
+
+    /**
+     * Gives the message that the player has drawn 3 additional cards from the draw pile
+     *
+     * @param additionalCost : the additional cost from the three cards
+     * @return message including the names of the additional cards and the additional cost
+     */
+    public static String getAdditionalCost(int additionalCost) {
+        String additionalCostMessage;
+
+        if (additionalCost == 0) {
+            additionalCostMessage = StringsFr.NO_ADDITIONAL_COST;
+        } else {
+            additionalCostMessage = String.format(StringsFr.SOME_ADDITIONAL_COST, additionalCost, StringsFr.plural(additionalCost));
+        }
+        return additionalCostMessage;
+    }
+
 }

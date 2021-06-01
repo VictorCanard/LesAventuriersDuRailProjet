@@ -45,7 +45,7 @@ final class SignatureChecks_3 {
         v17 = v16.canPlay();
         v17 = v16.claimedRoute(v19, v15);
         v17 = v16.didNotClaimRoute(v19);
-        v17 = v16.drewAdditionalCards(v15, v06);
+       // v17 = v16.drewAdditionalCards(v15, v06);
         v17 = v16.drewBlindCard();
         v17 = v16.drewTickets(v06);
         v17 = v16.drewVisibleCard(v12);

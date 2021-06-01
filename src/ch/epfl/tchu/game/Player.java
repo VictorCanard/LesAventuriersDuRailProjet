@@ -96,6 +96,8 @@ public interface Player {
 
     SortedBag<Card> tunnelDrawnCards(SortedBag<Card> cards);
 
+    int additionalCost(int additionalCost);
+
 
 
     /**

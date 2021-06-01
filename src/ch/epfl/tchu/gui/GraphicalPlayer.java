@@ -72,7 +72,7 @@ public final class GraphicalPlayer {
 
     private void setSceneGraph() {
 
-       // boolean darkMode = true;
+        // boolean darkMode = true;
 
         primaryStage.setResizable(false);
         Node mapView = MapViewCreator
@@ -227,18 +227,10 @@ public final class GraphicalPlayer {
                 SelectionMode.SINGLE,
                 Info::cardNames,
                 1,
-        items -> chooseCardsHandler.onChooseCards(items.get(0)));
-
-
-
+                items -> chooseCardsHandler.onChooseCards(items.get(0)));
 
     }
-    static BooleanProperty b = new SimpleBooleanProperty(false);
 
-    public static ReadOnlyBooleanProperty getCanShowCards(){
-        System.out.println(b + "from getter method");
-        return b;
-    }
     /**
      * Allows the player to choose additional cards when it is necessary when attempting to claim a tunnel route.
      * The player also has an option to abandon the route by not selecting cards and clicking the choose button
@@ -251,8 +243,10 @@ public final class GraphicalPlayer {
         Preconditions.checkArgument(!possibleAdditionalCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
 
+        String description = addCost + '\n' + StringsFr.CHOOSE_ADDITIONAL_CARDS;
+
         createChoiceWindow(StringsFr.CARDS_CHOICE,
-                StringsFr.CHOOSE_ADDITIONAL_CARDS,
+                description,
                 List.copyOf(possibleAdditionalCards),
                 SelectionMode.SINGLE,
                 Info::cardNames,
@@ -265,32 +259,38 @@ public final class GraphicalPlayer {
                     }
                 });
     }
+    private String addCost;
+    public void addCost(int additionalCost){
+        addCost = StringsFr.getAdditionalCost(additionalCost);
+    }
 
 
-    public void createDrawnCardWindow2(SortedBag<Card> cards){
+    public void createDrawnCardWindow(SortedBag<Card> cards){
         VBox vbox = new VBox();
 
         Scene scene = new Scene(vbox);
         scene.getStylesheets().add("additional-cards.css");
 
         Stage stage = new Stage(StageStyle.UTILITY);
-        stage.setTitle("Cartes Additionnelles");
+        stage.setTitle("Cartes Supplémentaires");
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setScene(scene);
         stage.setOnCloseRequest(Event::consume);
 
-        Text text = new Text("Les 3 cartes supplementaires sont: ");
+        Text text = new Text(StringsFr.ADDITIONAL_CARDS_ARE);
         TextFlow textFlow = new TextFlow(text);
 
 
         Button button = new Button("Fermer");
 
-        button.setOnAction(event -> stage.hide());
-        vbox.getChildren().addAll(textFlow, DecksViewCreator.createDrawnCards2(cards), button);
-
+        button.setOnAction(event -> {
+            stage.hide();
+        });
+        vbox.getChildren().addAll(textFlow, DecksViewCreator.createDrawnCards(cards), button);
         stage.setAlwaysOnTop(true);
         stage.show();
+
     }
 
     private <E> void createChoiceWindow(String title, String displayText, List<E> list, SelectionMode selectionMode, Function<E, String> objectToStringFunction, int minToSelect, Consumer<ObservableList<E>> consumer) {
@@ -342,4 +342,3 @@ public final class GraphicalPlayer {
     }
 
 }
-

@@ -1,3 +1,4 @@
+/*
 package ch.epfl.tchu.net;
 
 
@@ -18,4 +19,4 @@ public final class TestClient1 {
     }
 
 
-}
+}*/

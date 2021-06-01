@@ -136,13 +136,18 @@ public class RemotePlayerClient {
                     case CHOOSE_ADDITIONAL_CARDS:
                         List<SortedBag<Card>> cardOptions = LIST_SORTED_BAG_CARD_SERDE.deserialize(arguments.next());
                         SortedBag<Card> additionalCards = player.chooseAdditionalCards(cardOptions);
-
-                        writeAndFlush(bufferedWriter, SORTED_BAG_CARD_SERDE.serialize(additionalCards));
+                        writeAndFlush(bufferedWriter,SORTED_BAG_CARD_SERDE.serialize(additionalCards));
                         break;
                     case THREE_DRAWN_CARDS:
                         SortedBag<Card> cards = SORTED_BAG_CARD_SERDE.deserialize(arguments.next());
                         SortedBag<Card> drawn = player.tunnelDrawnCards(cards);
                         writeAndFlush(bufferedWriter, SORTED_BAG_CARD_SERDE.serialize(drawn));
+                        break;
+                    case ADDITIONAL_COST:
+                        int additionalCost = INTEGER_SERDE.deserialize(arguments.next());
+                        int addCost = player.additionalCost(additionalCost);
+                        writeAndFlush(bufferedWriter,INTEGER_SERDE.serialize(addCost));
+
                         break;
                     default:
                         throw new Error();

@@ -1,3 +1,4 @@
+/*
 package ch.epfl.tchu.game;
 
 import org.junit.jupiter.api.Assertions;
@@ -42,4 +43,4 @@ class CardTest {
                 assertEquals(allColors[card.ordinal()], card.color());
         }
     }
-}
+}*/

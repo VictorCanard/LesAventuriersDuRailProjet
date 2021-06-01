@@ -184,12 +184,11 @@ class DecksViewCreator {
 
         return cardPane;
     }
-//todo: get rid of info related to drawn cards ? (spoiler)
-    public static Node createDrawnCards2(SortedBag<Card> cards){
+
+    public static Node createDrawnCards(SortedBag<Card> cards){
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css", "additional-cards.css");
         hbox.setId("drawCards");
-        System.out.println(cards);
 
             for (int i = 0; i < Constants.ADDITIONAL_TUNNEL_CARDS; i++) {
                 StackPane mainStack = new StackPane();

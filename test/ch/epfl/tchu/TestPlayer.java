@@ -1,3 +1,4 @@
+/*
 package ch.epfl.tchu;
 
 import ch.epfl.tchu.game.*;
@@ -196,3 +197,4 @@ public final class TestPlayer implements Player {
 }
 
 
+*/
