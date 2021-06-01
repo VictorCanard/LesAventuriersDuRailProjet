@@ -122,7 +122,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of tickets the given player has
      *
-     * @return the ticket Menu.numberOfPlayers property of the given player
+     * @return the ticket ServerMain.numberOfPlayers property of the given player
      */
     public ReadOnlyIntegerProperty getTicketCount(PlayerId playerId) {
         return ticketCount.get(playerId);
@@ -131,7 +131,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of cards the given player has
      *
-     * @return the card Menu.numberOfPlayers property of the given player
+     * @return the card ServerMain.numberOfPlayers property of the given player
      */
     public ReadOnlyIntegerProperty getCardCount(PlayerId playerId) {
         return cardCount.get(playerId);
@@ -140,7 +140,7 @@ public final class ObservableGameState {
     /**
      * Getter for the property of the number of cars the given player has
      *
-     * @return the car Menu.numberOfPlayers property of the given player
+     * @return the car ServerMain.numberOfPlayers property of the given player
      */
     public ReadOnlyIntegerProperty getCarCount(PlayerId playerId) {
         return carCount.get(playerId);
@@ -194,7 +194,7 @@ public final class ObservableGameState {
 
     private void createEmptyMap(Map<PlayerId, IntegerProperty> currentMap) {
 
-        Menu.activePlayers.forEach(playerId -> currentMap.put(playerId, new SimpleIntegerProperty(0)));
+        ServerMain.activePlayers.forEach(playerId -> currentMap.put(playerId, new SimpleIntegerProperty(0)));
     }
 
     private void createRoutes() {
@@ -204,7 +204,7 @@ public final class ObservableGameState {
 
     private void setRoutesPlayerId(PublicGameState newPublicGameState) {
 
-        ChMap.routes().forEach(route -> Menu.activePlayers.forEach(playerId -> {
+        ChMap.routes().forEach(route -> ServerMain.activePlayers.forEach(playerId -> {
             if (newPublicGameState.playerState(playerId).routes().contains(route)) {
                 allRoutesContainedByWhom.get(route).set(playerId);
                 allPairsOfStationsClaimed.put(route.stations(), playerId);
@@ -267,7 +267,7 @@ public final class ObservableGameState {
                     && playerState.canClaimRoute(route)
                     && !publicGameState.claimedRoutes().contains(route)) {
 
-                if (Menu.numberOfPlayers == Constants.NUMBER_OF_PLAYERS_FOR_NO_DOUBLE_ROUTE_CAPTURE
+                if (ServerMain.numberOfPlayers == Constants.NUMBER_OF_PLAYERS_FOR_NO_DOUBLE_ROUTE_CAPTURE
                 ) {
                     booleanObjectProperty.set(allPairsOfStationsClaimed.get(route.stations()) == null);
                 } else
@@ -281,7 +281,7 @@ public final class ObservableGameState {
 
     private void setEachPlayerCountAttributesCount(PublicGameState publicGameState) {
 
-        Menu.activePlayers.forEach(playerId -> {
+        ServerMain.activePlayers.forEach(playerId -> {
             ticketCount.get(playerId).set(publicGameState.playerState(playerId).ticketCount());
             cardCount.get(playerId).set(publicGameState.playerState(playerId).cardCount());
             carCount.get(playerId).set(publicGameState.playerState(playerId).carCount());

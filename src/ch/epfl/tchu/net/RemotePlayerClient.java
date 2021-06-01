@@ -2,7 +2,7 @@ package ch.epfl.tchu.net;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
-import ch.epfl.tchu.gui.Menu;
+import ch.epfl.tchu.gui.ServerMain;
 
 import java.io.*;
 import java.net.Socket;
@@ -72,7 +72,7 @@ public class RemotePlayerClient {
 
                         Map<PlayerId, String> playerNames = new HashMap<>();
 
-                        Menu.activePlayers.forEach(playerId -> playerNames.put(playerId, STRING_SERDE.deserialize(nameIterator.next())));
+                        ServerMain.activePlayers.forEach(playerId -> playerNames.put(playerId, STRING_SERDE.deserialize(nameIterator.next())));
 
                         player.initPlayers(ownId, playerNames);
                         break;
