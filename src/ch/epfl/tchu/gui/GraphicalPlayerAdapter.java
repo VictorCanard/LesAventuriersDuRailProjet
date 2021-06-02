@@ -117,21 +117,18 @@ public final class GraphicalPlayerAdapter implements Player {
     }
 
     @Override
-    public SortedBag<Card> tunnelDrawnCards(SortedBag<Card> cards) {
+    public void tunnelDrawnCards(SortedBag<Card> cards) {
         runLater(() -> graphicalPlayer.createDrawnCardWindow(cards));
-        return cards;
     }
 
     @Override
-    public int additionalCost(int additionalCost) {
+    public void additionalCost(int additionalCost) {
         runLater(() -> graphicalPlayer.addCost(additionalCost));
-        return additionalCost;
     }
 
     @Override
-    public String didOrDidntClaimRoute(String s) {
+    public void didOrDidntClaimRoute(String s) {
         runLater(() -> graphicalPlayer.didOrDidntClaimRoute(s));
-        return s;
     }
 
 

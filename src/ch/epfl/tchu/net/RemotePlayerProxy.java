@@ -4,7 +4,6 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import ch.epfl.tchu.gui.Menu;
-import ch.epfl.tchu.gui.ServerMain;
 
 import java.io.*;
 import java.net.Socket;
@@ -136,29 +135,22 @@ public class RemotePlayerProxy implements Player {
     }
 
     @Override
-    public SortedBag<Card> tunnelDrawnCards(SortedBag<Card> cards) {
+    public void tunnelDrawnCards(SortedBag<Card> cards) {
         String cardsString = SORTED_BAG_CARD_SERDE.serialize(cards);
         sendMessage(MessageId.THREE_DRAWN_CARDS, cardsString);
-
-        return SORTED_BAG_CARD_SERDE.deserialize(receiveMessage());
-
     }
 
     @Override
-    public int additionalCost(int additionalCost) {
-
+    public void additionalCost(int additionalCost) {
         String addCost = INTEGER_SERDE.serialize(additionalCost);
         sendMessage(MessageId.ADDITIONAL_COST, addCost);
-
-        return INTEGER_SERDE.deserialize(receiveMessage());
     }
 
     @Override
-    public String didOrDidntClaimRoute(String s) {
+    public void didOrDidntClaimRoute(String s) {
         System.out.println("INSIDE PROXY : " + s);
         String claimRoute = STRING_SERDE.serialize(s);
         sendMessage(MessageId.DID_OR_DIDNT_CLAIM_ROUTE, claimRoute);
-        return STRING_SERDE.deserialize(receiveMessage());
     }
 
     /**

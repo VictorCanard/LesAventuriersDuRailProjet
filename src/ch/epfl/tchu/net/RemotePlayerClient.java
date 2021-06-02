@@ -144,19 +144,17 @@ public class RemotePlayerClient {
                         break;
                     case THREE_DRAWN_CARDS:
                         SortedBag<Card> cards = SORTED_BAG_CARD_SERDE.deserialize(arguments.next());
-                        SortedBag<Card> drawn = player.tunnelDrawnCards(cards);
-                        writeAndFlush(bufferedWriter, SORTED_BAG_CARD_SERDE.serialize(drawn));
+                        player.tunnelDrawnCards(cards);
                         break;
                     case ADDITIONAL_COST:
                         int additionalCost = INTEGER_SERDE.deserialize(arguments.next());
-                        int addCost = player.additionalCost(additionalCost);
-                        writeAndFlush(bufferedWriter,INTEGER_SERDE.serialize(addCost));
+                        player.additionalCost(additionalCost);
 
                         break;
                     case DID_OR_DIDNT_CLAIM_ROUTE:
                         String s = STRING_SERDE.deserialize(arguments.next());
-                        String didOrNot = player.didOrDidntClaimRoute(s);
-                        writeAndFlush(bufferedWriter, STRING_SERDE.serialize(didOrNot));
+                        player.didOrDidntClaimRoute(s);
+                        break;
                     default:
                         throw new Error();
                 }

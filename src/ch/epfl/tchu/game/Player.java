@@ -94,11 +94,11 @@ public interface Player {
      */
     SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options);
 
-    SortedBag<Card> tunnelDrawnCards(SortedBag<Card> cards);
+    void tunnelDrawnCards(SortedBag<Card> cards);
 
-    int additionalCost(int additionalCost);
+    void additionalCost(int additionalCost);
 
-    String didOrDidntClaimRoute(String s);
+    void didOrDidntClaimRoute(String s);
 
 
 
