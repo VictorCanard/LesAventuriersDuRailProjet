@@ -261,10 +261,9 @@ public final class GraphicalPlayer {
         addCost = StringsFr.getAdditionalCost(additionalCost);
     }
 
-    private String claimedRouteString;
-    public void didOrDidntClaimRoute(String s){
-       if(s == null) claimedRouteString = "null";
-           claimedRouteString = s;
+    private String claimedRouteString = "null";
+    public void didOrDidntClaimRoute(String s) {
+        if (s != null) claimedRouteString = s;
     }
 
 
@@ -290,33 +289,19 @@ public final class GraphicalPlayer {
         button.setOnAction(event -> stage.hide());
 
        Node  drawnCards;
-       Map<String, String> messageMap = new LinkedHashMap<>();
-
-      /* if(claimedRouteString == null){
-           messageMap.put(playerNames.get(thisPlayer), "null");
-           messageMap.put(playerNames.get(thisPlayer.next()), "null");
-       }else{*/
-           messageMap.put(playerNames.get(thisPlayer), claimedRouteString);
-           messageMap.put(playerNames.get(thisPlayer.next()), claimedRouteString);
-      // }
-
-        System.out.println(messageMap);
 
         if(addCost.equals(StringsFr.getAdditionalCost(0))) {
 
             drawnCards = DecksViewCreator.createDrawnCards(cards,
                                                            this::receiveInfo,
                                                            playerNames.get((thisPlayer.next())),
-                                                           messageMap,
+                                                           claimedRouteString,
                                                            true);}
         else {
-            System.out.println(cards);
-            System.out.println(addCost);
-            System.out.println(playerNames.get(thisPlayer.next()));
             drawnCards = DecksViewCreator.createDrawnCards(cards,
                                                         this::receiveInfo,
                                                         playerNames.get((thisPlayer.next())),
-                                                        messageMap,
+                                                        claimedRouteString,
                                                         false);}
 
 

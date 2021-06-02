@@ -155,6 +155,7 @@ public class RemotePlayerProxy implements Player {
 
     @Override
     public String didOrDidntClaimRoute(String s) {
+        System.out.println("INSIDE PROXY : " + s);
         String claimRoute = STRING_SERDE.serialize(s);
         sendMessage(MessageId.DID_OR_DIDNT_CLAIM_ROUTE, claimRoute);
         return STRING_SERDE.deserialize(receiveMessage());

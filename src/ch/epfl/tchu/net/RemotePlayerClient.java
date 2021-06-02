@@ -62,7 +62,11 @@ public class RemotePlayerClient {
             String readLine;
 
             while ((readLine = bufferedReader.readLine()) != null) {
+
+
+
                 Iterator<String> arguments = NetUtils.getStringIterator(readLine, spacePattern);
+
 
                 switch (MessageId.valueOf(arguments.next())) {
                     case INIT_PLAYERS:

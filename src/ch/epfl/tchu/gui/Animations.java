@@ -44,22 +44,18 @@ public class Animations extends Application{
     }
 
 
-    public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String name, Map<String, String> message, boolean noAddCost){
+    public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String name, String message, boolean noAddCost){
         SequentialTransition sq = new SequentialTransition(new PauseTransition(DURATION), simpleFlip(faceDown[0], faceUp[0]), simpleFlip(faceDown[1], faceUp[1]), simpleFlip(faceDown[2], faceUp[2]));
-        System.out.println("Inside flip");
-        System.out.println(noAddCost);
-        System.out.println(message.get(name));
-        if(noAddCost || !message.get(name).equals("null")) {
+
+        if(noAddCost || !message.equals("null")) {
            sq.setOnFinished(event -> {
 
-               message.forEach((key, value) -> {
-                   consumer.accept("HELLO FROM FLIP");
-                   consumer.accept(message.get(key));
-                   consumer.accept("TURN FOR :  " + name + '\n');});
-
+               consumer.accept("HELLO FROM FLIP" +'\n');
+               consumer.accept(message);
+               consumer.accept("TURN FOR :  " + name + '\n');
            });
-       }
 
+        }
 
         sq.play();
     }

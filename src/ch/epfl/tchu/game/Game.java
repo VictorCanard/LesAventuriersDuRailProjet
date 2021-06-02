@@ -102,6 +102,7 @@ public final class Game {
                 .get(allGameData.gameState.currentPlayerId())
                 .willPlayFirst());
         allGameData.modifyGameState(distributeTickets(allGameData));
+        receiveInfoForAll(players, allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId()).canPlay());
 
         return allGameData.gameState;
     }
@@ -154,22 +155,24 @@ public final class Game {
         Player nextPlayer = players.get(currentPlayerId.next());
 
         Info currentInfo = allGameData.infoGenerators.get(currentPlayerId);
+        Info nextInfo = allGameData.infoGenerators.get(currentPlayerId.next());
 
-        receiveInfoForAll(players, currentInfo.canPlay());
 
         Player.TurnKind playerChoice = currentPlayer.nextTurn();
 
         switch (playerChoice) {
             case DRAW_TICKETS:
                 allGameData.modifyGameState(drawTickets(allGameData, currentPlayer, currentInfo));
+                receiveInfoForAll(players, nextInfo.canPlay());
                 break;
 
             case DRAW_CARDS:
                 allGameData.modifyGameState(drawCards(allGameData, currentPlayer, currentInfo));
+                receiveInfoForAll(players, nextInfo.canPlay());
                 break;
 
             case CLAIM_ROUTE:
-                allGameData.modifyGameState(claimRoute(allGameData, currentPlayer,nextPlayer, currentInfo));
+                allGameData.modifyGameState(claimRoute(allGameData, currentPlayer,nextPlayer, currentInfo, nextInfo));
         }
         return allGameData.gameState;
     }
@@ -244,12 +247,12 @@ public final class Game {
      * @param currentInfo   : information generator of the current player
      * @return a game state where the current player has or hasn't claimed a new route with his initial cards.
      */
-    private static GameState claimRoute(AllGameData allGameData, Player currentPlayer, Player nextPlayer, Info currentInfo) {
+    private static GameState claimRoute(AllGameData allGameData, Player currentPlayer, Player nextPlayer, Info currentInfo, Info nextInfo) {
         Route claimedRoute = currentPlayer.claimedRoute();
         SortedBag<Card> initialClaimCards = currentPlayer.initialClaimCards();
 
         if (claimedRoute.level() == Route.Level.UNDERGROUND) {
-            return claimUnderground(allGameData, currentPlayer, nextPlayer,currentInfo, claimedRoute, initialClaimCards);
+            return claimUnderground(allGameData, currentPlayer, nextPlayer,currentInfo, nextInfo, claimedRoute, initialClaimCards);
         }
         return claimOverground(allGameData, currentInfo, claimedRoute, initialClaimCards);
     }
@@ -263,7 +266,7 @@ public final class Game {
      * @param initialClaimCards : initial cards the player has chosen to attempt capturing this route
      * @return a game state where the player has claimed the route if he had the necessary cards, or where he couldn't/ didn't want to claim it.
      */
-    private static GameState claimUnderground(AllGameData allGameData, Player currentPlayer, Player nextPlayer, Info currentInfo, Route claimedRoute, SortedBag<Card> initialClaimCards) {
+    private static GameState claimUnderground(AllGameData allGameData, Player currentPlayer, Player nextPlayer, Info currentInfo, Info nextInfo , Route claimedRoute, SortedBag<Card> initialClaimCards) {
         Map<PlayerId, Player> players = allGameData.players;
 
         receiveInfoForAll(players, currentInfo.attemptsTunnelClaim(claimedRoute, initialClaimCards));
@@ -296,15 +299,18 @@ public final class Game {
 
 
                 currentPlayer.didOrDidntClaimRoute(currentInfo.didNotClaimRoute(claimedRoute));
+               // currentPlayer.didOrDidntClaimRoute("DIDNT CLAIM ROUTE BC ADD CARDS AND DIDNT HAVE ANY");
                 currentPlayer.tunnelDrawnCards(drawnCards);
 
                 nextPlayer.receiveInfo(currentInfo.didNotClaimRoute(claimedRoute));
+                nextPlayer.receiveInfo(nextInfo.canPlay());
 
 
                 return allGameData.gameState.withMoreDiscardedCards(drawnCards);
 
             } else {
                 //The player can play additional cards. Asks the player which set of cards he want to play.
+                System.out.println("ADD CARDS AND CAN PLAY");
                 currentPlayer.tunnelDrawnCards(drawnCards);
                 SortedBag<Card> tunnelCards = currentPlayer.chooseAdditionalCards(possibleAdditionalCards);
 
@@ -324,10 +330,12 @@ public final class Game {
         } else {
             //No additional cost
             allGameData.modifyGameState(allGameData.gameState.withMoreDiscardedCards(drawnCards));
-
+            System.out.println("IN NO ADD CARDS GAME : " + currentInfo.claimedRoute(claimedRoute, initialClaimCards));
             currentPlayer.didOrDidntClaimRoute(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
+           // currentPlayer.didOrDidntClaimRoute("CLAIMED ROUTE W  NO ADD CARDS");
             currentPlayer.tunnelDrawnCards(drawnCards);
             nextPlayer.receiveInfo(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
+            nextPlayer.receiveInfo(nextInfo.canPlay());
 
             return allGameData.gameState.withClaimedRoute(claimedRoute, initialClaimCards);
         }
