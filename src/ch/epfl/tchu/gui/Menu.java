@@ -96,8 +96,6 @@ public class Menu extends Application {
             }
             server.setParameters(playerNames);
             server.start(primaryStage);
-
-
         });
 
 

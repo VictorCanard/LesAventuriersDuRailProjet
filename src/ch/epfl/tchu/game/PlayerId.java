@@ -1,6 +1,6 @@
 package ch.epfl.tchu.game;
 
-import ch.epfl.tchu.gui.ServerMain;
+import ch.epfl.tchu.gui.Menu;
 
 import java.util.List;
 
@@ -29,6 +29,6 @@ public enum PlayerId {
      * @return the next player's id
      */
     public PlayerId next() {
-        return ServerMain.activePlayers.get((this.ordinal() + 1) % ServerMain.numberOfPlayers);
+        return Menu.activePlayers.get((this.ordinal() + 1) % Menu.numberOfPlayers);
     }
 }

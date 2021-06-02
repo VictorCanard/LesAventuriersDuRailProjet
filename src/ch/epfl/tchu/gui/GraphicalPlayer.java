@@ -40,13 +40,11 @@ import static javafx.application.Platform.isFxApplicationThread;
  */
 public final class GraphicalPlayer {
 
-    static BooleanProperty b = new SimpleBooleanProperty(false);
     private final PlayerId thisPlayer;
     private final Map<PlayerId, String> playerNames;
     private final ObservableGameState observableGameState;
     private final ObservableList<Text> messages = FXCollections.observableArrayList();
     private final Stage primaryStage;
-    private final ObjectProperty<SortedBag<Card>> tunnelCards = new SimpleObjectProperty<>(SortedBag.of());
 
     private final ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTicketsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.DrawCardHandler> drawCardsHP = new SimpleObjectProperty<>(null);
@@ -71,10 +69,6 @@ public final class GraphicalPlayer {
         setSceneGraph();
     }
 
-    public static ReadOnlyBooleanProperty getCanShowCards() {
-        System.out.println(b + "from getter method");
-        return b;
-    }
 
     private void setSceneGraph() {
 
@@ -234,12 +228,8 @@ public final class GraphicalPlayer {
                 1,
                 items -> chooseCardsHandler.onChooseCards(items.get(0)));
     }
-    static BooleanProperty b = new SimpleBooleanProperty(false);
 
-    public static ReadOnlyBooleanProperty getCanShowCards(){
-        System.out.println(b + "from getter method");
-        return b;
-    }
+
     /**
      * Allows the player to choose additional cards when it is necessary when attempting to claim a tunnel route.
      * The player also has an option to abandon the route by not selecting cards and clicking the choose button
