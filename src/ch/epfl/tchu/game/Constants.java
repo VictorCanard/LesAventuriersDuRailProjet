@@ -41,7 +41,7 @@ public final class Constants {
     /**
      * Nombre de cartes distribuées à chaque joueur en début de partie.
      */
-    public static final int INITIAL_CARDS_COUNT = 4;
+    public static final int INITIAL_CARDS_COUNT = 20; //4
     /**
      * Nombre de wagons dont dispose chaque joueur en début de partie.
      */

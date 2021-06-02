@@ -149,6 +149,10 @@ public class RemotePlayerClient {
                         writeAndFlush(bufferedWriter,INTEGER_SERDE.serialize(addCost));
 
                         break;
+                    case DID_OR_DIDNT_CLAIM_ROUTE:
+                        String s = STRING_SERDE.deserialize(arguments.next());
+                        String didOrNot = player.didOrDidntClaimRoute(s);
+                        writeAndFlush(bufferedWriter, STRING_SERDE.serialize(didOrNot));
                     default:
                         throw new Error();
                 }

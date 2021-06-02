@@ -153,6 +153,13 @@ public class RemotePlayerProxy implements Player {
         return INTEGER_SERDE.deserialize(receiveMessage());
     }
 
+    @Override
+    public String didOrDidntClaimRoute(String s) {
+        String claimRoute = STRING_SERDE.serialize(s);
+        sendMessage(MessageId.DID_OR_DIDNT_CLAIM_ROUTE, claimRoute);
+        return STRING_SERDE.deserialize(receiveMessage());
+    }
+
     /**
      * Sends a message to the client
      *

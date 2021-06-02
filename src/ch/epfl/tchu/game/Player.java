@@ -98,6 +98,8 @@ public interface Player {
 
     int additionalCost(int additionalCost);
 
+    String didOrDidntClaimRoute(String s);
+
 
 
     /**

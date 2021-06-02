@@ -24,9 +24,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -263,6 +261,12 @@ public final class GraphicalPlayer {
         addCost = StringsFr.getAdditionalCost(additionalCost);
     }
 
+    private String claimedRouteString;
+    public void didOrDidntClaimRoute(String s){
+       if(s == null) claimedRouteString = "null";
+           claimedRouteString = s;
+    }
+
 
     public void createDrawnCardWindow(SortedBag<Card> cards){
         VBox vbox = new VBox();
@@ -286,11 +290,34 @@ public final class GraphicalPlayer {
         button.setOnAction(event -> stage.hide());
 
        Node  drawnCards;
+       Map<String, String> messageMap = new LinkedHashMap<>();
+
+      /* if(claimedRouteString == null){
+           messageMap.put(playerNames.get(thisPlayer), "null");
+           messageMap.put(playerNames.get(thisPlayer.next()), "null");
+       }else{*/
+           messageMap.put(playerNames.get(thisPlayer), claimedRouteString);
+           messageMap.put(playerNames.get(thisPlayer.next()), claimedRouteString);
+      // }
+
+        System.out.println(messageMap);
+
         if(addCost.equals(StringsFr.getAdditionalCost(0))) {
-            receiveInfo("NO ADDITIONAL COST");
-            drawnCards = DecksViewCreator.createDrawnCards(cards, this::receiveInfo, playerNames.get((thisPlayer.next())), true);}
-        else { receiveInfo("SOME ADDITIONAL COST");
-            drawnCards = DecksViewCreator.createDrawnCards(cards, this::receiveInfo, playerNames.get((thisPlayer.next())), false);}
+
+            drawnCards = DecksViewCreator.createDrawnCards(cards,
+                                                           this::receiveInfo,
+                                                           playerNames.get((thisPlayer.next())),
+                                                           messageMap,
+                                                           true);}
+        else {
+            System.out.println(cards);
+            System.out.println(addCost);
+            System.out.println(playerNames.get(thisPlayer.next()));
+            drawnCards = DecksViewCreator.createDrawnCards(cards,
+                                                        this::receiveInfo,
+                                                        playerNames.get((thisPlayer.next())),
+                                                        messageMap,
+                                                        false);}
 
 
         vbox.getChildren().addAll(textFlow, drawnCards, button);

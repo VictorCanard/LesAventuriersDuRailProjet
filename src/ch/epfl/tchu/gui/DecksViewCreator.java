@@ -186,7 +186,7 @@ class DecksViewCreator {
         return cardPane;
     }
 
-    public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String name, boolean noAddCost){
+    public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String name, Map<String, String> message, boolean noAddCost){
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css", "additional-cards.css");
         hbox.setId("drawCards");
@@ -213,11 +213,7 @@ class DecksViewCreator {
                 hbox.getChildren().add(mainStack);
 
             }
-        if (noAddCost) {
-            Animations.flip(backs, stacks, consumer, name, true); //todo : get the success/fail text too
-        } else {
-            Animations.flip(backs, stacks, consumer, name, false);
-        }
+        Animations.flip(backs, stacks, consumer, name, message, noAddCost); //todo : get the success/fail text too
 
         return hbox;
     }

@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.animation.TranslateTransition;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 //organizing all the animation possibilities
@@ -43,14 +44,23 @@ public class Animations extends Application{
     }
 
 
-    public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String name, boolean noAddCost){
+    public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String name, Map<String, String> message, boolean noAddCost){
         SequentialTransition sq = new SequentialTransition(new PauseTransition(DURATION), simpleFlip(faceDown[0], faceUp[0]), simpleFlip(faceDown[1], faceUp[1]), simpleFlip(faceDown[2], faceUp[2]));
-       if(noAddCost) {
+        System.out.println("Inside flip");
+        System.out.println(noAddCost);
+        System.out.println(message.get(name));
+        if(noAddCost || !message.get(name).equals("null")) {
            sq.setOnFinished(event -> {
-               consumer.accept("TURN FOR :  " + name + '\n');
+
+               message.forEach((key, value) -> {
+                   consumer.accept("HELLO FROM FLIP");
+                   consumer.accept(message.get(key));
+                   consumer.accept("TURN FOR :  " + name + '\n');});
 
            });
        }
+
+
         sq.play();
     }
 
