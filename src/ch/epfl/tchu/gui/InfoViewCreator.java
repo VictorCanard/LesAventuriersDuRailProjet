@@ -37,7 +37,7 @@ public class InfoViewCreator {
 
         //
         PlayerId currentId = playerId;
-        for (int i = 0; i < Menu.numberOfPlayers; i++) {
+        for (int i = 0; i < ServerMain.numberOfPlayers; i++) {
             infoPane.getChildren().add(playerStats(currentId, playerNames, gameState));
             currentId = currentId.next();
         }

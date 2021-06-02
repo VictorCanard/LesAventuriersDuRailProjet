@@ -47,6 +47,7 @@ public final class GraphicalPlayer {
     private final ObservableList<Text> messages = FXCollections.observableArrayList();
     private final Stage primaryStage;
     private final ObjectProperty<SortedBag<Card>> tunnelCards = new SimpleObjectProperty<>(SortedBag.of());
+
     private final ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTicketsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.DrawCardHandler> drawCardsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.ClaimRouteHandler> claimRouteHP = new SimpleObjectProperty<>(null);
@@ -79,7 +80,6 @@ public final class GraphicalPlayer {
 
         // boolean darkMode = true;
 
-        System.out.println("I am setting scene graph");
         primaryStage.setResizable(false);
         Node mapView = MapViewCreator
                 .createMapView(observableGameState, claimRouteHP, this::chooseClaimCards);
@@ -103,7 +103,6 @@ public final class GraphicalPlayer {
 
         primaryStage.setTitle("tCHu" + " \u2014 " + playerNames.get(thisPlayer));
         primaryStage.setScene(scene);
-        System.out.println("I am showing this ");
         primaryStage.show();
     }
 
@@ -234,10 +233,13 @@ public final class GraphicalPlayer {
                 Info::cardNames,
                 1,
                 items -> chooseCardsHandler.onChooseCards(items.get(0)));
-
-
     }
+    static BooleanProperty b = new SimpleBooleanProperty(false);
 
+    public static ReadOnlyBooleanProperty getCanShowCards(){
+        System.out.println(b + "from getter method");
+        return b;
+    }
     /**
      * Allows the player to choose additional cards when it is necessary when attempting to claim a tunnel route.
      * The player also has an option to abandon the route by not selecting cards and clicking the choose button
