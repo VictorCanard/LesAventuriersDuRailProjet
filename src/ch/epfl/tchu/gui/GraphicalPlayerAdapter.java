@@ -2,6 +2,7 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
+import javafx.stage.Stage;
 
 import java.util.List;
 import java.util.Map;
@@ -22,11 +23,12 @@ public final class GraphicalPlayerAdapter implements Player {
     private final BlockingQueue<TurnKind> turnKindQueue;
     //
     private GraphicalPlayer graphicalPlayer;
+    private final Stage primaryStage;
 
     /**
      * Constructs the GraphicalPlayerAdapter, to be executed on a different thread than the JavaFx thread
      */
-    public GraphicalPlayerAdapter() {
+    public GraphicalPlayerAdapter(Stage primaryStage) {
         final int cap = 1;
 
         this.ticketQueue = new ArrayBlockingQueue<>(cap);
@@ -34,6 +36,7 @@ public final class GraphicalPlayerAdapter implements Player {
         this.routeQueue = new ArrayBlockingQueue<>(cap);
         this.turnKindQueue = new ArrayBlockingQueue<>(cap);
         this.integerQueue = new ArrayBlockingQueue<>(cap);
+        this.primaryStage = primaryStage;
     }
 
     /**
@@ -43,7 +46,7 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public void initPlayers(PlayerId ownID, Map<PlayerId, String> playerNames) {
-        runLater(() -> this.graphicalPlayer = new GraphicalPlayer(ownID, playerNames));
+        runLater(() -> this.graphicalPlayer = new GraphicalPlayer(ownID, playerNames, primaryStage));
     }
 
     @Override

@@ -40,13 +40,13 @@ import static javafx.application.Platform.isFxApplicationThread;
  */
 public final class GraphicalPlayer {
 
+    static BooleanProperty b = new SimpleBooleanProperty(false);
     private final PlayerId thisPlayer;
     private final Map<PlayerId, String> playerNames;
     private final ObservableGameState observableGameState;
     private final ObservableList<Text> messages = FXCollections.observableArrayList();
     private final Stage primaryStage;
     private final ObjectProperty<SortedBag<Card>> tunnelCards = new SimpleObjectProperty<>(SortedBag.of());
-
     private final ObjectProperty<ActionHandlers.DrawTicketsHandler> drawTicketsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.DrawCardHandler> drawCardsHP = new SimpleObjectProperty<>(null);
     private final ObjectProperty<ActionHandlers.ClaimRouteHandler> claimRouteHP = new SimpleObjectProperty<>(null);
@@ -56,24 +56,30 @@ public final class GraphicalPlayer {
      *
      * @param thisPlayer  : the player the graphical interface belongs to
      * @param playerNames : the names of the players in the game
-     * @throws NullPointerException if the playerId or the player names map is null
+     * @throws NullPointerException     if the playerId or the player names map is null
      * @throws IllegalArgumentException if there aren't the right number of pairs in the player names map
      */
-    public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
+    public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames, Stage primaryStage) {
         Preconditions.checkArgument(playerNames.size() == Menu.numberOfPlayers);
 
         this.thisPlayer = Objects.requireNonNull(thisPlayer);
         this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
         this.observableGameState = new ObservableGameState(thisPlayer);
-        this.primaryStage = new Stage();
+        this.primaryStage = primaryStage;
 
         setSceneGraph();
     }
 
+    public static ReadOnlyBooleanProperty getCanShowCards() {
+        System.out.println(b + "from getter method");
+        return b;
+    }
+
     private void setSceneGraph() {
 
-       // boolean darkMode = true;
+        // boolean darkMode = true;
 
+        System.out.println("I am setting scene graph");
         primaryStage.setResizable(false);
         Node mapView = MapViewCreator
                 .createMapView(observableGameState, claimRouteHP, this::chooseClaimCards);
@@ -97,6 +103,7 @@ public final class GraphicalPlayer {
 
         primaryStage.setTitle("tCHu" + " \u2014 " + playerNames.get(thisPlayer));
         primaryStage.setScene(scene);
+        System.out.println("I am showing this ");
         primaryStage.show();
     }
 
@@ -128,7 +135,6 @@ public final class GraphicalPlayer {
         }
         messages.add(new Text(messageToAdd));
     }
-
 
     /**
      * Starts the player's turn on the javafx thread, where they can initially do 3 actions
@@ -227,18 +233,11 @@ public final class GraphicalPlayer {
                 SelectionMode.SINGLE,
                 Info::cardNames,
                 1,
-        items -> chooseCardsHandler.onChooseCards(items.get(0)));
-
-
+                items -> chooseCardsHandler.onChooseCards(items.get(0)));
 
 
     }
-    static BooleanProperty b = new SimpleBooleanProperty(false);
 
-    public static ReadOnlyBooleanProperty getCanShowCards(){
-        System.out.println(b + "from getter method");
-        return b;
-    }
     /**
      * Allows the player to choose additional cards when it is necessary when attempting to claim a tunnel route.
      * The player also has an option to abandon the route by not selecting cards and clicking the choose button
@@ -267,7 +266,7 @@ public final class GraphicalPlayer {
     }
 
 
-    public void createDrawnCardWindow2(SortedBag<Card> cards){
+    public void createDrawnCardWindow2(SortedBag<Card> cards) {
         VBox vbox = new VBox();
 
         Scene scene = new Scene(vbox);

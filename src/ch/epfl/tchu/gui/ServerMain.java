@@ -30,6 +30,7 @@ public class ServerMain extends Application {
 
     private final int localPlayerNumber = 1;
     private final Map<PlayerId, Player> players = new EnumMap<>(PlayerId.class);
+    private List<String> parameters = new ArrayList<>();
 
     /**
      * Launches the application with the given args
@@ -37,6 +38,7 @@ public class ServerMain extends Application {
      * @param args : args to pass to the launch method
      */
     public static void main(String[] args) {
+
         launch(args);
     }
 
@@ -53,12 +55,15 @@ public class ServerMain extends Application {
     public void start(Stage primaryStage) {
         new Thread(() -> {
             try {
+
+                System.out.println("Creating sockets");
                 ServerSocket serverSocket = createSockets();
 
                 createPlayerNames();
 
-                createPlayers();
+                createPlayers(primaryStage);
 
+                System.out.println("playing the game");
                 Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random());
 
                 close(serverSocket);
@@ -77,8 +82,6 @@ public class ServerMain extends Application {
     }
 
     private void createPlayerNames() {
-        List<String> parameters = getParameters().getRaw();
-
         for (int i = 0; i < Menu.numberOfPlayers; i++) {
             PlayerId currentId = ALL.get(i);
             if (i < parameters.size()) {
@@ -89,8 +92,8 @@ public class ServerMain extends Application {
         }
     }
 
-    private void createPlayers() {
-        players.put(PLAYER_1, new GraphicalPlayerAdapter());
+    private void createPlayers(Stage stage) {
+        players.put(PLAYER_1, new GraphicalPlayerAdapter(stage));
 
         for (int i = localPlayerNumber; i < Menu.numberOfPlayers; i++) {
             players.put(ALL.get(i), new RemotePlayerProxy(sockets.get(i - localPlayerNumber)));
@@ -106,4 +109,7 @@ public class ServerMain extends Application {
         serverSocket.close();
     }
 
+    public void setParameters(List<String> playerNames) {
+        parameters = List.copyOf(playerNames);
+    }
 }
