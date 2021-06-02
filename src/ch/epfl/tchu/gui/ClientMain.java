@@ -44,7 +44,7 @@ public class ClientMain extends Application {
             case 1:
                 name = parameters.get(0);
         }
-        RemotePlayerClient remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(), name, port);
+        RemotePlayerClient remotePlayerClient = new RemotePlayerClient(new GraphicalPlayerAdapter(primaryStage), name, port);
 
         new Thread(remotePlayerClient::run).start();
     }
