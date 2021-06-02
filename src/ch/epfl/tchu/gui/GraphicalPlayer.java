@@ -290,7 +290,7 @@ public final class GraphicalPlayer {
         button.setOnAction(event -> stage.hide());
 
        Node  drawnCards;
-
+       //observableGameState.
         if(addCost.equals(StringsFr.getAdditionalCost(0))) {
 
             drawnCards = DecksViewCreator.createDrawnCards(cards,

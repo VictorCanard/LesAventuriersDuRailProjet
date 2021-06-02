@@ -158,6 +158,7 @@ public final class Game {
         Info nextInfo = allGameData.infoGenerators.get(currentPlayerId.next());
 
 
+
         Player.TurnKind playerChoice = currentPlayer.nextTurn();
 
         switch (playerChoice) {
@@ -172,7 +173,7 @@ public final class Game {
                 break;
 
             case CLAIM_ROUTE:
-                allGameData.modifyGameState(claimRoute(allGameData, currentPlayer,nextPlayer, currentInfo, nextInfo));
+                allGameData.modifyGameState(claimRoute(allGameData));
         }
         return allGameData.gameState;
     }
@@ -243,16 +244,18 @@ public final class Game {
      * determines how it will be captured (or attempted to be captured).
      *
      * @param allGameData   : all of the game's information
-     * @param currentPlayer : player whose turn it is currently
-     * @param currentInfo   : information generator of the current player
+
      * @return a game state where the current player has or hasn't claimed a new route with his initial cards.
      */
-    private static GameState claimRoute(AllGameData allGameData, Player currentPlayer, Player nextPlayer, Info currentInfo, Info nextInfo) {
+    private static GameState claimRoute(AllGameData allGameData) {
+        Player currentPlayer = allGameData.players.get(allGameData.gameState.currentPlayerId());
+        Info currentInfo = allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId());
+
         Route claimedRoute = currentPlayer.claimedRoute();
         SortedBag<Card> initialClaimCards = currentPlayer.initialClaimCards();
 
         if (claimedRoute.level() == Route.Level.UNDERGROUND) {
-            return claimUnderground(allGameData, currentPlayer, nextPlayer,currentInfo, nextInfo, claimedRoute, initialClaimCards);
+            return claimUnderground(allGameData, claimedRoute, initialClaimCards);
         }
         return claimOverground(allGameData, currentInfo, claimedRoute, initialClaimCards);
     }
@@ -261,13 +264,20 @@ public final class Game {
      * Procedure to verify if the player has the additional cards necessary to claim this route.
      *
      * @param allGameData       : all of the game's information
-     * @param currentInfo       : information generator of the current player
      * @param claimedRoute      : route that the player has decided to claim
      * @param initialClaimCards : initial cards the player has chosen to attempt capturing this route
      * @return a game state where the player has claimed the route if he had the necessary cards, or where he couldn't/ didn't want to claim it.
      */
-    private static GameState claimUnderground(AllGameData allGameData, Player currentPlayer, Player nextPlayer, Info currentInfo, Info nextInfo , Route claimedRoute, SortedBag<Card> initialClaimCards) {
+    private static GameState claimUnderground(AllGameData allGameData, Route claimedRoute, SortedBag<Card> initialClaimCards) {
         Map<PlayerId, Player> players = allGameData.players;
+        PlayerId p = allGameData.gameState.currentPlayerId();
+
+        Player currentPlayer = allGameData.players.get(allGameData.gameState.currentPlayerId());
+        Player secondPlayer = allGameData.players.get(allGameData.gameState.currentPlayerId().next());
+
+        Info currentInfo = allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId());
+        Info secondInfo = allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId().next());
+
 
         receiveInfoForAll(players, currentInfo.attemptsTunnelClaim(claimedRoute, initialClaimCards));
 
@@ -300,8 +310,13 @@ public final class Game {
                 currentPlayer.didOrDidntClaimRoute(currentInfo.didNotClaimRoute(claimedRoute));
                 currentPlayer.tunnelDrawnCards(drawnCards);
 
-                nextPlayer.receiveInfo(currentInfo.didNotClaimRoute(claimedRoute));
-                nextPlayer.receiveInfo(nextInfo.canPlay());
+
+                players.forEach((key, value) ->{
+                    if(key != allGameData.gameState.currentPlayerId()){
+                        value.receiveInfo(currentInfo.didNotClaimRoute(claimedRoute));
+                        value.receiveInfo((secondInfo.canPlay()));
+                    }
+                });
 
 
                 return allGameData.gameState.withMoreDiscardedCards(drawnCards);
@@ -315,16 +330,24 @@ public final class Game {
 
                 if (tunnelCards.isEmpty()) {
                     receiveInfoForAll(players, currentInfo.didNotClaimRoute(claimedRoute));
-                    receiveInfoForAll(players, nextInfo.canPlay());
+                    receiveInfoForAll(players, secondInfo.canPlay());
                     return allGameData.gameState.withMoreDiscardedCards(drawnCards);
 
                 } else {
-                    receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
-                    receiveInfoForAll(players, nextInfo.canPlay());
-                    return allGameData.gameState
+
+                    GameState gs = allGameData.gameState
                             //Drawn cards are put in the discard
                             .withMoreDiscardedCards(drawnCards)
                             .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards));
+
+                    receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
+
+                    if(!allGameData.gameState.lastTurnBegins()){
+                        receiveInfoForAll(players, secondInfo.canPlay());
+                    }
+
+
+                    return gs;
                 }
 
             }
@@ -335,10 +358,17 @@ public final class Game {
             currentPlayer.didOrDidntClaimRoute(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
 
             currentPlayer.tunnelDrawnCards(drawnCards);
-            nextPlayer.receiveInfo(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
-            nextPlayer.receiveInfo(nextInfo.canPlay());
 
-            return allGameData.gameState.withClaimedRoute(claimedRoute, initialClaimCards);
+            GameState gs = allGameData.gameState.withClaimedRoute(claimedRoute, initialClaimCards);
+            players.forEach((key, value) ->{
+                if(key != allGameData.gameState.currentPlayerId()){
+                    value.receiveInfo(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
+                    if(!allGameData.gameState.lastTurnBegins()){
+                        value.receiveInfo((secondInfo.canPlay())); }
+                    }
+                 });
+
+            return gs;
         }
     }
 
@@ -370,11 +400,13 @@ public final class Game {
         Map<PlayerId, Player> players = allGameData.players;
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
 
+        PlayerId previousPlayerId = allGameData.gameState.currentPlayerId().previous();
+
+
+
         receiveInfoForAll(players, infoGenerators
-                .get(allGameData.gameState.currentPlayerId())
-                .lastTurnBegins(allGameData.gameState
-                        .currentPlayerState()
-                        .carCount()));
+                .get(previousPlayerId)
+                .lastTurnBegins(allGameData.gameState.playerState(previousPlayerId).carCount()));
         //LastTurnBegins
 
         //One more turn for each player

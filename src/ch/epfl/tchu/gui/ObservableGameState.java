@@ -332,5 +332,13 @@ public final class ObservableGameState {
 
         return getCanPlayerClaimRoute().get(route);
     }
+    private final BooleanProperty isLT = new SimpleBooleanProperty(false);
+    public ReadOnlyBooleanProperty isLastTurn(){
+        return isLT;
+    }
+
+    private void setLT(){
+        isLT.set(publicGameState.lastPlayer() !=null);
+    }
 
 }

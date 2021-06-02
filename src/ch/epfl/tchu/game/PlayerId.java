@@ -31,4 +31,9 @@ public enum PlayerId {
     public PlayerId next() {
         return Menu.activePlayers.get((this.ordinal() + 1) % Menu.numberOfPlayers);
     }
+
+    public PlayerId previous(){
+        if(Menu.numberOfPlayers == 3) {return Menu.activePlayers.get((this.ordinal() +2) % Menu.numberOfPlayers);}
+        else{ return Menu.activePlayers.get((this.ordinal() +1)%Menu.numberOfPlayers); }
+    }
 }
