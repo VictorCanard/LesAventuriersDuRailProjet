@@ -53,16 +53,17 @@ public final class GraphicalPlayer {
      *
      * @param thisPlayer  : the player the graphical interface belongs to
      * @param playerNames : the names of the players in the game
+     * @param primaryStage
      * @throws NullPointerException if the playerId or the player names map is null
      * @throws IllegalArgumentException if there aren't the right number of pairs in the player names map
      */
-    public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames) {
+    public GraphicalPlayer(PlayerId thisPlayer, Map<PlayerId, String> playerNames, Stage primaryStage) {
         Preconditions.checkArgument(playerNames.size() == Menu.numberOfPlayers);
 
         this.thisPlayer = Objects.requireNonNull(thisPlayer);
         this.playerNames = Map.copyOf(Objects.requireNonNull(playerNames));
         this.observableGameState = new ObservableGameState(thisPlayer);
-        this.primaryStage = new Stage();
+        this.primaryStage = primaryStage;
 
         setSceneGraph();
     }
