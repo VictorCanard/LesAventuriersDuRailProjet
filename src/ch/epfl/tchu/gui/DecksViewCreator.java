@@ -186,7 +186,7 @@ class DecksViewCreator {
         return cardPane;
     }
 
-    public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String name, String message, boolean noAddCost){
+    public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String name, String message, boolean noAddCost, boolean isLastTurn){
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css", "additional-cards.css");
         hbox.setId("drawCards");
@@ -213,7 +213,7 @@ class DecksViewCreator {
                 hbox.getChildren().add(mainStack);
 
             }
-        Animations.flip(backs, stacks, consumer, name, message, noAddCost);
+        Animations.flip(backs, stacks, consumer, name, message, noAddCost, isLastTurn);
 
         return hbox;
     }

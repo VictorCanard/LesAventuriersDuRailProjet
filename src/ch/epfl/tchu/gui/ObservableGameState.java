@@ -237,6 +237,7 @@ public final class ObservableGameState {
         setPlayerTickets(playerState);
         setPlayerCards(playerState);
         setPlayerCanClaimRouteOrNot(publicGameState, playerState);
+        if(publicGameState.lastPlayer() != null) setLT();
 
         //
         this.publicGameState = publicGameState;
@@ -338,7 +339,7 @@ public final class ObservableGameState {
     }
 
     private void setLT(){
-        isLT.set(publicGameState.lastPlayer() !=null);
+     isLT.set(true);
     }
 
 }

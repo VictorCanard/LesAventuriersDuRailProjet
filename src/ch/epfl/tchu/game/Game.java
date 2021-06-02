@@ -152,7 +152,7 @@ public final class Game {
 
         PlayerId currentPlayerId = allGameData.gameState.currentPlayerId();
         Player currentPlayer = players.get(currentPlayerId);
-        Player nextPlayer = players.get(currentPlayerId.next());
+
 
         Info currentInfo = allGameData.infoGenerators.get(currentPlayerId);
         Info nextInfo = allGameData.infoGenerators.get(currentPlayerId.next());
@@ -164,12 +164,12 @@ public final class Game {
         switch (playerChoice) {
             case DRAW_TICKETS:
                 allGameData.modifyGameState(drawTickets(allGameData, currentPlayer, currentInfo));
-                receiveInfoForAll(players, nextInfo.canPlay());
+                if(!allGameData.gameState.lastTurnBegins())receiveInfoForAll(players, nextInfo.canPlay());
                 break;
 
             case DRAW_CARDS:
                 allGameData.modifyGameState(drawCards(allGameData, currentPlayer, currentInfo));
-                receiveInfoForAll(players, nextInfo.canPlay());
+                if(!allGameData.gameState.lastTurnBegins())receiveInfoForAll(players, nextInfo.canPlay());
                 break;
 
             case CLAIM_ROUTE:
@@ -270,10 +270,10 @@ public final class Game {
      */
     private static GameState claimUnderground(AllGameData allGameData, Route claimedRoute, SortedBag<Card> initialClaimCards) {
         Map<PlayerId, Player> players = allGameData.players;
-        PlayerId p = allGameData.gameState.currentPlayerId();
+
 
         Player currentPlayer = allGameData.players.get(allGameData.gameState.currentPlayerId());
-        Player secondPlayer = allGameData.players.get(allGameData.gameState.currentPlayerId().next());
+
 
         Info currentInfo = allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId());
         Info secondInfo = allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId().next());
@@ -401,6 +401,7 @@ public final class Game {
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
 
         PlayerId previousPlayerId = allGameData.gameState.currentPlayerId().previous();
+        Info secondInfo = allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId().next());
 
 
 
@@ -413,6 +414,11 @@ public final class Game {
         for (int i = 0; i < Menu.numberOfPlayers; i++) {
             allGameData.modifyGameState(allGameData.gameState.forNextTurn());
             nextTurn(allGameData);
+            players.forEach((key, value) -> {
+                if(key!= allGameData.gameState.currentPlayerId()){
+                value.receiveInfo("next turn string");
+                 }
+            });
         }
 
         //Calculate final points

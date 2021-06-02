@@ -297,13 +297,13 @@ public final class GraphicalPlayer {
                                                            this::receiveInfo,
                                                            playerNames.get((thisPlayer.next())),
                                                            claimedRouteString,
-                                                           true);}
+                                                           true, observableGameState.isLastTurn().get());}
         else {
             drawnCards = DecksViewCreator.createDrawnCards(cards,
                                                         this::receiveInfo,
                                                         playerNames.get((thisPlayer.next())),
                                                         claimedRouteString,
-                                                        false);}
+                                                        false, observableGameState.isLastTurn().get());}
 
 
         vbox.getChildren().addAll(textFlow, drawnCards, button);
