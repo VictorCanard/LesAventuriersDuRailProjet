@@ -20,8 +20,8 @@ import java.util.function.Consumer;
 
 //organizing all the animation possibilities
 public class Animations extends Application{
-    private static final Duration DURATION = Duration.seconds(1);
-    private static final Duration PAUSE = Duration.seconds(3);
+    private static final Duration DURATION = Duration.seconds(0.5);
+    private static final Duration PAUSE = Duration.seconds(1);
     private static final double PATH_RATE = 1.2;
 
 
@@ -45,16 +45,13 @@ public class Animations extends Application{
 
 
     public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String name, String message, boolean noAddCost){
-        SequentialTransition sq = new SequentialTransition(new PauseTransition(DURATION), simpleFlip(faceDown[0], faceUp[0]), simpleFlip(faceDown[1], faceUp[1]), simpleFlip(faceDown[2], faceUp[2]));
+        SequentialTransition sq = new SequentialTransition(new PauseTransition(PAUSE), simpleFlip(faceDown[0], faceUp[0]), simpleFlip(faceDown[1], faceUp[1]), simpleFlip(faceDown[2], faceUp[2]));
 
         if(noAddCost || !message.equals("null")) {
            sq.setOnFinished(event -> {
-
-               consumer.accept("HELLO FROM FLIP" +'\n');
                consumer.accept(message);
-               consumer.accept("TURN FOR :  " + name + '\n');
+               consumer.accept(String.format(StringsFr.CAN_PLAY, name));
            });
-
         }
 
         sq.play();

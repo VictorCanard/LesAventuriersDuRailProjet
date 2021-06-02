@@ -213,7 +213,7 @@ class DecksViewCreator {
                 hbox.getChildren().add(mainStack);
 
             }
-        Animations.flip(backs, stacks, consumer, name, message, noAddCost); //todo : get the success/fail text too
+        Animations.flip(backs, stacks, consumer, name, message, noAddCost);
 
         return hbox;
     }

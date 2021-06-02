@@ -295,11 +295,9 @@ public final class Game {
             List<SortedBag<Card>> possibleAdditionalCards = playerState.possibleAdditionalCards(additionalCost, initialClaimCards);
 
             if (possibleAdditionalCards.isEmpty()) { //Player can't play any additional cards
-              //  receiveInfoForAll(players, currentInfo.didNotClaimRoute(claimedRoute));
-
+                System.out.println("ADD CARDS AND CANNOT PLAY");
 
                 currentPlayer.didOrDidntClaimRoute(currentInfo.didNotClaimRoute(claimedRoute));
-               // currentPlayer.didOrDidntClaimRoute("DIDNT CLAIM ROUTE BC ADD CARDS AND DIDNT HAVE ANY");
                 currentPlayer.tunnelDrawnCards(drawnCards);
 
                 nextPlayer.receiveInfo(currentInfo.didNotClaimRoute(claimedRoute));
@@ -311,28 +309,31 @@ public final class Game {
             } else {
                 //The player can play additional cards. Asks the player which set of cards he want to play.
                 System.out.println("ADD CARDS AND CAN PLAY");
+                currentPlayer.didOrDidntClaimRoute("null");
                 currentPlayer.tunnelDrawnCards(drawnCards);
                 SortedBag<Card> tunnelCards = currentPlayer.chooseAdditionalCards(possibleAdditionalCards);
 
                 if (tunnelCards.isEmpty()) {
                     receiveInfoForAll(players, currentInfo.didNotClaimRoute(claimedRoute));
-
+                    receiveInfoForAll(players, nextInfo.canPlay());
                     return allGameData.gameState.withMoreDiscardedCards(drawnCards);
 
                 } else {
                     receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
+                    receiveInfoForAll(players, nextInfo.canPlay());
                     return allGameData.gameState
                             //Drawn cards are put in the discard
                             .withMoreDiscardedCards(drawnCards)
                             .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards));
                 }
+
             }
         } else {
             //No additional cost
             allGameData.modifyGameState(allGameData.gameState.withMoreDiscardedCards(drawnCards));
-            System.out.println("IN NO ADD CARDS GAME : " + currentInfo.claimedRoute(claimedRoute, initialClaimCards));
+            System.out.println("NO ADD CARDS");
             currentPlayer.didOrDidntClaimRoute(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
-           // currentPlayer.didOrDidntClaimRoute("CLAIMED ROUTE W  NO ADD CARDS");
+
             currentPlayer.tunnelDrawnCards(drawnCards);
             nextPlayer.receiveInfo(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
             nextPlayer.receiveInfo(nextInfo.canPlay());
