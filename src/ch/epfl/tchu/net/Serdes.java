@@ -3,7 +3,6 @@ package ch.epfl.tchu.net;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.*;
 import ch.epfl.tchu.gui.Menu;
-import ch.epfl.tchu.gui.ServerMain;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -52,7 +51,7 @@ public class Serdes {
     /**
      * Serde of a player id
      */
-    public static final Serde<PlayerId> PLAYER_ID_SERDE = Serde.oneOf(Menu.activePlayers);
+    public static final Serde<PlayerId> PLAYER_ID_SERDE = Serde.oneOf(PlayerId.ALL);
 
     /**
      * Serde of the kind of action a player can take on their turn
