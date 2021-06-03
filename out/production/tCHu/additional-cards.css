@@ -5,8 +5,9 @@
     -fx-padding: 20;
     -fx-min-width: 450;
     -fx-background-image: url("mapBW.png");
-    -fx-pref-width: 1120 ;
-    -fx-pref-height: 730;
+
+    -fx-pref-width: 1100 ;
+    -fx-pref-height: 717;
    /* -fx-pref-width: 450;
     -fx-pref-height: 300;*/
 
