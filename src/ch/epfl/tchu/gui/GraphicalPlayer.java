@@ -275,14 +275,12 @@ public final class GraphicalPlayer {
         scene.getStylesheets().add("additional-cards.css");
 
         Stage stage = new Stage(StageStyle.UTILITY);
-        stage.setTitle("Cartes Supplémentaires");
+        stage.setTitle(" Les cartes supplémentaires");
         stage.initOwner(primaryStage);
-        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.setOnCloseRequest(Event::consume);
 
-        Text text = new Text(StringsFr.ADDITIONAL_CARDS_ARE);
-        TextFlow textFlow = new TextFlow(text);
 
 
         Button button = new Button("Fermer");
@@ -305,7 +303,7 @@ public final class GraphicalPlayer {
                                                         claimedRouteString,
                                                         false, observableGameState.isLastTurn().get());}
 
-        vbox.getChildren().addAll(textFlow, drawnCards, button);
+        vbox.getChildren().addAll(drawnCards, button);
         stage.setAlwaysOnTop(true);
         stage.show();
 

@@ -159,7 +159,7 @@ public final class Game {
         Info nextInfo = allGameData.infoGenerators.get(currentPlayerId.next());
 
         if(allGameData.gameState.lastTurnBegins()){
-            receiveInfoForAll(players, nextInfo.canPlay());
+            receiveInfoForAll(players, "FROM NEXT TURN : " + nextInfo.canPlay());
         }
 
 
@@ -318,7 +318,7 @@ public final class Game {
                 players.forEach((key, value) ->{
                     if(key != allGameData.gameState.currentPlayerId()){
                         value.receiveInfo(currentInfo.didNotClaimRoute(claimedRoute));
-                        value.receiveInfo((secondInfo.canPlay()));
+                        value.receiveInfo("ADD CARDS AND CANNOT PLAY : " + secondInfo.canPlay());
                     }
                 });
 
@@ -334,7 +334,7 @@ public final class Game {
 
                 if (tunnelCards.isEmpty()) {
                     receiveInfoForAll(players, currentInfo.didNotClaimRoute(claimedRoute));
-                    receiveInfoForAll(players, secondInfo.canPlay());
+                    receiveInfoForAll(players, "FROM ADD CARDS AND ABORT : " + secondInfo.canPlay());
                     return allGameData.gameState.withMoreDiscardedCards(drawnCards);
 
                 } else {
@@ -347,7 +347,7 @@ public final class Game {
                     receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
 
                     if(!((allGameData.gameState.playerState(allGameData.gameState.currentPlayerId()).carCount() - claimedRoute.length()) <= Constants.NUMBER_OF_WAGONS_TO_BEGIN_LAST_TURN)) {
-                        receiveInfoForAll(players, secondInfo.canPlay());
+                        receiveInfoForAll(players, "FROM ADD CARDS AND PLAY : " + secondInfo.canPlay());
                     }
 
                     /*    if(!allGameData.gameState.lastTurnBegins()){
@@ -373,7 +373,7 @@ public final class Game {
                     value.receiveInfo(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
 
                     if(!((allGameData.gameState.playerState(allGameData.gameState.currentPlayerId()).carCount() - claimedRoute.length()) <= Constants.NUMBER_OF_WAGONS_TO_BEGIN_LAST_TURN)){
-                        value.receiveInfo((secondInfo.canPlay()));
+                        value.receiveInfo( "FROM NO ADD CARDS : " + secondInfo.canPlay());
                     }
 
                 /*
@@ -399,6 +399,7 @@ public final class Game {
         Map<PlayerId, Player> players = allGameData.players;
 
         receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards));
+       if(!allGameData.gameState.lastTurnBegins()) receiveInfoForAll(players, "FROM CLAIM OVERGROUND : " + allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId().next()).canPlay());
 
         return allGameData.gameState.withClaimedRoute(claimedRoute, initialClaimCards);
     }
@@ -424,7 +425,7 @@ public final class Game {
         receiveInfoForAll(players, infoGenerators
                 .get(previousPlayerId)
                 .lastTurnBegins(allGameData.gameState.playerState(previousPlayerId).carCount()));
-        receiveInfoForAll(players, firstInfo.canPlay());
+        receiveInfoForAll(players, "FROM END OF GAME : " +firstInfo.canPlay());
         //LastTurnBegins
 
         //One more turn for each player
@@ -433,12 +434,7 @@ public final class Game {
             else{ allGameData.modifyGameState(allGameData.gameState.forNextTurn());}
             nextTurn(allGameData);
             if(i != Menu.numberOfPlayers-1)
-            receiveInfoForAll(players, allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId().next()).canPlay());
-           /* players.forEach((key, value) -> {
-                if(key!= allGameData.gameState.currentPlayerId()){
-                value.receiveInfo("next turn string");
-                 }
-            });*/
+            receiveInfoForAll(players, "FROM INSIDE LAST TURN LOOP : " +allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId().next()).canPlay());
         }
 
         //Calculate final points

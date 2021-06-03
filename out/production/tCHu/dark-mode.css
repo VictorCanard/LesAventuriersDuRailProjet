@@ -1,9 +1,0 @@
-.root {
-    -fx-background-color: black;
-
-}
-
-ImageView{
-    -fx-image : url("map-dark.png");
-}
-
