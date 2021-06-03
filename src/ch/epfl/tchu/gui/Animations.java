@@ -40,12 +40,12 @@ public class Animations extends Application{
         translate.setOnFinished(event -> node.setVisible(false));
         translate.playFromStart();
 
-
     }
 
 
     public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String nextPlayer, String message, boolean noAddCost, boolean isLastTurn){
         SequentialTransition sq = new SequentialTransition(new PauseTransition(PAUSE), simpleFlip(faceDown[0], faceUp[0]), simpleFlip(faceDown[1], faceUp[1]), simpleFlip(faceDown[2], faceUp[2]));
+
         if(noAddCost || !message.equals("null")) {
            sq.setOnFinished(event -> {
                consumer.accept(message);
@@ -78,32 +78,6 @@ public class Animations extends Application{
 
     }
 
-    public static void arcTranslate(Node node, double centerx, double centery, double radx, double rady, double finalx, double finaly){
-        Arc arc = new Arc();
-        arc.setLength(90);
-        arc.setRadiusX(radx);
-        arc.setRadiusY(rady);
-        arc.setStartAngle(90);
-        arc.setType(ArcType.OPEN);
-        arc.setCenterX(centerx);
-        arc.setCenterY(centery);
-
-        PathTransition pt = new PathTransition();
-        pt.setDuration(DURATION);
-        pt.setPath(arc);
-        pt.setNode(node);
-
-        TranslateTransition tt = new TranslateTransition(DURATION);
-        tt.setToY(finaly);
-        tt.setToX(finalx);
-        tt.setNode(node);
-
-
-        SequentialTransition sq = new SequentialTransition(pt, tt);
-        sq.setOnFinished(event -> node.setVisible(false));
-        sq.play();
-
-    }
 
 
 //for testing

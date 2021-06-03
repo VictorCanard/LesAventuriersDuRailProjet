@@ -277,7 +277,7 @@ public final class GraphicalPlayer {
         Stage stage = new Stage(StageStyle.UTILITY);
         stage.setTitle(" Les cartes supplémentaires");
         stage.initOwner(primaryStage);
-        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initModality(Modality.WINDOW_MODAL);
         stage.setScene(scene);
         stage.setOnCloseRequest(Event::consume);
 

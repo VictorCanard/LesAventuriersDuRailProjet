@@ -134,13 +134,7 @@ class DecksViewCreator {
                 stackPane.getStyleClass().add(getCardName(newValue));
 
                 if (oldValue != null) {
-                    animCard.getStyleClass().add(getCardName(oldValue));
                     stackPane.getStyleClass().remove(getCardName(oldValue));
-                    if(animCard.getStyleClass().size()>2) {
-                        animCard.getStyleClass().remove(1);
-                    }
-                }else{
-                    animCard.getStyleClass().add(getCardName(newValue));
                 }
             });
             stackPane.disableProperty().bind(drawCards.isNull());
@@ -151,8 +145,9 @@ class DecksViewCreator {
                 String source = event.getSource().toString();
                 String bracketPattern = Pattern.quote("[");
                 String[] sourceTab = source.split(bracketPattern, -1);
+                int stringLength = 16;
 
-                String cardname = sourceTab[1].substring(16, sourceTab[1].length()-1);
+                String cardname = sourceTab[1].substring(stringLength, sourceTab[1].length()-1);
 
                 double posx;
                 if (cardname.equals("NEUTRAL")) {
@@ -164,7 +159,6 @@ class DecksViewCreator {
                 }
                 if(animCard.getStyleClass().size()>1){ animCard.getStyleClass().remove(1);}
                 animCard.getStyleClass().add(cardname);
-                // Animations.arcTranslate(animCard, 0, 250,400, 200, posx, 575-(slot*100));
                 Animations.translate(animCard, posx,575-(slot*100));
 
                 drawCards.get().onDrawCards(slot);

@@ -24,7 +24,6 @@ import java.util.List;
 class MapViewCreator {
     private MapViewCreator() {
     }
-    //static boolean darkMode = true;
 
     /**
      * Creates the map view used by both players
@@ -38,10 +37,6 @@ class MapViewCreator {
         Pane map = new Pane();
         //
         map.getStylesheets().addAll("map.css", "colors.css");
-        /*if(darkMode){
-            map.getStylesheets().remove("map.css");
-            map.getStylesheets().add("dark-mode.css");
-        }*/
 
         //
         ImageView mapBackground = new ImageView();
@@ -124,7 +119,8 @@ class MapViewCreator {
             trackRectangle.getStyleClass().addAll("track", "filled");
 
             caseGroup.getChildren().add(trackRectangle);
-            //
+
+            //claimed route wagon
             Group wagonGroup = new Group();
             wagonGroup.getStyleClass().add("car");
 

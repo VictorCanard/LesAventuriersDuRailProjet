@@ -1,11 +1,16 @@
 .root{
-   -fx-pref-width: 1120 ;
-   -fx-pref-height: 730;
+
     -fx-spacing: 10;
     -fx-alignment: center;
     -fx-padding: 20;
     -fx-min-width: 450;
-    -fx-background-image: url("mapBW.png");
+    /*-fx-background-image: url("mapBW.png");
+    -fx-pref-width: 1120 ;
+    -fx-pref-height: 730;*/
+    -fx-pref-width: 450;
+    -fx-pref-height: 300;
+
+
 }
 
 VBox {
