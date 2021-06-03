@@ -72,10 +72,14 @@ public class RemotePlayerClient {
                     case INIT_PLAYERS:
                         PlayerId ownId = PLAYER_ID_SERDE.deserialize(arguments.next());
 
-                        Iterator<String> nameIterator = NetUtils.getStringIterator(arguments.next(), commaPattern);
+                        String allNames = arguments.next();
+                        Menu.numberOfPlayers = (int) allNames.chars().filter(c-> c ==',').count() + 1;
+
+                        Iterator<String> nameIterator = NetUtils.getStringIterator(allNames, commaPattern);
 
                         Map<PlayerId, String> playerNames = new HashMap<>();
 
+                        Menu.activePlayers = PlayerId.ALL.subList(0, Menu.numberOfPlayers);
                         Menu.activePlayers.forEach(playerId -> playerNames.put(playerId, STRING_SERDE.deserialize(nameIterator.next())));
 
                         player.initPlayers(ownId, playerNames);

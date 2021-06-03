@@ -12,7 +12,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -20,8 +22,8 @@ import java.util.List;
 
 
 public class Menu extends Application {
-    public static int numberOfPlayers = 2;
-    public static List<PlayerId> activePlayers = PlayerId.ALL.subList(0, numberOfPlayers);
+    public static int numberOfPlayers;
+    public static List<PlayerId> activePlayers;
 
 
     public static void main(String[] args) {
@@ -75,14 +77,22 @@ public class Menu extends Application {
         vBox.setId("player-names");
 
         //
+        HBox waiting = new HBox();
+        Label serverIsStarting = new Label();
+        serverIsStarting.setText("Le serveur démarre.\nEn attente de la connexion des autres joueurs...");
+        serverIsStarting.setFont(Font.font("Tahoma"));
+        serverIsStarting.setTextAlignment(TextAlignment.JUSTIFY);
+        serverIsStarting.setFont(Font.font(20));
+        serverIsStarting.setTranslateX(255);
+        serverIsStarting.setTranslateY(200);
+
+        //
         Button startGame = new Button("Commencer");
         startGame.setId("start-button");
         startGame.disableProperty().bind(Bindings.isNull(choiceBox.valueProperty()));
         startGame.setOnAction(e -> {
 
-            HBox waiting = new HBox();
-            Label serverIsStarting = new Label();
-            serverIsStarting.setText("Le serveur démarre.\nEn attente de la connexion des autres joueurs.");
+
             waiting.getChildren().add(serverIsStarting);
 
             primaryStage.getScene().setRoot(waiting);

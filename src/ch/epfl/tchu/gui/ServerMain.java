@@ -56,14 +56,12 @@ public class ServerMain extends Application {
         new Thread(() -> {
             try {
 
-                System.out.println("Creating sockets");
                 ServerSocket serverSocket = createSockets();
 
                 createPlayerNames();
 
                 createPlayers(primaryStage);
 
-                System.out.println("playing the game");
                 Game.play(players, playerNames, SortedBag.of(ChMap.tickets()), new Random());
 
                 close(serverSocket);

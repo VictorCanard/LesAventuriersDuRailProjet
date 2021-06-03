@@ -286,7 +286,7 @@ public final class Info {
 
         for (int i = 1; i < Menu.numberOfPlayers; i++) {
             String contre = (i == 1) ? StringsFr.CONTRE : "";
-            String and = (i == Menu.numberOfPlayers -1) ? StringsFr.AND_SEPARATOR : "";
+            String and = (i == Menu.numberOfPlayers -1 && Menu.numberOfPlayers > 2) ? StringsFr.AND_SEPARATOR : "";
             String comma = (i < Menu.numberOfPlayers -1) ? ", " : "";
             sb
                     .append(comma)
