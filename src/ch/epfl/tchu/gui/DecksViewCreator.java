@@ -183,6 +183,17 @@ class DecksViewCreator {
         return cardPane;
     }
 
+    /**
+     * Creates the window where the drawn cards will be displayed
+     * @param cards : the three drawn cards
+     * @param consumer : operation to be executed
+     * @param nextPlayer :  next player to play
+     * @param message : message describing if the player has successfully claimed the route or not
+     *                ("null" in the case it is not known immediately ie. additional cards can be played)
+     * @param noAddCost : if there is no additional cost for the route
+     * @param isLastTurn : if the last round has been reached
+     * @return the node containing the three drawn cards
+     */
     public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String nextPlayer, String message, boolean noAddCost, boolean isLastTurn){
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css", "additional-cards.css");
@@ -198,7 +209,7 @@ class DecksViewCreator {
                 StackPane frontOfCard = new StackPane();
                 frontOfCard.getStyleClass().add("card");
                 frontOfCard.getStyleClass().add(getCardName(cards.get(i)));
-
+               //the back of the card
                 StackPane back = new StackPane();
                 StackPane backOfCard = backOfCardRectangle(back);
 
@@ -206,7 +217,6 @@ class DecksViewCreator {
 
                 stacks [i] = frontOfCard;
                 backs[i] = backOfCard;
-
 
                 hbox.getChildren().add(mainStack);
 

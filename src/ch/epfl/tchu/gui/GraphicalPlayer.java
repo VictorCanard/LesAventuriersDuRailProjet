@@ -257,17 +257,32 @@ public final class GraphicalPlayer {
                     }
                 });
     }
+
+
     private String addCost;
+
+    /**
+     * Sets the additional cost of the route
+     * @param additionalCost the additional cost of the route
+     */
     public void addCost(int additionalCost){
         addCost = StringsFr.getAdditionalCost(additionalCost);
     }
 
     private String claimedRouteString = "null";
+
+    /**
+     * Sets the string of the message declaring if the player claimed the route or not
+     * @param s : the message
+     */
     public void didOrDidntClaimRoute(String s) {
         if (s != null) claimedRouteString = s;
     }
 
-
+    /**
+     * Creates the window to display the three additional cards and their animation
+     * @param cards : the three additional cards
+     */
     public void createDrawnCardWindow(SortedBag<Card> cards){
         VBox vbox = new VBox();
 
@@ -281,14 +296,12 @@ public final class GraphicalPlayer {
         stage.setScene(scene);
         stage.setOnCloseRequest(Event::consume);
 
-
-
         Button button = new Button("Fermer");
 
         button.setOnAction(event -> stage.hide());
 
-       Node  drawnCards;
-       //observableGameState.
+        Node  drawnCards;
+
         if(addCost.equals(StringsFr.getAdditionalCost(0))) {
 
             drawnCards = DecksViewCreator.createDrawnCards(cards,

@@ -32,8 +32,12 @@ public enum PlayerId {
         return Menu.activePlayers.get((this.ordinal() + 1) % Menu.numberOfPlayers);
     }
 
+    /**
+     * Gets the previous player Id
+     * @return the previous players Id
+     */
     public PlayerId previous(){
         if(Menu.numberOfPlayers == 3) {return Menu.activePlayers.get((this.ordinal() +2) % Menu.numberOfPlayers);}
-        else{ return Menu.activePlayers.get((this.ordinal() +1)%Menu.numberOfPlayers); }
+        else{ return this.next();}
     }
 }

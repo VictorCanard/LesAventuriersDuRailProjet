@@ -94,10 +94,22 @@ public interface Player {
      */
     SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options);
 
+    /**
+     * Determines the 3 additional cards when claiming a tunnel route
+     * @param cards : the three additional cards
+     */
     void tunnelDrawnCards(SortedBag<Card> cards);
 
+    /**
+     * The additional cost as a result of attempting to claim a tunnel route
+     * @param additionalCost : the additional cost
+     */
     void additionalCost(int additionalCost);
 
+    /**
+     * Determines the string corresponding to whether or not the player was successful in claiming the route or not
+     * @param s : the string describing if the player claimed the route
+     */
     void didOrDidntClaimRoute(String s);
 
 
