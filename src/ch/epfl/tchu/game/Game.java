@@ -4,6 +4,7 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.Info;
 import ch.epfl.tchu.gui.Menu;
+import ch.epfl.tchu.gui.StringsFr;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -157,6 +158,9 @@ public final class Game {
         Info currentInfo = allGameData.infoGenerators.get(currentPlayerId);
         Info nextInfo = allGameData.infoGenerators.get(currentPlayerId.next());
 
+        if(allGameData.gameState.lastTurnBegins()){
+            receiveInfoForAll(players, nextInfo.canPlay());
+        }
 
 
         Player.TurnKind playerChoice = currentPlayer.nextTurn();
@@ -164,7 +168,7 @@ public final class Game {
         switch (playerChoice) {
             case DRAW_TICKETS:
                 allGameData.modifyGameState(drawTickets(allGameData, currentPlayer, currentInfo));
-                if(!allGameData.gameState.lastTurnBegins())receiveInfoForAll(players, nextInfo.canPlay());
+                if(!allGameData.gameState.lastTurnBegins())receiveInfoForAll(players, nextInfo.canPlay()); //todo : aaaa
                 break;
 
             case DRAW_CARDS:
@@ -336,15 +340,19 @@ public final class Game {
                 } else {
 
                     GameState gs = allGameData.gameState
-                            //Drawn cards are put in the discard
-                            .withMoreDiscardedCards(drawnCards)
-                            .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards));
+                                               //Drawn cards are put in the discard
+                                                .withMoreDiscardedCards(drawnCards)
+                                                .withClaimedRoute(claimedRoute, initialClaimCards.union(tunnelCards));
 
                     receiveInfoForAll(players, currentInfo.claimedRoute(claimedRoute, initialClaimCards.union(tunnelCards)));
 
-                    if(!allGameData.gameState.lastTurnBegins()){
+                    if(!((allGameData.gameState.playerState(allGameData.gameState.currentPlayerId()).carCount() - claimedRoute.length()) <= Constants.NUMBER_OF_WAGONS_TO_BEGIN_LAST_TURN)) {
                         receiveInfoForAll(players, secondInfo.canPlay());
                     }
+
+                    /*    if(!allGameData.gameState.lastTurnBegins()){
+                        receiveInfoForAll(players, secondInfo.canPlay());
+                    }*/
 
 
                     return gs;
@@ -359,12 +367,18 @@ public final class Game {
 
             currentPlayer.tunnelDrawnCards(drawnCards);
 
-            GameState gs = allGameData.gameState.withClaimedRoute(claimedRoute, initialClaimCards);
+            GameState gs =allGameData.gameState.withClaimedRoute(claimedRoute, initialClaimCards);
             players.forEach((key, value) ->{
                 if(key != allGameData.gameState.currentPlayerId()){
                     value.receiveInfo(currentInfo.claimedRoute(claimedRoute, initialClaimCards));
+
+                    if(!((allGameData.gameState.playerState(allGameData.gameState.currentPlayerId()).carCount() - claimedRoute.length()) <= Constants.NUMBER_OF_WAGONS_TO_BEGIN_LAST_TURN)){
+                        value.receiveInfo((secondInfo.canPlay()));
+                    }
+
+                /*
                     if(!allGameData.gameState.lastTurnBegins()){
-                        value.receiveInfo((secondInfo.canPlay())); }
+                        value.receiveInfo((secondInfo.canPlay())); }*/
                     }
                  });
 
@@ -400,25 +414,31 @@ public final class Game {
         Map<PlayerId, Player> players = allGameData.players;
         Map<PlayerId, Info> infoGenerators = allGameData.infoGenerators;
 
-        PlayerId previousPlayerId = allGameData.gameState.currentPlayerId().previous();
-        Info secondInfo = allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId().next());
 
+        PlayerId previousPlayerId = allGameData.gameState.currentPlayerId().previous();
+        Info firstInfo = allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId());
+
+       PlayerId currentPlayerId = allGameData.gameState.currentPlayerId();
 
 
         receiveInfoForAll(players, infoGenerators
                 .get(previousPlayerId)
                 .lastTurnBegins(allGameData.gameState.playerState(previousPlayerId).carCount()));
+        receiveInfoForAll(players, firstInfo.canPlay());
         //LastTurnBegins
 
         //One more turn for each player
         for (int i = 0; i < Menu.numberOfPlayers; i++) {
-            allGameData.modifyGameState(allGameData.gameState.forNextTurn());
+            if(i ==0) {allGameData.modifyGameState(allGameData.gameState.lastForNext());}
+            else{ allGameData.modifyGameState(allGameData.gameState.forNextTurn());}
             nextTurn(allGameData);
-            players.forEach((key, value) -> {
+            if(i != Menu.numberOfPlayers-1)
+            receiveInfoForAll(players, allGameData.infoGenerators.get(allGameData.gameState.currentPlayerId().next()).canPlay());
+           /* players.forEach((key, value) -> {
                 if(key!= allGameData.gameState.currentPlayerId()){
                 value.receiveInfo("next turn string");
                  }
-            });
+            });*/
         }
 
         //Calculate final points

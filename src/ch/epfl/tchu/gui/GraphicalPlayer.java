@@ -305,7 +305,6 @@ public final class GraphicalPlayer {
                                                         claimedRouteString,
                                                         false, observableGameState.isLastTurn().get());}
 
-
         vbox.getChildren().addAll(textFlow, drawnCards, button);
         stage.setAlwaysOnTop(true);
         stage.show();

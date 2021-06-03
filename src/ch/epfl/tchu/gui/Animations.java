@@ -44,13 +44,13 @@ public class Animations extends Application{
     }
 
 
-    public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String name, String message, boolean noAddCost, boolean isLastTurn){
+    public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String nextPlayer, String message, boolean noAddCost, boolean isLastTurn){
         SequentialTransition sq = new SequentialTransition(new PauseTransition(PAUSE), simpleFlip(faceDown[0], faceUp[0]), simpleFlip(faceDown[1], faceUp[1]), simpleFlip(faceDown[2], faceUp[2]));
 
         if(noAddCost || !message.equals("null")) {
            sq.setOnFinished(event -> {
                consumer.accept(message);
-               if(!isLastTurn) consumer.accept(String.format(StringsFr.CAN_PLAY, name));
+               if(!isLastTurn) {consumer.accept(String.format(StringsFr.CAN_PLAY, nextPlayer));}
            });
         }
 

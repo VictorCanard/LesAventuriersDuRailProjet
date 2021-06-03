@@ -62,6 +62,15 @@ public class PublicPlayerState {
         return routes;
     }
 
+    public int totalRouteLength(){
+        int sum =0;
+        for(Route r : routes()){
+           sum += r.length();
+        }
+
+        return sum;
+    }
+
     /**
      * Getter for the number of cars the player has
      *

@@ -88,7 +88,10 @@ class DecksViewCreator {
 
             handPane.getChildren().add(stackPane);
 
-            X_HAND_CARD_POS.put(card, (double) (-745 + 75*Card.ALL.indexOf(card)));
+            int lhs = -745;
+            int factor = 75;
+
+            X_HAND_CARD_POS.put(card, (double) (lhs + factor*Card.ALL.indexOf(card)));
         }
         return mainHBox;
     }
@@ -186,7 +189,7 @@ class DecksViewCreator {
         return cardPane;
     }
 
-    public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String name, String message, boolean noAddCost, boolean isLastTurn){
+    public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String nextPlayer, String message, boolean noAddCost, boolean isLastTurn){
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css", "additional-cards.css");
         hbox.setId("drawCards");
@@ -199,6 +202,7 @@ class DecksViewCreator {
                 mainStack.getStyleClass().add("card");
 
                 StackPane frontOfCard = new StackPane();
+                frontOfCard.getStyleClass().add("card");
                 frontOfCard.getStyleClass().add(getCardName(cards.get(i)));
 
                 StackPane back = new StackPane();
@@ -213,7 +217,7 @@ class DecksViewCreator {
                 hbox.getChildren().add(mainStack);
 
             }
-        Animations.flip(backs, stacks, consumer, name, message, noAddCost, isLastTurn);
+        Animations.flip(backs, stacks, consumer, nextPlayer, message, noAddCost, isLastTurn);
 
         return hbox;
     }

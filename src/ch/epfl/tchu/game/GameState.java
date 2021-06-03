@@ -281,4 +281,11 @@ public final class GameState extends PublicGameState {
 
         return new GameState(playerStateMap, ticketDeck, cardState, otherPlayer, lastPlayer);
     }
+
+    public GameState lastForNext() {
+        PlayerId lastPlayer = (lastTurnBegins()) ? super.currentPlayerId() : super.lastPlayer();
+        PlayerId otherPlayer = super.currentPlayerId(); //removed .next()
+
+        return new GameState(playerStateMap, ticketDeck, cardState, otherPlayer, lastPlayer);
+    }
 }

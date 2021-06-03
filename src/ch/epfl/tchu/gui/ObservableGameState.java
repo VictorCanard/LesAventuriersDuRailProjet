@@ -237,7 +237,9 @@ public final class ObservableGameState {
         setPlayerTickets(playerState);
         setPlayerCards(playerState);
         setPlayerCanClaimRouteOrNot(publicGameState, playerState);
-        if(publicGameState.lastPlayer() != null) setLT();
+        if(!((Constants.INITIAL_CAR_COUNT-playerState.totalRouteLength())<=2)){
+            setLT();
+        }
 
         //
         this.publicGameState = publicGameState;
@@ -341,5 +343,7 @@ public final class ObservableGameState {
     private void setLT(){
      isLT.set(true);
     }
+
+
 
 }
