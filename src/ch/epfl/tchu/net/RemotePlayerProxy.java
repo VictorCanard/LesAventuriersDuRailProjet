@@ -18,6 +18,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  * Represents a remote player proxy and plays the role of a Player
  *
  * @author Victor Canard-Duchêne (326913)
+ * @author Anne-Marie Rusu (296098)
  */
 public class RemotePlayerProxy implements Player {
     private final BufferedWriter bufferedWriter;

@@ -32,6 +32,9 @@ import java.util.regex.Pattern;
  */
 
 class DecksViewCreator {
+    /**
+     * positions of the hand view cards
+     */
     private static final Map<Card, Double> X_HAND_CARD_POS = new EnumMap<>(Card.class) ;
 
 
