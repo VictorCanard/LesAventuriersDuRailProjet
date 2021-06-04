@@ -237,9 +237,7 @@ public final class ObservableGameState {
         setPlayerTickets(playerState);
         setPlayerCards(playerState);
         setPlayerCanClaimRouteOrNot(publicGameState, playerState);
-        if((Constants.INITIAL_CAR_COUNT-playerState.totalRouteLength())<=2){
-            setLT();
-        }
+
 
         //
         this.publicGameState = publicGameState;
@@ -334,15 +332,6 @@ public final class ObservableGameState {
     public ReadOnlyBooleanProperty claimable(Route route) {
 
         return getCanPlayerClaimRoute().get(route);
-    }
-    private final BooleanProperty isLT = new SimpleBooleanProperty(false);
-    public ReadOnlyBooleanProperty isLastTurn(){
-        return isLT;
-    }
-
-    private void setLT(){
-     isLT.set(true);
-        System.out.println("TRUE FROM OBVS");
     }
 
 

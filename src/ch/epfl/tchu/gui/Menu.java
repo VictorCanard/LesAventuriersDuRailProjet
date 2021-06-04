@@ -90,6 +90,7 @@ public class Menu extends Application {
         Button startGame = new Button("Commencer");
         startGame.setId("start-button");
         startGame.disableProperty().bind(Bindings.isNull(choiceBox.valueProperty()));
+
         startGame.setOnAction(e -> {
 
 
@@ -102,6 +103,7 @@ public class Menu extends Application {
             ServerMain server = new ServerMain();
             List<String> playerNames = new ArrayList<>();
             for (int i = 0; i < Menu.numberOfPlayers; i++) {
+                if(!textFields.get(i).getText().equals(""))
                 playerNames.add(textFields.get(i).getText());
             }
             server.setParameters(playerNames);

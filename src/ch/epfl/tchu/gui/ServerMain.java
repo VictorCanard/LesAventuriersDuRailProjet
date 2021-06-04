@@ -25,7 +25,7 @@ import static ch.epfl.tchu.game.PlayerId.*;
  */
 public class ServerMain extends Application {
     private final List<Socket> sockets = new ArrayList<>();
-    private final Map<PlayerId, String> defaultNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
+    private final Map<PlayerId, String> defaultNames = Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles", PLAYER_3, "Julie");
     private final Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
 
     private final int localPlayerNumber = 1;
