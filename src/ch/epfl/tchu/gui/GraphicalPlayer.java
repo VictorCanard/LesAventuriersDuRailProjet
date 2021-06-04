@@ -70,7 +70,6 @@ public final class GraphicalPlayer {
 
     private void setSceneGraph() {
 
-        // boolean darkMode = true;
 
         primaryStage.setResizable(false);
         Node mapView = MapViewCreator
@@ -89,8 +88,6 @@ public final class GraphicalPlayer {
                 new BorderPane(mapView, null, cardsView, handView, infoView);
 
         Scene scene = new Scene(mainPane);
-
-        //if(darkMode) scene.getStylesheets().add("dark-mode.css");
 
 
         primaryStage.setTitle("tCHu" + " \u2014 " + playerNames.get(thisPlayer));
@@ -217,7 +214,6 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         Preconditions.checkArgument(!possibleClaimCards.isEmpty());
         Preconditions.checkArgument(chooseCardsHandler != null);
-        //createDrawnCardWindow();
 
         createChoiceWindow(StringsFr.CARDS_CHOICE,
                 StringsFr.CHOOSE_CARDS,
@@ -269,15 +265,8 @@ public final class GraphicalPlayer {
         addCost = StringsFr.getAdditionalCost(additionalCost);
     }
 
-    private String claimedRouteString = "null";
 
-    /**
-     * Sets the string of the message declaring if the player claimed the route or not
-     * @param s : the message
-     */
-    public void didOrDidntClaimRoute(String s) {
-        if (s != null) claimedRouteString = s;
-    }
+
 
     /**
      * Creates the window to display the three additional cards and their animation
@@ -295,26 +284,16 @@ public final class GraphicalPlayer {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setScene(scene);
         stage.setOnCloseRequest(Event::consume);
-
+        stage.setMaximized(true);
         Button button = new Button("Fermer");
 
         button.setOnAction(event -> stage.hide());
 
         Node  drawnCards;
 
-        if(addCost.equals(StringsFr.getAdditionalCost(0))) {
 
-            drawnCards = DecksViewCreator.createDrawnCards(cards,
-                                                           this::receiveInfo,
-                                                           playerNames.get((thisPlayer.next())),
-                                                           claimedRouteString,
-                                                           true, observableGameState.isLastTurn().get());}
-        else {
-            drawnCards = DecksViewCreator.createDrawnCards(cards,
-                                                        this::receiveInfo,
-                                                        playerNames.get((thisPlayer.next())),
-                                                        claimedRouteString,
-                                                        false, observableGameState.isLastTurn().get());}
+            drawnCards = DecksViewCreator.createDrawnCards(cards);
+
 
         vbox.getChildren().addAll(drawnCards, button);
         stage.setAlwaysOnTop(true);

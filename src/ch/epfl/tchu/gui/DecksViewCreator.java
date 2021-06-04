@@ -197,7 +197,7 @@ class DecksViewCreator {
      * @param isLastTurn : if the last round has been reached
      * @return the node containing the three drawn cards
      */
-    public static Node createDrawnCards(SortedBag<Card> cards, Consumer<String> consumer, String nextPlayer, String message, boolean noAddCost, boolean isLastTurn){
+    public static Node createDrawnCards(SortedBag<Card> cards){
         HBox hbox = new HBox();
         hbox.getStylesheets().addAll("decks.css", "colors.css", "additional-cards.css");
         hbox.setId("drawCards");
@@ -224,7 +224,7 @@ class DecksViewCreator {
                 hbox.getChildren().add(mainStack);
 
             }
-        Animations.flip(backs, stacks, consumer, nextPlayer, message, noAddCost, isLastTurn);
+        Animations.flip(backs, stacks);
 
         return hbox;
     }

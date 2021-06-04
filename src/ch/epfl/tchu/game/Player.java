@@ -106,12 +106,6 @@ public interface Player {
      */
     void additionalCost(int additionalCost);
 
-    /**
-     * Determines the string corresponding to whether or not the player was successful in claiming the route or not
-     * @param s : the string describing if the player claimed the route
-     */
-    void didOrDidntClaimRoute(String s);
-
 
 
     /**

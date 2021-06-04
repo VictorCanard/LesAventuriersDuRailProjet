@@ -153,11 +153,6 @@ public class RemotePlayerClient {
                     case ADDITIONAL_COST:
                         int additionalCost = INTEGER_SERDE.deserialize(arguments.next());
                         player.additionalCost(additionalCost);
-
-                        break;
-                    case DID_OR_DIDNT_CLAIM_ROUTE:
-                        String s = STRING_SERDE.deserialize(arguments.next());
-                        player.didOrDidntClaimRoute(s);
                         break;
                     default:
                         throw new Error();

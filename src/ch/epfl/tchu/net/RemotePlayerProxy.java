@@ -147,11 +147,6 @@ public class RemotePlayerProxy implements Player {
         sendMessage(MessageId.ADDITIONAL_COST, addCost);
     }
 
-    @Override
-    public void didOrDidntClaimRoute(String s) {
-        String claimRoute = STRING_SERDE.serialize(s);
-        sendMessage(MessageId.DID_OR_DIDNT_CLAIM_ROUTE, claimRoute);
-    }
 
     /**
      * Sends a message to the client

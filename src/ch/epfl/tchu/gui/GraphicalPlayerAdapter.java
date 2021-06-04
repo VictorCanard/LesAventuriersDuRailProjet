@@ -126,10 +126,7 @@ public final class GraphicalPlayerAdapter implements Player {
         runLater(() -> graphicalPlayer.addCost(additionalCost));
     }
 
-    @Override
-    public void didOrDidntClaimRoute(String s) {
-        runLater(() -> graphicalPlayer.didOrDidntClaimRoute(s));
-    }
+
 
 
     private <E> E withTryAndCatch(BlockingQueue<E> e) {

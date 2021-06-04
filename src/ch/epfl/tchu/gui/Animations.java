@@ -54,23 +54,10 @@ public class Animations{
      * Flips the set of 3 drawn additional cards obtained when a player wants to claim an underground route
      * @param faceDown : an array of the three face down cards
      * @param faceUp : an array of the the three face up cards
-     * @param consumer : a consumer used to execute receiveInfo
-     * @param nextPlayer : the next player to play after the turn is over
-     * @param message : the message if the player has claimed the route or not
-     * @param noAddCost : the additional cost for this turn
-     * @param isLastTurn : if the last turn has arrived
      */
 
-    public static void flip(Node [] faceDown, Node [] faceUp, Consumer<String> consumer, String nextPlayer, String message, boolean noAddCost, boolean isLastTurn){
+    public static void flip(Node [] faceDown, Node [] faceUp){
         SequentialTransition sq = new SequentialTransition(new PauseTransition(PAUSE), simpleFlip(faceDown[0], faceUp[0]), simpleFlip(faceDown[1], faceUp[1]), simpleFlip(faceDown[2], faceUp[2]));
-
-        if(noAddCost || !message.equals("null")) {
-           sq.setOnFinished(event -> {
-               consumer.accept(message);
-               if(!isLastTurn) {
-                   consumer.accept("FROM ANIMATION : " + String.format(StringsFr.CAN_PLAY, nextPlayer));}
-           });
-        }
 
         sq.play();
     }
